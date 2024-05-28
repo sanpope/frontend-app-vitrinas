@@ -9,7 +9,6 @@ function App() {
         <p>
           Edita <code>src/App.js</code> y guarda para recargar.
         </p>
-        <p>¡Bienvenido!</p>
         <a
           className="App-link"
           href="https://reactjs.org"
