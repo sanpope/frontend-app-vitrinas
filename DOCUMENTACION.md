@@ -4,7 +4,7 @@ En este proyecto debe crearse todo el frontend del sistema de gestión de vitrin
 
 ## Diseño de interfaz
 
-El número de pantallas, así como el diseño general de la interfaz de usuario, ha sido definido e ilustrado en un [proyecto Figma](https://www.figma.com/design/F7lUVXTRd7zsPyM53uR58f/Vitrinas?node-id=11435-1672&t=nKTvctQPwgVVWHvo-1).
+El número de pantallas, así como el diseño general de la interfaz de usuario, ha sido definido e ilustrado en un [proyecto Figma](https://www.freelancer.com.co/users/l.php?url=https:%2F%2Fwww.figma.com%2Fproto%2FiDzAkkNmIleLntLgkYJ1hk%2FVitrinas%3Fpage-id%3D7101%253A46349%26node-id%3D11815-4497%26viewport%3D131%252C759%252C0.13%26t%3DmtcwNZjgFuNMblbA-1%26scaling%3Dmin-zoom%26starting-point-node-id%3D11815%253A4497&sig=cf58ec03274c234249753c1a394ca3c22b45f14e17602df9b96288607cbb9475).
 
 Se adjuntan imágenes de algunas pantallas de la interfaz:
 
