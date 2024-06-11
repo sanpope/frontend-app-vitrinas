@@ -10,7 +10,19 @@ Se adjuntan imágenes de algunas pantallas de la interfaz:
 
 ### `Pantalla Principal`
 
+![Imagen de pantalla principal](diseño/Home.png)
+
+### `Menú de vitrinas`
+
 ![Imagen de pantalla principal](diseño/Vitrinas.png)
+
+### `Pantalla de una vitrina`
+
+![Imagen de pantalla principal](diseño/ResumenDeVitrinas.png)
+
+### `Inventario de una vitrina`
+
+![Imagen de pantalla principal](diseño/Inventario.png)
 
 ## API REST 
 
