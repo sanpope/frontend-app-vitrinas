@@ -24,6 +24,6 @@ Se adjuntan imágenes de algunas pantallas de la interfaz:
 
 ![Imagen de pantalla principal](diseño/Inventario.png)
 
-## API REST 
+## API REST
 
 El desarrollador de esta app dispondrá de servicios REST que le proporcionarán toda la información y las funcionalidades requeridas en cada pantalla del diseño. La documentación de dicha API es accesible a través de este [link Swagger](https://app.swaggerhub.com/apis-docs/sanpope/vitrinas-app/1.0#/). Todavía no hay un dominio definido para los servicios REST, por lo que se sugiere usar uno cualquiera para simular las pruebas en el entorno de desarrollo.

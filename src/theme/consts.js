@@ -1,0 +1,2 @@
+export const SMALL_SCREEN_WIDTH = 476
+export const LARGE_SCREEN_WIDTH = 682

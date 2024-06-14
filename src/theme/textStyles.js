@@ -1,0 +1,70 @@
+const textStyles = {
+  RobotoeBanner: {
+    fontFamily: "Roboto",
+    fontSize: "64px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "74px",
+    letterSpacing: "0.5px",
+  },
+  RobotoHeader: {
+    fontFamily: "Roboto",
+    fontSize: "36px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "normal",
+    letterSpacing: "0.5px",
+  },
+  RobotoBody: {
+    fontFamily: "Roboto",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+    letterSpacing: "0.08px",
+  },
+  RobotoTitle: {
+    fontFamily: "Roboto",
+    fontSize: "20px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+  },
+  RobotoSubtitle: {
+    fontFamily: "Roboto",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "150%",
+  },
+  RobotoRegular: {
+    fontFamily: "Roboto",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+  },
+  RobotoSubtitleSmall: {
+    fontFamily: "Roboto",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "150%",
+  },
+  RobotoTiny: {
+    fontFamily: "Roboto",
+    fontSize: "12px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+  },
+  RobotoNano: {
+    fontFamily: "Roboto",
+    fontSize: "10px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+  },
+};
+
+export default textStyles;

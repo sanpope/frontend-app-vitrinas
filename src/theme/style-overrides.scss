@@ -1,0 +1,34 @@
+.chakra-toast__inner {
+  margin: 0.5rem 0 !important;
+  padding-right: 1.5rem !important;
+  padding-left: 1.5rem !important;
+  width: 100% !important;
+}
+
+.chakra-toast-manager-bottom {
+  bottom: 5rem;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  -webkit-transition: green 5000s ease-in-out 0s;
+  transition: green 5000s ease-in-out 0s;
+}
+
+.disclaimers-text {
+  p {
+    margin-bottom: 1rem;
+  }
+
+  h4 {
+    font-weight: 700;
+  }
+
+  a {
+    color: #3D65F6;
+    text-decoration: underline;
+  }
+}
