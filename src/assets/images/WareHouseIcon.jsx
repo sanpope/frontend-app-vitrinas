@@ -1,4 +1,4 @@
-const WareHouse = ({ width = "20px", height = "20px", fill = "white" }) => {
+const WareHouseIcon = ({ width = "20px", height = "20px", fill = "white" }) => {
   return (
     <svg
       width={width}
@@ -15,4 +15,4 @@ const WareHouse = ({ width = "20px", height = "20px", fill = "white" }) => {
   );
 };
 
-export default WareHouse;
+export default WareHouseIcon;

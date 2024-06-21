@@ -46,13 +46,13 @@ const BUTTON_VARIANTS = {
   WHITE: {
     normal: {
       bg: "white",
-      borderColor: "darkPurple.100",
-      color: "darkPurple.100",
+      borderColor: "black",
+      color: "black",
     },
     hover: {
-      bg: "blue.100",
-      borderColor: "blue.100",
-      color: "white",
+      bg: "white",
+      borderColor: "red.100",
+      color: "black",
     },
     disabled: {
       bg: "white",

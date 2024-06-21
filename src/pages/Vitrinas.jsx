@@ -1,7 +1,11 @@
-import React from 'react'
+import { Box } from "@chakra-ui/react";
+import React from "react";
+import ModalComponent from "../component/ModalComponent";
 
 export default function Vitrinas() {
   return (
-    <div>Vitrinas</div>
-  )
+    <Box>
+      <ModalComponent />
+    </Box>
+  );
 }

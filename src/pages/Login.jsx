@@ -108,7 +108,6 @@ function App() {
                 onChange={setPassword}
                 error={errPassword}
                 placeholder={"************"}
-                borderColor={"black"}
                 isPassword
               />
             </Box>

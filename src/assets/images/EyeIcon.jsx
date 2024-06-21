@@ -1,4 +1,4 @@
-const Eye = ({ width = "12", height = "8", fill = "#020202" }) => {
+const EyeIcon = ({ width = "12", height = "8", fill = "#020202" }) => {
   return (
     <svg
       width={width}
@@ -15,4 +15,4 @@ const Eye = ({ width = "12", height = "8", fill = "#020202" }) => {
   );
 };
 
-export default Eye;
+export default EyeIcon;

@@ -1,4 +1,4 @@
-const BriefCase = ({ width = "20px", height = "20px", fill = "white" }) => {
+const BriefCaseIcon = ({ width = "20px", height = "20px", fill = "white" }) => {
   return (
     <svg
       width={width}
@@ -15,4 +15,4 @@ const BriefCase = ({ width = "20px", height = "20px", fill = "white" }) => {
   );
 };
 
-export default BriefCase;
+export default BriefCaseIcon;

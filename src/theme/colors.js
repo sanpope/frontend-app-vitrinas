@@ -2,11 +2,16 @@ export const colors = {
   white: "#FFFFFF",
   black: "black",
   textBlack: "#020202",
+  mainBg: "#E5E5E5",
   alert: {
     error: "#C62828",
     warning: "#FFC255",
     success: "#2CA900",
     info: "blue",
+  },
+  success: {
+    10: "#008d2b",
+    20: "#97d0a9",
   },
   grey: {
     placeholder: "#AEAEB2",

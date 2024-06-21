@@ -14,7 +14,7 @@ import colors from "./theme.json";
 import ErrorMessage from "../errorMessage";
 // import { FIELD_SIZE } from "#/types/consts";
 // import EyeOff from "#/images/svgs/eye-off";
-import Eye from "../../../assets/images/Eye";
+import EyeIcon from "../../../assets/images/EyeIcon";
 import useColorFormatConverter from "../../../theme/useColorFormatConverter";
 
 export default function TextInput(props) {
@@ -73,7 +73,7 @@ export default function TextInput(props) {
         // }}
         // borderColor={getBorderColor(false)}
         borderWidth="1px"
-        borderRadius="2px"
+        borderRadius="5px"
         h={`40px`}
       >
         {leftIcon && (
@@ -97,8 +97,8 @@ export default function TextInput(props) {
             borderLeftWidth={"1px"}
             borderTopRightRadius={0}
             borderBottomRightRadius={0}
-            borderTopLeftRadius={"2px"}
-            borderBottomLeftRadius={"2px"}
+            borderTopLeftRadius={"5px"}
+            borderBottomLeftRadius={"5px"}
             height="38px"
             display="flex"
             alignItems={"center"}
@@ -153,10 +153,10 @@ export default function TextInput(props) {
           borderRightWidth={rightIcon ? 0 : "1px"}
           focusBorderColor="transparent"
           errorBorderColor="transparent"
-          borderTopLeftRadius={leftIcon || staticText ? 0 : "2px"}
-          borderBottomLeftRadius={leftIcon || staticText ? 0 : "2px"}
-          borderBottomRightRadius={rightIcon ? 0 : "2px"}
-          borderTopRightRadius={rightIcon ? 0 : "2px"}
+          borderTopLeftRadius={leftIcon || staticText ? 0 : "5px"}
+          borderBottomLeftRadius={leftIcon || staticText ? 0 : "5px"}
+          borderBottomRightRadius={rightIcon ? 0 : "5px"}
+          borderTopRightRadius={rightIcon ? 0 : "5px"}
           _autofill={{
             WebkitTextFillColor: colorConverter(palette.text),
             WebkitBoxShadow: `inset 0 0 20px 20px ${
@@ -171,7 +171,7 @@ export default function TextInput(props) {
         )}
         {isPassword && (
           <InputRightElement h="full" onClick={handleClick} cursor="pointer">
-              <Eye />
+            <EyeIcon />
           </InputRightElement>
         )}
       </InputGroup>

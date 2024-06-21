@@ -14,7 +14,7 @@
     "iconContainer": "darkPurple.10",
     "icon": "black",
     "active": "blue.50",
-    "border": "black",
+    "border": "grey.50",
     "placeholder": "grey.placeholder",
     "error": "alert.error",
     "errorBg": "white"

@@ -1,9 +1,9 @@
 const textStyles = {
   RobotoeBanner: {
     fontFamily: "Roboto",
-    fontSize: "64px",
+    fontSize: "42px",
     fontStyle: "normal",
-    fontWeight: 400,
+    fontWeight: 600,
     lineHeight: "74px",
     letterSpacing: "0.5px",
   },
@@ -30,6 +30,13 @@ const textStyles = {
     fontWeight: 400,
     lineHeight: "150%",
   },
+  RobotoSubSmall: {
+    fontFamily: "Roboto",
+    fontSize: "18px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+  },
   RobotoSubtitle: {
     fontFamily: "Roboto",
     fontSize: "16px",
@@ -49,6 +56,13 @@ const textStyles = {
     fontSize: "14px",
     fontStyle: "normal",
     fontWeight: 600,
+    lineHeight: "150%",
+  },
+  RobotoSubtitleRegular: {
+    fontFamily: "Roboto",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: 400,
     lineHeight: "150%",
   },
   RobotoTiny: {
