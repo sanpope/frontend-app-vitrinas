@@ -10,10 +10,10 @@ import {
   Text,
   useTheme,
 } from "@chakra-ui/react";
-import colors from "./theme.json";
+import colors from "./types.json";
 import ErrorMessage from "../errorMessage";
 // import { FIELD_SIZE } from "#/types/consts";
-// import EyeOff from "#/images/svgs/eye-off";
+
 import EyeIcon from "../../../assets/images/EyeIcon";
 import useColorFormatConverter from "../../../theme/useColorFormatConverter";
 
@@ -80,13 +80,9 @@ export default function TextInput(props) {
           <InputLeftAddon
             pointerEvents="none"
             children={leftIcon}
-            borderColor={error ? palette.error : palette?.iconContainer}
-            bgColor={palette?.iconContainer}
+            bgColor={"white"}
             h="full"
-            borderTopWidth="1px"
-            borderBottomWidth="1px"
-            borderLeftWidth={"1px"}
-            borderRightWidth={0}
+            border={"0px solid transparent"}
           />
         )}
         {staticText && (
@@ -124,7 +120,7 @@ export default function TextInput(props) {
           disabled={disabled}
           placeholder={placeholder}
           _placeholder={{ opacity: 0.4, color: palette?.placeholder }}
-          fontFamily="Inter"
+          fontFamily="Roboto"
           fontSize="16px"
           fontStyle="normal"
           fontWeight="400"
@@ -133,6 +129,7 @@ export default function TextInput(props) {
           type={!show && isPassword ? "password" : "text"}
           bgColor={error ? palette.errorBg : baseColor}
           color={palette?.text}
+          border={"0px solid transparent"}
           borderColor={
             error
               ? colorConverter(palette.error) + " " + "!important"
@@ -147,16 +144,6 @@ export default function TextInput(props) {
           _disabled={{
             borderColor: palette?.border,
           }}
-          borderTopWidth="1px"
-          borderBottomWidth="1px"
-          borderLeftWidth={leftIcon || staticText ? 0 : "1px"}
-          borderRightWidth={rightIcon ? 0 : "1px"}
-          focusBorderColor="transparent"
-          errorBorderColor="transparent"
-          borderTopLeftRadius={leftIcon || staticText ? 0 : "5px"}
-          borderBottomLeftRadius={leftIcon || staticText ? 0 : "5px"}
-          borderBottomRightRadius={rightIcon ? 0 : "5px"}
-          borderTopRightRadius={rightIcon ? 0 : "5px"}
           _autofill={{
             WebkitTextFillColor: colorConverter(palette.text),
             WebkitBoxShadow: `inset 0 0 20px 20px ${
@@ -175,7 +162,7 @@ export default function TextInput(props) {
           </InputRightElement>
         )}
       </InputGroup>
-      {!!error && <ErrorMessage color={palette?.text}>{error}</ErrorMessage>}
+      {!!error && <ErrorMessage color={palette?.error}>{error}</ErrorMessage>}
     </FormControl>
   );
 }

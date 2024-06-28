@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 import colors from "../theme/colors";
 
-export default function Vitrina({ city, name }) {
+export default function Vitrina({ city, names, onClick }) {
   return (
     <Box
       bg={colors.white}
@@ -14,6 +14,7 @@ export default function Vitrina({ city, name }) {
       boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
       _hover={{ ".topSection": { bg: "black", color: "white" } }}
       cursor={"default"}
+      onClick={() => onClick(city)}
     >
       <Box
         className="topSection"
@@ -32,30 +33,38 @@ export default function Vitrina({ city, name }) {
         flexDir={"column"}
         justifyContent={"center"}
         alignItems={"center"}
-        gap={"20px"}
+        gap={"10px"}
         p={"10px"}
+        height={"130px"}
+        overflowY="scroll"
+        overflowX="hidden"
+        sx={{
+          "::-webkit-scrollbar": {
+            width: "5px",
+          },
+          "::-webkit-scrollbar-track": {
+            background: "tranparent",
+          },
+          "::-webkit-scrollbar-thumb": {
+            background: "tranparent",
+            borderRadius: "10px",
+          },
+          "::-webkit-scrollbar-thumb:hover": {
+            background: "tranparent",
+          },
+        }}
       >
-        <Text
-          textStyle={"RobotoRegular"}
-          _hover={{ color: "red" }}
-          transition="color 0.5s ease"
-        >
-          {name}
-        </Text>
-        <Text
-          textStyle={"RobotoRegular"}
-          _hover={{ color: "red" }}
-          transition="color 0.5s ease"
-        >
-          {name}
-        </Text>
-        <Text
-          textStyle={"RobotoRegular"}
-          _hover={{ color: "red" }}
-          transition="color 0.5s ease"
-        >
-          {name}
-        </Text>
+        {names.map((name) => {
+          return (
+            <Text
+              textStyle={"RobotoRegular"}
+              _hover={{ color: "red" }}
+              transition="color 0.5s ease"
+            >
+              {name}
+            </Text>
+          );
+        })}
       </Box>
     </Box>
   );

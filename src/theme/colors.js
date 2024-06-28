@@ -3,6 +3,7 @@ export const colors = {
   black: "black",
   textBlack: "#020202",
   mainBg: "#E5E5E5",
+  bgCard: "",
   alert: {
     error: "#C62828",
     warning: "#FFC255",
@@ -35,10 +36,7 @@ export const colors = {
   blue: {
     20: "#D8E0FD",
     50: "#58b2ff",
-    70: "#7793F9",
-    pale: "#D8E0FD",
-    80: "#6484F8",
-    100: "#3D65F6",
+    70: "#1790fe",
   },
   bluePurple: {
     30: "#B5B5C0",

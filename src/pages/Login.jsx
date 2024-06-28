@@ -9,15 +9,90 @@ import colors from "../theme/colors";
 import { color } from "framer-motion";
 import BUTTON_VARIANTS from "../component/ui/buttons/standard/types";
 import textStyles from "../theme/textStyles";
+import login from "../services/login";
 
-function App() {
-  const [user, setUser] = useState("");
+function Login({ setLoggedIn }) {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState(true);
 
-  const [errUser, setErrUser] = useState(false);
-  const [errPassword, setErrPassword] = useState(false);
-  const [errCheck, setErrCheck] = useState(false);
+  const [errEmail, setErrEmail] = useState("");
+  const [errPassword, setErrPassword] = useState("");
+  const [errCheck, setErrCheck] = useState("");
+
+  const onChangeEmail = (e) => {
+    let emailLowerCase = e.toLowerCase();
+    console.log(emailLowerCase);
+    setEmail(emailLowerCase);
+  };
+
+  const onChangePassword = (e) => {
+    console.log(e);
+    setPassword(e);
+  };
+
+  const emailValidation = () => {
+    let result = false;
+    const rgExp = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+    if (rgExp.test(email)) {
+      setErrEmail("");
+      result = false;
+    } else if (email === "") {
+      setErrEmail("Ingrese un correo");
+      result = true;
+    } else if (!rgExp.test(email)) {
+      setErrEmail("Ingrese un correo valido");
+      result = true;
+    } else {
+      setErrEmail("");
+      result = false;
+    }
+
+    return result;
+  };
+
+  const passwordValidation = (pw) => {
+    setErrPassword("");
+    let result = false;
+    let msg = "";
+
+    const rgExp =
+      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{6,15}$/;
+    if (rgExp.test(pw)) {
+      setErrPassword("");
+      result = false;
+      return result;
+    } else {
+      if (pw.length === 0) {
+        msg = "El campo no puede estar vacío, agrega una contraseña";
+        setErrPassword(msg);
+        result = true;
+      } else if (pw.length > 0 && pw.length < 6) {
+        msg = "La contraseña debe:\n Contener mínimo 6 carácteres";
+        result = true;
+      } else if (pw.length > 15) {
+        msg += "La contraseña debe:\n Contener máximo 15 carácteres.";
+        result = true;
+      }
+
+      setErrPassword(msg);
+    }
+
+    return result;
+  };
+
+  const handleLogin = async () => {
+    const loginData = await login.login({ user: email, password });
+    const validEmail = emailValidation();
+    const validPassword = passwordValidation(password);
+    if (!validEmail && !validPassword && loginData.status) {
+      console.log(loginData.status);
+      setLoggedIn(true);
+
+      console.log("login success");
+    } else {
+    }
+  };
 
   return (
     <Box
@@ -74,6 +149,7 @@ function App() {
               padding: "10px",
               borderRadius: "10px",
             }}
+            onSubmit={handleLogin}
           >
             <Box
               style={{
@@ -94,9 +170,9 @@ function App() {
               label="Usuario"
               type="text"
               id="user"
-              value={user}
-              onChange={setUser}
-              error={errUser}
+              value={email}
+              onChange={(e) => onChangeEmail(e)}
+              error={errEmail}
               rounded="md"
               placeholder={"example"}
             />
@@ -105,7 +181,7 @@ function App() {
               <TextInput
                 label="Contraseña"
                 value={password}
-                onChange={setPassword}
+                onChange={(e) => onChangePassword(e)}
                 error={errPassword}
                 placeholder={"************"}
                 isPassword
@@ -143,6 +219,7 @@ function App() {
                 py="1rem"
                 borderRadius="30px"
                 w="fit-content"
+                type={"submit"}
               >
                 Iniciar sesión
               </StandardButton>
@@ -154,4 +231,4 @@ function App() {
   );
 }
 
-export default App;
+export default Login;

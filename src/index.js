@@ -6,13 +6,18 @@ import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme"
 import { Fonts } from "./theme/fonts";
+import { Provider } from 'react-redux'
+import store from "./store"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <ChakraProvider theme={theme}>
-    <Fonts />
-    <App />
-  </ChakraProvider>,
+  <Provider store={store}>
+    <ChakraProvider theme={theme}>
+      <Fonts />
+      <App />
+    </ChakraProvider>
+  </Provider>
+  ,
   document.getElementById("root"),
 );
 

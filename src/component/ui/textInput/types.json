@@ -6,7 +6,7 @@
     "active": "grey.50",
     "border": "bluePurple.80",
     "placeholder": "grey.50",
-    "error": "red.40",
+    "error": "red.100",
     "errorBg": "red.200"
   },
   "white": {
@@ -16,7 +16,7 @@
     "active": "blue.50",
     "border": "grey.50",
     "placeholder": "grey.placeholder",
-    "error": "alert.error",
+    "error": "red.100",
     "errorBg": "white"
   }
 }

@@ -1,24 +1,30 @@
-import React from 'react';
-import { Checkbox } from '@chakra-ui/react';
+import React from "react";
+import { Checkbox as ChakraCheckbox } from "@chakra-ui/react";
+import FileCheckIcon from "../../../assets/images/FileCheckIcon";
 
-export default function Checbox({ 
-    text, 
-    defaultChecked, 
-    size,
-    disabled
+export default function Checkbox({
+  text,
+  defaultChecked,
+  size,
+  disabled,
+  colorScheme = "red",
+  checkIcon = <FileCheckIcon />,
 }) {
-
-
-    return (
-        <Checkbox 
-            defaultChecked={defaultChecked ?? false}
-            disabled={disabled}
-            size={size ?? 'lg'}
-            colorScheme="red"
-            iconColor='white'
-
-        >
-            {text}
-        </Checkbox>
-    );
+  return (
+    <ChakraCheckbox
+      checkIcon={checkIcon}
+      defaultChecked={defaultChecked ?? false}
+      disabled={disabled}
+      size={size ?? "md"}
+      _checked={{
+        "& .chakra-checkbox__control": {
+          background: colorScheme,
+          border: `1px solid ${colorScheme}`,
+        },
+      }}
+      iconColor="white"
+    >
+      {text}
+    </ChakraCheckbox>
+  );
 }

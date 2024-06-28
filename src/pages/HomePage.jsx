@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Text,
-  Button,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-  Modal,
-} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
+import textStyles from "../theme/textStyles";
 import colors from "../theme/colors";
 import Container from "../component/Container";
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
@@ -21,34 +10,22 @@ import BoxesIcon from "../../src/assets/images/BoxesIcon";
 import PhoneLaptopIcon from "../../src/assets/images/PhoneLaptopIcon";
 import TruckIcon from "../../src/assets/images/TruckIcon";
 import FileCheckIcon from "../../src/assets/images/FileCheckIcon";
-import LeftTriangleIcon from "../../src/assets/images/LeftTriangleIcon";
+
+import { useSelector, useDispatch } from "react-redux";
+import { setCity } from "../store/slices/vitrina";
 
 import axios from "axios";
-import textStyles from "../theme/textStyles";
-import Message from "../component/Message";
-import Vitrina from "../component/Vitrina";
-import GreenArrowICon from "../assets/images/GreenArrowIcon";
-import ModalComponent from "../component/ModalComponent";
-import StyledButton from "../component/ui/buttons/standard/index";
 
-const url =
-  "https://virtserver.swaggerhub.com/sanpope/vitrinas-app/1.0/rest/cuenta";
+import GreenArrowICon from "../assets/images/GreenArrowIcon";
+
+const url = "";
+
 export default function HomePage() {
+  //const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
   const [name, setName] = useState("Edgar");
   const [ventasMes, setVentasMes] = useState("22.000.000");
-
-  const {
-    isOpen: isFirstModalOpen,
-    onOpen: onFirstModalOpen,
-    onClose: onFirstModalClose,
-  } = useDisclosure();
-
-  // Control del segundo modal
-  const {
-    isOpen: isSecondModalOpen,
-    onOpen: onSecondModalOpen,
-    onClose: onSecondModalClose,
-  } = useDisclosure();
 
   useEffect(() => {
     serverConexion();
@@ -67,6 +44,10 @@ export default function HomePage() {
       });
   };
 
+  const emptyFunction = (cityName) => {
+    dispatch(setCity(cityName));
+  };
+
   return (
     <Box
       bg={colors.mainBg}
@@ -76,7 +57,8 @@ export default function HomePage() {
       flexDir={"column"}
       display={"flex"}
       gap={"20px"}
-      padding={"40px"}
+      px={"40px"}
+      pt={"10px"}
       overflowY={"scroll"}
     >
       <Box>
@@ -151,79 +133,6 @@ export default function HomePage() {
           }
         />
       </Box>
-      <Button onClick={onFirstModalOpen}>Open Modal</Button>
-
-      {/* Modal que usa isOpen para determinar si está abierto o cerrado */}
-      <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
-        <ModalOverlay />
-        <ModalContent
-          bg={colors.white}
-          maxW={"850px"}
-          p={"5px"}
-          borderRadius={"20px"}
-          left={"-55px"}
-          top={"45px"}
-          position="relative"
-        >
-          <Box position={"absolute"} left={"-45px"} top={"40px"}>
-            <LeftTriangleIcon width={"60px"} height={"50px"} />
-          </Box>
-          <ModalBody
-            display={"flex"}
-            flexWrap={"wrap"}
-            gap={"20px"}
-            justifyContent={"center"}
-            flexDir={"row"}
-            w={"100%"}
-            mt={"15px"}
-          >
-            <Vitrina city={"Bogotá"} name={"Elemento"} />
-            <Vitrina city={"Medellin"} name={"Elemento"} />
-            <Vitrina city={"Cali"} name={"Elemento"} />
-            <Vitrina city={"Bogotá"} name={"Elemento"} />
-            <Vitrina city={"Medellin"} name={"Elemento"} />
-            <Vitrina city={"Cali"} name={"Elemento"} />
-          </ModalBody>
-          <ModalFooter m={"0px"}>
-            <StyledButton
-              variant={"RED_PRIMARY"}
-              borderRadius="30px"
-              size="14px"
-              py={"5px"}
-              onClick={onSecondModalOpen}
-              children={
-                <Text textStyle={"RobotoSubtitleRegular"}>
-                  Crear una Vitrina
-                </Text>
-              }
-            ></StyledButton>
-            <Modal isOpen={isSecondModalOpen} onClose={onSecondModalClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalBody></ModalBody>
-
-                <ModalFooter>
-                  <StyledButton
-                    variant={"BLACK_PRIMARY"}
-                    borderRadius="30px"
-                    py={"5px"}
-                  >
-                    Cancelar
-                  </StyledButton>
-                  <StyledButton
-                    variant={"WHITE"}
-                    borderRadius="30px"
-                    py={"5px"}
-                    onClick={onSecondModalOpen}
-                  >
-                    Guardar
-                  </StyledButton>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </Box>
   );
 }

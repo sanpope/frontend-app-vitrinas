@@ -15,13 +15,12 @@ const textStyles = {
     lineHeight: "normal",
     letterSpacing: "0.5px",
   },
-  RobotoBody: {
+  RobotoTitleBold: {
     fontFamily: "Roboto",
-    fontSize: "16px",
+    fontSize: "20px",
     fontStyle: "normal",
-    fontWeight: 400,
+    fontWeight: 600,
     lineHeight: "150%",
-    letterSpacing: "0.08px",
   },
   RobotoTitle: {
     fontFamily: "Roboto",
@@ -30,39 +29,55 @@ const textStyles = {
     fontWeight: 400,
     lineHeight: "150%",
   },
-  RobotoSubSmall: {
+  RobotoSubtitleBold: {
+    fontFamily: "Roboto",
+    fontSize: "18px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "150%",
+  },
+  RobotoSubtitle: {
     fontFamily: "Roboto",
     fontSize: "18px",
     fontStyle: "normal",
     fontWeight: 400,
     lineHeight: "150%",
   },
-  RobotoSubtitle: {
+  RobotoBodyBold: {
     fontFamily: "Roboto",
     fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "150%",
+    letterSpacing: "0.08px",
+  },
+  RobotoBody: {
+    fontFamily: "Roboto",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "150%",
+    letterSpacing: "0.08px",
+  },
+  RobotoRegularBold: {
+    fontFamily: "Roboto",
+    fontSize: "14px",
     fontStyle: "normal",
     fontWeight: 600,
     lineHeight: "150%",
   },
   RobotoRegular: {
     fontFamily: "Roboto",
-    fontSize: "16px",
+    fontSize: "14px",
     fontStyle: "normal",
     fontWeight: 400,
     lineHeight: "150%",
   },
-  RobotoSubtitleSmall: {
+  RobotoTinyBold: {
     fontFamily: "Roboto",
-    fontSize: "14px",
+    fontSize: "12px",
     fontStyle: "normal",
     fontWeight: 600,
-    lineHeight: "150%",
-  },
-  RobotoSubtitleRegular: {
-    fontFamily: "Roboto",
-    fontSize: "14px",
-    fontStyle: "normal",
-    fontWeight: 400,
     lineHeight: "150%",
   },
   RobotoTiny: {

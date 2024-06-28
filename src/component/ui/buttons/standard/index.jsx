@@ -28,14 +28,14 @@ export default function StandardButton({
       _disabled={disabledColor}
       _hover={!disabled ? hover : {}}
       _active={active}
-      borderWidth="2px"
+      borderWidth="1.8px"
       borderColor={normal.borderColor}
       size={size}
       type={type}
       textStyle={textStyle}
       color={normal.color}
       isLoading={isLoading}
-      fontFamily="Inter"
+      fontFamily="Roboto"
       fontSize="16px"
       fontStyle="normal"
       fontWeight="600"

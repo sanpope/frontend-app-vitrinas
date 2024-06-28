@@ -1,6 +1,6 @@
 import React from "react";
-import ModalComponent from "../component/ModalComponent";
+import { Box } from "@chakra-ui/react";
 
 export default function ProductosyBodega() {
-  return <ModalComponent />;
+  return <Box>Productos y Bodega</Box>;
 }

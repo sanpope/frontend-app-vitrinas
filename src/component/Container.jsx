@@ -1,12 +1,18 @@
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
 import colors from "../theme/colors";
+import ReceiptIcon from "../assets/images/ReceiptIcon";
 
-export default function Container({ icon, title, children }) {
+export default function Container({
+  maxW = "400px",
+  icon = <ReceiptIcon width={"24px"} height={"24px"} />,
+  title,
+  children,
+}) {
   return (
     <Box
       w="100%"
-      maxW="400px"
+      maxW={maxW}
       h={"225px"}
       bg={colors.white}
       display="flex"
