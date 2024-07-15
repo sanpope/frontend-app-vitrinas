@@ -19,8 +19,7 @@ import StandardButton from "./ui/buttons/standard";
 import ConfirmationMessage from "./ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
 
-export default function EditarExistencia() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export default function EditarExistencia({ isOpen, onOpen, onClose }) {
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
@@ -28,7 +27,6 @@ export default function EditarExistencia() {
   } = useDisclosure();
   return (
     <>
-      <Button onClick={onOpen}>Editar Existencia</Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent borderRadius={"20px"}>

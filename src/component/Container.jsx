@@ -1,20 +1,19 @@
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
-import colors from "../theme/colors";
-import ReceiptIcon from "../assets/images/ReceiptIcon";
 
 export default function Container({
-  maxW = "400px",
-  icon = <ReceiptIcon width={"24px"} height={"24px"} />,
+  maxW = "350px",
+  minH = "200px",
+  bg = "white",
+  icon,
   title,
   children,
 }) {
   return (
     <Box
-      w="100%"
-      maxW={maxW}
-      h={"225px"}
-      bg={colors.white}
+      flex={`1 1 ${maxW}`}
+      minH={minH}
+      bg={bg}
       display="flex"
       flexDirection={"column"}
       borderRadius={"30px"}
@@ -29,7 +28,7 @@ export default function Container({
       >
         {icon}
         {title ? (
-          <Text textStyle={"RobotoSubtitle"} color={colors.black}>
+          <Text textStyle={"RobotoSubtitle"} color={"black"}>
             {title}
           </Text>
         ) : null}

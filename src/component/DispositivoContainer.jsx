@@ -4,6 +4,8 @@ import React from "react";
 const newDate = new Date();
 
 export default function DispositivoContainer({
+  minH = "200px",
+  maxW = "340px",
   icon,
   title = "Título",
   emoji,
@@ -18,9 +20,8 @@ export default function DispositivoContainer({
 }) {
   return (
     <Box
-      w={"100%"}
-      maxW={"380px"}
-      h={"225px"}
+      flex={`0 1 ${maxW}`}
+      minH={minH}
       bg={"white"}
       display="flex"
       flexDirection={"column"}

@@ -81,7 +81,8 @@ function Login({ setLoggedIn }) {
     return result;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     const loginData = await login.login({ user: email, password });
     const validEmail = emailValidation();
     const validPassword = passwordValidation(password);
@@ -149,7 +150,7 @@ function Login({ setLoggedIn }) {
               padding: "10px",
               borderRadius: "10px",
             }}
-            onSubmit={handleLogin}
+            onSubmit={(e) => handleLogin(e)}
           >
             <Box
               style={{

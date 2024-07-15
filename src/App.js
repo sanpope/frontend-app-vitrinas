@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import { Route, BrowserRouter, Routes, Navigate } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 import HomePage from "./pages/HomePage";
+import Profile from "./pages/Profile";
 import ProductosyBodega from "./pages/ProductosyBodega";
 import Asesores from "./pages/Asesores";
 import ErrorPage from "./pages/ErrorPage";
@@ -31,15 +32,16 @@ function App() {
     <>
       {isLoggedIn ? (
         <BrowserRouter>
-          <Box style={{ display: "flex", width: "100vw", height: "100vh" }}>
+          <Box display={"flex"} width={"100%"} height={"100%"}>
             <SideBar setLoggedIn={setLoggedIn} />
             <Box
               position={"relative"}
-              w={"100%"}
               height={"100%"}
               display={"flex"}
+              flexGrow={1}
+              overflowX={"auto"}
               flexDir={"column"}
-              bg={colors.mainBg}
+              bg={"mainBg"}
             >
               <Header />
               <Routes>
@@ -70,6 +72,12 @@ export const routes = [
     errorElement: <ErrorPage />,
     label: "Inicio",
     leftIcon: <HomeIcon />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+    errorElement: <ErrorPage />,
+    label: "Cuenta",
   },
   {
     path: "/vitrinas",

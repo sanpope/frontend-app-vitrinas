@@ -10,13 +10,14 @@ import BoxesIcon from "../../src/assets/images/BoxesIcon";
 import PhoneLaptopIcon from "../../src/assets/images/PhoneLaptopIcon";
 import TruckIcon from "../../src/assets/images/TruckIcon";
 import FileCheckIcon from "../../src/assets/images/FileCheckIcon";
-
 import { useSelector, useDispatch } from "react-redux";
 import { setCity } from "../store/slices/vitrina";
 
 import axios from "axios";
 
 import GreenArrowICon from "../assets/images/GreenArrowIcon";
+import VentasMesesAnteriores from "../component/VentasMesesAnteriores";
+import TopVitrinasdelMes from "../component/TopVitrinasdelMes";
 
 const url = "";
 
@@ -24,7 +25,7 @@ export default function HomePage() {
   //const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
 
-  const [name, setName] = useState("Edgar");
+  const name = useSelector((state) => state.userReducer.userName);
   const [ventasMes, setVentasMes] = useState("22.000.000");
 
   useEffect(() => {
@@ -56,23 +57,20 @@ export default function HomePage() {
       position="relative"
       flexDir={"column"}
       display={"flex"}
-      gap={"20px"}
-      px={"40px"}
+      gap={"1.5rem"}
+      p={"1.5rem"}
       pt={"10px"}
       overflowY={"scroll"}
     >
       <Box>
-        <Text textStyle={"RobotoHeader"} color={colors.textBlack}>
+        <Text textStyle={"RobotoHeaderBold"} color={colors.textBlack}>
           ¡Hola {name}, bienvenido! 👋🏻
         </Text>
       </Box>
-      <Box
-        display={"flex"}
-        flexWrap={"wrap"}
-        gap={"30px"}
-        justifyContent={"center"}
-      >
+      <Box display={"flex"} flexWrap={"wrap"} gap={"1.5rem"}>
         <Container
+          width={"1.5rem"}
+          height={"1.5rem"}
           title={"Ventas del mes"}
           icon={<ReceiptIcon width={"24px"} height={"24px"} />}
           children={
@@ -98,38 +96,65 @@ export default function HomePage() {
         />
         <Container
           title={"Ventas de meses anteriores"}
-          icon={<ReceiptIcon width={"24px"} height={"24px"} children={<></>} />}
+          icon={<ReceiptIcon width={"1.5rem"} height={"1.5rem"} />}
+          children={
+            <Box>
+              <VentasMesesAnteriores />
+            </Box>
+          }
         />
         <Container
           title={"Top Vitrinas del Mes"}
-          icon={<StarIcon width={"24px"} height={"24px"} children={<></>} />}
+          icon={
+            <StarIcon
+              width={"1.5rem"}
+              height={"1.5rem"}
+              children={<Box></Box>}
+            />
+          }
         />
         <Container
           title={"Top Vitrinas"}
-          icon={<TrophyIcon width={"24px"} height={"24px"} children={<></>} />}
+          icon={
+            <TrophyIcon width={"1.5rem"} height={"1.5rem"} children={<></>} />
+          }
         />
         <Container
           title={"Top Categorías"}
-          icon={<StarIcon width={"24px"} height={"24px"} children={<></>} />}
+          icon={
+            <StarIcon width={"1.5rem"} height={"1.5rem"} children={<></>} />
+          }
         />
         <Container
           title={"Top Productos"}
-          icon={<BoxesIcon width={"24px"} height={"24px"} children={<></>} />}
+          icon={
+            <BoxesIcon width={"1.5rem"} height={"1.5rem"} children={<></>} />
+          }
         />
         <Container
           title={"Dispositivos averiados"}
           icon={
-            <PhoneLaptopIcon width={"24px"} height={"24px"} children={<></>} />
+            <PhoneLaptopIcon
+              width={"1.5rem"}
+              height={"1.5rem"}
+              children={<></>}
+            />
           }
         />
         <Container
           title={"Despachos actuales"}
-          icon={<TruckIcon width={"24px"} height={"24px"} children={<></>} />}
+          icon={
+            <TruckIcon width={"1.5rem"} height={"1.5rem"} children={<></>} />
+          }
         />
         <Container
           title={"Inventario pendiente de verificar"}
           icon={
-            <FileCheckIcon width={"24px"} height={"24px"} children={<></>} />
+            <FileCheckIcon
+              width={"1.5rem"}
+              height={"1.5rem"}
+              children={<></>}
+            />
           }
         />
       </Box>

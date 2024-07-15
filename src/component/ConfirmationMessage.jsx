@@ -17,10 +17,13 @@ import StandardButton from "./ui/buttons/standard";
 export default function ConfirmationMessage({
   icon = <InfoIcon />,
   text = "Se procederá con la selección anterior",
+  text2,
+  colorText2,
   isOpen,
   onOpen,
   onClose,
-  funcConfirmar
+  funcConfirmar,
+  buttonText = "Confirmar",
 }) {
   return (
     <Box>
@@ -36,11 +39,20 @@ export default function ConfirmationMessage({
             <Box
               display={"flex"}
               justifyContent={"flex-start"}
-              alignItems={"center"}
+              alignItems={"flex-start"}
               gap={"10px"}
             >
               {icon}
               <Text textStyle={"RobotoBodyBold"}>{text}</Text>
+            </Box>
+            <Box>
+              <Text
+                textStyle={"RobotoBody"}
+                color={colorText2}
+                textAlign={"center"}
+              >
+                {text2}
+              </Text>
             </Box>
           </ModalBody>
 
@@ -65,7 +77,7 @@ export default function ConfirmationMessage({
               fontWeight="400"
               onClick={() => funcConfirmar}
             >
-              Guardar
+              {buttonText}
             </StandardButton>
           </ModalFooter>
         </ModalContent>

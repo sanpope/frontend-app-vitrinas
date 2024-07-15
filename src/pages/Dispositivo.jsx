@@ -22,7 +22,7 @@ export default function Dispositivo() {
       flexDir={"column"}
       display={"flex"}
       gap={"20px"}
-      px={"40px"}
+      px={"1.5rem"}
       pt={"10px"}
       overflowY={"scroll"}
     >
@@ -30,7 +30,7 @@ export default function Dispositivo() {
         <Text textStyle={" RobotoBody"}>{city}</Text>
         <Text textStyle={"RobotoTitleBold"}>Dispositivo</Text>
       </Box>
-      <Box display={"flex"} gap={"20px"}>
+      <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
           icon={<MobileIcon />}
           title={"Estado del Dispositivo:"}
@@ -38,7 +38,7 @@ export default function Dispositivo() {
           description={"Operando con dificultades"}
         />
       </Box>
-      <Box display={"flex"} gap={"20px"}>
+      <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
           icon={<WifiIcon />}
           title={"Conexión a internet:"}
@@ -60,7 +60,7 @@ export default function Dispositivo() {
           description={"Conectado"}
         />
       </Box>
-      <Box display={"flex"} gap={"20px"}>
+      <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
           icon={<DevIcon />}
           title={"Aplicación:"}

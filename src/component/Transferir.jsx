@@ -73,16 +73,16 @@ export default function Transferir({
               alignItems={"flex-start"}
             >
               <Box
-                w={"50%"}
+                w={{ base: "100%", lg: "50%" }}
                 display={"flex"}
-                justifyContent={"space-around"}
-                gap={"20px"}
+                justifyContent={"space-between"}
+                gap={"1.25rem"}
               >
                 <Box
-                  py={"20px"}
+                  py={"1.25rem"}
                   display={"flex"}
                   flexDirection={"column"}
-                  gap={"20px"}
+                  gap={"1.25rem"}
                 >
                   <Text textStyle={"RobotoSubtitleRegular"}>
                     Se transferiran productos desde
@@ -109,18 +109,19 @@ export default function Transferir({
                   </Select>
                 </Box>
                 <Box
-                  display={"flex"}
+                  display={{ base: "none", lg: "flex" }}
                   justifyContent={"center"}
                   alignItems={"flex-end"}
-                  p={"20px"}
+                  p={"1.25rem"}
                 >
                   <RightArrowIcon />
                 </Box>
                 <Box
-                  p={"20px"}
+                  p={"1.25rem"}
                   display={"flex"}
                   flexDirection={"column"}
-                  gap={"20px"}
+                  justifyContent={"space-between"}
+                  gap={"1.25rem"}
                 >
                   <Text textStyle={"RobotoSubtitleRegular"}>Hacia</Text>
                   <Text textStyle={"RobotoSubtitleRegular"}>{vitrina}</Text>
@@ -130,17 +131,18 @@ export default function Transferir({
             <Box
               w={"100%"}
               display={"flex"}
+              flexDir={{ base: "column", md: "row" }}
               justifyContent={"center"}
               alignItems={"center"}
-              gap={"20px"}
+              gap={"1.25rem"}
             >
               <Box
-                w={"50%"}
+                w={{ base: "100%", md: "50%" }}
                 height={"240px"}
                 borderRadius={"20px"}
                 border="1px"
                 borderColor="gray.200"
-                p={"15px"}
+                p={"0.938rem"}
               >
                 <FormControl>
                   <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
@@ -150,7 +152,7 @@ export default function Transferir({
                     display="flex"
                     alignItems="center"
                     justifyContent={"space-between"}
-                    gap={"10px"}
+                    gap={"0.625rem"}
                   >
                     <TextInput
                       placeholder={"Buscar"}
@@ -206,7 +208,7 @@ export default function Transferir({
                 </FormControl>
               </Box>
               <Box
-                w={"50%"}
+                w={{ base: "100%", md: "50%" }}
                 height={"240px"}
                 borderRadius={"20px"}
                 border="1px"

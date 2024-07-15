@@ -18,5 +18,15 @@
     "placeholder": "grey.placeholder",
     "error": "red.100",
     "errorBg": "white"
+  },
+  "transparent": {
+    "text": "black",
+    "iconContainer": "transparent",
+    "icon": "black",
+    "active": "transparent",
+    "border": "transparent",
+    "placeholder": "grey.placeholder",
+    "error": "red.100",
+    "errorBg": "white"
   }
 }

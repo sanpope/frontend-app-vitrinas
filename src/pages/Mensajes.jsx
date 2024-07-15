@@ -29,6 +29,7 @@ export default function Mensajes() {
         <Text textStyle={" RobotoBody"}>{city}</Text>
         <Box
           display={"flex"}
+          flexDirection={{ base: "column", sm: "row" }}
           justifyContent={"space-between"}
           alignItems={"center"}
         >
@@ -61,9 +62,9 @@ export default function Mensajes() {
         </Box>
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"20px"} py={"10px"}>
-        <Message />
-        <Message />
-        <Message />
+        <Message onClick={onConfirmationModalOpen} />
+        <Message onClick={onConfirmationModalOpen} />
+        <Message onClick={onConfirmationModalOpen} />
       </Box>
     </Box>
   );

@@ -157,7 +157,7 @@ export default function ProductosEnDespacho({
               py={"17px"}
               px={"20px"}
               w={"fit-content"}
-              fontSize={"12px"}
+              fontSize={"0.875rem"}
               fontWeight="400"
               onClick={onClose}
             >

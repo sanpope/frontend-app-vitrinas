@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Text, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import NameLogo from "../assets/images/NameLogo";
 import IconLogo from "../assets/images/IconLogo";
 import SignOutIcon from "../assets/images/SignOutIcon.jsx";
 import StandardButton from "./ui/buttons/standard";
-import BUTTON_VARIANTS from "../component/ui/buttons/standard/types";
 
-import colors from "../theme/colors.js";
-import textStyles from "../theme/textStyles.js";
 import MinusIcon from "../assets/images/minusIcon.jsx";
 import Resumen from "../pages/Resumen.jsx";
 import Inventario from "../pages/Inventario.jsx";
@@ -22,6 +19,9 @@ import StoreIcon from "../assets/images/StoreIcon.jsx";
 import WareHouseIcon from "../assets/images/WareHouseIcon.jsx";
 import BriefCaseIcon from "../assets/images/BriefCaseIcon.jsx";
 import ModalVitrinas from "../pages/ModalVitrinas.jsx";
+
+import { useSelector, useDispatch } from "react-redux";
+import { setActive, setVitrinaActive } from "../store/slices/menu";
 
 const routes = [
   {
@@ -91,9 +91,17 @@ const vitrinasRoutes = [
 ];
 
 export default function SideBar({ setLoggedIn }) {
-  const [menuActive, setMenuActive] = useState(0);
-  const [vitrinaActive, setVitrinaActive] = useState(0);
+  const dispatch = useDispatch();
+  const isDeskMenuOpen = useSelector(
+    (state) => state.menuReducer.isDeskMenuOpen,
+  );
+  const active = useSelector((state) => state.menuReducer.active);
+  const vitrinaActive = useSelector((state) => state.menuReducer.vitrinaActive);
   const [showOptions, setShowOptions] = useState(false);
+  const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
+
+  console.log(active);
+  console.log(vitrinaActive);
 
   const {
     isOpen: isFirstModalOpen,
@@ -101,126 +109,265 @@ export default function SideBar({ setLoggedIn }) {
     onClose: onFirstModalClose,
   } = useDisclosure();
 
-  
-
   const handleClickLogOut = () => {
     setLoggedIn(false);
   };
 
+  const handleClickOnLogo = () => {
+    dispatch(setActive(0));
+    setShowOptions(false);
+  };
   return (
     <Box
-      style={{
-        padding: "10px",
-        width: "23%",
-        height: "100%",
-        background: "black",
-        position: "relative",
-      }}
+      p={{ base: "5px", md: "10px" }}
+      h={"100%"}
+      bg={"black"}
+      display={"flex"} // MAX hiding sidebar on mobile
+      flexDirection={"column"}
+      justifyContent={"space-between"}
     >
       <Box
         w="100%"
         display="flex"
         alignItems="center"
         justifyContent="center"
+        flexDirection={"column"}
         gap="10px"
       >
-        <IconLogo width={"50px"} height={"40px"} stroke={"white"} />
-        <NameLogo width={"180px"} height={"60px"} />
-      </Box>
-
-      <Box display="flex" flexDirection="column" gap="20px" p="20px">
-        {routes.map((route, index) => (
-          <Box>
-            <Link to={route.path}>
-              <StandardButton
-                variant={
-                  menuActive === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
-                }
-                borderRadius="30px"
-                w="100%"
-                py="1.2rem"
-                leftIcon={route.leftIcon}
-                display="flex"
-                justifyContent="flex-start"
-                onClick={
-                  route.label === "Vitrinas"
-                    ? () => {
-                        onFirstModalOpen();
-                        setMenuActive(index);
-                      }
-                    : () => {
-                        setShowOptions(false);
-                        setMenuActive(index);
-                      }
-                }
-              >
-                <Text textStyle={"RobotoRegular"}>{route.label}</Text>
-              </StandardButton>
-              {showOptions && route.label === "Vitrinas" ? (
-                <Box
-                  w={"100%"}
-                  display={"flex"}
-                  flexDirection={"column"}
-                  gap={"10px"}
-                  py={"10px"}
-                >
-                  {vitrinasRoutes.map((route, index) => (
-                    <Link to={route.path} w="100%">
-                      <StandardButton
-                        variant={
-                          vitrinaActive === index
-                            ? "DARK_GREY_OPT2"
-                            : "DARK_GREY"
-                        }
-                        bg={"red"}
-                        borderRadius="30px"
-                        w={"100%"}
-                        maxW={"220px"}
-                        ml={"30px"}
-                        px={"20px"}
-                        py={"18px"}
-                        display={"flex"}
-                        justifyContent={"flex-start"}
-                        leftIcon={
-                          vitrinaActive === index ? route.leftIcon : null
-                        }
-                        onClick={() => {
-                          setVitrinaActive(index);
-                        }}
-                      >
-                        <Text
-                          textStyle={"RobotoRegular"}
-                          color={"white"}
-                          textAlign={"left"}
-                        >
-                          {route.label}
-                        </Text>
-                      </StandardButton>
-                    </Link>
-                  ))}
-                </Box>
-              ) : null}
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Box display={{ base: "flex", md: "none" }} mt={"10px"}>
+            <Link to={"/"} onClick={() => handleClickOnLogo()}>
+              <IconLogo width={"45px"} height={"40px"} stroke={"white"} />
             </Link>
           </Box>
-        ))}
+          <Link to={"/"} onClick={() => handleClickOnLogo()}>
+            <Box
+              display={{ base: "none", md: "flex" }}
+              justifyContent={isDeskMenuOpen ? "flex-start" : "center"}
+              alignItems={{ base: "none", md: "center" }}
+              gap={"20px"}
+              p={2}
+            >
+              <IconLogo width={"45px"} height={"40px"} stroke={"white"} />
+              {isDeskMenuOpen ? (
+                <NameLogo width={"170px"} height={"50px"} />
+              ) : null}
+            </Box>
+          </Link>
+        </Box>
+        {isDeskMenuOpen && !isSmallScreen ? (
+          <Box display={"flex"} flexDirection="column" gap="20px">
+            {routes.map((route, index) => (
+              <Box>
+                <Link to={route.path}>
+                  <StandardButton
+                    variant={
+                      active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
+                    }
+                    borderRadius="30px"
+                    fontSize={"0.875rem"}
+                    w="100%"
+                    py="1.2rem"
+                    leftIcon={route.leftIcon}
+                    display="flex"
+                    justifyContent="flex-start"
+                    onClick={
+                      route.label === "Vitrinas"
+                        ? () => {
+                            onFirstModalOpen();
+                            dispatch(setActive(index));
+                          }
+                        : () => {
+                            setShowOptions(false);
+                            dispatch(setActive(index));
+                          }
+                    }
+                  >
+                    <Text>{route.label}</Text>
+                  </StandardButton>
+                  {showOptions && route.label === "Vitrinas" ? (
+                    <Box
+                      w={"100%"}
+                      display={"flex"}
+                      flexDirection={"column"}
+                      gap={"10px"}
+                      py={"10px"}
+                    >
+                      {vitrinasRoutes.map((route, index) => (
+                        <Link to={route.path} w="100%">
+                          <StandardButton
+                            variant={
+                              vitrinaActive === index
+                                ? "DARK_GREY_OPT2"
+                                : "DARK_GREY"
+                            }
+                            bg={"red"}
+                            borderRadius="30px"
+                            w={"100%"}
+                            maxW={"220px"}
+                            ml={"30px"}
+                            px={"20px"}
+                            py={"18px"}
+                            display={"flex"}
+                            justifyContent={"flex-start"}
+                            leftIcon={
+                              vitrinaActive === index ? route.leftIcon : null
+                            }
+                            onClick={() => {
+                              dispatch(setVitrinaActive(index));
+                            }}
+                          >
+                            <Text
+                              textStyle={"RobotoRegular"}
+                              color={"white"}
+                              textAlign={"left"}
+                            >
+                              {route.label}
+                            </Text>
+                          </StandardButton>
+                        </Link>
+                      ))}
+                    </Box>
+                  ) : null}
+                </Link>
+              </Box>
+            ))}
+          </Box>
+        ) : isSmallScreen ? (
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            alignItems="center"
+            gap="20px"
+            p="20px"
+          >
+            {routes.map((route, index) => (
+              <Link key={index} to={route.path}>
+                <StandardButton
+                  variant={
+                    active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
+                  }
+                  borderRadius="30px"
+                  w="50px"
+                  h="50px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  onClick={
+                    route.label === "Vitrinas"
+                      ? () => {
+                          onFirstModalOpen();
+                          dispatch(setActive(index));
+                        }
+                      : () => {
+                          setShowOptions(false);
+                          dispatch(setActive(index));
+                        }
+                  }
+                >
+                  {route.leftIcon}
+                </StandardButton>
+              </Link>
+            ))}
+          </Box>
+        ) : !isDeskMenuOpen && isSmallScreen ? (
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            alignItems="center"
+            gap="20px"
+            p="20px"
+          >
+            {routes.map((route, index) => (
+              <Link key={index} to={route.path}>
+                <StandardButton
+                  variant={
+                    active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
+                  }
+                  borderRadius="30px"
+                  w="50px"
+                  h="50px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  onClick={
+                    route.label === "Vitrinas"
+                      ? () => {
+                          onFirstModalOpen();
+                          dispatch(setActive(index));
+                        }
+                      : () => {
+                          setShowOptions(false);
+                          dispatch(setActive(index));
+                        }
+                  }
+                >
+                  {route.leftIcon}
+                </StandardButton>
+              </Link>
+            ))}
+          </Box>
+        ) : !isDeskMenuOpen && !isSmallScreen ? (
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            alignItems="center"
+            gap="20px"
+            p="20px"
+          >
+            {routes.map((route, index) => (
+              <Link key={index} to={route.path}>
+                <StandardButton
+                  variant={
+                    active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
+                  }
+                  borderRadius="30px"
+                  w="50px"
+                  h="50px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  onClick={
+                    route.label === "Vitrinas"
+                      ? () => {
+                          onFirstModalOpen();
+                          dispatch(setActive(index));
+                        }
+                      : () => {
+                          setShowOptions(false);
+                          dispatch(setActive(index));
+                        }
+                  }
+                >
+                  {route.leftIcon}
+                </StandardButton>
+              </Link>
+            ))}
+          </Box>
+        ) : null}
       </Box>
+
       <Box
         w="100%"
         display="flex"
         alignItems="center"
-        justifyContent="flex-start"
+        justifyContent={"center"}
         gap="10px"
-        position={"absolute"}
-        pl={"10%"}
         bottom={"40px"}
         cursor={"pointer"}
         onClick={handleClickLogOut}
+        mb={"2rem"}
       >
         <SignOutIcon width={"24px"} height={"24px"} />
-
-        <Text textStyle={"RobotoRegular"} color={colors.white}>
-          Cerrar Sesión
-        </Text>
+        {isDeskMenuOpen && !isSmallScreen ? (
+          <Text
+            display={"inline-flex"}
+            textStyle={"RobotoRegular"}
+            color={"white"}
+          >
+            Cerrar Sesión
+          </Text>
+        ) : null}
       </Box>
       <ModalVitrinas
         isFirstModalOpen={isFirstModalOpen}

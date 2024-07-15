@@ -14,8 +14,8 @@ export default function Resumen() {
       display={"flex"}
       flexDir={"column"}
       gap={"10px"}
-      px={"40px"}
-      py={"20px"}
+      px={"1.5rem"}
+      py={"1rem"}
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
@@ -23,17 +23,17 @@ export default function Resumen() {
         <Text textStyle={"RobotoTitleBold"}>Resumen</Text>
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"20px"}>
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"600px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
-        <Container maxW={"290px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"525px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
+        <Container maxW={"250px"} />
       </Box>
     </Box>
   );

@@ -16,7 +16,7 @@ export default function Product({
       borderColor="gray.200"
       alignItems={"center"}
       justifyContent={"space-around"}
-      py={"10px"}
+      p={"10px"}
     >
       <Text textStyle={"RobotoBody"}>{productName}</Text>
       <Text
@@ -42,6 +42,7 @@ export default function Product({
         borderWidth="1px"
         borderRadius={"5px"}
         textAlign={"center"}
+        mx={2}
       >
         <option>20</option>
         <option>30</option>

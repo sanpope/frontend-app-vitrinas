@@ -22,25 +22,44 @@ export default function Visitas() {
   } = useDisclosure();
 
   return (
-    <Box w={"100%"} h={"100%"} p={"20px"}>
-      <Box></Box>
-      <Box w={"100%"} h={"70%"} display={"flex"} flexWrap={"wrap"} gap={"20px"}>
-        <VisitaContainer title={"Visitas realizadas a esta vitrina"} />
-        <VisitaContainer title={"Movimientos de inventario"} />
-        <VisitaContainer title={"Correcciones de inventario"} />
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      w={"100%"}
+      h={"100%"}
+      p={"20px"}
+      overflowY={"scroll"}
+    >
+      <Box
+        order={{ base: "2", xl: "1" }}
+        h={"90%"}
+        display="flex"
+        flexWrap="wrap"
+        gap={"1.25rem"}
+      >
+        <VisitaContainer
+          title="Visitas realizadas a esta vitrina"
+          maxW="320px"
+        />
+        <VisitaContainer title="Movimientos de inventario" maxW="320px" />
+        <VisitaContainer title="Correcciones de inventario" maxW="320px" />
       </Box>
       <Box
         display={"flex"}
-        gap={"10px"}
-        justifyContent={"flex-end"}
+        gap={{ base: "5px", md: "10px" }}
+        flexDirection={{ base: "column", sm: "row" }}
+        justifyContent={{ base: "flex.start", sm: "flex-end" }}
         alignItems={"center"}
+        margin={{ base: "0px", md: "20px" }}
+        order={{ base: "1", xl: "2" }}
+        py={"10px"}
       >
         <StandardButton
           variant={"WHITE_RED"}
           borderRadius="20px"
           py={"17px"}
           w={"fit-content"}
-          fontSize={"14px"}
+          fontSize={"12px"}
           fontWeight="400"
           onClick={onFirstModalOpen}
         >

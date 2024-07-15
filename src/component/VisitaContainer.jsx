@@ -3,20 +3,20 @@ import React from "react";
 
 export default function VisitaContainer({
   title = "Porfavor agregue un título",
+  maxW,
 }) {
   return (
     <Box
-      w={"100%"}
-      h={"80%"}
-      maxH={"1200px"}
-      maxW={"420px"}
+      flexGrow={1}
+      flexShrink={1}
+      flexBasis={{ base: "100%", md: maxW }}
+      h={"600px"}
       display={"flex"}
       flexDir={"column"}
       borderRadius="20px"
     >
       <Box
         bg={"black"}
-        w={"100%"}
         height={"60px"}
         display={"flex"}
         justifyContent={"flex-start"}
@@ -29,28 +29,11 @@ export default function VisitaContainer({
         </Text>
       </Box>
       <Box
-        w={"100%"}
         h={"100%"}
         bg={"white"}
         borderBottomRadius={"20px"}
-        overflowY="scroll"
+        overflowY="auto"
         overflowX="hidden"
-        sx={{
-          "::-webkit-scrollbar": {
-            width: "8px",
-            height: "4px",
-          },
-          "::-webkit-scrollbar-track": {
-            background: "tranparent",
-          },
-          "::-webkit-scrollbar-thumb": {
-            background: "gray.200",
-            borderRadius: "10px",
-          },
-          "::-webkit-scrollbar-thumb:hover": {
-            background: "gray.200",
-          },
-        }}
       ></Box>
     </Box>
   );

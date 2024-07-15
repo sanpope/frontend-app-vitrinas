@@ -6,7 +6,8 @@ export default function StandardButton({
   children,
   onClick,
   type,
-  textStyle = "InterSubtitle",
+  textStyle = "RobotoRegular",
+  fontSize,
   size = "sm",
   variant,
   disabled = false,
@@ -36,7 +37,7 @@ export default function StandardButton({
       color={normal.color}
       isLoading={isLoading}
       fontFamily="Roboto"
-      fontSize="16px"
+      fontSize={fontSize ?? "1rem"}
       fontStyle="normal"
       fontWeight="600"
     >

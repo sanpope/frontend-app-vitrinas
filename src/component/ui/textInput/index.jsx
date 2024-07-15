@@ -33,6 +33,10 @@ export default function TextInput(props) {
     maxLength = 150,
     baseColor = "white",
     staticText,
+    borderTopWidth = "1px",
+    borderBottomWidth = "1px",
+    borderRightWidth = "0px",
+    borderLeftWidth = "1px",
     ...rest
   } = props;
 
@@ -87,10 +91,10 @@ export default function TextInput(props) {
         )}
         {staticText && (
           <Box
-            borderTopWidth="1px"
-            borderBottomWidth="1px"
-            borderRightWidth={0}
-            borderLeftWidth={"1px"}
+            borderTopWidth={borderTopWidth}
+            borderBottomWidth={borderBottomWidth}
+            borderRightWidth={borderRightWidth}
+            borderLeftWidth={borderLeftWidth}
             borderTopRightRadius={0}
             borderBottomRightRadius={0}
             borderTopLeftRadius={"5px"}

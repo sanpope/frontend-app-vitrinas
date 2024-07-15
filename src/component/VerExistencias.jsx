@@ -30,15 +30,15 @@ export default function VerExistencias({
     { Nombre: "Producto 6", Cantidad: 45 },
     { Nombre: "Producto 7", Cantidad: 45 },
   ],
+  isOpen,
+  onOpen,
+  onClose,
 }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <>
-      <Button onClick={onOpen}>Ver Existencias</Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent borderRadius={"20px"} w={"100%"} maxW={"500px"}>
+        <ModalContent borderRadius={"20px"} w={"100%"} maxW={"400px"}>
           <ModalHeader
             bg={"black"}
             display={"flex"}
@@ -65,8 +65,8 @@ export default function VerExistencias({
                 alignItems={"center"}
                 gap={"5px"}
               >
-                <ClockIcon />
-                <Text textStyle={"RobotoRegularBold"}>
+                <ClockIcon width={"13px"} />
+                <Text textStyle={"RobotoTinyBold"}>
                   {date} a las {hour}
                 </Text>
               </Box>
@@ -77,8 +77,8 @@ export default function VerExistencias({
                 alignItems={"center"}
                 gap={"5px"}
               >
-                <UsdCircleIcon />
-                <Text textStyle={"RobotoRegularBold"}>${total}</Text>
+                <UsdCircleIcon width={"20px"} />
+                <Text textStyle={"RobotoTinyBold"}>${total}</Text>
               </Box>
             </Box>
             <Box
