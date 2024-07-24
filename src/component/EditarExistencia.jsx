@@ -13,18 +13,26 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import TextInput from "./ui/textInput";
 import StandardButton from "./ui/buttons/standard";
 import ConfirmationMessage from "./ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
 
-export default function EditarExistencia({ isOpen, onOpen, onClose }) {
+export default function EditarExistencia({ isOpen, onOpen, onClose, articulo }) {
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
     onClose: onConfirmationModalClose,
   } = useDisclosure();
+
+  // TODO make a bunch of text input fields
+
+  useEffect(() => {
+    // TODO if articulo is not null, set every single text input field now
+  }, [isOpen, articulo])
+
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>

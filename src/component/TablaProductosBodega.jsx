@@ -27,6 +27,18 @@ import Agregar from "./Agregar";
 import AgregarCategoria from "./AgregarCategoria";
 import Pagination from "../component/Pagination";
 
+const HEADERS = [
+  "Productos",
+  "Código",
+  "Precio",
+  "Costo",
+  "Bodega",
+  "Vitrinas",
+  "Proveedor",
+  "Categorías",
+  "Acciones",
+];
+
 export default function TablaProductosBodega({
   isFirstModalOpen,
   onFirstModalOpen,
@@ -56,371 +68,112 @@ export default function TablaProductosBodega({
   getMasArticulos,
 }) {
   return (
-    <Box w={"100%"} mt={"20px"} overflowX={"auto"}>
-      <TableContainer
-        borderTopLeftRadius={"20px"}
-        borderTopRightRadius={"20px"}
-        w={"100%"}
+    <Box
+      mt={"5px"}
+      position="relative"
+      width="100%"
+      display="flex"
+      flexDir="column"
+      flexGrow={1}
+    >
+      <Box
         overflowY={"auto"}
-        overflowX="auto"
+        borderTopLeftRadius={{ base: "0px", md: "20px" }}
+        borderTopRightRadius={{ base: "0px", md: "20px" }}
       >
-        <Table variant="simple" bg={"black"}>
-          <Thead h={"50px"}>
-            <Tr>
-              <Th p={1}></Th>
-              <Th p={1}>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
+        <table className="Table">
+          <thead className="TableHead">
+            <tr className="TrHead">
+              <th className="ThHead">
+                <Checkbox />
+              </th>
+              {HEADERS.map((name) => (
+                <th className="ThHead">
+                  <Box
+                    display={"flex"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    gap={"5px"}
                   >
-                    Productos
-                  </Text>
-                  <UnionIcon
-                    width={"10px"}
-                    height={"10px"}
-                    fill={"white"}
-                    onClick={() => handleSortingClick("productos")}
-                  />
-                </Box>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Código
-                </Text>
-              </Th>
-
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Precio
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Costo
-                </Text>
-              </Th>
-              <Th>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Bodega
-                  </Text>
-                  <UnionIcon
-                    width={"10px"}
-                    height={"10px"}
-                    fill={"white"}
-                    onClick={() => handleSortingClick("bodega")}
-                  />
-                </Box>
-              </Th>
-              <Th>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Vitrinas
-                  </Text>
-                  <UnionIcon
-                    width={"10px"}
-                    height={"10px"}
-                    fill={"white"}
-                    onClick={() => handleSortingClick("vitrinas")}
-                  />
-                </Box>
-              </Th>
-              <Th>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Proveedor
-                  </Text>
-                  <EditIcon
-                    width={"15px"}
-                    height={"15px"}
-                    fill={"white"}
-                    onClick={onThirdModalOpen}
-                  />
-                  <ListComponent
-                    desc={"Proveedores"}
-                    desc2={"proveedor"}
-                    isFirstModalOpen={isThirdModalOpen}
-                    onFirstModalOpen={onThirdModalOpen}
-                    onFirstModalClose={onThirdModalClose}
-                    isSecondModalOpen={isFourthModalOpen}
-                    onSecondModalOpen={onFourthModalOpen}
-                    onSecondModalClose={onFourthModalClose}
-                    lista={lista1}
-                    Children={
-                      <Agregar
-                        isOpen={isFourthModalOpen}
-                        onOpen={onFourthModalOpen}
-                        onClose={onFourthModalClose}
-                        onClick={onFourthModalClose}
-                        desc={"proveedor"}
-                        desc2={"Nombre del proveedor"}
+                    <Text
+                      color="white"
+                      textStyle={"RobotoRegularBold"}
+                      textTransform={"capitalize"}
+                      textAlign={"center"}
+                    >
+                      {name}
+                    </Text>
+                    {name === "Productos" ||
+                    name === "Bodega" ||
+                    name === "Vitrinas" ? (
+                      <UnionIcon
+                        width={"10px"}
+                        height={"10px"}
+                        fill={"white"}
+                        onClick={() => handleSortingClick("productos")}
                       />
-                    }
-                  />
-                </Box>
-              </Th>
-              <Th>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Categorías
-                  </Text>
-                  <EditIcon
-                    width={"15px"}
-                    height={"15px"}
-                    fill={"white"}
-                    onClick={onFifthModalOpen}
-                  />
-                  <ListComponent
-                    desc={"Categorías"}
-                    desc2={"categoría"}
-                    isFirstModalOpen={isFifthModalOpen}
-                    onFirstModalOpen={onFifthModalOpen}
-                    onFirstModalClose={onFifthModalClose}
-                    isSecondModalOpen={isSixthModalOpen}
-                    onSecondModalOpen={onSixthModalOpen}
-                    onSecondModalClose={onSixthModalClose}
-                    lista={lista2}
-                    Children={
-                      <AgregarCategoria
-                        isOpen={isSixthModalOpen}
-                        onOpen={onSixthModalOpen}
-                        onClose={onSixthModalClose}
-                        onClick={onSixthModalClose}
+                    ) : name === "Proveedor" || name === "Categorías" ? (
+                      <EditIcon
+                        width={"15px"}
+                        height={"15px"}
+                        fill={"white"}
+                        onClick={onThirdModalOpen}
                       />
-                    }
-                  />
-                </Box>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Acciones
-                </Text>
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody bg={"white"} w={"100%"} h={"100%"}>
+                    ) : null}
+                  </Box>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody
+            className="TableBody"
+            style={{ height: "100%", maxHeight: "450px" }}
+          >
             {displayedArticulos.map((articulo) => {
               return (
-                <Tr color="black">
-                  <Th p={1}>
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                    >
-                      <Checkbox />
-                    </Box>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Producto}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Codigo}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Precio}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Costo}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Bodega}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Vitrinas}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Proveedor}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Categorias}
-                    </Text>
-                  </Th>
-
-                  <Th p={1}>
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                      gap={"10px"}
-                    >
-                      <EditIcon onClick={onFirstModalOpen} />
-                      <Editar
-                        desc={"Editar"}
-                        isOpen={isFirstModalOpen}
-                        onOpen={onFirstModalOpen}
-                        onClose={onFirstModalClose}
-                      />
-                      <TrashIcon onClick={onSecondModalOpen} />
-                      <ConfirmationMessage
-                        isOpen={isSecondModalOpen}
-                        onOpen={onSecondModalOpen}
-                        onClose={onSecondModalClose}
-                        icon={<WarningIcon />}
-                        text={
-                          "¿Estás seguro que desea eliminar a este producto?"
-                        }
-                        text2={
-                          "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-                        }
-                        colorText2={"red.100"}
-                        buttonText={"Continuar"}
-                      />
-                    </Box>
-                  </Th>
-                </Tr>
+                <tr className="TrBody">
+                  <td className="TdBody" style={{ paddingLeft: "33px" }}>
+                    <Checkbox />
+                  </td>
+                  {Object.values(articulo).map((value) => {
+                    return <td className="TdBody">{value}</td>;
+                  })}
+                  <Box display={"flex"} columnGap={"5px"} px={"15px"}>
+                    <EditIcon onClick={() => ""} />
+                    <TrashIcon onClick={() => ""} />
+                  </Box>
+                </tr>
               );
             })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Box
-        bg={"#d7d7d7"}
-        p={1}
-        borderBottomLeftRadius={"20px"}
-        borderBottomRightRadius={"20px"}
-        color={"black"}
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
+          </tbody>
+        </table>
         <Box
-          p={2}
+          bg={"#d7d7d7"}
+          p={1}
+          borderBottomLeftRadius={{ base: "0px", md: "20px" }}
+          borderBottomRightRadius={{ base: "0px", md: "20px" }}
+          color={"black"}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
-          gap={"1rem"}
         >
-          <Text textStyle={"RobotoRegularBold"}>{totalResults} elementos</Text>
+          <Box
+            p={2}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            gap={"1rem"}
+          >
+            <Text textStyle={"RobotoRegularBold"}>
+              {totalResults} elementos
+            </Text>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={getMasArticulos}
-          />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={getMasArticulos}
+            />
+          </Box>
         </Box>
       </Box>
     </Box>

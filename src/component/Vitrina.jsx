@@ -12,8 +12,7 @@ export default function Vitrina({ city, names, onClick }) {
       flexDir={"column"}
       gap={"15px"}
       boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
-      _hover={{ ".topSection": { bg: "black", color: "white" } }}
-      cursor={"default"}
+      cursor={"pointer"}
       onClick={() => onClick(city)}
     >
       <Box
@@ -38,21 +37,7 @@ export default function Vitrina({ city, names, onClick }) {
         height={"130px"}
         overflowY="scroll"
         overflowX="hidden"
-        sx={{
-          "::-webkit-scrollbar": {
-            width: "5px",
-          },
-          "::-webkit-scrollbar-track": {
-            background: "tranparent",
-          },
-          "::-webkit-scrollbar-thumb": {
-            background: "tranparent",
-            borderRadius: "10px",
-          },
-          "::-webkit-scrollbar-thumb:hover": {
-            background: "tranparent",
-          },
-        }}
+        className="scroll-wrapper"
       >
         {names.map((name) => {
           return (

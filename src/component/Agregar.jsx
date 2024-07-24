@@ -52,6 +52,8 @@ export default function Agregar({
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
+          px={"20px"}
+          pt={"10px"}
         >
           <Box
             w={"100%"}
@@ -60,7 +62,7 @@ export default function Agregar({
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={Agregar}>
+            <FormControl onSubmit={Agregar} pt={"10px"}>
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -95,7 +97,7 @@ export default function Agregar({
                 <option>Medellín</option>
                 <option>Cali</option>
               </Select>
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" pt={"10px"}>
                 <span
                   style={{
                     color: "red",

@@ -43,26 +43,48 @@ const BUTTON_VARIANTS = {
       color: "white",
     },
   },
-  DARK_PURPLE_BORDERLESS: {
+  RED_SECUNDARY: {
+    normal: {
+      bg: "white",
+      borderColor: "red.100",
+      color: "red.100",
+    },
+    hover: {
+      bg: "white",
+      borderColor: "black",
+      color: "black",
+    },
+    disabled: {
+      bg: "bluePurple.60",
+      borderColor: "bluePurple.60",
+      color: "white",
+    },
+    active: {
+      bg: "red.100",
+      borderColor: "red.100",
+      color: "white",
+    },
+  },
+  BORDERLESS: {
     normal: {
       bg: "transparent",
       borderColor: "transparent",
-      color: "darkPurple.100",
+      color: "black",
     },
     hover: {
       bg: "transparent",
       borderColor: "transparent",
-      color: "blue.100",
+      color: "placeholder",
     },
     disabled: {
       bg: "transparent",
       borderColor: "transparent",
-      color: "bluePurple.50",
+      color: "grey",
     },
     active: {
-      bg: "darkPurple.100",
-      borderColor: "darkPurple.100",
-      color: "blue.70",
+      bg: "transparent",
+      borderColor: "transparent",
+      color: "red",
     },
   },
   WHITE: {

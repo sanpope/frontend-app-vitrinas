@@ -50,18 +50,17 @@ export default function EstaVitrina() {
       height={"100%"}
       display={"flex"}
       flexDir={"column"}
-      gap={"1.25rem"}
-      px={"2.5rem"}
-      py={"1.25rem"}
+      gap={"20px"}
+      p={"20px"}
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
         <Text textStyle={" RobotoBody"}>{city}</Text>
         <Box
           display={"flex"}
-          flexDirection={{ base: "column", sm: "row" }}
-          justifyContent={"space-between"}
-          alignItems={"center"}
+          flexDirection={{ base: "column", md: "row" }}
+          justifyContent={{ base: "flex-start", md: "space-between" }}
+          alignItems={{ base: "flex-start", md: "center" }}
         >
           <Text textStyle={"RobotoTitleBold"}>Esta Vitrina</Text>
           <Box
@@ -72,14 +71,13 @@ export default function EstaVitrina() {
             gap={"10px"}
           >
             <StandardButton
-              variant={"WHITE_BLACK"}
+              variant={"WHITE_RED"}
               borderRadius="20px"
               py={"17px"}
               w={"10.25rem"}
               fontSize={"14px"}
               fontWeight={"400"}
               onClick={onFirstModalOpen}
-              leftIcon={<EditIcon />}
             >
               Editar Vitrina
             </StandardButton>
@@ -93,14 +91,13 @@ export default function EstaVitrina() {
               desc2={"Vitrina"}
             />
             <StandardButton
-              variant={"WHITE_BLACK"}
+              variant={"WHITE_RED"}
               borderRadius="20px"
               py={"17px"}
               w={"10.25rem"}
               fontSize={"14px"}
               fontWeight={"400"}
               onClick={onSecondModalOpen}
-              leftIcon={<TrashIcon />}
             >
               Eliminar Vitrina
             </StandardButton>

@@ -1,13 +1,163 @@
-html, #root, body {
+html,
+#root,
+body {
   height: 100%;
   width: 100%;
 }
 
 body {
+  padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.overlay-vitrinas ~ div > .chakra-modal__content-container {
+  justify-content: flex-start !important;
+}
+
+.Table {
+  width: 100%;
+
+  table-layout: fixed;
+}
+
+.TableHead {
+  background-color: black;
+  color: white;
+}
+
+.TableHead,
+.TableBody {
+  display: block;
+}
+
+.TrHead {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  display: flex; /* Flex para alinear el contenido */
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.TrBody {
+  display: flex; /* Flex para alinear el contenido */
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.TableBody {
+  background-color: white;
+
+  overflow-y: auto;
+}
+.ThHead {
+  flex-grow: 1;
+}
+.ThHead,
+.TdBody {
+  font-size: 14px;
+  text-align: left;
+  overflow-x: hidden;
+  text-wrap: wrap;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.ThHead {
+  text-align: center;
+  flex: 2 1 150px;
+}
+
+.TdBody {
+  max-width: 100px;
+  flex-grow: 1;
+}
+
+.TrHead:last-child {
+  text-align: end;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  border-bottom-right-radius: 20px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 20px;
+}
+
+.dashboard-grid-container {
+  grid-template-columns: 1fr;
+}
+
+/* Medium screens (tablets) */
+@media screen and (min-width: 1040px) {
+  .dashboard-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Large screens (desktops) */
+@media screen and (min-width: 1300px) {
+  .dashboard-grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.dashboard-grid-container-resumen {
+  grid-template-columns: 1fr;
+}
+
+/* Medium screens (tablets) */
+@media screen and (min-width: 1040px) {
+  .dashboard-grid-container-resumen {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Oculta el scrollbar predeterminado */
+  position: relative; /* Asegura que el contenido adicional no afecte la posición */
+}
+
+.scroll-wrapper {
+  height: 100%;
+  width: calc(100% + 17px);
+  overflow-y: scroll;
+  margin-right: -17px;
+  padding-right: 17px;
+}
+
+.scroll-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scroll-wrapper::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb {
+  border-bottom: 20px;
+  background-color: #888;
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+.scroll-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
 }

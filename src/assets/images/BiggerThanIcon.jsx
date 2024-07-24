@@ -1,4 +1,4 @@
-const LeftArrowICon = ({
+const BiggerThanICon = ({
   width = "14px",
   height = "12px",
   fill = "black",
@@ -24,4 +24,4 @@ const LeftArrowICon = ({
   );
 };
 
-export default LeftArrowICon;
+export default BiggerThanICon;

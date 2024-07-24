@@ -1,14 +1,21 @@
 import React from "react";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import VisitaContainer from "../component/VisitaContainer";
-import { Box, useDisclosure } from "@chakra-ui/react";
+import { Box, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import VerExistencias from "../component/VerExistencias";
 import StandardButton from "../component/ui/buttons/standard";
 import ProductosEnDespacho from "../component/ProductosEnDespacho";
+import CardVisitas from "../component/CardVisitas";
+import CardMovimientosInventario from "../component/CardMovimientosInventario";
+import CardCorreccionesInventario from "../component/CardCorreccionesInventario";
+import registroVisitas from "../DummieData/registroVisitas";
+import registroMovimientosInventario from "../DummieData/registroMovimientosInventario";
+import registroCorreccionesInventario from "../DummieData/registroCorreccionesInventario";
 
 import WarningIcon from "../assets/images/WarningIcon";
 
 export default function Visitas() {
+  const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
   const {
     isOpen: isFirstModalOpen,
     onOpen: onFirstModalOpen,
@@ -40,9 +47,40 @@ export default function Visitas() {
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
           maxW="320px"
+          children={registroVisitas.map((visita) => (
+            <CardVisitas
+              asesor={visita.Asesor}
+              fecha={visita["Fecha y hora"]}
+              ingresos={visita.Ingresos}
+              retiros={visita.Retiros}
+              correcciones={visita.Correcciones}
+              verificada={visita.Verificada}
+            />
+          ))}
         />
-        <VisitaContainer title="Movimientos de inventario" maxW="320px" />
-        <VisitaContainer title="Correcciones de inventario" maxW="320px" />
+        <VisitaContainer
+          title="Movimientos de inventario"
+          maxW="320px"
+          children={registroMovimientosInventario.map((inventario) => (
+            <CardMovimientosInventario
+              fecha={inventario["Fecha y hora"]}
+              visita={inventario.Visita}
+              ProdIngr={inventario["Productos Ingresados"]}
+              ProdRet={inventario["Productos Retirados"]}
+            />
+          ))}
+        />
+        <VisitaContainer
+          title="Correcciones de inventario"
+          maxW="320px"
+          children={registroCorreccionesInventario.map((corr) => (
+            <CardCorreccionesInventario
+              fecha={corr["Fecha y hora"]}
+              visita={corr.Visita}
+              ProdCorr={corr["Productos Corregidos"]}
+            />
+          ))}
+        />
       </Box>
       <Box
         display={"flex"}
@@ -59,11 +97,11 @@ export default function Visitas() {
           borderRadius="20px"
           py={"17px"}
           w={"fit-content"}
-          fontSize={"12px"}
+          fontSize={{ base: "12px", lg: "14px" }}
           fontWeight="400"
           onClick={onFirstModalOpen}
         >
-          Ver productos en despacho
+          {isSmallScreen ? "Ver productos" : "Ver productos en despacho"}
         </StandardButton>
         <ProductosEnDespacho
           isOpen={isFirstModalOpen}
@@ -76,11 +114,13 @@ export default function Visitas() {
           py={"17px"}
           px={"20px"}
           w={"fit-content"}
-          fontSize={"12px"}
+          fontSize={{ base: "12px", lg: "14px" }}
           fontWeight="400"
           onClick={onConfirmationModalOpen}
         >
-          Revertir movimientos y correcciones
+          {isSmallScreen
+            ? "Revertir movimientos"
+            : "Revertir movimientos y correcciones"}
         </StandardButton>
         <ConfirmationMessage
           icon={<WarningIcon />}

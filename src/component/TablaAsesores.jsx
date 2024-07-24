@@ -29,6 +29,17 @@ import SwitchElement from "./SwitchElement";
 import EditarAsesor from "./EditarAsesor";
 import Pagination from "./Pagination";
 
+const HEADERS = [
+  <Checkbox />,
+  "Asesor",
+  "Vitrinas",
+  "Ubicación",
+  "Usuario",
+  "Contraseña",
+  "Habilitar/Deshabilitar Asesor",
+  "Acciones",
+];
+
 export default function TablaProductosBodega({
   isSecondModalOpen,
   onSecondModalOpen,
@@ -44,281 +55,144 @@ export default function TablaProductosBodega({
   handleSortingClick,
 }) {
   return (
-    <Box w={"100%"} mt={"20px"} overflowX={"auto"}>
-      <TableContainer
-        borderTopLeftRadius={"20px"}
-        borderTopRightRadius={"20px"}
+    <>
+      <Box
+        mt={"5px"}
+        position="relative"
+        width="100%"
+        display="flex"
+        flexDir="column"
+        flexGrow={1}
       >
-        <Table variant="simple" w={"100%"} bg={"black"}>
-          <Thead h={"50px"}>
-            <Tr>
-              <Th p={1}>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                  pl={2}
-                >
-                  <Checkbox />
-                </Box>
-              </Th>
-              <Th p={1}>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Asesor
-                  </Text>
-                  <UnionIcon
-                    width={"10px"}
-                    height={"10px"}
-                    fill={"white"}
-                    onClick={() => handleSortingClick("asesor")}
-                  />
-                </Box>
-              </Th>
-              <Th p={1}>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Vitrinas
-                  </Text>
-                  <UnionIcon
-                    width={"10px"}
-                    height={"10px"}
-                    fill={"white"}
-                    onClick={() => handleSortingClick("vitrinas")}
-                  />
-                </Box>
-              </Th>
-              <Th p={1}>
-                <Box
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  gap={"5px"}
-                >
-                  <Text
-                    color="white"
-                    textStyle={"RobotoRegularBold"}
-                    textTransform={"capitalize"}
-                    textAlign={"center"}
-                  >
-                    Ubicación
-                  </Text>
-                  <UnionIcon
-                    width={"10px"}
-                    height={"10px"}
-                    fill={"white"}
-                    onClick={() => handleSortingClick("ubicacion")}
-                  />
-                </Box>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Usuario
-                </Text>
-              </Th>
-
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Contraseña
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Habilitar/Deshabilitar Asesor
-                </Text>
-              </Th>
-
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Acciones
-                </Text>
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody bg={"white"}>
-            {displayedArticulos.map((articulo) => {
-              return (
-                <Tr color="black">
-                  <Th p={1}>
+        <Box
+          overflowY={"auto"}
+          borderTopLeftRadius={{ base: "0px", md: "20px" }}
+          borderTopRightRadius={{ base: "0px", md: "20px" }}
+        >
+          <table className="Table">
+            <thead className="TableHead">
+              <tr className="TrHead">
+                {HEADERS.map((name) => (
+                  <th className="ThHead">
                     <Box
                       display={"flex"}
                       justifyContent={"center"}
                       alignItems={"center"}
-                    >
-                      <Checkbox />
-                    </Box>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"left"}
-                    >
-                      {articulo.Asesor}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"left"}
-                    >
-                      {articulo.Vitrinas}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"left"}
-                    >
-                      {articulo.Ubicacion}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Usuario}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Contraseña}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                      gap={"10px"}
+                      gap={"5px"}
                     >
                       <Text
-                        color="black"
-                        textStyle={"RobotoRegular"}
+                        color="white"
+                        textStyle={"RobotoRegularBold"}
                         textTransform={"capitalize"}
                         textAlign={"center"}
                       >
-                        {articulo.Hab_Des}
+                        {name}
                       </Text>
-                      <SwitchElement />
+                      {name === "Asesor" ||
+                      name === "Vitrinas" ||
+                      name === "Ubicación" ? (
+                        <UnionIcon
+                          width={"10px"}
+                          height={"10px"}
+                          fill={"white"}
+                          onClick={() => handleSortingClick("productos")}
+                        />
+                      ) : null}
                     </Box>
-                  </Th>
-
-                  <Th p={1}>
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                      gap={"10px"}
-                    >
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody
+              className="TableBody"
+              style={{ height: "100%", maxHeight: "500px" }}
+            >
+              {displayedArticulos.map((articulo) => {
+                return (
+                  <tr className="TrBody">
+                    <td className="TdBody" style={{ paddingLeft: "20px" }}>
+                      <Checkbox />
+                    </td>
+                    {Object.values(articulo).map((value) => {
+                      return (
+                        <td
+                          className="TdBody"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            columnGap: "5px",
+                            textAlign: "left"
+                          }}
+                        >
+                          {value}
+                          {value ===
+                          `Habilitar / deshabilitar para modificar` ? (
+                            <SwitchElement />
+                          ) : null}
+                        </td>
+                      );
+                    })}
+                    <Box display={"flex"} columnGap={"5px"}>
                       <EditIcon onClick={onSecondModalOpen} />
-                      <EditarAsesor
-                        desc={"Editar"}
-                        isOpen={isSecondModalOpen}
-                        onOpen={onSecondModalOpen}
-                        onClose={onSecondModalClose}
-                      />
                       <TrashIcon onClick={onThirdModalOpen} />
-                      <ConfirmationMessage
-                        isOpen={isThirdModalOpen}
-                        onOpen={onThirdModalOpen}
-                        onClose={onThirdModalClose}
-                        icon={<WarningIcon />}
-                        text={"¿Estás seguro que desea eliminar a este Asesor?"}
-                        text2={
-                          "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-                        }
-                        colorText2={"red.100"}
-                        buttonText={"Continuar"}
-                      />
                     </Box>
-                  </Th>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Box
-        bg={"#d7d7d7"}
-        p={1}
-        borderBottomLeftRadius={"20px"}
-        borderBottomRightRadius={"20px"}
-        color={"black"}
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Box
-          p={2}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          gap={"1rem"}
-        >
-          <Text textStyle={"RobotoRegularBold"}>{totalResults} elementos</Text>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <Box
+            bg={"#d7d7d7"}
+            p={1}
+            borderBottomLeftRadius={"20px"}
+            borderBottomRightRadius={"20px"}
+            color={"black"}
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <Box
+              p={2}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              gap={"1rem"}
+            >
+              <Text textStyle={"RobotoRegularBold"}>
+                {totalResults} elementos
+              </Text>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={getMasArticulos}
-          />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={getMasArticulos}
+              />
+            </Box>
+          </Box>
         </Box>
       </Box>
-    </Box>
+
+      <Box w={"100%"} mt={"20px"} overflowX={"auto"}>
+        <EditarAsesor
+          desc={"Editar"}
+          isOpen={isSecondModalOpen}
+          onOpen={onSecondModalOpen}
+          onClose={onSecondModalClose}
+        />
+        <ConfirmationMessage
+          isOpen={isThirdModalOpen}
+          onOpen={onThirdModalOpen}
+          onClose={onThirdModalClose}
+          icon={<WarningIcon />}
+          text={"¿Estás seguro que desea eliminar a este Asesor?"}
+          text2={
+            "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
+          }
+          colorText2={"red.100"}
+          buttonText={"Continuar"}
+        />
+      </Box>
+    </>
   );
 }

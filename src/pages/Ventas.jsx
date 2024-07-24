@@ -7,6 +7,9 @@ import DatePickerComponent from "../component/DatePickerComponent";
 import StandardButton from "../component/ui/buttons/standard";
 import Container from "../component/Container";
 import tablaVentasData from "../DummieData/tablaVentasData";
+import CoinsIcon from "../assets/images/CoinsIcon";
+import ChartLineDownIcon from "../assets/images/ChartLineDownIcon";
+import HandsUsdIcon from "../assets/images/HandsUsdIcon";
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -17,7 +20,7 @@ export default function Ventas() {
   const [totalResults, setTotalResults] = useState(tablaVentas.length);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(8);
+  const [rowsToShow, setRowsToShow] = useState(11);
   const totalPages = Math.ceil(tablaVentas.length / rowsToShow);
 
   const handleSelectChange = (event) => {
@@ -45,8 +48,7 @@ export default function Ventas() {
       height={"100%"}
       display={"flex"}
       flexDir={"column"}
-      gap={"0.625rem"}
-      p={"1.25rem"}
+      p={"16px"}
     >
       <Box
         w={"100%"}
@@ -54,6 +56,7 @@ export default function Ventas() {
         justifyContent={"space-between"}
         alignContent={"center"}
         flexWrap={"wrap"}
+        p={2}
       >
         <Box
           display={"flex"}
@@ -103,18 +106,72 @@ export default function Ventas() {
               : "Productos"
         }
       />
-      {
-        <Box
-          display={"flex"}
-          flexWrap={"wrap"}
-          gap={"20px"}
-          justifyContent={"center"}
-        >
-          <Container bg={"black"} w={"250px"} heigth={"150px"} />
-          <Container w={"250px"} heigth={"150px"} />
-          <Container w={"250px"} heigth={"150px"} />
-        </Box>
-      }
+
+      <Box
+        w={"100%"}
+        h={"100%"}
+        display="flex"
+        flexWrap={"wrap"}
+        gridGap={"1rem"}
+        justifyContent={"space-between"}
+        m={2}
+      >
+        <Container
+          flex={"1 1 auto"}
+          bg={"black"}
+          title={"Total vendido en el intervalo"}
+          color="white"
+          icon={<CoinsIcon />}
+          children={
+            <Box
+              h={"100%"}
+              display={"flex"}
+              flexDir={"column"}
+              justifyContent={"center"}
+              alignItems={"flex-start"}
+              p={"20px"}
+            >
+              <Text textStyle={"RobotoHeader"} color={"success.30"}>
+                $22.000.000
+              </Text>
+            </Box>
+          }
+        />
+        <Container
+          flex={"1 1 auto"}
+          title={"Total devuelto en el intervalo"}
+          icon={<ChartLineDownIcon />}
+          children={
+            <Box
+              h={"100%"}
+              display={"flex"}
+              flexDir={"column"}
+              justifyContent={"center"}
+              alignItems={"flex-start"}
+              p={"20px"}
+            >
+              <Text textStyle={"RobotoSubheading"}>$2.000</Text>
+            </Box>
+          }
+        />
+        <Container
+          flex={"1 1 auto"}
+          title={"Ingreso real recibido en el intervalo"}
+          icon={<HandsUsdIcon />}
+          children={
+            <Box
+              h={"100%"}
+              display={"flex"}
+              flexDir={"column"}
+              justifyContent={"center"}
+              alignItems={"flex-start"}
+              p={"20px"}
+            >
+              <Text textStyle={"RobotoSubheading"}>$10.000</Text>
+            </Box>
+          }
+        />
+      </Box>
     </Box>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import LeftArrowICon from "../assets/images/LeftArrowIcon";
 import BiggerThanIcon from "../assets/images/BiggerThanIcon";
 
@@ -52,11 +52,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     return pages;
   };
 
-  const pages = React.useMemo(getPageNumbers, [
-    currentPage,
-    totalPages,
-    onPageChange,
-  ]);
+  const pages = React.useMemo(getPageNumbers, [currentPage, totalPages]);
 
   return (
     <Box
@@ -67,13 +63,25 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     >
       <LeftArrowICon
         onClick={currentPage === 1 ? null : () => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1 ? true : false}
+        disabled={currentPage === 1}
       />
 
       {pages.map((page, index) => (
         <Text
           key={index}
-          onClick={() => onPageChange(page)}
+          onClick={() => {
+            if (page === "...") {
+              if (index === 1) {
+                // Al hacer clic en los puntos a la izquierda, ir a la página anterior
+                onPageChange(currentPage - 1);
+              } else {
+                // Al hacer clic en los puntos a la derecha, ir a la página siguiente
+                onPageChange(currentPage + 1);
+              }
+            } else {
+              onPageChange(page);
+            }
+          }}
           disabled={page === "..."}
           backgroundColor={"transparent"}
           color={page === currentPage ? "red" : "black"}
@@ -81,7 +89,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           borderColor={page === currentPage ? "red" : "transparent"}
           py={"3px"}
           px={"10px"}
-          cursor={"pointer"}
+          cursor={page === "..." ? "default" : "pointer"}
           _hover={{ bg: "transparent" }}
         >
           {page}
@@ -94,7 +102,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             ? null
             : () => onPageChange(currentPage + 1)
         }
-        disabled={currentPage === totalPages ? true : false}
+        disabled={currentPage === totalPages}
       />
     </Box>
   );

@@ -37,8 +37,6 @@ export default function Dispositivo() {
           emoji={<SadFaceIcon />}
           description={"Operando con dificultades"}
         />
-      </Box>
-      <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
           icon={<WifiIcon />}
           title={"Conexión a internet:"}
@@ -59,8 +57,6 @@ export default function Dispositivo() {
           emoji={<ThumbUpIcon />}
           description={"Conectado"}
         />
-      </Box>
-      <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
           icon={<DevIcon />}
           title={"Aplicación:"}

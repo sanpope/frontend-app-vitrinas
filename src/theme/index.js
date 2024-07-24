@@ -38,29 +38,6 @@ export default extendTheme({
       ".chakra-form__required-indicator": {
         color: "#3D65F6 !important",
       },
-      "html, body": {
-        fontSize: "clamp(10px, 1vw + 1rem, 16px)", // Ajuste de tamaño de fuente responsivo
-      },
-      "@media (max-width: 1200px)": {
-        "html, body": {
-          fontSize: "clamp(10px, 1.5vw, 15px)",
-        },
-      },
-      "@media (max-width: 992px)": {
-        "html, body": {
-          fontSize: "clamp(10px, 1.5vw, 14px)",
-        },
-      },
-      "@media (max-width: 768px)": {
-        "html, body": {
-          fontSize: "clamp(10px, 1.5vw, 13px)",
-        },
-      },
-      "@media (max-width: 576px)": {
-        "html, body": {
-          fontSize: "clamp(10px, 1.5vw, 12px)",
-        },
-      },
     }),
   },
 });

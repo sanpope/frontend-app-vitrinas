@@ -4,13 +4,14 @@ import React from "react";
 export default function VisitaContainer({
   title = "Porfavor agregue un título",
   maxW,
+  children,
 }) {
   return (
     <Box
       flexGrow={1}
       flexShrink={1}
       flexBasis={{ base: "100%", md: maxW }}
-      h={"600px"}
+      h={"650px"}
       display={"flex"}
       flexDir={"column"}
       borderRadius="20px"
@@ -31,10 +32,12 @@ export default function VisitaContainer({
       <Box
         h={"100%"}
         bg={"white"}
+        p={3}
+        className="container "
         borderBottomRadius={"20px"}
-        overflowY="auto"
-        overflowX="hidden"
-      ></Box>
+      >
+        <Box className="scroll-wrapper"> {children}</Box>
+      </Box>
     </Box>
   );
 }

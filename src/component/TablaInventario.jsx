@@ -1,17 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import axios from "axios";
 import Checkbox from "./ui/checkbox";
 import LeftArrowIcon from "../assets/images/LeftArrowIcon";
@@ -20,270 +8,112 @@ import EditIcon from "../assets/images/EditIcon";
 import EditarExistencia from "./EditarExistencia";
 import Pagination from "./Pagination";
 
+const HEADERS = [
+  "Código",
+  "Nombre",
+  "Categoría",
+  "Precio",
+  "Costo",
+  "Existencia",
+  "Exis verificados",
+  "Stok mín",
+  "Stok máx",
+  "Acciones",
+];
+
 export default function TablaInventario({
-  isOpen,
-  onOpen,
-  onClose,
   displayedArticulos,
   totalResults,
   currentPage,
   totalPages,
   getMasArticulos,
+  setArticulo,
 }) {
   return (
-    <Box flexGrow={1} mt={"20px"} overflowX={"auto"}>
-      <TableContainer
-        borderTopLeftRadius={"20px"}
-        borderTopRightRadius={"20px"}
+    <Box
+      mt={"5px"}
+      position="relative"
+      display="flex"
+      flexDir="column"
+      flexGrow={1}
+    >
+      <Box
+        overflowY={"auto"}
+        borderTopLeftRadius={{ base: "0px", md: "20px" }}
+        borderTopRightRadius={{ base: "0px", md: "20px" }}
       >
-        <Table variant="simple" w={"100%"} bg={"black"}>
-          <Thead h={"50px"}>
-            <Tr>
-              <Th p={1}></Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
+        <table className="Table">
+          <thead className="TableHead">
+            <tr className="TrHead">
+              <th className="" style={{ padding: "15px", marginTop: "5px" }}>
+                <Checkbox />
+              </th>
+              {HEADERS.map((name) => (
+                <th
+                  className="ThHead"
+                  style={{ paddingLeft: "15px", textAlign: "left" }}
                 >
-                  Código
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Nombre
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Categoría
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Precio
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Costo
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Existencia
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Exis verificados
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Stok mín
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Stok máx
-                </Text>
-              </Th>
-              <Th p={1}>
-                <Text
-                  color="white"
-                  textStyle={"RobotoRegularBold"}
-                  textTransform={"capitalize"}
-                  textAlign={"center"}
-                >
-                  Acciones
-                </Text>
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody bg={"white"}>
+                  {name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody
+            className="TableBody"
+            style={{ height: "100%", maxHeight: "450px" }}
+          >
             {displayedArticulos.map((articulo) => {
               return (
-                <Tr>
-                  <Th p={1}>
-                    <Box
-                      display={"flex"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                    >
-                      <Checkbox />
-                    </Box>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Código}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {" "}
-                      {articulo.Nombre}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Categoría}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Precio}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Costo}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Existencia}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Exis_verificadas}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Stock_mín}
-                    </Text>
-                  </Th>
-                  <Th p={1}>
-                    <Text
-                      color="black"
-                      textStyle={"RobotoRegular"}
-                      textTransform={"capitalize"}
-                      textAlign={"center"}
-                    >
-                      {articulo.Stock_máx}
-                    </Text>
-                  </Th>
-                  <Th>
-                    <Box
-                      display={"flex"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                    >
-                      <EditIcon onClick={onOpen} />
-                      <EditarExistencia
-                        isOpen={isOpen}
-                        onOpen={onOpen}
-                        onClose={onClose}
-                      />
-                    </Box>
-                  </Th>
-                </Tr>
+                <tr className="TrBody">
+                  <td className="" style={{ paddingLeft: "10px" }}>
+                    <Checkbox />
+                  </td>
+                  {Object.values(articulo).map((value) => {
+                    return (
+                      <td style={{ paddingLeft: "30px" }} className="TdBody">
+                        {value}
+                      </td>
+                    );
+                  })}
+                  <td
+                    className="TdBody"
+                    style={{ paddingLeft: "40px" }}
+                    onClick={() => setArticulo(articulo)}
+                  >
+                    <EditIcon />
+                  </td>
+                </tr>
               );
             })}
-          </Tbody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </Box>
+
       <Box
         bg={"#d7d7d7"}
-        p={1}
-        borderBottomLeftRadius={"20px"}
-        borderBottomRightRadius={"20px"}
+        px={1}
+        pb={1}
+        borderBottomLeftRadius={{ base: "0px", md: "20px" }}
+        borderBottomRightRadius={{ base: "0px", md: "20px" }}
         color={"black"}
         display={"flex"}
         justifyContent={"center"}
         alignItems={"center"}
       >
         <Box
-          p={2}
+          p={3}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
           gap={"1rem"}
         >
-          <Text textStyle={"RobotoRegularBold"}>{totalResults} elementos</Text>
+          <Text
+            display={{ base: "none", md: "inline-flex" }}
+            textStyle={"RobotoRegularBold"}
+          >
+            {totalResults} elementos
+          </Text>
 
           <Pagination
             currentPage={currentPage}

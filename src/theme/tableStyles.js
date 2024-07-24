@@ -1,5 +1,3 @@
-import { transform } from "framer-motion";
-
 const tableStyles = {
   components: {
     Table: {

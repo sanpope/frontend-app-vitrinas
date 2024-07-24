@@ -5,16 +5,10 @@ import {
   Box,
   Input,
   FormControl,
-  FormLabel,
-  Flex,
-  Icon,
-  Button,
   useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
   useMediaQuery,
@@ -22,20 +16,23 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import StandardButton from "./ui/buttons/standard";
-import TextInput from "./ui/textInput";
 import SwapRightIcon from "../assets/images/SwapRightIcon";
 import CalendarIcon from "../assets/images/CalendarIcon";
 
 const DateRangePicker = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [showCalendars, setShowCalendars] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isStartOpen,
+    onOpen: onStartOpen,
+    onClose: onStartClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEndOpen,
+    onOpen: onEndOpen,
+    onClose: onEndClose,
+  } = useDisclosure();
   const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
-
-  const handleClick = () => {
-    setShowCalendars(true);
-  };
 
   return (
     <Box
@@ -45,23 +42,23 @@ const DateRangePicker = () => {
       bg={"white"}
       borderRadius={"5px"}
       p={0}
-      flex={"0 1 250px"}
+      flex={"0 1 auto"}
     >
-      <FormControl>
-        <InputGroup size="md">
+      <FormControl display={"flex"} alignContent={"center"}>
+        <InputGroup>
           <Input
             placeholder="Start date"
             value={startDate ? startDate.toLocaleDateString() : ""}
             readOnly
-            onClick={onOpen}
-            onChange={(e) => setEndDate(e.target.value)}
+            onClick={onStartOpen}
             fontSize={"1rem"}
-            w={"9.375rem"}
+            w={"auto"}
             borderTopWidth={"0px"}
             borderBottomWidth={"0px"}
             borderRightWidth={"0px"}
             borderLeftWidth={"0px"}
             color={"mainBg"}
+            cursor={"pointer"}
           />
           <InputRightElement width="4.5rem">
             {!isSmallScreen ? <SwapRightIcon /> : <></>}
@@ -69,13 +66,12 @@ const DateRangePicker = () => {
         </InputGroup>
       </FormControl>
       <FormControl>
-        <InputGroup size="md">
+        <InputGroup>
           <Input
             placeholder="End date"
             value={endDate ? endDate.toLocaleDateString() : ""}
             readOnly
-            onClick={onOpen}
-            onChange={(e) => setEndDate(e.target.value)}
+            onClick={onEndOpen}
             fontSize={"1rem"}
             w={"9.375rem"}
             borderTopWidth={"0px"}
@@ -83,38 +79,26 @@ const DateRangePicker = () => {
             borderRightWidth={"0px"}
             borderLeftWidth={"0px"}
             color={"mainBg"}
+            cursor={"pointer"}
           />
           <InputRightElement width="4.5rem">
             {!isSmallScreen ? <CalendarIcon /> : <></>}
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isStartOpen} onClose={onStartClose} size={"xs"}>
         <ModalOverlay />
-        <ModalContent w={"100%"} maxW={"515px"}>
+        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
           <ModalBody>
-            <Box display={"flex"} justifyContent={"center"} gap={"5px"}>
-              <Box>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  inline
-                />
-              </Box>
-              <Box>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={startDate}
-                  inline
-                />
-              </Box>
+            <Box display={"flex"} justifyContent={"center"}>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                inline
+              />
             </Box>
           </ModalBody>
           <ModalFooter>
@@ -124,7 +108,37 @@ const DateRangePicker = () => {
               w={"fit-content"}
               fontSize="14px"
               fontWeight="400"
-              onClick={onClose}
+              onClick={onStartClose}
+            >
+              Ok
+            </StandardButton>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isEndOpen} onClose={onEndClose} size={"xs"}>
+        <ModalOverlay />
+        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
+          <ModalBody>
+            <Box display={"flex"} justifyContent={"center"}>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                inline
+              />
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <StandardButton
+              variant={"RED_PRIMARY"}
+              py={"17px"}
+              w={"fit-content"}
+              fontSize="14px"
+              fontWeight="400"
+              onClick={onEndClose}
             >
               Ok
             </StandardButton>
@@ -136,21 +150,3 @@ const DateRangePicker = () => {
 };
 
 export default DateRangePicker;
-{
-  /*<TextInput
-            baseColor="transparent"
-            placeholder="Start date"
-            value={startDate ? startDate.toLocaleDateString() : ""}
-            readOnly
-            onClick={onOpen}
-            onChange={(e) => setEndDate(e.target.value)}
-            fontSize={"0.75rem"}
-            w={"9.375rem"}
-            rightIcon={!isSmallScreen ? <SwapRightIcon /> : <></>}
-            borderTopWidth={"0px"}
-            borderBottomWidth={"1px"}
-            borderRightWidth={"0px"}
-            borderLeftWidth={"0px"}
-            style={{ borderStyle: "hidden" }}
-          />*/
-}

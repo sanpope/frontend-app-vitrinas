@@ -13,6 +13,7 @@ export const colors = {
   success: {
     10: "#008d2b",
     20: "#97d0a9",
+    30: "#00BC4F",
   },
   grey: {
     placeholder: "#AEAEB2",
@@ -54,7 +55,7 @@ export const colors = {
     primary: "#312E80",
   },
   red: {
-    40: "#E8A9A9",
+    40: "#FDE7E7",
     70: "#9B2C2C",
     100: "#E60F0F",
     200: "#352823",

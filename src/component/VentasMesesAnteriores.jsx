@@ -9,7 +9,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  plugins,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import VentasMesAnterior from "../DummieData/VentasMesAnterior";
@@ -41,9 +40,10 @@ const chartData = {
         "#000000",
         "#FF0000",
       ],
-      pointRadius: 5,
+      pointRadius: 6,
       pointBorderWidth: 2,
       pointBorderColor: "white",
+      pointHoverRadius: 8,
     },
   ],
 };
@@ -57,6 +57,7 @@ const labelTooltip = (tooltipItem) => {
   const dataIndex = tooltipItem.dataIndex;
   return `${chartData.datasets[datasetIndex].data[dataIndex]}K`;
 };
+
 const options = {
   responsive: true,
   plugins: {
@@ -67,7 +68,6 @@ const options = {
       displayColors: false,
       padding: 5,
       caretSize: 10,
-
       callbacks: {
         title: titleTooltip,
         label: labelTooltip,

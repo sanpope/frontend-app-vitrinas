@@ -144,7 +144,6 @@ export default function Asesores() {
         bg={"white"}
         borderTop={"1px"}
         borderTopColor={"mainBg"}
-        p={"20px"}
       >
         <Box
           display={"flex"}
@@ -160,6 +159,7 @@ export default function Asesores() {
             flexDirection={{ base: "column", sm: "row" }}
             alignItems={"center"}
             gap={"10px"}
+            p={3}
           >
             <TextInput
               placeholder={"Buscar"}
@@ -167,19 +167,6 @@ export default function Asesores() {
               onChange={(e) => onBuscarChange(e)}
               value={busqueda}
             />
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              px={"30px"}
-              w={"fit-content"}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={""}
-              leftIcon={<SearchIcon width={"20px"} height={"20px"} />}
-            >
-              Buscar
-            </StandardButton>
           </Box>
           <Box
             w={"100%"}

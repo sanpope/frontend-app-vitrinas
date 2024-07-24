@@ -5,7 +5,7 @@ export default [
   },
   {
     mes: "Jul",
-    valor: 3200,
+    valor: 2600,
   },
   {
     mes: "Ago",
@@ -21,7 +21,7 @@ export default [
   },
   {
     mes: "Nov",
-    valor: 3000,
+    valor: 1000,
   },
   {
     mes: "Dic",

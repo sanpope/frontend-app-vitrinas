@@ -9,8 +9,10 @@ import {
   ModalOverlay,
   useDisclosure,
   Modal,
+  useMediaQuery,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
-import colors from "../theme/colors";
 import LeftTriangleIcon from "../assets/images/LeftTriangleIcon";
 import StandardButton from "../component/ui/buttons/standard";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,25 +21,23 @@ import { setVitrinaActive } from "../store/slices/menu";
 import Vitrina from "../component/Vitrina";
 import { useNavigate } from "react-router-dom";
 import Agregar from "../component/Agregar";
+import vitrinas from "../DummieData/vitrinas";
+import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
 
 export default function ModalVitrinas({
   isFirstModalOpen,
   onFirstModalOpen,
   onFirstModalClose,
-
   showOptions,
   setShowOptions,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [ciudadesVitrinas, setCiudadesVitrinas] = useState([
-    "Barranquilla",
-    "Bogotá",
-    "Bucaramanga",
-    "Cali",
-    "Cartagena",
-    "Medellín",
-  ]);
+  const isDeskMenuOpen = useSelector(
+    (state) => state.menuReducer.isDeskMenuOpen,
+  );
+  const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
+  const [ciudadesVitrinas, setCiudadesVitrinas] = useState(vitrinas);
   const {
     isOpen: isSecondModalOpen,
     onOpen: onSecondModalOpen,
@@ -69,51 +69,77 @@ export default function ModalVitrinas({
 
   return (
     <>
-      <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
-        <ModalOverlay />
+      <Modal
+        isOpen={isFirstModalOpen}
+        onClose={onFirstModalClose}
+        size={"xl"}
+        scrollBehavior={"inside"}
+      >
+        <ModalOverlay className="overlay-vitrinas" />
         <ModalContent
-          bg={colors.white}
-          w={"90%"}
-          maxW={"850px"}
-          p={"5px"}
-          borderRadius={"20px"}
-          left={{ base: "0px", xl: "-55px" }}
-          top={"45px"}
+          ml={isDeskMenuOpen && !isSmallScreen ? BIG_WIDTH : SMALL_WIDTH}
+          justifyContent="flex-center"
+          w={"100%"}
+          maxW={"865px"}
+          h={"525px"}
+          bg={"white"}
+          borderRadius={{ base: "0px", md: "20px" }}
           position="relative"
+          top={{ base: "0px", md: "35px" }}
+          left={{ base: "0px", md: "-45px" }}
         >
           <Box
             display={{ base: "none", xl: "block" }}
             position={"absolute"}
-            left={"-45px"}
+            left={"-26px"}
             top={"40px"}
+            w={"40px"}
+            h={"30px"}
           >
-            <LeftTriangleIcon width={"60px"} height={"50px"} />
+            <LeftTriangleIcon width={"40px"} height={"30px"} />
           </Box>
           <ModalBody
             display={"flex"}
-            flexWrap={"wrap"}
-            gap={"20px"}
             justifyContent={"center"}
+            flexWrap={"wrap"}
+            gap={{ base: "0px", md: "20px" }}
             flexDir={"row"}
             w={"100%"}
-            mt={"15px"}
+            mt={{ base: "0px", md: "15px" }}
           >
-            {ciudadesVitrinas.map((vitrina) => {
-              return (
-                <Vitrina
-                  key={vitrina}
-                  city={vitrina}
-                  names={[
-                    "Nombre de la vitrina",
-                    "Nombre de la vitrina",
-                    "Nombre de la vitrina",
-                  ]}
-                  onClick={() => handleVitrinaClick(vitrina)}
-                />
-              );
-            })}
+            {isSmallScreen ? (
+              <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
+                {ciudadesVitrinas.map((vitrina) => (
+                  <UnorderedList
+                    onClick={() => handleVitrinaClick(vitrina.ciudad)}
+                    cursor={"pointer"}
+                    flex={"1 1 120px"}
+                    boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
+                    p={3}
+                  >
+                    <Text textStyle={"RobotoBodyBold"}>{vitrina.ciudad}</Text>
+                    {vitrina.vitrinas.map((name) => (
+                      <ListItem textStyle={"RobotoBody"} ml={2}>
+                        {name}
+                      </ListItem>
+                    ))}
+                  </UnorderedList>
+                ))}
+              </Box>
+            ) : (
+              ciudadesVitrinas.map((vitrina) => {
+                return (
+                  <Vitrina
+                    key={vitrina.ciudad}
+                    city={vitrina.ciudad}
+                    names={vitrina.vitrinas}
+                    onClick={() => handleVitrinaClick(vitrina.ciudad)}
+                  />
+                );
+              })
+            )}
           </ModalBody>
-          <ModalFooter m={"0px"}>
+          <ModalFooter m={"0px"} display={{ base: "none", md: "flex" }}>
             <StandardButton
               variant={"RED_PRIMARY"}
               borderRadius="30px"

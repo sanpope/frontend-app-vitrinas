@@ -4,8 +4,6 @@ import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import Despachar from "../component/Despachar";
 import Transferir from "../component/Transferir";
-import SmallRightArrowIcon from "../assets/images/SmallRightArrow";
-import BoxIcon from "../assets/images/BoxIcon";
 import TablaInventario from "../component/TablaInventario";
 import EditarExistencia from "../component/EditarExistencia";
 import tablaIventarioData from "../DummieData/tablaInventarioData";
@@ -18,7 +16,8 @@ export default function Inventario() {
   const [totalResults, setTotalResults] = useState(tablaInventario.length);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(5);
+  const [rowsToShow, setRowsToShow] = useState(15);
+  const [selectedArticulo, setArticulo] = useState(null);
   const totalPages = Math.ceil(tablaInventario.length / rowsToShow);
 
   const getMasArticulos = (pageNumber) => {
@@ -68,9 +67,9 @@ export default function Inventario() {
         <Box
           w={"100%"}
           display={"flex"}
-          flexDirection={{ base: "column", sm: "row" }}
-          justifyContent={"space-between"}
-          alignItems={"center"}
+          flexDirection={{ base: "column", md: "row" }}
+          justifyContent={{ base: "flex-start", md: "space-between" }}
+          alignItems={{ base: "flex-start", md: "center" }}
           flexWrap="wrap"
         >
           <Text textStyle={"RobotoTitleBold"}>Inventario</Text>
@@ -79,18 +78,17 @@ export default function Inventario() {
             flexDirection={{ base: "column", sm: "row" }}
             justifyContent={"center"}
             alignItems={"center"}
-            gap={"10px"}
+            gap={{ base: "5px", md: "10px" }}
             mt={{ base: "10px", md: "0" }}
           >
             <StandardButton
-              variant={"WHITE_BLACK"}
+              variant={"WHITE_RED"}
               borderRadius="20px"
               py={"17px"}
               w={"150px"}
               fontSize="14px"
               fontWeight="400"
               onClick={onFirstModalOpen}
-              leftIcon={<BoxIcon />}
             >
               Despachar
             </StandardButton>
@@ -100,14 +98,13 @@ export default function Inventario() {
               onClose={onFirstModalClose}
             />
             <StandardButton
-              variant={"WHITE_BLACK"}
+              variant={"WHITE_RED"}
               borderRadius="20px"
               py={"17px"}
               w={"150px"}
               fontSize="14px"
               fontWeight="400"
               onClick={onSecondModalOpen}
-              leftIcon={<SmallRightArrowIcon />}
             >
               Transferir
             </StandardButton>
@@ -119,20 +116,46 @@ export default function Inventario() {
           </Box>
         </Box>
       </Box>
-      <Box display={"flex"} gap={"20px"} w={"100%"}>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"space-around"}
+        gap={"20px"}
+        w={"100%"}
+        flexGrow="1"
+      >
         {
           <TablaInventario
-            isOpen={isThirdModalOpen}
-            onOpen={onThirdModalOpen}
-            onClose={onThirdModalClose}
             displayedArticulos={displayedArticulos}
             totalResults={totalResults}
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
+            setArticulo={setArticulo}
           />
         }
+        <Box
+          display={{ base: "flex" }}
+          flexDirection={"column"}
+          justifyContent={"space-around"}
+          w={"100%"}
+          h={"80px"}
+          borderWidth={1}
+          borderColor={"#FFE58F"}
+          bg={"#FFFBE6"}
+          pl={"10px"}
+        >
+          <Text>
+            Pendiente verificar actualizaciones realizadas en visitas del:
+          </Text>
+          <Text>01/04/2024, 15/03/2024 y 01/03/2024</Text>
+        </Box>
       </Box>
+      <EditarExistencia
+        isOpen={!!selectedArticulo}
+        onClose={() => setArticulo(null)}
+        articulo={selectedArticulo}
+      />
     </Box>
   );
 }

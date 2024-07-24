@@ -25,7 +25,6 @@ export default function AsesorContainer({
     <Box
       w={"100%"}
       maxW={"280px"}
-      h={"220px"}
       bg={"white"}
       display="flex"
       flexDirection={"column"}
@@ -33,6 +32,7 @@ export default function AsesorContainer({
       justifyContent="center"
       borderRadius={"30px"}
       boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
+      p={1}
     >
       <Box
         borderBottom="1px"
@@ -88,7 +88,11 @@ export default function AsesorContainer({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <TrashIcon height={"20px"} width={"20px"} onClick={onFirstModalOpen} />
+          <TrashIcon
+            height={"20px"}
+            width={"20px"}
+            onClick={onFirstModalOpen}
+          />
           <ConfirmationMessage
             isOpen={isFirstModalOpen}
             onOpen={onFirstModalOpen}
@@ -108,7 +112,11 @@ export default function AsesorContainer({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <EditIcon height={"20px"} width={"20px"} onClick={onSecondModalOpen} />
+          <EditIcon
+            height={"20px"}
+            width={"20px"}
+            onClick={onSecondModalOpen}
+          />
           <EditarAsesor
             isOpen={isSecondModalOpen}
             onOpen={onSecondModalOpen}

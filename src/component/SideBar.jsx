@@ -90,6 +90,9 @@ const vitrinasRoutes = [
   },
 ];
 
+export const BIG_WIDTH = "320px";
+export const SMALL_WIDTH = "80px";
+
 export default function SideBar({ setLoggedIn }) {
   const dispatch = useDispatch();
   const isDeskMenuOpen = useSelector(
@@ -117,12 +120,14 @@ export default function SideBar({ setLoggedIn }) {
     dispatch(setActive(0));
     setShowOptions(false);
   };
+
   return (
     <Box
+      w={isSmallScreen ? SMALL_WIDTH : ""}
       p={{ base: "5px", md: "10px" }}
       h={"100%"}
       bg={"black"}
-      display={"flex"} // MAX hiding sidebar on mobile
+      display={isDeskMenuOpen ? "flex" : "none"}
       flexDirection={"column"}
       justifyContent={"space-between"}
     >
@@ -134,10 +139,14 @@ export default function SideBar({ setLoggedIn }) {
         flexDirection={"column"}
         gap="10px"
       >
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+        <Box
+          display={isDeskMenuOpen ? "flex" : "none"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           <Box display={{ base: "flex", md: "none" }} mt={"10px"}>
             <Link to={"/"} onClick={() => handleClickOnLogo()}>
-              <IconLogo width={"45px"} height={"40px"} stroke={"white"} />
+              <IconLogo width={"40px"} height={"40px"} stroke={"white"} />
             </Link>
           </Box>
           <Link to={"/"} onClick={() => handleClickOnLogo()}>
@@ -148,15 +157,19 @@ export default function SideBar({ setLoggedIn }) {
               gap={"20px"}
               p={2}
             >
-              <IconLogo width={"45px"} height={"40px"} stroke={"white"} />
-              {isDeskMenuOpen ? (
+              <IconLogo width={"40px"} height={"40px"} stroke={"white"} />
+              {!isSmallScreen ? (
                 <NameLogo width={"170px"} height={"50px"} />
               ) : null}
             </Box>
           </Link>
         </Box>
-        {isDeskMenuOpen && !isSmallScreen ? (
-          <Box display={"flex"} flexDirection="column" gap="20px">
+        {!isSmallScreen ? (
+          <Box
+            display={isDeskMenuOpen ? "flex" : "none"}
+            flexDirection="column"
+            gap="10px"
+          >
             {routes.map((route, index) => (
               <Box>
                 <Link to={route.path}>
@@ -166,7 +179,7 @@ export default function SideBar({ setLoggedIn }) {
                     }
                     borderRadius="30px"
                     fontSize={"0.875rem"}
-                    w="100%"
+                    w="230px"
                     py="1.2rem"
                     leftIcon={route.leftIcon}
                     display="flex"
@@ -187,14 +200,13 @@ export default function SideBar({ setLoggedIn }) {
                   </StandardButton>
                   {showOptions && route.label === "Vitrinas" ? (
                     <Box
-                      w={"100%"}
-                      display={"flex"}
+                      display={isDeskMenuOpen ? "flex" : "none"}
                       flexDirection={"column"}
-                      gap={"10px"}
+                      gap={"5px"}
                       py={"10px"}
                     >
                       {vitrinasRoutes.map((route, index) => (
-                        <Link to={route.path} w="100%">
+                        <Link to={route.path}>
                           <StandardButton
                             variant={
                               vitrinaActive === index
@@ -204,7 +216,7 @@ export default function SideBar({ setLoggedIn }) {
                             bg={"red"}
                             borderRadius="30px"
                             w={"100%"}
-                            maxW={"220px"}
+                            maxW={"200px"}
                             ml={"30px"}
                             px={"20px"}
                             py={"18px"}
@@ -233,13 +245,12 @@ export default function SideBar({ setLoggedIn }) {
               </Box>
             ))}
           </Box>
-        ) : isSmallScreen ? (
+        ) : (
           <Box
-            display={"flex"}
-            flexDirection="column"
-            alignItems="center"
-            gap="20px"
-            p="20px"
+            display={isDeskMenuOpen ? "flex" : "none"}
+            flexDirection={"column"}
+            alignItems={"center"}
+            gap="10px"
           >
             {routes.map((route, index) => (
               <Link key={index} to={route.path}>
@@ -248,8 +259,8 @@ export default function SideBar({ setLoggedIn }) {
                     active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
                   }
                   borderRadius="30px"
-                  w="50px"
-                  h="50px"
+                  w="60px"
+                  h="60px"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
@@ -270,86 +281,12 @@ export default function SideBar({ setLoggedIn }) {
               </Link>
             ))}
           </Box>
-        ) : !isDeskMenuOpen && isSmallScreen ? (
-          <Box
-            display={"flex"}
-            flexDirection="column"
-            alignItems="center"
-            gap="20px"
-            p="20px"
-          >
-            {routes.map((route, index) => (
-              <Link key={index} to={route.path}>
-                <StandardButton
-                  variant={
-                    active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
-                  }
-                  borderRadius="30px"
-                  w="50px"
-                  h="50px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  onClick={
-                    route.label === "Vitrinas"
-                      ? () => {
-                          onFirstModalOpen();
-                          dispatch(setActive(index));
-                        }
-                      : () => {
-                          setShowOptions(false);
-                          dispatch(setActive(index));
-                        }
-                  }
-                >
-                  {route.leftIcon}
-                </StandardButton>
-              </Link>
-            ))}
-          </Box>
-        ) : !isDeskMenuOpen && !isSmallScreen ? (
-          <Box
-            display={"flex"}
-            flexDirection="column"
-            alignItems="center"
-            gap="20px"
-            p="20px"
-          >
-            {routes.map((route, index) => (
-              <Link key={index} to={route.path}>
-                <StandardButton
-                  variant={
-                    active === index ? "RED_PRIMARY_OPT2" : "BLACK_PRIMARY"
-                  }
-                  borderRadius="30px"
-                  w="50px"
-                  h="50px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  onClick={
-                    route.label === "Vitrinas"
-                      ? () => {
-                          onFirstModalOpen();
-                          dispatch(setActive(index));
-                        }
-                      : () => {
-                          setShowOptions(false);
-                          dispatch(setActive(index));
-                        }
-                  }
-                >
-                  {route.leftIcon}
-                </StandardButton>
-              </Link>
-            ))}
-          </Box>
-        ) : null}
+        )}
       </Box>
 
       <Box
         w="100%"
-        display="flex"
+        display={isDeskMenuOpen ? "flex" : "none"}
         alignItems="center"
         justifyContent={"center"}
         gap="10px"
@@ -359,7 +296,7 @@ export default function SideBar({ setLoggedIn }) {
         mb={"2rem"}
       >
         <SignOutIcon width={"24px"} height={"24px"} />
-        {isDeskMenuOpen && !isSmallScreen ? (
+        {!isSmallScreen ? (
           <Text
             display={"inline-flex"}
             textStyle={"RobotoRegular"}

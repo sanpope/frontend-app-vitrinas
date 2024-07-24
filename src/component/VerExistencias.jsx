@@ -115,22 +115,6 @@ export default function VerExistencias({
                 height={"170px"}
                 overflowY="scroll"
                 overflowX="hidden"
-                sx={{
-                  "::-webkit-scrollbar": {
-                    width: "8px",
-                    height: "4px",
-                  },
-                  "::-webkit-scrollbar-track": {
-                    background: "tranparent",
-                  },
-                  "::-webkit-scrollbar-thumb": {
-                    background: "gray.200",
-                    borderRadius: "10px",
-                  },
-                  "::-webkit-scrollbar-thumb:hover": {
-                    background: "gray.200",
-                  },
-                }}
               >
                 {products.map((producto, index) => (
                   <Box

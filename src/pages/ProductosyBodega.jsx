@@ -50,7 +50,7 @@ export default function ProductosyBodega() {
   const [isAscendent, setIsAscendent] = useState(false);
   const [sortingBy, setSortingBy] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(5);
+  const [rowsToShow, setRowsToShow] = useState(20);
   const totalPages = Math.ceil(tablaProductos.length / rowsToShow);
 
   const {
@@ -199,115 +199,110 @@ export default function ProductosyBodega() {
     >
       <Box
         display={"flex"}
-        flexDir={"column"}
-        gap={"10px"}
+        flexDirection={{ base: "column", lg: "row" }}
+        justifyContent={{ base: "flex-start", lg: "space-around" }}
+        alignItems={{ base: "flex-start", lg: "center" }}
         w={"100%"}
         bg={"white"}
         borderTop={"1px"}
         borderTopColor={"mainBg"}
+        py={2}
       >
         <Box
           w={"100%"}
+          order={{ base: "2", lg: "1" }}
           display={"flex"}
-          flexDirection={{ base: "column", lg: "row" }}
-          justifyContent={{ base: "flex-start", lg: "space-between" }}
-          alignItems={{ base: "flex-start", lg: "center" }}
-          py={{ base: "0px", md: "1.25rem" }}
+          flexDirection={{ base: "column", sm: "row" }}
+          justifyContent={"flex-start"}
+          alignItems={"center"}
+          gap={"1rem"}
+          p={{ base: "5px", md: "10px" }}
         >
-          <Box
-            w={"100%"}
-            order={{ base: "2", lg: "1" }}
-            display={"flex"}
-            flexDirection={{ base: "column", sm: "row" }}
-            justifyContent={{ base: "center", lg: "flex-start" }}
-            alignItems={"center"}
-            gap={"1rem"}
-            p={{ base: "1.25rem", md: "5px" }}
-          >
-            <TextInput
-              maxW={"250px"}
-              placeholder={"Buscar"}
-              leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
-              onChange={(e) => onBuscarChange(e)}
-              value={busqueda}
-            />
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              px={"30px"}
-              w={isSmallScreen ? "13rem" : "fit-content"}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={""}
-              leftIcon={<SearchIcon width={"20px"} height={"20px"} />}
-            >
-              Buscar
-            </StandardButton>
-          </Box>
-          <Box
-            w={"100%"}
-            display={"flex"}
-            order={{ base: "1", lg: "2" }}
-            flexDirection={{ base: "column", md: "row" }}
-            flexWrap={{ base: "wrap", xl: "nowrap" }}
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={"5px"}
-            p={{ base: "1.25rem", md: "5px" }}
-          >
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={isSmallScreen ? "13rem" : "fit-content"}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onFirstModalOpen}
-              leftIcon={<PlusCircleIcon fill="black" />}
-            >
-              Ingresar Nuevo Producto
-            </StandardButton>
-            <IngresarProducto
-              isOpen={isFirstModalOpen}
-              onOpen={onFirstModalOpen}
-              onClose={onFirstModalClose}
-            />
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={isSmallScreen ? "13rem" : "fit-content"}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onSecondModalOpen}
-              leftIcon={<SmallRightArrowIcon />}
-            >
-              Despachar Producto
-            </StandardButton>
-            <Despachar
-              isOpen={isSecondModalOpen}
-              onOpen={onSecondModalOpen}
-              onClose={onSecondModalClose}
-            />
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={"fit-content"}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onThirdModalOpen}
-              leftIcon={<SyncIcon />}
-            >
-              Transferir Productos
-            </StandardButton>
-            <Transferir
-              isOpen={isThirdModalOpen}
-              onOpen={onThirdModalOpen}
-              onClose={onThirdModalClose}
-            />
-          </Box>
+          <TextInput
+            maxW={"250px"}
+            placeholder={"Buscar"}
+            leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
+            onChange={(e) => onBuscarChange(e)}
+            value={busqueda}
+          />
+        </Box>
+
+        <Box
+          w={"100%"}
+          display={"flex"}
+          order={{ base: "1", lg: "2" }}
+          flexDirection={{ base: "column", md: "row" }}
+          justifyContent={{ base: "flex-start", md: "center" }}
+          alignItems={{ base: "flex-start", md: "center" }}
+          p={{ base: "15px", md: "5px" }}
+          gap={2}
+        >
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={{ base: "160px", md: "fit-content" }}
+            fontSize={"14px"}
+            fontWeight={"400"}
+            onClick={onFirstModalOpen}
+            children={
+              <Text
+                textAlign={"left"}
+                textStyle={{ base: "RobotoTinyBold", md: "RobotoRegularBold" }}
+              >
+                Ingresar Nuevo Producto
+              </Text>
+            }
+          ></StandardButton>
+          <IngresarProducto
+            isOpen={isFirstModalOpen}
+            onOpen={onFirstModalOpen}
+            onClose={onFirstModalClose}
+          />
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={{ base: "160px", md: "fit-content" }}
+            fontSize={"14px"}
+            fontWeight={"400"}
+            onClick={onSecondModalOpen}
+            children={
+              <Text
+                textAlign={"left"}
+                textStyle={{ base: "RobotoTinyBold", md: "RobotoRegularBold" }}
+              >
+                Despachar Producto
+              </Text>
+            }
+          ></StandardButton>
+          <Despachar
+            isOpen={isSecondModalOpen}
+            onOpen={onSecondModalOpen}
+            onClose={onSecondModalClose}
+          />
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={{ base: "160px", md: "fit-content" }}
+            fontSize={"14px"}
+            fontWeight={"400"}
+            onClick={onThirdModalOpen}
+            children={
+              <Text
+                textAlign={"left"}
+                textStyle={{ base: "RobotoTinyBold", md: "RobotoRegularBold" }}
+              >
+                Transferir Productos
+              </Text>
+            }
+          ></StandardButton>
+          <Transferir
+            isOpen={isThirdModalOpen}
+            onOpen={onThirdModalOpen}
+            onClose={onThirdModalClose}
+          />
         </Box>
       </Box>
       <Box gap={"10px"} p={"20px"} w={"100%"}>
@@ -344,4 +339,15 @@ export default function ProductosyBodega() {
       </Box>
     </Box>
   );
+}
+
+{
+  /* <Box
+  w={"100%"}
+  display={"flex"}
+  flexDirection={{ base: "column", lg: "row" }}
+  justifyContent={{ base: "flex-start", lg: "space-between" }}
+  alignItems={{ base: "flex-start", lg: "center" }}
+  py={{ base: "0px", md: "1.25rem" }}
+></Box>;*/
 }
