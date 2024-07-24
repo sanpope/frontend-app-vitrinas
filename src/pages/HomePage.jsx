@@ -63,8 +63,8 @@ export default function HomePage() {
   };
 
   const ContainerHeight = useMemo(() => {
-    return Math.floor((height - HEADER_HEIGHT - (PADDING * 5) - 35) / 3);
-  }, [height])
+    return Math.floor((height - HEADER_HEIGHT - PADDING * 5 - 35) / 3);
+  }, [height]);
 
   return (
     <Box
@@ -76,15 +76,15 @@ export default function HomePage() {
       display={"flex"}
       gap={PADDING + "px"}
       p={PADDING + "px"}
-      overflowY={"auto"}
+      overflowY={{ base: "hidden", md: "auto" }}
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={colors.textBlack}>
         ¡Hola {name}, bienvenido! 👋🏻
       </Text>
       <Box display="grid" gridGap={"1rem"} className="dashboard-grid-container">
         <Container
-          height={ContainerHeight + "px"}
-          minHeight="225px"
+          height={{ base: "150px", md: ContainerHeight + "px" }}
+          minHeight={{ base: "170px", md: "225px" }}
           title={"Ventas del mes"}
           icon={<ReceiptIcon width={"24px"} height={"24px"} />}
           children={
@@ -95,10 +95,20 @@ export default function HomePage() {
               alignItems={"flex-start"}
               gap={"10px"}
             >
-              <Text textStyle={"RobotoeBannerBold"} color={"black"}>
+              <Text
+                textStyle={{
+                  base: "RobotoSubheadingBold",
+                  md: "RobotoeBannerBold",
+                }}
+                color={"black"}
+              >
                 $ {ventasMes}
               </Text>
-              <Box display={"flex"} alignItems={"center"} columnGap={"5px"}>
+              <Box
+                display={{ base: "none", md: "flex" }}
+                alignItems={"center"}
+                columnGap={"5px"}
+              >
                 <Text textStyle={"RobotoSubSmall"} color={"success.30"}>
                   +50% con respecto al promedio
                 </Text>
@@ -108,15 +118,16 @@ export default function HomePage() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
-          minHeight="225px"
+          minHeight={"225px"}
           title={"Ventas de meses anteriores"}
           icon={<ReceiptIcon width={"1.5rem"} height={"1.5rem"} />}
           children={<VentasMesesAnteriores />}
         />
         <Container
           height={ContainerHeight + "px"}
-          minHeight="225px"
+          minHeight={{ base: "170px", md: "225px" }}
           title={"Top Vitrinas del Mes"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
@@ -136,7 +147,7 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          minHeight="225px"
+          minHeight={{ base: "170px", md: "225px" }}
           title={"Top Vitrinas"}
           icon={<TrophyIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
@@ -160,12 +171,13 @@ export default function HomePage() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Top Categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
-            <Box display={"flex"} flexWrap={"wrap"} gap={"1rem"}>
+            <Box h={"100%"} display={"flex"} flexWrap={"wrap"} gap={"1rem"}>
               {topCategorias.map((cat) => (
                 <TopCategoriaItem
                   icon={cat.Icon}
@@ -181,6 +193,7 @@ export default function HomePage() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Top Productos"}
@@ -203,6 +216,7 @@ export default function HomePage() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Dispositivos averiados"}
@@ -210,6 +224,7 @@ export default function HomePage() {
           children={<DispositivosAveriados />}
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Despachos actuales"}
@@ -217,6 +232,7 @@ export default function HomePage() {
           children={<DespachosActuales />}
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Inventario pendiente de verificar"}

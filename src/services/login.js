@@ -1,14 +1,14 @@
-import api from "./api";
+import xmlToJSON from "./XmlToJsonConverter";
 
 const login = async (credentials) => {
   const fallo = "user_invalidoasdasdasd";
-  // const xmlData = `
-  //   <?xml version="1.0" encoding="UTF-8"?>
-  //   <credentials>
-  //     <username>${credentials.user}</username>
-  //     <password>${credentials.password}</password>
-  //   </credentials>
-  // `;
+  const xmlData = `
+    <credentials>
+      <username>${credentials.user}</username>
+      <username>${credentials.user}</username>
+      <password>${credentials.password}</password>
+    </credentials>
+  `;
 
   // const response = await api.post('/auth/login', xmlData, {
   //   headers: {
@@ -26,6 +26,8 @@ const login = async (credentials) => {
   // }
 
   // return response.data;
+
+  console.log(xmlToJSON(xmlData));
 
   if (fallo === "user_invalido")
     return { status: false, message: "Usuario o contraseña incorrectos" };

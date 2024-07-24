@@ -2,9 +2,11 @@ const GreenArrowICon = ({
   width = "20px",
   height = "20px",
   fill = "#008D2B",
+  display,
 }) => {
   return (
     <svg
+      display={display}
       width={width}
       height={height}
       viewBox="0 0 22 12"

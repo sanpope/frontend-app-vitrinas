@@ -4,6 +4,7 @@ import React from "react";
 export default function TopCategoriaItem({}) {
   return (
     <Box
+      h={"100%"}
       w={{ base: "100%" }}
       display={"flex"}
       flexDirection={"column"}
@@ -28,7 +29,7 @@ export default function TopCategoriaItem({}) {
             h={3}
             borderRadius="full"
             mr={"10px"}
-            display={"inline-flex"}
+            display={{ base: "none", md: "inline-flex" }}
           ></Box>
           <Text textStyle={"RobotoRegular"}>Corales de Indias</Text>
         </Box>
@@ -65,7 +66,7 @@ export default function TopCategoriaItem({}) {
             h={3}
             borderRadius="full"
             mr={"10px"}
-            display={"inline-flex"}
+            display={{ base: "none", md: "inline-flex" }}
           ></Box>
           <Text textStyle={"RobotoRegular"}>Double Tree Bogotá</Text>
         </Box>
@@ -92,7 +93,7 @@ export default function TopCategoriaItem({}) {
         alignItems={"center"}
       >
         <Box
-          display={"flex"}
+          display={{ base: "none", md: "flex" }}
           justifyContent={"flex-start"}
           alignItems={"center"}
         >
@@ -107,7 +108,7 @@ export default function TopCategoriaItem({}) {
           <Text textStyle={"RobotoRegular"}>Double Tree Bogotá</Text>
         </Box>
         <Box
-          display={"flex"}
+          display={{ base: "none", md: "flex" }}
           justifyContent={"flex-end"}
           borderLeftWidth={"2px"}
           borderLeftColor={"mainBg"}

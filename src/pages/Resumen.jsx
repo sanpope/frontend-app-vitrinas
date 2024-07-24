@@ -49,7 +49,7 @@ export default function Resumen() {
       flexDir={"column"}
       gap={PADDING + "px"}
       p={PADDING + "px"}
-      overflowY={"auto"}
+      overflowY={{ base: "hidden", md: "auto" }}
     >
       <Box display={"flex"} flexDir={"column"}>
         <Text textStyle={" RobotoBody"}>{city}</Text>
@@ -182,6 +182,7 @@ export default function Resumen() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           flex={"1 1 auto"}
@@ -196,6 +197,7 @@ export default function Resumen() {
         />
 
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           flex={"1 1 auto"}
@@ -207,6 +209,7 @@ export default function Resumen() {
           children={<ActualizacionesInventario />}
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           flex={"1 1 auto"}
@@ -246,6 +249,7 @@ export default function Resumen() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           flex={"1 1 auto"}
@@ -264,8 +268,10 @@ export default function Resumen() {
           }
         />
         <Container
+          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
+          maxW={"450px"}
           flex={"1 1 auto"}
           icon={<BoxesIcon />}
           title={"Productos con poco stock"}

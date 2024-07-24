@@ -6,15 +6,17 @@ export default function TopVitrinaItem({ vitrinaName, vitrinaAmount }) {
     <Box
       display={"flex"}
       flexDirection={{ base: "column", sm: "row" }}
-      justifyContent={"space-between"}
-      alignItems={"center"}
+      justifyContent={{base: "flex-start", md: "space-between"}}
+      alignItems={{base: "flex-start", md: "center"}}
       pt={"0.500rem"}
     >
       <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
-        <Text textStyle={"RobotoBody"}>{vitrinaName}</Text>
+        <Text textStyle={"RobotoBody"} textAlign={"left"}>
+          {vitrinaName}
+        </Text>
       </Box>
       <Box
-        display={"flex"}
+        display={{ base: "none", md: "flex" }}
         justifyContent={"flex-end"}
         borderLeftWidth={"2px"}
         borderLeftColor={"mainBg"}

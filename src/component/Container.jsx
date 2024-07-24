@@ -28,7 +28,7 @@ export default function Container({
         {icon}
         {title ? (
           <Text
-            textStyle={"RobotoSubtitleBold"}
+            textStyle={{ base: "RobotoBodyBold", md: "RobotoSubtitleBold" }}
             color={color}
             whiteSpace={withLineBreaks ? "pre-line" : "normal"}
             lineHeight={lineHeight}

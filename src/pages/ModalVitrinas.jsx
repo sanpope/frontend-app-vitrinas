@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -23,6 +23,8 @@ import { useNavigate } from "react-router-dom";
 import Agregar from "../component/Agregar";
 import vitrinas from "../DummieData/vitrinas";
 import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
+import xmlToJSON from "../services/XmlToJsonConverter";
+import dataXmlVitrinas from "../services/vitrinasData";
 
 export default function ModalVitrinas({
   isFirstModalOpen,
@@ -37,7 +39,7 @@ export default function ModalVitrinas({
     (state) => state.menuReducer.isDeskMenuOpen,
   );
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
-  const [ciudadesVitrinas, setCiudadesVitrinas] = useState(vitrinas);
+  const [ciudadesVitrinas, setCiudadesVitrinas] = useState(null);
   const {
     isOpen: isSecondModalOpen,
     onOpen: onSecondModalOpen,
@@ -66,6 +68,24 @@ export default function ModalVitrinas({
   const createNewVitrina = () => {
     //ToDO Agregar vitrina POST/rest/vitrina
   };
+
+  console.log(xmlToJSON(dataXmlVitrinas).vitrinas.vitrina);
+
+  useEffect(() => {
+    const DataVitrina = xmlToJSON(dataXmlVitrinas).vitrinas.vitrina;
+    const vitrinasObj = {};
+
+    for (let i = 0; i < DataVitrina.length; i++) {
+      const city = DataVitrina[i].ciudad["#text"];
+      const vitrina = DataVitrina[i].nombre["#text"];
+      console.log(city);
+      if (!(city in vitrinasObj)) {
+        vitrinasObj[city] = [];
+      }
+      vitrinasObj[city].push(vitrina);
+    }
+    setCiudadesVitrinas(vitrinasObj);
+  }, []);
 
   return (
     <>
@@ -107,18 +127,18 @@ export default function ModalVitrinas({
             w={"100%"}
             mt={{ base: "0px", md: "15px" }}
           >
-            {isSmallScreen ? (
+            {isSmallScreen && ciudadesVitrinas != null ? (
               <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
-                {ciudadesVitrinas.map((vitrina) => (
+                {Object.entries(ciudadesVitrinas).map(([ciudad, vitrinas]) => (
                   <UnorderedList
-                    onClick={() => handleVitrinaClick(vitrina.ciudad)}
+                    onClick={() => handleVitrinaClick(ciudad)}
                     cursor={"pointer"}
                     flex={"1 1 120px"}
                     boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
                     p={3}
                   >
-                    <Text textStyle={"RobotoBodyBold"}>{vitrina.ciudad}</Text>
-                    {vitrina.vitrinas.map((name) => (
+                    <Text textStyle={"RobotoBodyBold"}>{ciudad}</Text>
+                    {vitrinas.map((name) => (
                       <ListItem textStyle={"RobotoBody"} ml={2}>
                         {name}
                       </ListItem>
@@ -126,18 +146,18 @@ export default function ModalVitrinas({
                   </UnorderedList>
                 ))}
               </Box>
-            ) : (
-              ciudadesVitrinas.map((vitrina) => {
+            ) : ciudadesVitrinas != null ? (
+              Object.entries(ciudadesVitrinas).map(([ciudad, vitrinas]) => {
                 return (
                   <Vitrina
-                    key={vitrina.ciudad}
-                    city={vitrina.ciudad}
-                    names={vitrina.vitrinas}
-                    onClick={() => handleVitrinaClick(vitrina.ciudad)}
+                    key={ciudad}
+                    city={ciudad}
+                    names={vitrinas}
+                    onClick={() => handleVitrinaClick(ciudad)}
                   />
                 );
               })
-            )}
+            ) : null}
           </ModalBody>
           <ModalFooter m={"0px"} display={{ base: "none", md: "flex" }}>
             <StandardButton
