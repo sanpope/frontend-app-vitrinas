@@ -1,7 +1,14 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Login from "./pages/Login";
-import { Route, BrowserRouter, Routes, Navigate } from "react-router-dom";
+import {
+  Route,
+  BrowserRouter,
+  Routes,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 import HomePage from "./pages/HomePage";
 import Profile from "./pages/Profile";

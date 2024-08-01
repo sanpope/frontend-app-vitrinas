@@ -5,7 +5,10 @@ import Checkbox from "./ui/checkbox";
 import LeftArrowIcon from "../assets/images/LeftArrowIcon";
 import BiggerThanIcon from "../assets/images/BiggerThanIcon";
 import EditIcon from "../assets/images/EditIcon";
-import EditarExistencia from "./EditarExistencia";
+import Editar from "../component/Editar"; 
+import EditarProducto from "../component/EditarProducto"; 
+import WarningIcon from "../assets/images/WarningIcon";
+
 import Pagination from "./Pagination";
 
 const HEADERS = [
@@ -48,8 +51,9 @@ export default function TablaInventario({
               <th className="" style={{ padding: "15px", marginTop: "5px" }}>
                 <Checkbox />
               </th>
-              {HEADERS.map((name) => (
+              {HEADERS.map((name, index) => (
                 <th
+                  key={index}
                   className="ThHead"
                   style={{ paddingLeft: "15px", textAlign: "left" }}
                 >
@@ -63,15 +67,19 @@ export default function TablaInventario({
             className="TableBody"
             style={{ height: "100%", maxHeight: "450px" }}
           >
-            {displayedArticulos.map((articulo) => {
+            {displayedArticulos.map((articulo, index) => {
               return (
-                <tr className="TrBody">
+                <tr key={index} className="TrBody">
                   <td className="" style={{ paddingLeft: "10px" }}>
                     <Checkbox />
                   </td>
-                  {Object.values(articulo).map((value) => {
+                  {Object.values(articulo).map((value, index) => {
                     return (
-                      <td style={{ paddingLeft: "30px" }} className="TdBody">
+                      <td
+                        key={index}
+                        style={{ paddingLeft: "30px" }}
+                        className="TdBody"
+                      >
                         {value}
                       </td>
                     );
@@ -122,6 +130,7 @@ export default function TablaInventario({
           />
         </Box>
       </Box>
+      <Editar/>
     </Box>
   );
 }

@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 export default function Dispositivo() {
   const city = useSelector((state) => state.vitrinaReducer.city);
+  const name = useSelector((state) => state.vitrinaReducer.name);
   return (
     <Box
       bg={"mainBg"}
@@ -27,7 +28,9 @@ export default function Dispositivo() {
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
-        <Text textStyle={" RobotoBody"}>{city}</Text>
+        <Text textStyle={" RobotoBody"}>
+          {name} - {city}
+        </Text>
         <Text textStyle={"RobotoTitleBold"}>Dispositivo</Text>
       </Box>
       <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>

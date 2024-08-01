@@ -4,16 +4,18 @@ import SmallPagination from "../component/SmallPagination";
 import BiggerThanICon from "../assets/images/BiggerThanIcon";
 
 export default function ActualizacionesInventario({
-  date = "03/04/2024",
-  hour = "2:50PM",
+  actualizacionesInventarioNV,
 }) {
+ 
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
+  const totalPages = actualizacionesInventarioNV.length;
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
+  const currentItem = actualizacionesInventarioNV[currentPage - 1];
+  
   return (
     <Box
       w={"100%"}
@@ -31,11 +33,15 @@ export default function ActualizacionesInventario({
         borderBottomWidth={1}
         pb={1}
       >
-        <Text color="grey.placeholder" textStyle={"RobotoBodyBold"}>Visita</Text>
+        <Text color="grey.placeholder" textStyle={"RobotoBodyBold"}>
+          Visita
+        </Text>
         <Box width={"1.5px"} height="100%" bg="grey.placeholder"></Box>
-        <Text color="grey.placeholder" textStyle={"RobotoBody"}>{date}</Text>
+        <Text color="grey.placeholder" textStyle={"RobotoBody"}>
+          {currentItem?.fechaHora}
+        </Text>
         <Box width={"1.5px"} height="100%" bg="grey.placeholder"></Box>
-        <Text color="grey.placeholder" textStyle={"RobotoBody"}>{hour}</Text>
+        <Text color="grey.placeholder" textStyle={"RobotoBody"}></Text>
       </Box>
       <Box
         w={"100%"}
@@ -56,7 +62,7 @@ export default function ActualizacionesInventario({
           ></Box>
           <Text textStyle={"RobotoBody"}>Ingresos</Text>
           <Text textStyle={"RobotoBodyBold"} px={2}>
-            + 8
+            + {currentItem?.cantidadProductosIngresados}
           </Text>
         </Box>
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -70,7 +76,7 @@ export default function ActualizacionesInventario({
           ></Box>
           <Text textStyle={"RobotoBody"}>Retiros</Text>
           <Text textStyle={"RobotoBodyBold"} px={2}>
-            - 2
+            - {currentItem?.cantidadProductosRetirados}
           </Text>
         </Box>
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -84,9 +90,12 @@ export default function ActualizacionesInventario({
           ></Box>
           <Text textStyle={"RobotoBody"}>Correcciones </Text>
           <BiggerThanICon width={"17px"} height={"15px"} />
-          <Text textStyle={"RobotoBodyBold"}>5</Text>
+          <Text textStyle={"RobotoBodyBold"}>
+            {currentItem?.cantidadDeCorrecciones}
+          </Text>
         </Box>
       </Box>
+
       <Box
         w={"100%"}
         display={"flex"}

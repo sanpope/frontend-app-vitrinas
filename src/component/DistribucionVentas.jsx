@@ -10,8 +10,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import distribucionVentas from "../DummieData/distribucionVentas";
-import { color } from "framer-motion";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +20,7 @@ ChartJS.register(
   Legend,
 );
 
-const DistribucionVentas = () => {
+const DistribucionVentas = ({ distribucionVentas }) => {
   const canvasRef = React.useRef(null);
 
   const createGradient = (ctx, chartArea) => {
@@ -31,11 +29,12 @@ const DistribucionVentas = () => {
     gradient.addColorStop(1, "rgba(255, 0, 0, 0.2)");
     return gradient;
   };
+
   const chartData = {
-    labels: distribucionVentas.map((d) => d.hora),
+    labels: distribucionVentas.map((d) => d.dia),
     datasets: [
       {
-        data: distribucionVentas.map((d) => d.porcentaje), // Datos de ejemplo
+        data: distribucionVentas.map((d) => d.valor),
         backgroundColor: function (context) {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
@@ -63,6 +62,7 @@ const DistribucionVentas = () => {
       },
     ],
   };
+
   const formatHour = (hora) => {
     const [start, endWithSuffix] = hora.split("-");
     const [end, suffix] = endWithSuffix.match(/\d+|am|pm/g);
@@ -101,9 +101,9 @@ const DistribucionVentas = () => {
     const dataIndex = tooltipItem.dataIndex;
     return ` ${chartData.datasets[datasetIndex].data[dataIndex]}%+`;
   };
-  const options = {
-    responsive: true,
 
+  const options = {
+    maintainAspectRatio: false,
     barThickness: 25,
     plugins: {
       legend: {
@@ -154,7 +154,7 @@ const DistribucionVentas = () => {
             } else if (value >= 40) {
               return "40%";
             } else {
-              return "";
+              return "50%";
             }
           },
         },
@@ -176,9 +176,7 @@ const DistribucionVentas = () => {
     },
   };
 
-  return (
-      <Bar data={chartData} options={options} />
-  );
+  return <Bar data={chartData} options={options} />;
 };
 
 export default DistribucionVentas;

@@ -13,6 +13,7 @@ import AsesorContainer from "../component/AsesorContainer";
 
 export default function EstaVitrina() {
   const city = useSelector((state) => state.vitrinaReducer.city);
+  const name = useSelector((state) => state.vitrinaReducer.name);
   const {
     isOpen: isFirstModalOpen,
     onOpen: onFirstModalOpen,
@@ -55,7 +56,9 @@ export default function EstaVitrina() {
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
-        <Text textStyle={" RobotoBody"}>{city}</Text>
+        <Text textStyle={" RobotoBody"}>
+          {name} - {city}
+        </Text>
         <Box
           display={"flex"}
           flexDirection={{ base: "column", md: "row" }}

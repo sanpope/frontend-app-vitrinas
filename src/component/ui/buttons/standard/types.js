@@ -65,6 +65,28 @@ const BUTTON_VARIANTS = {
       color: "white",
     },
   },
+  RED_GREY: {
+    normal: {
+      bg: "red.100",
+      borderColor: "red.100",
+      color: "white",
+    },
+    hover: {
+      bg: "#535253",
+      borderColor: "black",
+      color: "white",
+    },
+    disabled: {
+      bg: "bluePurple.60",
+      borderColor: "bluePurple.60",
+      color: "white",
+    },
+    active: {
+      bg: "red.100",
+      borderColor: "red.100",
+      color: "white",
+    },
+  },
   BORDERLESS: {
     normal: {
       bg: "transparent",
@@ -182,8 +204,8 @@ const BUTTON_VARIANTS = {
       color: "white",
     },
     hover: {
-      bg: "red.100",
-      borderColor: "red.100",
+      bg: "#535253",
+      borderColor: "black",
       color: "white",
     },
     disabled: {

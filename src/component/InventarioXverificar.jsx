@@ -1,15 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-export default function InventarioXverificar({
-  date = "06/Abr",
-  hour = "2:50PM",
-  name = "José C",
-  vitrina = "Corales de Indias",
-  ingresos = 5,
-  retiros = 8,
-  correcciones = 2,
-}) {
+export default function InventarioXverificar({ visitasNoVerificadas }) {
   return (
     <Box
       w={"100%"}
@@ -88,130 +80,81 @@ export default function InventarioXverificar({
       </Box>
 
       <Box
-        w={"100%"}
         display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        borderBottomWidth={2}
-        borderBottomColor={"mainBg"}
+        flexDirection={"column"}
+        w={"100%"}
+        height={"100px"}
+        flexGrow={1}
+        className={"scroll-wrapper"}
+        gap={3}
       >
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          justifyContent={"center"}
-          alignItems={"flex-start"}
-        >
-          <Text textStyle={"RobotoBodyBold"}>{name}</Text>
-          <Text textStyle={"RobotoRegular"} color={"grey.placeholder"}>
-            {vitrina}
-          </Text>
-        </Box>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          justifyContent={"flex-end"}
-        >
-          <Text
-            minW={"5rem"}
-            textStyle={"RobotoRegular"}
-            textAlign={"left"}
-            color={"grey.placeholder"}
-          >
-            {date} {hour}
-          </Text>
+        {visitasNoVerificadas?.map((visita, index) => (
           <Box
+            key={index}
+            w={"100%"}
             display={"flex"}
             justifyContent={"space-between"}
             alignItems={"center"}
+            borderBottomWidth={2}
+            borderBottomColor={"mainBg"}
           >
             <Box
-              bg="green"
-              w={3}
-              h={3}
-              borderRadius="full"
-              display={"inline-flex"}
-            ></Box>
-            <Text>{ingresos}</Text>
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"center"}
+              alignItems={"flex-start"}
+            >
+              <Text textStyle={"RobotoBodyBold"}>{visita.asesor}</Text>
+              <Text textStyle={"RobotoRegular"} color={"grey.placeholder"}>
+                {"Pendiente"}
+              </Text>
+            </Box>
             <Box
-              bg="red"
-              w={3}
-              h={3}
-              borderRadius="full"
-              display={"inline-flex"}
-            ></Box>
-            <Text>{retiros}</Text>
-            <Box
-              bg="#FFD80C"
-              w={3}
-              h={3}
-              borderRadius="full"
-              display={"inline-flex"}
-            ></Box>
-            <Text>{correcciones}</Text>
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"flex-end"}
+            >
+              <Text
+                minW={"5rem"}
+                textStyle={"RobotoRegular"}
+                textAlign={"left"}
+                color={"grey.placeholder"}
+              >
+                {visita.fechaHora}
+              </Text>
+              <Box
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
+                <Box
+                  bg="green"
+                  w={3}
+                  h={3}
+                  borderRadius="full"
+                  display={"inline-flex"}
+                ></Box>
+                <Text>{visita.ingresos}</Text>
+                <Box
+                  bg="red"
+                  w={3}
+                  h={3}
+                  borderRadius="full"
+                  display={"inline-flex"}
+                ></Box>
+                <Text>{visita.retiros}</Text>
+                <Box
+                  bg="#FFD80C"
+                  w={3}
+                  h={3}
+                  borderRadius="full"
+                  display={"inline-flex"}
+                ></Box>
+                <Text>{visita.correccionesDeInventario}</Text>
+              </Box>
+            </Box>
           </Box>
-        </Box>
-      </Box>
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          justifyContent={"center"}
-          alignItems={"flex-start"}
-        >
-          <Text textStyle={"RobotoBodyBold"}>{name}</Text>
-          <Text textStyle={"RobotoRegular"} color={"grey.placeholder"}>
-            {vitrina}
-          </Text>
-        </Box>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          justifyContent={"flex-end"}
-        >
-          <Text
-            minW={"5rem"}
-            textStyle={"RobotoRegular"}
-            textAlign={"left"}
-            color={"grey.placeholder"}
-          >
-            {date} {hour}
-          </Text>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Box
-              bg="green"
-              w={3}
-              h={3}
-              borderRadius="full"
-              display={"inline-flex"}
-            ></Box>
-            <Text>{ingresos}</Text>
-            <Box
-              bg="red"
-              w={3}
-              h={3}
-              borderRadius="full"
-              display={"inline-flex"}
-            ></Box>
-            <Text>{retiros}</Text>
-            <Box
-              bg="#FFD80C"
-              w={3}
-              h={3}
-              borderRadius="full"
-              display={"inline-flex"}
-            ></Box>
-            <Text>{correcciones}</Text>
-          </Box>
-        </Box>
+        ))}
       </Box>
     </Box>
   );

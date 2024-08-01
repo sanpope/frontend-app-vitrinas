@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import VentasMesAnterior from "../DummieData/VentasMesAnterior";
 
 ChartJS.register(
   CategoryScale,
@@ -23,31 +22,6 @@ ChartJS.register(
   Legend,
 );
 
-const chartData = {
-  labels: VentasMesAnterior.map((d) => d.mes),
-  datasets: [
-    {
-      data: VentasMesAnterior.map((d) => d.valor),
-      fill: false,
-      borderColor: "#000000",
-      borderWidth: 2,
-      pointBackgroundColor: [
-        "#000000",
-        "#000000",
-        "#000000",
-        "#000000",
-        "#000000",
-        "#000000",
-        "#FF0000",
-      ],
-      pointRadius: 6,
-      pointBorderWidth: 2,
-      pointBorderColor: "white",
-      pointHoverRadius: 8,
-    },
-  ],
-};
-
 const titleTooltip = () => {
   return "VENTAS:";
 };
@@ -55,11 +29,11 @@ const titleTooltip = () => {
 const labelTooltip = (tooltipItem) => {
   const datasetIndex = tooltipItem.datasetIndex;
   const dataIndex = tooltipItem.dataIndex;
-  return `${chartData.datasets[datasetIndex].data[dataIndex]}K`;
+  return `${tooltipItem.dataset.data[dataIndex]}K`;
 };
 
 const options = {
-  responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: false,
@@ -118,7 +92,32 @@ const options = {
   },
 };
 
-const VentasMesesAnteriores = () => {
+const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
+  const chartData = {
+    labels: VentasMesAnterior.map((d) => d.mes),
+    datasets: [
+      {
+        data: VentasMesAnterior.map((d) => d.valor),
+        fill: false,
+        borderColor: "#000000",
+        borderWidth: 2,
+        pointBackgroundColor: [
+          "#000000",
+          "#000000",
+          "#000000",
+          "#000000",
+          "#000000",
+          "#000000",
+          "#FF0000",
+        ],
+        pointRadius: 6,
+        pointBorderWidth: 2,
+        pointBorderColor: "white",
+        pointHoverRadius: 8,
+      },
+    ],
+  };
+
   return <Line data={chartData} options={options} />;
 };
 

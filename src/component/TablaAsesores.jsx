@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import axios from "axios";
 import Checkbox from "./ui/checkbox";
 import LeftArrowIcon from "../assets/images/LeftArrowIcon";
@@ -72,8 +61,8 @@ export default function TablaProductosBodega({
           <table className="Table">
             <thead className="TableHead">
               <tr className="TrHead">
-                {HEADERS.map((name) => (
-                  <th className="ThHead">
+                {HEADERS.map((name, index) => (
+                  <th key={index} className="ThHead">
                     <Box
                       display={"flex"}
                       justifyContent={"center"}
@@ -107,22 +96,23 @@ export default function TablaProductosBodega({
               className="TableBody"
               style={{ height: "100%", maxHeight: "500px" }}
             >
-              {displayedArticulos.map((articulo) => {
+              {displayedArticulos.map((articulo, index) => {
                 return (
-                  <tr className="TrBody">
+                  <tr key={index} className="TrBody">
                     <td className="TdBody" style={{ paddingLeft: "20px" }}>
                       <Checkbox />
                     </td>
-                    {Object.values(articulo).map((value) => {
+                    {Object.values(articulo).map((value, index) => {
                       return (
                         <td
+                          key={index}
                           className="TdBody"
                           style={{
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             columnGap: "5px",
-                            textAlign: "left"
+                            textAlign: "left",
                           }}
                         >
                           {value}
@@ -142,33 +132,36 @@ export default function TablaProductosBodega({
               })}
             </tbody>
           </table>
+        </Box>
+      </Box>
+      <Box w={"100%"} h={"1000%"}>
+        <Box
+          w={"100%"}
+          bg={"#d7d7d7"}
+          p={1}
+          borderBottomLeftRadius={"20px"}
+          borderBottomRightRadius={"20px"}
+          color={"black"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           <Box
-            bg={"#d7d7d7"}
-            p={1}
-            borderBottomLeftRadius={"20px"}
-            borderBottomRightRadius={"20px"}
-            color={"black"}
+            p={2}
             display={"flex"}
             justifyContent={"center"}
             alignItems={"center"}
+            gap={"1rem"}
           >
-            <Box
-              p={2}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              gap={"1rem"}
-            >
-              <Text textStyle={"RobotoRegularBold"}>
-                {totalResults} elementos
-              </Text>
+            <Text textStyle={"RobotoRegularBold"}>
+              {totalResults} elementos
+            </Text>
 
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={getMasArticulos}
-              />
-            </Box>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={getMasArticulos}
+            />
           </Box>
         </Box>
       </Box>

@@ -21,8 +21,9 @@ body {
 
 .Table {
   width: 100%;
-
+  min-width: 900px;
   table-layout: fixed;
+  overflow-x: auto;
 }
 
 .TableHead {

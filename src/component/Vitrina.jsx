@@ -13,7 +13,6 @@ export default function Vitrina({ city, names, onClick }) {
       gap={"15px"}
       boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
       cursor={"pointer"}
-      onClick={() => onClick(city)}
     >
       <Box
         className="topSection"
@@ -39,12 +38,14 @@ export default function Vitrina({ city, names, onClick }) {
         overflowX="hidden"
         className="scroll-wrapper"
       >
-        {names.map((name) => {
+        {names.map((name, index) => {
           return (
             <Text
+              key={index}
               textStyle={"RobotoRegular"}
               _hover={{ color: "red" }}
               transition="color 0.5s ease"
+              onClick={() => onClick(city, name)}
             >
               {name}
             </Text>

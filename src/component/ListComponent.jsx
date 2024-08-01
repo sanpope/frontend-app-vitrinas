@@ -23,7 +23,7 @@ export default function Agregar({
   onSecondModalOpen,
   onSecondModalClose,
   lista = [],
-  Children
+  Children,
 }) {
   return (
     <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
@@ -66,8 +66,8 @@ export default function Agregar({
             h={"250px"}
             w={"100%"}
           >
-            {lista.map((item) => (
-              <ListaItem desc={item.nombre} elemento={desc2} />
+            {lista.map((item, index) => (
+              <ListaItem key={index} desc={item.nombre} elemento={desc2} />
             ))}
           </Box>
         </ModalBody>

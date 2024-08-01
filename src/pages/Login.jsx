@@ -22,12 +22,11 @@ function Login({ setLoggedIn }) {
 
   const onChangeEmail = (e) => {
     let emailLowerCase = e.toLowerCase();
-    console.log(emailLowerCase);
+
     setEmail(emailLowerCase);
   };
 
   const onChangePassword = (e) => {
-    console.log(e);
     setPassword(e);
   };
 
@@ -87,10 +86,7 @@ function Login({ setLoggedIn }) {
     const validEmail = emailValidation();
     const validPassword = passwordValidation(password);
     if (!validEmail && !validPassword && loginData.status) {
-      console.log(loginData.status);
       setLoggedIn(true);
-
-      console.log("login success");
     } else {
     }
   };

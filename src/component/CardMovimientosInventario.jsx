@@ -82,8 +82,8 @@ export default function CardMovimientosInventario({
           <Text textStyle={"RobotoRegularBold"}>Productos Retirados:</Text>
         </Box>
         <UnorderedList p={1}>
-          {ProdRet.map((prod) => (
-            <ListItem>
+          {ProdRet.map((prod, index) => (
+            <ListItem key={index} >
               <Text textStyle={"RobotoRegular"}>{prod}</Text>
             </ListItem>
           ))}

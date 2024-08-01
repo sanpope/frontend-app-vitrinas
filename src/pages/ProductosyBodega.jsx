@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useDisclosure, useMediaQuery } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
 import Editar from "../component/Editar";
@@ -42,9 +52,12 @@ const lista2 = [
 export default function ProductosyBodega() {
   const [busqueda, setBusqueda] = useState(null);
   const [isSmallScreen] = useMediaQuery("(max-width: 475px)");
+
   const [tablaProductos, setTablaProductos] = useState(tablaProductosData);
+
   const [displayedArticulos, setDisplayedArticulos] =
     useState(tablaProductosData);
+
   const [totalResults, setTotalResults] = useState(tablaProductos.length);
   const [loading, toggleLoading] = useState(false);
   const [isAscendent, setIsAscendent] = useState(false);
@@ -176,6 +189,15 @@ export default function ProductosyBodega() {
         (pageNumber - 1) * rowsToShow + rowsToShow,
       ),
     );
+  };
+
+  const handleConfirmarDelete = (Prod) => {
+    console.log(Prod);
+    const codigoProd = Prod.Codigo;
+    let copy = [...displayedArticulos];
+    let prodToDelete = copy.filter((p) => p.Codigo != codigoProd);
+    console.log(prodToDelete);
+    setTablaProductos(prodToDelete);
   };
 
   React.useEffect(() => {
@@ -334,20 +356,10 @@ export default function ProductosyBodega() {
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
+            funcConfirmar={handleConfirmarDelete}
           />
         }
       </Box>
     </Box>
   );
-}
-
-{
-  /* <Box
-  w={"100%"}
-  display={"flex"}
-  flexDirection={{ base: "column", lg: "row" }}
-  justifyContent={{ base: "flex-start", lg: "space-between" }}
-  alignItems={{ base: "flex-start", lg: "center" }}
-  py={{ base: "0px", md: "1.25rem" }}
-></Box>;*/
 }

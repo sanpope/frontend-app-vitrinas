@@ -74,7 +74,6 @@ export default function Asesores() {
       }
     });
     setDisplayedArticulos(result);
-    console.log(result);
   };
 
   useEffect(() => {
@@ -90,13 +89,11 @@ export default function Asesores() {
           );
           break;
         case "vitrinas":
-          console.log("Vitrinas");
           articulosCopy.sort((a, b) =>
             isAscendent ? a.Vitrinas - b.Vitrinas : b.Vitrinas - a.Vitrinas,
           );
           break;
         case "ubicacion":
-          console.log("Ubicacion");
           articulosCopy.sort((a, b) =>
             isAscendent ? a.Ubicacion - b.Ubicacion : b.Ubicacion - a.Ubicacion,
           );

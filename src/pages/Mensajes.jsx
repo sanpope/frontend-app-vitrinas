@@ -8,6 +8,7 @@ import Message from "../component/Message";
 
 export default function Mensajes() {
   const city = useSelector((state) => state.vitrinaReducer.city);
+  const name = useSelector((state) => state.vitrinaReducer.name);
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
@@ -26,7 +27,9 @@ export default function Mensajes() {
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
-        <Text textStyle={" RobotoBody"}>{city}</Text>
+        <Text textStyle={" RobotoBody"}>
+          {name} - {city}
+        </Text>
         <Box
           display={"flex"}
           flexDirection={{ base: "column", sm: "row" }}

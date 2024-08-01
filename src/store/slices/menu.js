@@ -4,8 +4,6 @@ export const menuSlice = createSlice({
   name: "menu",
   initialState: {
     isDeskMenuOpen: true,
-    active: 0,
-    vitrinaActive: 0,
   },
   reducers: {
     toggleMenu: (state) => {
@@ -17,17 +15,11 @@ export const menuSlice = createSlice({
     openMenu: (state) => {
       state.isDeskMenuOpen = true;
     },
-    setActive: (state, action) => {
-      state.active = action.payload;
-    },
-    setVitrinaActive: (state, action) => {
-      state.vitrinaActive = action.payload;
-    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { toggleMenu, closeMenu, openMenu, setActive, setVitrinaActive } =
+export const { toggleMenu, closeMenu, openMenu, setVitrinaActive } =
   menuSlice.actions;
 
 export default menuSlice.reducer;

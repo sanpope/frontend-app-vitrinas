@@ -22,13 +22,13 @@ ChartJS.register(
   Legend,
 );
 
-const EvolucionVentaDiaria = () => {
+const EvolucionVentaDiaria = ({ labels, dataPoints }) => {
   const data = {
-    labels: ["01/03", "Ayer", "Hoy"],
+    labels: labels,
     datasets: [
       {
         label: "Ventas",
-        data: [120, 300, 280, 400], // Datos de ejemplo
+        data: dataPoints,
         borderColor: "red",
         backgroundColor: "red",
         pointBackgroundColor: "red",
@@ -56,10 +56,13 @@ const EvolucionVentaDiaria = () => {
       tooltip: {
         displayColors: false,
         callbacks: {
-          label: function (context) {
-            return `$${context.raw.toFixed(3)}`;
-          },
           title: titleTooltip,
+          label: function (context) {
+            const value = context.raw;
+            return value !== undefined && !isNaN(value)
+              ? `$${value?.toFixed(3)}`
+              : "";
+          },
         },
       },
     },

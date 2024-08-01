@@ -1,10 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-export default function DespachosActuales({
-  date = "06/Abr",
-  hour = "2:50PM",
-}) {
+export default function DespachosActuales({ listaDeDespachos }) {
   function truncateText(text, maxLength = 15) {
     if (text.length > maxLength) {
       return text.slice(0, maxLength) + "...";
@@ -14,11 +11,11 @@ export default function DespachosActuales({
   return (
     <Box
       w={"100%"}
+      height={"100%"}
       display={"flex"}
       flexDirection={"column"}
       justifyContent={"center"}
-      alignItems={"center"}
-      gap={"0.5rem"}
+      alignItems={"space-between"}
     >
       <Box
         w={"100%"}
@@ -27,6 +24,7 @@ export default function DespachosActuales({
         alignItems={"center"}
         borderBottomWidth={2}
         borderBottomColor={"mainBg"}
+        flexGrow={1}
       >
         <Text
           textStyle={""}
@@ -55,100 +53,57 @@ export default function DespachosActuales({
       </Box>
 
       <Box
-        w={"100%"}
         display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        borderBottomWidth={2}
-        borderBottomColor={"mainBg"}
-      >
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Text textStyle={"RobotoRegular"}>
-            {truncateText("Corales de Indias")}
-          </Text>
-        </Box>
-        <Box
-          display={"flex"}
-          justifyContent={"flex-start"}
-          alignItems={"center"}
-        >
-          <Text textStyle={"RobotoRegular"}>45</Text>
-        </Box>
-        <Box display={"flex"} justifyContent={"flex-end"}>
-          <Text
-            minW={"4.40rem"}
-            textStyle={"RobotoRegular"}
-            textAlign={"left"}
-            ml={2}
-            color={"grey.placeholder"}
-          >
-            {date} {hour}
-          </Text>
-        </Box>
-      </Box>
-      <Box
+        flexDirection={"column"}
+        justifyContent={"space-around"}
         w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        borderBottomWidth={2}
-        borderBottomColor={"mainBg"}
+        height={"140px"}
+        flexGrow={1}
+        className={"scroll-wrapper"}
       >
-        <Box
-          display={"flex"}
-          justifyContent={"flex-start"}
-          alignItems={"center"}
-        >
-          <Text textStyle={"RobotoRegular"}>
-            {truncateText("Double Tree Bogotá")}
-          </Text>
-        </Box>
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Text textStyle={"RobotoRegular"}>34</Text>
-        </Box>
-        <Box display={"flex"} justifyContent={"flex-end"}>
-          <Text
-            minW={"4.40rem"}
-            textStyle={"RobotoRegular"}
-            textAlign={"left"}
-            ml={2}
-            color={"grey.placeholder"}
+        {listaDeDespachos?.map((despacho, index) => (
+          <Box
+            key={index}
+            w={"100%"}
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            borderBottomWidth={2}
+            borderBottomColor={"mainBg"}
+            py={1}
           >
-            {date} {hour}
-          </Text>
-        </Box>
-      </Box>
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        borderBottomWidth={2}
-        borderBottomColor={"mainBg"}
-      >
-        <Box
-          display={"flex"}
-          justifyContent={"flex-start"}
-          alignItems={"center"}
-        >
-          <Text textStyle={"RobotoRegular"}>
-            {truncateText("Double Tree Bogotá")}
-          </Text>
-        </Box>
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Text textStyle={"RobotoRegular"}>78</Text>
-        </Box>
-        <Box display={"flex"} justifyContent={"flex-end"}>
-          <Text
-            minW={"4.40rem"}
-            textStyle={"RobotoRegular"}
-            textAlign={"left"}
-            ml={2}
-            color={"grey.placeholder"}
-          >
-            {date} {hour}
-          </Text>
-        </Box>
+            <Box
+              display={"flex"}
+              justifyContent={"flex-start"}
+              alignItems={"center"}
+              w={"120px"}
+            >
+              <Text textStyle={"RobotoRegular"}>
+                {truncateText(despacho.vitrina)}
+              </Text>
+            </Box>
+            <Box
+              display={"flex"}
+              justifyContent={"flex-start"}
+              alignItems={"center"}
+            >
+              <Text textStyle={"RobotoRegular"} textAlign={"center"}>
+                {despacho.cantidadDeProductosDespachados}
+              </Text>
+            </Box>
+            <Box display={"flex"} justifyContent={"flex-end"} w={"120px"}>
+              <Text
+                minW={"4.40rem"}
+                textStyle={"RobotoRegular"}
+                textAlign={"left"}
+                pl={2}
+                color={"grey.placeholder"}
+              >
+                {despacho.fecha}
+              </Text>
+            </Box>
+          </Box>
+        ))}
       </Box>
     </Box>
   );

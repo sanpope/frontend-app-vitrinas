@@ -11,7 +11,7 @@ export default function VisitaContainer({
       flexGrow={1}
       flexShrink={1}
       flexBasis={{ base: "100%", md: maxW }}
-      h={"650px"}
+      h={"600px"}
       display={"flex"}
       flexDir={"column"}
       borderRadius="20px"

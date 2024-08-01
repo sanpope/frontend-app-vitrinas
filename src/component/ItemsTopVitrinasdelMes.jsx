@@ -1,7 +1,9 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-export default function TopCategoriaItem({}) {
+const COLORS = ["#000000", "#555555", "#BBBBBB"];
+
+export default function TopCategoriaItem({ topVitrinas }) {
   return (
     <Box
       h={"100%"}
@@ -12,117 +14,46 @@ export default function TopCategoriaItem({}) {
       alignItems={"center"}
       gap={"1.2rem"}
     >
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
+      {topVitrinas?.map((venta, index) => (
         <Box
+          key={index}
+          w={"100%"}
           display={"flex"}
-          justifyContent={"flex-start"}
+          justifyContent={"space-between"}
           alignItems={"center"}
         >
           <Box
-            bg="#000000"
-            w={3}
-            h={3}
-            borderRadius="full"
-            mr={"10px"}
-            display={{ base: "none", md: "inline-flex" }}
-          ></Box>
-          <Text textStyle={"RobotoRegular"}>Corales de Indias</Text>
-        </Box>
-        <Box
-          display={"flex"}
-          justifyContent={"flex-end"}
-          borderLeftWidth={"2px"}
-          borderLeftColor={"mainBg"}
-        >
-          <Text
-            minW={"4.40rem"}
-            textStyle={"RobotoRegularBold"}
-            textAlign={"left"}
-            ml={2}
+            display={"flex"}
+            justifyContent={"flex-start"}
+            alignItems={"center"}
           >
-            $2.100.000
-          </Text>
-        </Box>
-      </Box>
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Box
-          display={"flex"}
-          justifyContent={"flex-start"}
-          alignItems={"center"}
-        >
+            <Box
+              bg={COLORS[index]}
+              w={3}
+              h={3}
+              borderRadius="full"
+              mr={"10px"}
+              display={{ base: "none", md: "inline-flex" }}
+            ></Box>
+            <Text textStyle={"RobotoRegular"}>{venta.nombre}</Text>
+          </Box>
           <Box
-            bg="#555555"
-            w={3}
-            h={3}
-            borderRadius="full"
-            mr={"10px"}
-            display={{ base: "none", md: "inline-flex" }}
-          ></Box>
-          <Text textStyle={"RobotoRegular"}>Double Tree Bogotá</Text>
-        </Box>
-        <Box
-          display={"flex"}
-          justifyContent={"flex-end"}
-          borderLeftWidth={"2px"}
-          borderLeftColor={"mainBg"}
-        >
-          <Text
-            textStyle={"RobotoRegularBold"}
-            minW={"4.40rem"}
-            textAlign={"left"}
-            ml={2}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            borderLeftWidth={"2px"}
+            borderLeftColor={"mainBg"}
           >
-            $800.000
-          </Text>
+            <Text
+              minW={"4.40rem"}
+              textStyle={"RobotoRegularBold"}
+              textAlign={"left"}
+              ml={2}
+            >
+              ${venta.venta}
+            </Text>
+          </Box>
         </Box>
-      </Box>
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Box
-          display={{ base: "none", md: "flex" }}
-          justifyContent={"flex-start"}
-          alignItems={"center"}
-        >
-          <Box
-            bg="#BBBBBB"
-            w={3}
-            h={3}
-            borderRadius="full"
-            mr={"10px"}
-            display={"inline-flex"}
-          ></Box>
-          <Text textStyle={"RobotoRegular"}>Double Tree Bogotá</Text>
-        </Box>
-        <Box
-          display={{ base: "none", md: "flex" }}
-          justifyContent={"flex-end"}
-          borderLeftWidth={"2px"}
-          borderLeftColor={"mainBg"}
-        >
-          <Text
-            textStyle={"RobotoRegularBold"}
-            minW={"4.40rem"}
-            textAlign={"left"}
-            ml={2}
-          >
-            $500.000
-          </Text>
-        </Box>
-      </Box>
+      ))}
     </Box>
   );
 }

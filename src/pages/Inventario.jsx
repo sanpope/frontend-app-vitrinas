@@ -10,6 +10,7 @@ import tablaIventarioData from "../DummieData/tablaInventarioData";
 
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
+  const name = useSelector((state) => state.vitrinaReducer.name);
   const [tablaInventario, setTablaInventario] = useState(tablaIventarioData);
   const [displayedArticulos, setDisplayedArticulos] =
     useState(tablaIventarioData);
@@ -17,7 +18,9 @@ export default function Inventario() {
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsToShow, setRowsToShow] = useState(15);
+  
   const [selectedArticulo, setArticulo] = useState(null);
+  
   const totalPages = Math.ceil(tablaInventario.length / rowsToShow);
 
   const getMasArticulos = (pageNumber) => {
@@ -63,7 +66,7 @@ export default function Inventario() {
       p={"1.25rem"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
-        <Text textStyle={"RobotoBody"}>{city}</Text>
+        <Text textStyle={"RobotoBody"}>{name} - {city}</Text>
         <Box
           w={"100%"}
           display={"flex"}

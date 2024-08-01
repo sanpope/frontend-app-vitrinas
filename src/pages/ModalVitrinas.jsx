@@ -16,12 +16,11 @@ import {
 import LeftTriangleIcon from "../assets/images/LeftTriangleIcon";
 import StandardButton from "../component/ui/buttons/standard";
 import { useSelector, useDispatch } from "react-redux";
-import { setCity } from "../store/slices/vitrina";
-import { setVitrinaActive } from "../store/slices/menu";
+import { setCity, setDispositivo, setName } from "../store/slices/vitrina";
+
 import Vitrina from "../component/Vitrina";
 import { useNavigate } from "react-router-dom";
 import Agregar from "../component/Agregar";
-import vitrinas from "../DummieData/vitrinas";
 import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import dataXmlVitrinas from "../services/vitrinasData";
@@ -31,13 +30,13 @@ export default function ModalVitrinas({
   onFirstModalOpen,
   onFirstModalClose,
   showOptions,
-  setShowOptions,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isDeskMenuOpen = useSelector(
     (state) => state.menuReducer.isDeskMenuOpen,
   );
+
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
   const [ciudadesVitrinas, setCiudadesVitrinas] = useState(null);
   const {
@@ -49,10 +48,12 @@ export default function ModalVitrinas({
   const [newVitrinaName, setNewVitrinaName] = useState("");
   const [newVitrinaCity, setNewVitrinaCity] = useState("");
 
-  const handleVitrinaClick = (cityName) => {
+  const handleVitrinaClick = (cityName, vitrinaName) => {
     dispatch(setCity(cityName));
-    dispatch(setVitrinaActive(0));
-    setShowOptions(true);
+
+    dispatch(setName(vitrinaName));
+    //dispatch(setVitrinaActive(0));
+
     navigate("/resumen");
     onFirstModalClose();
   };
@@ -69,8 +70,6 @@ export default function ModalVitrinas({
     //ToDO Agregar vitrina POST/rest/vitrina
   };
 
-  console.log(xmlToJSON(dataXmlVitrinas).vitrinas.vitrina);
-
   useEffect(() => {
     const DataVitrina = xmlToJSON(dataXmlVitrinas).vitrinas.vitrina;
     const vitrinasObj = {};
@@ -78,7 +77,6 @@ export default function ModalVitrinas({
     for (let i = 0; i < DataVitrina.length; i++) {
       const city = DataVitrina[i].ciudad["#text"];
       const vitrina = DataVitrina[i].nombre["#text"];
-      console.log(city);
       if (!(city in vitrinasObj)) {
         vitrinasObj[city] = [];
       }
@@ -87,11 +85,18 @@ export default function ModalVitrinas({
     setCiudadesVitrinas(vitrinasObj);
   }, []);
 
+  const handleFirstModalClose = () => {
+    if (showOptions === undefined) {
+      navigate("/");
+    }
+    onFirstModalClose();
+  };
+
   return (
     <>
       <Modal
         isOpen={isFirstModalOpen}
-        onClose={onFirstModalClose}
+        onClose={handleFirstModalClose}
         size={"xl"}
         scrollBehavior={"inside"}
       >
@@ -129,22 +134,32 @@ export default function ModalVitrinas({
           >
             {isSmallScreen && ciudadesVitrinas != null ? (
               <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
-                {Object.entries(ciudadesVitrinas).map(([ciudad, vitrinas]) => (
-                  <UnorderedList
-                    onClick={() => handleVitrinaClick(ciudad)}
-                    cursor={"pointer"}
-                    flex={"1 1 120px"}
-                    boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
-                    p={3}
-                  >
-                    <Text textStyle={"RobotoBodyBold"}>{ciudad}</Text>
-                    {vitrinas.map((name) => (
-                      <ListItem textStyle={"RobotoBody"} ml={2}>
-                        {name}
-                      </ListItem>
-                    ))}
-                  </UnorderedList>
-                ))}
+                {Object.entries(ciudadesVitrinas).map(
+                  ([ciudad, vitrinas], index) => (
+                    <UnorderedList
+                      key={index}
+                      cursor={"pointer"}
+                      flex={"1 1 120px"}
+                      boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
+                      p={3}
+                      maxH={"200px"}
+                    >
+                      <Text textStyle={"RobotoBodyBold"}>{ciudad}</Text>
+                      {vitrinas.map((name) => (
+                        <ListItem ml={2}>
+                          <Text
+                            textStyle={"RobotoBody"}
+                            onClick={() => handleVitrinaClick(ciudad, name)}
+                            color={"black"}
+                            _hover={{ color: "red.100" }}
+                          >
+                            {name}
+                          </Text>
+                        </ListItem>
+                      ))}
+                    </UnorderedList>
+                  ),
+                )}
               </Box>
             ) : ciudadesVitrinas != null ? (
               Object.entries(ciudadesVitrinas).map(([ciudad, vitrinas]) => {
@@ -153,7 +168,7 @@ export default function ModalVitrinas({
                     key={ciudad}
                     city={ciudad}
                     names={vitrinas}
-                    onClick={() => handleVitrinaClick(ciudad)}
+                    onClick={handleVitrinaClick}
                   />
                 );
               })

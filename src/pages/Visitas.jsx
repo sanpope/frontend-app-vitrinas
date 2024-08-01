@@ -1,7 +1,13 @@
 import React from "react";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import VisitaContainer from "../component/VisitaContainer";
-import { Box, useDisclosure, useMediaQuery } from "@chakra-ui/react";
+import {
+  Box,
+  Select,
+  Text,
+  useDisclosure,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import VerExistencias from "../component/VerExistencias";
 import StandardButton from "../component/ui/buttons/standard";
 import ProductosEnDespacho from "../component/ProductosEnDespacho";
@@ -11,10 +17,13 @@ import CardCorreccionesInventario from "../component/CardCorreccionesInventario"
 import registroVisitas from "../DummieData/registroVisitas";
 import registroMovimientosInventario from "../DummieData/registroMovimientosInventario";
 import registroCorreccionesInventario from "../DummieData/registroCorreccionesInventario";
+import { useSelector, useDispatch } from "react-redux";
 
 import WarningIcon from "../assets/images/WarningIcon";
 
 export default function Visitas() {
+  const city = useSelector((state) => state.vitrinaReducer.city);
+  const name = useSelector((state) => state.vitrinaReducer.name);
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
   const {
     isOpen: isFirstModalOpen,
@@ -38,6 +47,30 @@ export default function Visitas() {
       overflowY={"scroll"}
     >
       <Box
+        display={"flex"}
+        flexDir={{ base: "column", md: "row" }}
+        justifyContent={{ base: "flex-start", md: "space-between" }}
+        py={5}
+        gap={"10px"}
+      >
+        <Text textStyle={"RobotoBody"}>
+          {name} - {city}
+        </Text>
+        <Box w={"100%"} maxW={"300px"}>
+          <Select
+            borderColor={"grey.placeholder"}
+            bg={"white"}
+            borderRadius={"5px"}
+            placeholder={"Seleccionar un Intervalo"}
+            pacing={2}
+          >
+            <option>Opción 1 </option>
+            <option>Opción 2</option>
+            <option>Opción 3</option>
+          </Select>
+        </Box>
+      </Box>
+      <Box
         order={{ base: "2", xl: "1" }}
         h={"90%"}
         display="flex"
@@ -47,8 +80,9 @@ export default function Visitas() {
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
           maxW="320px"
-          children={registroVisitas.map((visita) => (
+          children={registroVisitas.map((visita, index) => (
             <CardVisitas
+              key={index}
               asesor={visita.Asesor}
               fecha={visita["Fecha y hora"]}
               ingresos={visita.Ingresos}
@@ -61,8 +95,9 @@ export default function Visitas() {
         <VisitaContainer
           title="Movimientos de inventario"
           maxW="320px"
-          children={registroMovimientosInventario.map((inventario) => (
+          children={registroMovimientosInventario.map((inventario, index) => (
             <CardMovimientosInventario
+              key={index}
               fecha={inventario["Fecha y hora"]}
               visita={inventario.Visita}
               ProdIngr={inventario["Productos Ingresados"]}
@@ -73,8 +108,9 @@ export default function Visitas() {
         <VisitaContainer
           title="Correcciones de inventario"
           maxW="320px"
-          children={registroCorreccionesInventario.map((corr) => (
+          children={registroCorreccionesInventario.map((corr, index) => (
             <CardCorreccionesInventario
+              key={index}
               fecha={corr["Fecha y hora"]}
               visita={corr.Visita}
               ProdCorr={corr["Productos Corregidos"]}

@@ -24,6 +24,7 @@ export default function ConfirmationMessage({
   onClose,
   funcConfirmar,
   buttonText = "Confirmar",
+  focusRow,
 }) {
   return (
     <Box>
@@ -75,7 +76,10 @@ export default function ConfirmationMessage({
               w={"50%"}
               fontSize="14px"
               fontWeight="400"
-              onClick={() => funcConfirmar}
+              onClick={() => {
+                funcConfirmar(focusRow);
+                onClose();
+              }}
             >
               {buttonText}
             </StandardButton>

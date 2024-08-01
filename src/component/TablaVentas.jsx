@@ -59,8 +59,8 @@ export default function TablaVentas({
           <table className="Table">
             <thead className="TableHead">
               <tr className="TrHead">
-                {HEADERS.map((name) => (
-                  <th className="ThHead">{name}</th>
+                {HEADERS.map((name, index) => (
+                  <th key={index} className="ThHead">{name}</th>
                 ))}
               </tr>
             </thead>
@@ -69,17 +69,17 @@ export default function TablaVentas({
               className="TableBody"
               style={{ height: "100%", maxHeight: "400px" }}
             >
-              {displayedArticulos.map((articulo) => {
+              {displayedArticulos.map((articulo, index) => {
                 return (
-                  <tr className="TrBody">
-                    {Object.values(articulo).map((value) => {
-                      return <td className="TdBody">{value}</td>;
+                  <tr key={index} className="TrBody">
+                    {Object.values(articulo).map((value, index) => {
+                      return <td key={index} className="TdBody">{value}</td>;
                     })}
                     <td
                       style={{ paddingLeft: "15px", textAlign: "end" }}
                       onClick={() => ""}
                     >
-                      <EyeIcon width="20px" height="20px" />
+                      <EyeIcon width="20px" height="20px" onClick={onOpen} />
                     </td>
                   </tr>
                 );
@@ -91,6 +91,7 @@ export default function TablaVentas({
 
       <Box w={"100%"} h={"100%"}>
         <Box
+          w={"100%"}
           bg={"#d7d7d7"}
           px={1}
           borderBottomLeftRadius={{ base: "0px", md: "20px" }}
@@ -121,6 +122,7 @@ export default function TablaVentas({
             />
           </Box>
         </Box>
+        <VerExistencias isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
       </Box>
     </>
   );

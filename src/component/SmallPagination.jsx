@@ -9,7 +9,7 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
   const isDisabledRight = currentPage === totalPages;
 
   return (
-    <Box display="flex" alignItems="center">
+    <Box display="flex" alignItems="center" m={1}>
       <StandardButton
         variant={"BORDERLESS"}
         isDisabled={isDisabledLeft}
@@ -22,11 +22,18 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
           fill={isDisabledLeft ? "grey" : "black"}
         />
       </StandardButton>
-      <StandardButton variant={"RED_SECUNDARY"} borderRadius="md" px={1}>
+      <StandardButton
+        variant={"RED_SECUNDARY"}
+        borderRadius="md"
+        px={"5px"}
+        fontSize={"12px"}
+      >
         {currentPage}
       </StandardButton>
-      <Text px={2}>de</Text>
-      <Text>{totalPages}</Text>
+      <Text px={2} textStyle={"RobotoRegular"}>
+        de
+      </Text>
+      <Text textStyle={"RobotoRegular"}>{totalPages}</Text>
       <StandardButton
         variant={"BORDERLESS"}
         isDisabled={isDisabledRight}

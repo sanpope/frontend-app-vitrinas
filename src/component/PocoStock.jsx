@@ -3,19 +3,21 @@ import React, { useState } from "react";
 import SmallPagination from "../component/SmallPagination";
 import BiggerThanICon from "../assets/images/BiggerThanIcon";
 
-export default function PocoStock({
-  producto1 = "Camisetas de Colombia",
-  cantidad1 = 8,
-  producto2 = "Gorras de Colombia",
-  cantidad2 = 8,
-}) {
+export default function PocoStock({ productosConPocoStock }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
+  const itemsPerPage = 2;
+  const totalPages = Math.ceil(productosConPocoStock.length / itemsPerPage);
+
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItem1 = productosConPocoStock[startIndex];
+  const currentItem2 = productosConPocoStock[startIndex + 1];
+
   return (
     <Box
       w={"100%"}
@@ -26,7 +28,7 @@ export default function PocoStock({
       justifyContent={"space-between"}
     >
       <Box>
-        <Text textStyle={"RobotoSubtitleBold"}>{producto1}</Text>
+        <Text textStyle={"RobotoSubtitleBold"}>{currentItem1?.nombre}</Text>
         <Box
           display={"flex"}
           flexGrow={1}
@@ -48,8 +50,7 @@ export default function PocoStock({
               Actual
             </Text>
             <Text textStyle={"RobotoSubtitleBold"} flexGrow={1}>
-              {" "}
-              {cantidad1}
+              {currentItem1?.existenciasActuales}
             </Text>
           </Box>
           <Box display={"flex"} flexGrow={1} justifyContent={"space-around"}>
@@ -66,14 +67,13 @@ export default function PocoStock({
               textAlign={"end"}
               flexGrow={1}
             >
-              {" "}
-              2
+              {currentItem1?.cantidadMinima}
             </Text>
           </Box>
         </Box>
       </Box>
       <Box>
-        <Text textStyle={"RobotoSubtitleBold"}>{producto2}</Text>
+        <Text textStyle={"RobotoSubtitleBold"}>{currentItem2?.nombre}</Text>
         <Box
           display={"flex"}
           flexGrow={1}
@@ -95,7 +95,7 @@ export default function PocoStock({
               Actual
             </Text>
             <Text textStyle={"RobotoSubtitleBold"} flexGrow={1}>
-              {cantidad2}
+              {currentItem2?.existenciasActuales}
             </Text>
           </Box>
           <Box display={"flex"} justifyContent={"space-around"} flexGrow={1}>
@@ -112,12 +112,12 @@ export default function PocoStock({
               flexGrow={1}
               textAlign={"end"}
             >
-              2
+              {currentItem2?.cantidadMinima}
             </Text>
           </Box>
         </Box>
       </Box>
-      <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
+      <Box w={"100%"} display={"flex"} justifyContent={"flex-end"} m={2}>
         <SmallPagination
           currentPage={currentPage}
           totalPages={totalPages}

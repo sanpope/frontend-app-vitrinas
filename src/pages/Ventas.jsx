@@ -13,6 +13,7 @@ import HandsUsdIcon from "../assets/images/HandsUsdIcon";
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
+  const name = useSelector((state) => state.vitrinaReducer.name);
   const [selectedOption, setSelectedOption] = useState("Todos");
 
   const [tablaVentas, setTablaVentas] = useState(tablaVentasData);
@@ -64,7 +65,9 @@ export default function Ventas() {
           gap={"10px"}
           flex={"1 1 200px"}
         >
-          <Text textStyle={" RobotoBody"}>{city}</Text>
+          <Text textStyle={" RobotoBody"}>
+            {name} - {city}
+          </Text>
           <Text textStyle={"RobotoTitleBold"}>Ventas</Text>
         </Box>
         <Box
