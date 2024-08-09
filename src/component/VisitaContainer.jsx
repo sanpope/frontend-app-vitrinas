@@ -33,7 +33,7 @@ export default function VisitaContainer({
         h={"100%"}
         bg={"white"}
         p={3}
-        className="container "
+        className="container"
         borderBottomRadius={"20px"}
       >
         <Box className="scroll-wrapper"> {children}</Box>

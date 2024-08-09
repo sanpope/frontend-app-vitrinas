@@ -107,7 +107,7 @@ export default function ActualizacionesInventario({
         justifyContent={"flex-start"}
         alignItems={"center"}
       >
-        {verificada ? <VerifiedIcon /> : <NoVerifiedIcon />}
+        {verificada === "true" ? <VerifiedIcon /> : <NoVerifiedIcon />}
       </Box>
     </Box>
   );

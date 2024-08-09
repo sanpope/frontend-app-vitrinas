@@ -1,28 +1,137 @@
-import React, { useState } from "react";
-import Transferir from "../component/Transferir";
+import React, { useState, useEffect } from "react";
+
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Select, Text } from "@chakra-ui/react";
 import TablaVentas from "../component/TablaVentas";
 import DatePickerComponent from "../component/DatePickerComponent";
-import StandardButton from "../component/ui/buttons/standard";
 import Container from "../component/Container";
-import tablaVentasData from "../DummieData/tablaVentasData";
+
 import CoinsIcon from "../assets/images/CoinsIcon";
 import ChartLineDownIcon from "../assets/images/ChartLineDownIcon";
 import HandsUsdIcon from "../assets/images/HandsUsdIcon";
+
+import xmlToJSON from "../services/XmlToJsonConverter";
+import ventasData from "../services/ventasData";
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [selectedOption, setSelectedOption] = useState("Todos");
 
-  const [tablaVentas, setTablaVentas] = useState(tablaVentasData);
-  const [displayedArticulos, setDisplayedArticulos] = useState(tablaVentasData);
-  const [totalResults, setTotalResults] = useState(tablaVentas.length);
+  const [tablaVentas, setTablaVentas] = useState(null);
+  const [tablaDevoluciones, setTablaDevoluciones] = useState([]);
+  const [listadoProductos, setListadoProductos] = useState(null);
+
+  const [displayedArticulos, setDisplayedArticulos] = useState(
+    tablaVentas ? tablaVentas : [],
+  );
+  const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsToShow, setRowsToShow] = useState(11);
-  const totalPages = Math.ceil(tablaVentas.length / rowsToShow);
+  const totalPages = Math.ceil(tablaVentas?.length / rowsToShow);
+
+  useEffect(() => {
+    parseData();
+  }, []);
+
+  useEffect(() => {
+    getMasArticulos(1);
+  }, [tablaVentas]);
+
+  useEffect(() => {
+    if (tablaVentas) {
+      setDisplayedArticulos(
+        selectedOption === "Todos"
+          ? [...tablaVentas, ...tablaDevoluciones]
+          : selectedOption === "Devoluciones"
+            ? tablaDevoluciones
+            : tablaVentas,
+      );
+      setTotalResults(
+        selectedOption === "Todos"
+          ? [...tablaVentas, ...tablaDevoluciones].length
+          : selectedOption === "Devoluciones"
+            ? tablaDevoluciones.length
+            : tablaVentas.length,
+      );
+    }
+  }, [selectedOption]);
+
+  const parseData = () => {
+    const resumenInfo = xmlToJSON(ventasData);
+    const totalVentas =
+      resumenInfo?.datosDeVentas?.ventasYDevoluciones?.vtasDeIntervalo;
+    const totalDevoluciones =
+      resumenInfo?.datosDeVentas?.ventasYDevoluciones?.devDeIntervalo;
+    const infoTotalVentas = [];
+    const infoTotalDevs = [];
+
+    totalVentas.forEach((intervaloVenta) => {
+      const { totalVtas, venta } = intervaloVenta;
+      const { codigo, fechaHora, valor, generadaEnCorreccion, prodsAfectados } =
+        venta;
+      // Crear un objeto para la información de la venta
+      let ventaInfo = {
+        totalVtas: totalVtas["#text"],
+        valor: valor["#text"],
+        codigo: codigo["#text"],
+        fechaHora: fechaHora["#text"],
+        generadaEnCorreccion: generadaEnCorreccion["#text"],
+        prodsAMostrar: [],
+        totalProds: [],
+      };
+
+      prodsAfectados.producto.forEach((producto, index) => {
+        const productoInfo = {
+          nombre: producto.nombre["#text"],
+          cantidad: producto.cantidad["#text"],
+        };
+        ventaInfo.totalProds.push(productoInfo);
+
+        if (index < 2) {
+          ventaInfo[`nombre${index + 1}`] = productoInfo.nombre;
+          ventaInfo[`cantidad${index + 1}`] = productoInfo.cantidad;
+          ventaInfo.prodsAMostrar.push(productoInfo);
+        }
+      });
+      infoTotalVentas.push(ventaInfo);
+    });
+    setTablaVentas(infoTotalVentas);
+
+    totalDevoluciones.forEach((intervaloDev) => {
+      const { totalDevs, devolucion } = intervaloDev;
+      const { codigo, fechaHora, valor, generadaEnCorreccion, prodsAfectados } =
+        devolucion;
+      // Crear un objeto para la información de la dev
+      let devInfo = {
+        totalDevs: totalDevs["#text"],
+        valor: valor["#text"],
+        codigo: codigo["#text"],
+        fechaHora: fechaHora["#text"],
+        generadaEnCorreccion: generadaEnCorreccion["#text"],
+        prodsAMostrar: [],
+        totalProds: [],
+      };
+
+      prodsAfectados.producto.forEach((producto, index) => {
+        const productoInfo = {
+          nombre: producto.nombre["#text"],
+          cantidad: producto.cantidad["#text"],
+        };
+        devInfo.totalProds.push(productoInfo);
+
+        if (index < 2) {
+          devInfo[`nombre${index + 1}`] = productoInfo.nombre;
+          devInfo[`cantidad${index + 1}`] = productoInfo.cantidad;
+          devInfo.prodsAMostrar.push(productoInfo);
+        }
+      });
+      infoTotalDevs.push(devInfo);
+    });
+    setTablaDevoluciones(infoTotalDevs);
+    setTotalResults([...infoTotalDevs, ...infoTotalVentas].length);
+  };
 
   const handleSelectChange = (event) => {
     setSelectedOption(event.target.value);
@@ -32,7 +141,7 @@ export default function Ventas() {
     toggleLoading(true);
     setCurrentPage(pageNumber);
     setDisplayedArticulos(
-      tablaVentas.slice(
+      tablaVentas?.slice(
         (pageNumber - 1) * rowsToShow,
         (pageNumber - 1) * rowsToShow + rowsToShow,
       ),
@@ -49,7 +158,8 @@ export default function Ventas() {
       height={"100%"}
       display={"flex"}
       flexDir={"column"}
-      p={"16px"}
+      overflowY={"auto"}
+      p={"1.25rem"}
     >
       <Box
         w={"100%"}
@@ -57,7 +167,6 @@ export default function Ventas() {
         justifyContent={"space-between"}
         alignContent={"center"}
         flexWrap={"wrap"}
-        p={2}
       >
         <Box
           display={"flex"}
@@ -95,29 +204,30 @@ export default function Ventas() {
         </Box>
         <Box></Box>
       </Box>
-      <TablaVentas
-        displayedArticulos={displayedArticulos}
-        totalResults={totalResults}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        getMasArticulos={getMasArticulos}
-        tableTitle={
-          selectedOption === "Ventas"
-            ? "Productos Vendidos"
-            : selectedOption === "Devoluciones"
-              ? "Productos Devueltos"
-              : "Productos"
-        }
-      />
+      <Box w={"100%"} display="flex" flexDir={"column"} mb="1rem" flexGrow={1}>
+        <TablaVentas
+          displayedArticulos={displayedArticulos}
+          totalResults={totalResults}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          getMasArticulos={getMasArticulos}
+          tableTitle={
+            selectedOption === "Ventas"
+              ? "Productos Vendidos"
+              : selectedOption === "Devoluciones"
+                ? "Productos Devueltos"
+                : "Productos"
+          }
+          productosRestantes={listadoProductos?.length - 2}
+        />
+      </Box>
 
       <Box
         w={"100%"}
-        h={"100%"}
         display="flex"
         flexWrap={"wrap"}
         gridGap={"1rem"}
         justifyContent={"space-between"}
-        m={2}
       >
         <Container
           flex={"1 1 auto"}

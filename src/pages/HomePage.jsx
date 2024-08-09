@@ -30,7 +30,10 @@ import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HEADER_HEIGHT } from "../component/Header";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setVentaTotalMes, setTopCategoriasGlobal } from "../store/slices/homePage";
+import {
+  setVentaTotalMes,
+  setTopCategoriasGlobal,
+} from "../store/slices/homePage";
 
 import xmlToJSON from "../services/XmlToJsonConverter";
 import homePageData from "../services/homePageData";
@@ -165,7 +168,7 @@ export default function HomePage() {
         return { nombre, porcentaje, icon };
       });
       setTotalCategorias(arrTopCategorias);
-      dispatch(setTopCategoriasGlobal(arrTopCategorias)); 
+      dispatch(setTopCategoriasGlobal(arrTopCategorias));
     } else {
       setTotalCategorias([{ nombre: "Top de Categorías no encontradas" }]);
     }

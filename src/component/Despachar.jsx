@@ -87,7 +87,10 @@ export default function Despachar({
                   flexDirection={"column"}
                   gap={"1.25rem"}
                 >
-                  <Text textStyle={"RobotoSubtitleRegular"}>
+                  <Text
+                    textStyle={"RobotoSubtitleRegular"}
+                    color={"grey.placeholder"}
+                  >
                     Se despacharán productos desde
                   </Text>
                   <Text textStyle={"RobotoSubtitleRegular"}>Bodega</Text>
@@ -107,8 +110,24 @@ export default function Despachar({
                   justifyContent={"space-between"}
                   gap={"1.25rem"}
                 >
-                  <Text textStyle={"RobotoSubtitleRegular"}>Hacia</Text>
-                  <Text textStyle={"RobotoSubtitleRegular"}>{vitrina}</Text>
+                  <Text
+                    textStyle={"RobotoSubtitleRegular"}
+                    color={"grey.placeholder"}
+                    p={2}
+                    px={5}
+                  >
+                    Hacia
+                  </Text>
+                  <Text
+                    textStyle={"RobotoSubtitleRegular"}
+                    borderRadius={"10px"}
+                    borderWidth={1}
+                    borderColor={"mainBg"}
+                    p={2}
+                    px={5}
+                  >
+                    {vitrina}
+                  </Text>
                 </Box>
               </Box>
             </Box>

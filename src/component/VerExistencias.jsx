@@ -15,21 +15,11 @@ import {
 import StandardButton from "./ui/buttons/standard";
 import ClockIcon from "../assets/images/ClockIcon";
 import UsdCircleIcon from "../assets/images/UsdCircleIcon";
-const newDate = new Date();
 
 export default function VerExistencias({
-  date = newDate.toLocaleDateString(),
-  hour = newDate.toLocaleTimeString(),
-  total = "245.000",
-  products = [
-    { Nombre: "Producto 1", Cantidad: 45 },
-    { Nombre: "Producto 2", Cantidad: 45 },
-    { Nombre: "Producto 3", Cantidad: 45 },
-    { Nombre: "Producto 4", Cantidad: 45 },
-    { Nombre: "Producto 5", Cantidad: 45 },
-    { Nombre: "Producto 6", Cantidad: 45 },
-    { Nombre: "Producto 7", Cantidad: 45 },
-  ],
+  fecha,
+  total,
+  productos,
   isOpen,
   onOpen,
   onClose,
@@ -37,7 +27,7 @@ export default function VerExistencias({
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
+        <ModalOverlay bg={"rgba(0, 0, 0, 0.2)"} />
         <ModalContent borderRadius={"20px"} w={"100%"} maxW={"400px"}>
           <ModalHeader
             bg={"black"}
@@ -59,26 +49,24 @@ export default function VerExistencias({
               py={"10px"}
             >
               <Box
-                w={"50%"}
+                flexGrow={1}
                 display={"flex"}
                 justifyContent={"flex-start"}
                 alignItems={"center"}
                 gap={"5px"}
               >
                 <ClockIcon width={"13px"} />
-                <Text textStyle={"RobotoTinyBold"}>
-                  {date} a las {hour}
-                </Text>
+                <Text textStyle={"RobotoRegularBold"}>{fecha}</Text>
               </Box>
               <Box
-                w={"50%"}
+                flexGrow={1}
                 display={"flex"}
                 justifyContent={"flex-start"}
                 alignItems={"center"}
                 gap={"5px"}
               >
                 <UsdCircleIcon width={"20px"} />
-                <Text textStyle={"RobotoTinyBold"}>${total}</Text>
+                <Text textStyle={"RobotoRegularBold"}>${total}</Text>
               </Box>
             </Box>
             <Box
@@ -116,7 +104,7 @@ export default function VerExistencias({
                 overflowY="scroll"
                 overflowX="hidden"
               >
-                {products.map((producto, index) => (
+                {productos?.map((producto, index) => (
                   <Box
                     key={index}
                     w={"100%"}
@@ -129,10 +117,10 @@ export default function VerExistencias({
                     pr={"15px"}
                   >
                     <Text textStyle={"RobotoBody"} color={"black"}>
-                      {producto.Nombre}
+                      {producto.nombre}
                     </Text>
                     <Text textStyle={"RobotoBody"} color={"black"}>
-                      {producto.Cantidad}
+                      {producto.cantidad}
                     </Text>
                   </Box>
                 ))}

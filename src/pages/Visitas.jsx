@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import VisitaContainer from "../component/VisitaContainer";
 import {
@@ -14,9 +14,10 @@ import ProductosEnDespacho from "../component/ProductosEnDespacho";
 import CardVisitas from "../component/CardVisitas";
 import CardMovimientosInventario from "../component/CardMovimientosInventario";
 import CardCorreccionesInventario from "../component/CardCorreccionesInventario";
-import registroVisitas from "../DummieData/registroVisitas";
-import registroMovimientosInventario from "../DummieData/registroMovimientosInventario";
-import registroCorreccionesInventario from "../DummieData/registroCorreccionesInventario";
+
+import xmlToJSON from "../services/XmlToJsonConverter";
+import visitasData from "../services/visitasData";
+
 import { useSelector, useDispatch } from "react-redux";
 
 import WarningIcon from "../assets/images/WarningIcon";
@@ -25,6 +26,137 @@ export default function Visitas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
+
+  const [totalVisitas, setTotalVisitas] = useState(null);
+  const [totalMovivmientos, setTotalMovimientos] = useState(null);
+  const [totalCorrecciones, setTotalCorrecciones] = useState(null);
+
+  useEffect(() => {
+    parseData();
+  }, []);
+
+  const parseData = () => {
+    const resumenInfo = xmlToJSON(visitasData);
+
+    const Visitas = resumenInfo?.acontecimientosDeVisita?.Visitas;
+    const Movimientos = resumenInfo?.acontecimientosDeVisita?.Movimientos;
+    const Correcciones = resumenInfo?.acontecimientosDeVisita?.Correcciones;
+
+    if (Visitas && Array.isArray(Visitas?.Visita)) {
+      const listadoVisitas = Visitas?.Visita;
+      const arrTotalVisitas = listadoVisitas?.map((Visita) => {
+        const idVisita = Visita?.idVisita["#text"];
+        const fechaHora = Visita?.fechaHora["#text"];
+        const asesor = Visita?.asesor["#text"];
+        const verificada = Visita?.verificada["#text"];
+        const ingresos = Visita?.ingresos["#text"];
+        const retiros = Visita?.retiros["#text"];
+        const correccionesDeInventario =
+          Visita?.correccionesDeInventario?.["#text"];
+        const revertida = Visita?.revertida?.["#text"];
+        return {
+          idVisita,
+          fechaHora,
+          asesor,
+          verificada,
+          ingresos,
+          retiros,
+          correccionesDeInventario,
+          revertida,
+        };
+      });
+      setTotalVisitas(arrTotalVisitas);
+    }
+
+    if (Movimientos && Array.isArray(Movimientos?.Movim)) {
+      const listadoMovimientos = Movimientos?.Movim;
+
+      const arrTotalMovimientos = listadoMovimientos?.map((mov) => {
+        const fechaHora = mov.fechaHora["#text"];
+        const hechoEnVisita = mov.hechoEnVisita["#text"];
+        const idVisita = mov.idVisita["#text"];
+        let totalProdsIngr = [];
+        let totalProdsRet = [];
+
+        if (
+          mov.ProductosIngresados &&
+          Array.isArray(mov.ProductosIngresados.Producto)
+        ) {
+          const listadoProductosIngresados = mov.ProductosIngresados.Producto;
+          totalProdsIngr = listadoProductosIngresados.map((prod) => {
+            const nombre = prod.nombre["#text"];
+            const cantidad = prod.cantidad["#text"];
+            return { nombre, cantidad };
+          });
+        }
+
+        if (
+          mov.ProductosRetirados &&
+          Array.isArray(mov.ProductosRetirados.Producto)
+        ) {
+          const listadoProductosRetirados = mov.ProductosRetirados.Producto;
+          totalProdsRet = listadoProductosRetirados.map((prod) => {
+            const nombre = prod.nombre["#text"];
+            const cantidad = prod.cantidad["#text"];
+            return { nombre, cantidad };
+          });
+        }
+
+        return {
+          fechaHora,
+          hechoEnVisita,
+          idVisita,
+          totalProdsIngr,
+          totalProdsRet,
+        };
+      });
+      setTotalMovimientos(arrTotalMovimientos);
+    }
+
+    if (Correcciones && Array.isArray(Correcciones?.CorreccionDeExistencias)) {
+      const listadoCorrecciones = Correcciones?.CorreccionDeExistencias;
+      const arrTotalCorrecciones = listadoCorrecciones?.map((correccion) => {
+        const fechaHora = correccion.fechaHora["#text"];
+        const visita = correccion.visita["#text"];
+        const idVisita = correccion.idVisita["#text"];
+
+        let ProdsCorregidos = [];
+
+        if (
+          correccion.ProductosCorregidos &&
+          Array.isArray(correccion.ProductosCorregidos.ProductoCorr)
+        ) {
+          const listadoProductosCorregidos =
+            correccion.ProductosCorregidos.ProductoCorr;
+          ProdsCorregidos = listadoProductosCorregidos.map((prod) => {
+            const codigo = prod.codigo["#text"];
+            const nombre = prod.nombre["#text"];
+            const cantidad = prod.cantidadCorregida?.["#text"];
+            const adicion = prod.adicion["#text"];
+            const motivoDeCorreccion = prod.motivoDeCorreccion["#text"];
+            const nota = prod.nota["#text"];
+            return {
+              codigo,
+              nombre,
+              cantidad,
+              adicion,
+              motivoDeCorreccion,
+              nota,
+            };
+          });
+        }
+
+        return {
+          fechaHora,
+          visita,
+          idVisita,
+          ProdsCorregidos,
+        };
+      });
+      setTotalCorrecciones(arrTotalCorrecciones);
+    }
+  };
+
   const {
     isOpen: isFirstModalOpen,
     onOpen: onFirstModalOpen,
@@ -53,9 +185,13 @@ export default function Visitas() {
         py={5}
         gap={"10px"}
       >
-        <Text textStyle={"RobotoBody"}>
-          {name} - {city}
-        </Text>
+        <Box>
+          <Text textStyle={"RobotoBody"}>
+            {name} - {city}
+          </Text>
+          <Text textStyle={"RobotoTitleBold"}>Visitas</Text>
+        </Box>
+
         <Box w={"100%"} maxW={"300px"}>
           <Select
             borderColor={"grey.placeholder"}
@@ -80,40 +216,40 @@ export default function Visitas() {
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
           maxW="320px"
-          children={registroVisitas.map((visita, index) => (
+          children={totalVisitas?.map((visita, index) => (
             <CardVisitas
               key={index}
-              asesor={visita.Asesor}
-              fecha={visita["Fecha y hora"]}
-              ingresos={visita.Ingresos}
-              retiros={visita.Retiros}
-              correcciones={visita.Correcciones}
-              verificada={visita.Verificada}
+              asesor={visita.asesor}
+              fecha={visita.fechaHora}
+              ingresos={visita.ingresos}
+              retiros={visita.retiros}
+              correcciones={visita.correccionesDeInventario}
+              verificada={visita.verificada}
             />
           ))}
         />
         <VisitaContainer
           title="Movimientos de inventario"
           maxW="320px"
-          children={registroMovimientosInventario.map((inventario, index) => (
+          children={totalMovivmientos?.map((movimiento, index) => (
             <CardMovimientosInventario
               key={index}
-              fecha={inventario["Fecha y hora"]}
-              visita={inventario.Visita}
-              ProdIngr={inventario["Productos Ingresados"]}
-              ProdRet={inventario["Productos Retirados"]}
+              fecha={movimiento.fechaHora}
+              visita={movimiento.hechoEnVisita}
+              ProdIngr={movimiento.totalProdsIngr}
+              ProdRet={movimiento.totalProdsRet}
             />
           ))}
         />
         <VisitaContainer
           title="Correcciones de inventario"
           maxW="320px"
-          children={registroCorreccionesInventario.map((corr, index) => (
+          children={totalCorrecciones?.map((corr, index) => (
             <CardCorreccionesInventario
               key={index}
-              fecha={corr["Fecha y hora"]}
-              visita={corr.Visita}
-              ProdCorr={corr["Productos Corregidos"]}
+              fecha={corr?.fechaHora}
+              visita={corr?.visita}
+              ProdCorr={corr?.ProdsCorregidos}
             />
           ))}
         />

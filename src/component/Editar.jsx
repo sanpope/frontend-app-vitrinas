@@ -36,7 +36,7 @@ export default function Agregar({
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
+      <ModalOverlay bg={"rgba(0, 0, 0, 0.2)"} />
       <ModalContent borderRadius={"20px"}>
         <ModalHeader
           bg={"black"}

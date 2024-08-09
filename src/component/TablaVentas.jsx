@@ -1,35 +1,17 @@
 import React, { useState } from "react";
 import {
   Box,
+  ListItem,
   Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
+  UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
-import Checkbox from "./ui/checkbox";
-import LeftArrowIcon from "../assets/images/LeftArrowIcon";
-import BiggerThanIcon from "../assets/images/BiggerThanIcon";
 import EyeIcon from "../assets/images/EyeIcon";
-import UnionIcon from "../assets/images/UnionIcon";
-import TrashIcon from "../assets/images/TrashIcon";
-import WarningIcon from "../assets/images/WarningIcon";
 import VerExistencias from "./VerExistencias";
-import Pagination from "./Pagination";
-
-const HEADERS = [
-  "Venta",
-  "Fecha Y Hora",
-  "Precio",
-  "Productos",
-  "Nota",
-  "Acciones",
-];
+import Note from "../component/Note";
+import BottomTable from "./ui/tablas/Bottom";
+import Contenedor from "./ui/tablas/Contenedor";
 
 export default function TablaVentas({
   displayedArticulos,
@@ -38,92 +20,106 @@ export default function TablaVentas({
   totalPages,
   getMasArticulos,
   tableTitle,
+  productosRestantes,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const HEADERS = [
+    "Venta",
+    "Fecha y Hora",
+    "Precio",
+    tableTitle,
+    "Nota",
+    "Acciones",
+  ];
+
+  const [prods, setProds] = useState(null);
+  const [fechaAct, setFechaActual] = useState(null);
+  const [valorTotal, setValorTotal] = useState(null);
+
+  const handleOnOpen = (prods, date, vTotal) => {
+    setProds(prods);
+    setFechaActual(date);
+    setValorTotal(vTotal);
+    onOpen();
+  };
 
   return (
     <>
-      <Box
-        mt={"5px"}
-        position="relative"
-        width="100%"
-        display="flex"
-        flexDir="column"
-        flexGrow={1}
-      >
-        <Box
-          overflowY={"auto"}
-          borderTopLeftRadius={{ base: "0px", md: "20px" }}
-          borderTopRightRadius={{ base: "0px", md: "20px" }}
-        >
-          <table className="Table">
-            <thead className="TableHead">
-              <tr className="TrHead">
-                {HEADERS.map((name, index) => (
-                  <th key={index} className="ThHead">{name}</th>
-                ))}
+      <Contenedor maxHeight={"460px"}>
+        <thead className="">
+          <tr className="">
+            {HEADERS.map((name, index) => (
+              <th key={index} className="ventastTh">
+                {name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody className="">
+          {displayedArticulos?.map((articulo, articuloIndex) => {
+            return (
+              <tr key={articuloIndex} className="">
+                <td className="ventasTd">{articulo.codigo}</td>
+                <td className="ventasTd">{articulo.fechaHora}</td>
+                <td className="ventasTd">${articulo.valor}</td>
+                <td className="ventasTd">
+                  <UnorderedList>
+                    <ListItem>
+                      {articulo.nombre1} x {articulo.cantidad1} unds
+                    </ListItem>
+                    <ListItem>
+                      {articulo.nombre2} x {articulo.cantidad2} unds
+                      <span style={{ fontWeight: "bolder" }}>
+                        y {productosRestantes} más ...
+                      </span>
+                    </ListItem>
+                  </UnorderedList>
+                </td>
+                <td className="ventasTd">
+                  {articulo?.generadaEnCorreccion === "true" ? (
+                    <Note
+                      text1={
+                        "¡Transacción generada por un asesor para corregir inventario!  "
+                      }
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </td>
+                <td className="iconContainer" onClick={() => ""}>
+                  <EyeIcon
+                    width="20px"
+                    height="20px"
+                    onClick={() =>
+                      handleOnOpen(
+                        articulo.totalProds,
+                        articulo.fechaHora,
+                        articulo.valor,
+                      )
+                    }
+                    p={1}
+                  />
+                  <VerExistencias
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    productos={prods}
+                    fecha={fechaAct}
+                    total={valorTotal}
+                  />
+                </td>
               </tr>
-            </thead>
+            );
+          })}
+        </tbody>
+      </Contenedor>
 
-            <tbody
-              className="TableBody"
-              style={{ height: "100%", maxHeight: "400px" }}
-            >
-              {displayedArticulos.map((articulo, index) => {
-                return (
-                  <tr key={index} className="TrBody">
-                    {Object.values(articulo).map((value, index) => {
-                      return <td key={index} className="TdBody">{value}</td>;
-                    })}
-                    <td
-                      style={{ paddingLeft: "15px", textAlign: "end" }}
-                      onClick={() => ""}
-                    >
-                      <EyeIcon width="20px" height="20px" onClick={onOpen} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </Box>
-      </Box>
-
-      <Box w={"100%"} h={"100%"}>
-        <Box
-          w={"100%"}
-          bg={"#d7d7d7"}
-          px={1}
-          borderBottomLeftRadius={{ base: "0px", md: "20px" }}
-          borderBottomRightRadius={{ base: "0px", md: "20px" }}
-          color={"black"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Box
-            p={2}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={"1rem"}
-          >
-            <Text
-              display={{ base: "none", md: "inline-flex" }}
-              textStyle={"RobotoRegularBold"}
-            >
-              {totalResults} elementos
-            </Text>
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={getMasArticulos}
-            />
-          </Box>
-        </Box>
-        <VerExistencias isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
-      </Box>
+      <BottomTable
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={getMasArticulos}
+        totalResults={totalResults}
+      />
     </>
   );
 }

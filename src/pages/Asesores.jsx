@@ -13,20 +13,48 @@ import SmallRightArrowIcon from "../assets/images/SmallRightArrow";
 import SyncIcon from "../assets/images/SyncIcon";
 import TablaAsesores from "../component/TablaAsesores";
 import AgregarAsesor from "../component/AgregarAsesor";
-import tablaAsesoresData from "../DummieData/tablaAsesoresData";
+
+import xmlToJSON from "../services/XmlToJsonConverter";
+import asesoresData from "../services/asesoresData";
 
 export default function Asesores() {
-  const [tablaAsesores, setTablaAsesores] = useState(tablaAsesoresData);
-  const [displayedArticulos, setDisplayedArticulos] =
-    useState(tablaAsesoresData);
-  const [totalResults, setTotalResults] = useState(tablaAsesores.length);
+  const [tablaAsesores, setTablaAsesores] = useState(null);
+  const [displayedArticulos, setDisplayedArticulos] = useState(null);
+  const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(10);
-  const totalPages = Math.ceil(tablaAsesores.length / rowsToShow);
+  const [rowsToShow, setRowsToShow] = useState(20);
+  const totalPages = Math.ceil(tablaAsesores?.length / rowsToShow);
   const [isAscendent, setIsAscendent] = useState(false);
   const [sortingBy, setSortingBy] = useState(null);
   const [busqueda, setBusqueda] = useState(null);
+
+  useEffect(() => {
+    parseData();
+  }, []);
+
+  useEffect(() => {
+    getMasArticulos(1);
+  }, [tablaAsesores]);
+
+  const parseData = () => {
+    const DataAsesores = xmlToJSON(asesoresData);
+    const infoAsesores = DataAsesores?.asesores;
+    if (infoAsesores && Array.isArray(infoAsesores.asesor)) {
+      const arrAsesores = infoAsesores?.asesor?.map((asesor) => {
+        const nombre = asesor?.nombre["#text"];
+        const vitrina = asesor?.vitrinas?.vitrina?.nombre["#text"];
+        const ciudad = asesor?.vitrinas?.vitrina?.ciudad["#text"];
+        const usuario = asesor?.usuario["#text"];
+        const clave = asesor?.clave["#text"];
+        const empty = "";
+        return { nombre, vitrina, ciudad, usuario, clave, empty };
+      });
+      setTablaAsesores(arrAsesores);
+      setTotalResults(arrAsesores.length);
+      setDisplayedArticulos(arrAsesores);
+    }
+  };
 
   const {
     isOpen: isFirstModalOpen,
@@ -58,15 +86,18 @@ export default function Asesores() {
   }, [busqueda]);
 
   const Busqueda = (textToSearch) => {
-    let result = tablaAsesores.filter((element) => {
+    let result = tablaAsesores?.filter((element) => {
       if (
-        element.Asesor.toString()
+        element.nombre
+          .toString()
           .toLowerCase()
           .includes(textToSearch.toLowerCase()) ||
-        element.Vitrinas.toString()
+        element.vitrina
+          .toString()
           .toLowerCase()
           .includes(textToSearch.toLowerCase()) ||
-        element.Ubicacion.toString()
+        element.ciudad
+          .toString()
           .toLowerCase()
           .includes(textToSearch.toLowerCase())
       ) {
@@ -79,23 +110,26 @@ export default function Asesores() {
   useEffect(() => {
     if (sortingBy) {
       let articulosCopy = [...displayedArticulos];
-
       switch (sortingBy) {
         case "asesor":
-          articulosCopy.sort((a, b) =>
+          articulosCopy?.sort((a, b) =>
             isAscendent
-              ? a.Asesor.localeCompare(b.Asesor)
-              : b.Asesor.localeCompare(a.Asesor),
+              ? a.nombre.localeCompare(b.nombre)
+              : b.nombre.localeCompare(a.nombre),
           );
           break;
         case "vitrinas":
-          articulosCopy.sort((a, b) =>
-            isAscendent ? a.Vitrinas - b.Vitrinas : b.Vitrinas - a.Vitrinas,
+          articulosCopy?.sort((a, b) =>
+            isAscendent
+              ? a.vitrina.localeCompare(b.vitrina)
+              : b.vitrina.localeCompare(a.vitrina),
           );
           break;
         case "ubicacion":
-          articulosCopy.sort((a, b) =>
-            isAscendent ? a.Ubicacion - b.Ubicacion : b.Ubicacion - a.Ubicacion,
+          articulosCopy?.sort((a, b) =>
+            isAscendent
+              ? a.ciudad.localeCompare(b.ciudad)
+              : b.ciudad.localeCompare(a.ciudad),
           );
           break;
         default:
@@ -109,14 +143,14 @@ export default function Asesores() {
     toggleLoading(true);
     setCurrentPage(pageNumber);
     setDisplayedArticulos(
-      tablaAsesores.slice(
+      tablaAsesores?.slice(
         (pageNumber - 1) * rowsToShow,
         (pageNumber - 1) * rowsToShow + rowsToShow,
       ),
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getMasArticulos(1);
   }, []);
 
@@ -150,6 +184,7 @@ export default function Asesores() {
         >
           <Box
             w={"100%"}
+            maxW={"300px"}
             order={{ base: "2", sm: "1" }}
             display={"flex"}
             justifyContent={"center"}
@@ -194,7 +229,7 @@ export default function Asesores() {
           </Box>
         </Box>
       </Box>
-      <Box gap={"10px"} p={"20px"} w={"100%"}>
+      <Box p={"1.25rem"} w={"100%"} h="100%" display="flex" flexDir={"column"}>
         {
           <TablaAsesores
             isSecondModalOpen={isSecondModalOpen}

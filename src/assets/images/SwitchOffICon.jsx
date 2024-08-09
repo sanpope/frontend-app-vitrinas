@@ -16,7 +16,7 @@ const SwitchOffIcon = ({
     >
       <rect x="2" y="0.5" width="28" height="16" rx="8" fill="#BFBFBF" />
       <g
-        clip-path="url(#clip0_11920_15887)"
+        clipPath="url(#clip0_11920_15887)"
         filter="url(#filter0_d_11920_15887)"
       >
         <rect x="4" y="2.5" width="12" height="12" rx="6" fill="white" />

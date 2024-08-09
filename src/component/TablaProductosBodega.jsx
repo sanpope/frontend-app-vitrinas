@@ -15,6 +15,8 @@ import ListComponent from "../component/ListComponent";
 import Agregar from "./Agregar";
 import AgregarCategoria from "./AgregarCategoria";
 import Pagination from "../component/Pagination";
+import BottomTable from "./ui/tablas/Bottom";
+import Contenedor from "./ui/tablas/Contenedor";
 
 const HEADERS = [
   "Productos",
@@ -66,95 +68,91 @@ export default function TablaProductosBodega({
 
   return (
     <>
-      <Box
-        mt={"5px"}
-        position="relative"
-        width="100%"
-        display="flex"
-        flexDir="column"
-        flexGrow={1}
-      >
-        <Box
-          overflowY={"auto"}
-          borderTopLeftRadius={{ base: "0px", md: "20px" }}
-          borderTopRightRadius={{ base: "0px", md: "20px" }}
-        >
-          <table className="Table">
-            <thead className="TableHead">
-              <tr className="TrHead">
-                <th className="ThHead">
+      <Contenedor maxHeight="570px">
+        <thead className="">
+          <tr className="">
+            <th className="checkBox">
+              <Checkbox />
+            </th>
+            {HEADERS.map((name, index) => (
+              <th key={index} className="ProdTh">
+                <Box
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  gap={"5px"}
+                  w={"100%"}
+                  height={"100%"}
+                >
+                  <Text
+                    color="white"
+                    textStyle={"RobotoRegularBold"}
+                    textTransform={"capitalize"}
+                  >
+                    {name}
+                  </Text>
+                  {name === "Productos" ||
+                  name === "Bodega" ||
+                  name === "Vitrinas" ? (
+                    <UnionIcon
+                      width={"10px"}
+                      height={"10px"}
+                      fill={"white"}
+                      onClick={() => handleSortingClick("productos")}
+                    />
+                  ) : name === "Proveedor" || name === "Categorías" ? (
+                    <EditIcon
+                      width={"18px"}
+                      height={"18px"}
+                      fill={"white"}
+                      onClick={
+                        name === "Proveedor"
+                          ? onThirdModalOpen
+                          : onFourthModalOpen
+                      }
+                    />
+                  ) : null}
+                </Box>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="" style={{ height: "100%" }}>
+          {displayedArticulos.map((articulo, index) => {
+            return (
+              <tr key={index} className="">
+                <td className="checkBox">
                   <Checkbox />
-                </th>
-                {HEADERS.map((name, index) => (
-                  <th key={index} className="ThHead">
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                      gap={"5px"}
-                    >
-                      <Text
-                        color="white"
-                        textStyle={"RobotoRegularBold"}
-                        textTransform={"capitalize"}
-                        textAlign={"center"}
-                      >
-                        {name}
-                      </Text>
-                      {name === "Productos" ||
-                      name === "Bodega" ||
-                      name === "Vitrinas" ? (
-                        <UnionIcon
-                          width={"10px"}
-                          height={"10px"}
-                          fill={"white"}
-                          onClick={() => handleSortingClick("productos")}
-                        />
-                      ) : name === "Proveedor" || name === "Categorías" ? (
-                        <EditIcon
-                          width={"15px"}
-                          height={"15px"}
-                          fill={"white"}
-                          onClick={
-                            name === "Proveedor"
-                              ? onThirdModalOpen
-                              : onFourthModalOpen
-                          }
-                        />
-                      ) : null}
-                    </Box>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody
-              className="TableBody"
-              style={{ height: "100%", maxHeight: "450px" }}
-            >
-              {displayedArticulos.map((articulo, index) => {
-                return (
-                  <tr key={index} className="TrBody">
-                    <td className="TdBody" style={{ paddingLeft: "33px" }}>
-                      <Checkbox />
+                </td>
+                {Object.values(articulo).map((value, index) => {
+                  return (
+                    <td key={index} className="ProdTd">
+                      {value}
                     </td>
-                    {Object.values(articulo).map((value, index) => {
-                      return (
-                        <td key={index} className="TdBody">
-                          {value}
-                        </td>
-                      );
-                    })}
-                    <Box display={"flex"} columnGap={"5px"} px={"15px"}>
-                      <EditIcon onClick={onSecondModalOpen} />
-                      <TrashIcon onClick={() => handleDeleteButton(articulo)} />
-                    </Box>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </Box>
-      </Box>
+                  );
+                })}
+                <Box
+                  display={"flex"}
+                  columnGap={"20px"}
+                  px={"15px"}
+                  className="iconContainer"
+                >
+                  <EditIcon
+                    onClick={onSecondModalOpen}
+                    width="19px"
+                    height="19px"
+                  />
+                  <TrashIcon
+                    onClick={() => handleDeleteButton(articulo)}
+                    width="19px"
+                    height="19px"
+                  />
+                </Box>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Contenedor>
 
       {/* Modal que abre la Lista de Proveedores */}
       <ListComponent
@@ -222,37 +220,12 @@ export default function TablaProductosBodega({
         onClose={onSecondModalClose}
       />
 
-      <Box w={"100%"} h={"100%"}>
-        <Box
-          w={"100%"}
-          bg={"#d7d7d7"}
-          p={1}
-          borderBottomLeftRadius={{ base: "0px", md: "20px" }}
-          borderBottomRightRadius={{ base: "0px", md: "20px" }}
-          color={"black"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Box
-            p={2}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={"1rem"}
-          >
-            <Text textStyle={"RobotoRegularBold"}>
-              {totalResults} elementos
-            </Text>
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={getMasArticulos}
-            />
-          </Box>
-        </Box>
-      </Box>
+      <BottomTable
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={getMasArticulos}
+        totalResults={totalResults}
+      />
     </>
   );
 }

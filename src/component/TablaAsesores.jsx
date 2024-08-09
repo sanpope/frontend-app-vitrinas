@@ -16,16 +16,18 @@ import Agregar from "./Agregar";
 import AgregarCategoria from "./AgregarCategoria";
 import SwitchElement from "./SwitchElement";
 import EditarAsesor from "./EditarAsesor";
+
 import Pagination from "./Pagination";
+import BottomTable from "./ui/tablas/Bottom";
+import Contenedor from "./ui/tablas/Contenedor";
 
 const HEADERS = [
-  <Checkbox />,
   "Asesor",
   "Vitrinas",
   "Ubicación",
   "Usuario",
   "Contraseña",
-  "Habilitar/Deshabilitar Asesor",
+  "Habilitar/Deshabilitar",
   "Acciones",
 ];
 
@@ -45,147 +47,116 @@ export default function TablaProductosBodega({
 }) {
   return (
     <>
-      <Box
-        mt={"5px"}
-        position="relative"
-        width="100%"
-        display="flex"
-        flexDir="column"
-        flexGrow={1}
-      >
-        <Box
-          overflowY={"auto"}
-          borderTopLeftRadius={{ base: "0px", md: "20px" }}
-          borderTopRightRadius={{ base: "0px", md: "20px" }}
-        >
-          <table className="Table">
-            <thead className="TableHead">
-              <tr className="TrHead">
-                {HEADERS.map((name, index) => (
-                  <th key={index} className="ThHead">
-                    <Box
-                      display={"flex"}
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                      gap={"5px"}
-                    >
-                      <Text
-                        color="white"
-                        textStyle={"RobotoRegularBold"}
-                        textTransform={"capitalize"}
-                        textAlign={"center"}
-                      >
-                        {name}
-                      </Text>
-                      {name === "Asesor" ||
-                      name === "Vitrinas" ||
-                      name === "Ubicación" ? (
-                        <UnionIcon
-                          width={"10px"}
-                          height={"10px"}
-                          fill={"white"}
-                          onClick={() => handleSortingClick("productos")}
-                        />
-                      ) : null}
-                    </Box>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody
-              className="TableBody"
-              style={{ height: "100%", maxHeight: "500px" }}
-            >
-              {displayedArticulos.map((articulo, index) => {
-                return (
-                  <tr key={index} className="TrBody">
-                    <td className="TdBody" style={{ paddingLeft: "20px" }}>
-                      <Checkbox />
-                    </td>
-                    {Object.values(articulo).map((value, index) => {
-                      return (
-                        <td
-                          key={index}
-                          className="TdBody"
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            columnGap: "5px",
-                            textAlign: "left",
-                          }}
+      <Contenedor maxHeight={"600px"}>
+        <thead className="">
+          <tr className="AsesorTr">
+            <th className="checkBox">
+              <Checkbox />
+            </th>
+            {HEADERS.map((name, index) => (
+              <th key={index} className="AsesorTh">
+                <Box
+                  display={"flex"}
+                  alignItems={"center"}
+                  gap={"5px"}
+                  w={"100%"}
+                  justifyContent={name === "Acciones" ? "center" : "flex-start"}
+                >
+                  <Text
+                    color="white"
+                    textStyle={"RobotoRegularBold"}
+                    textTransform={"capitalize"}
+                    textAlign={"center"}
+                  >
+                    {name}
+                  </Text>
+                  {name === "Asesor" ||
+                  name === "Vitrinas" ||
+                  name === "Ubicación" ? (
+                    <UnionIcon
+                      width={"13px"}
+                      height={"13px"}
+                      fill={"white"}
+                      onClick={() =>
+                        handleSortingClick(
+                          name === "Asesor"
+                            ? "asesor"
+                            : name === "Vitrinas"
+                              ? "vitrinas"
+                              : name === "Ubicación"
+                                ? "ubicacion"
+                                : "",
+                        )
+                      }
+                    />
+                  ) : null}
+                </Box>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="" style={{ height: "100%" }}>
+          {displayedArticulos?.map((articulo, index) => {
+            return (
+              <tr key={index} className="">
+                <td className="checkBox">
+                  <Checkbox />
+                </td>
+                {Object.values(articulo).map((value, index) => {
+                  return (
+                    <td key={index} className="AsesorTd">
+                      {value === `` ? (
+                        <Box
+                          display={"flex"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
                         >
-                          {value}
-                          {value ===
-                          `Habilitar / deshabilitar para modificar` ? (
-                            <SwitchElement />
-                          ) : null}
-                        </td>
-                      );
-                    })}
-                    <Box display={"flex"} columnGap={"5px"}>
-                      <EditIcon onClick={onSecondModalOpen} />
-                      <TrashIcon onClick={onThirdModalOpen} />
-                    </Box>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </Box>
-      </Box>
-      <Box w={"100%"} h={"1000%"}>
-        <Box
-          w={"100%"}
-          bg={"#d7d7d7"}
-          p={1}
-          borderBottomLeftRadius={"20px"}
-          borderBottomRightRadius={"20px"}
-          color={"black"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Box
-            p={2}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={"1rem"}
-          >
-            <Text textStyle={"RobotoRegularBold"}>
-              {totalResults} elementos
-            </Text>
+                          <SwitchElement />
+                        </Box>
+                      ) : (
+                        value
+                      )}
+                    </td>
+                  );
+                })}
+                <Box
+                  display={"flex"}
+                  columnGap={"20px"}
+                  className="iconContainer"
+                >
+                  <EditIcon onClick={onSecondModalOpen} />
+                  <TrashIcon onClick={onThirdModalOpen} />
+                </Box>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Contenedor>
+      <BottomTable
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={getMasArticulos}
+        totalResults={totalResults}
+      />
 
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={getMasArticulos}
-            />
-          </Box>
-        </Box>
-      </Box>
-
-      <Box w={"100%"} mt={"20px"} overflowX={"auto"}>
-        <EditarAsesor
-          desc={"Editar"}
-          isOpen={isSecondModalOpen}
-          onOpen={onSecondModalOpen}
-          onClose={onSecondModalClose}
-        />
-        <ConfirmationMessage
-          isOpen={isThirdModalOpen}
-          onOpen={onThirdModalOpen}
-          onClose={onThirdModalClose}
-          icon={<WarningIcon />}
-          text={"¿Estás seguro que desea eliminar a este Asesor?"}
-          text2={
-            "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-          }
-          colorText2={"red.100"}
-          buttonText={"Continuar"}
-        />
-      </Box>
+      <EditarAsesor
+        desc={"Editar"}
+        isOpen={isSecondModalOpen}
+        onOpen={onSecondModalOpen}
+        onClose={onSecondModalClose}
+      />
+      <ConfirmationMessage
+        isOpen={isThirdModalOpen}
+        onOpen={onThirdModalOpen}
+        onClose={onThirdModalClose}
+        icon={<WarningIcon />}
+        text={"¿Estás seguro que desea eliminar a este Asesor?"}
+        text2={
+          "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
+        }
+        colorText2={"red.100"}
+        buttonText={"Continuar"}
+      />
     </>
   );
 }

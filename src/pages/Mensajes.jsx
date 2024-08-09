@@ -1,14 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
+
 import Message from "../component/Message";
+
+import xmlToJSON from "../services/XmlToJsonConverter";
+import mensajesData from "../services/mensajesData";
 
 export default function Mensajes() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
+  const [totalMensajes, setTotalMensajes] = useState(null);
+
+  useEffect(() => {
+    parseData();
+  }, []);
+
+  const parseData = () => {
+    const resumenInfo = xmlToJSON(mensajesData);
+    const Mensajes = resumenInfo.mensajes;
+
+    if (Mensajes && Array.isArray(Mensajes.mensaje)) {
+      const listadoMensajes = Mensajes.mensaje;
+      const arrayMensajes = listadoMensajes.map((mensaje) => {
+        const id = mensaje.id["#text"];
+        const fechaHora = mensaje.fechaHora["#text"];
+        const visto = mensaje.visto["#text"];
+        const remitente = mensaje.remitente["#text"];
+        const asunto = mensaje.asunto["#text"];
+        const contenido = mensaje.contenido["#text"];
+        return { id, fechaHora, visto, remitente, asunto, contenido };
+      });
+      setTotalMensajes(arrayMensajes);
+    }
+  };
+
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
@@ -65,9 +94,16 @@ export default function Mensajes() {
         </Box>
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"20px"} py={"10px"}>
-        <Message onClick={onConfirmationModalOpen} />
-        <Message onClick={onConfirmationModalOpen} />
-        <Message onClick={onConfirmationModalOpen} />
+        {totalMensajes?.map((mensaje) => (
+          <Message
+            name={mensaje.remitente}
+            subject={mensaje.asunto}
+            message={mensaje.contenido}
+            visto={mensaje.visto}
+            fechaHora={mensaje.fechaHora}
+            onClick={onConfirmationModalOpen}
+          />
+        ))}
       </Box>
     </Box>
   );

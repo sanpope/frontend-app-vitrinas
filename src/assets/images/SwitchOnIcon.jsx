@@ -11,7 +11,7 @@ const SwitchOnIcon = ({ width = "15px", height = "15px", onClick }) => {
     >
       <rect y="0.5" width="28" height="16" rx="8" fill="#E60F0F" />
       <g filter="url(#filter0_d_552_1855)">
-        <g clip-path="url(#clip0_552_1855)">
+        <g clipPath="url(#clip0_552_1855)">
           <rect x="14" y="2.5" width="12" height="12" rx="6" fill="white" />
         </g>
       </g>

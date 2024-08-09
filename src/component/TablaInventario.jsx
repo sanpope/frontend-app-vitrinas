@@ -5,11 +5,13 @@ import Checkbox from "./ui/checkbox";
 import LeftArrowIcon from "../assets/images/LeftArrowIcon";
 import BiggerThanIcon from "../assets/images/BiggerThanIcon";
 import EditIcon from "../assets/images/EditIcon";
-import Editar from "../component/Editar"; 
-import EditarProducto from "../component/EditarProducto"; 
+import Editar from "../component/Editar";
+import EditarProducto from "../component/EditarProducto";
 import WarningIcon from "../assets/images/WarningIcon";
 
 import Pagination from "./Pagination";
+import BottomTable from "./ui/tablas/Bottom";
+import Contenedor from "./ui/tablas/Contenedor";
 
 const HEADERS = [
   "Código",
@@ -18,7 +20,7 @@ const HEADERS = [
   "Precio",
   "Costo",
   "Existencia",
-  "Exis verificados",
+  "Exis verificadas",
   "Stok mín",
   "Stok máx",
   "Acciones",
@@ -33,104 +35,54 @@ export default function TablaInventario({
   setArticulo,
 }) {
   return (
-    <Box
-      mt={"5px"}
-      position="relative"
-      display="flex"
-      flexDir="column"
-      flexGrow={1}
-    >
-      <Box
-        overflowY={"auto"}
-        borderTopLeftRadius={{ base: "0px", md: "20px" }}
-        borderTopRightRadius={{ base: "0px", md: "20px" }}
-      >
-        <table className="Table">
-          <thead className="TableHead">
-            <tr className="TrHead">
-              <th className="" style={{ padding: "15px", marginTop: "5px" }}>
-                <Checkbox />
+    <>
+      <Contenedor maxHeight={"470px"}>
+        <thead className="">
+          <tr className="">
+            <th className="checkBox">
+              <Checkbox />
+            </th>
+            {HEADERS?.map((name, index) => (
+              <th key={index} className="inventTh">
+                {name}
               </th>
-              {HEADERS.map((name, index) => (
-                <th
-                  key={index}
-                  className="ThHead"
-                  style={{ paddingLeft: "15px", textAlign: "left" }}
+            ))}
+          </tr>
+        </thead>
+
+        <tbody className="">
+          {displayedArticulos?.map((articulo, index) => {
+            return (
+              <tr key={index} className="">
+                <td className="checkBox">
+                  <Checkbox />
+                </td>
+                {Object.values(articulo).map((value, index) => {
+                  return (
+                    <td key={index} className="inventTd">
+                      {value}
+                    </td>
+                  );
+                })}
+                <td
+                  className="iconContainer"
+                  onClick={() => setArticulo(articulo)}
                 >
-                  {name}
-                </th>
-              ))}
-            </tr>
-          </thead>
+                  <EditIcon width="18px" height="18px" />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Contenedor>
+      <BottomTable
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={getMasArticulos}
+        totalResults={totalResults}
+      />
 
-          <tbody
-            className="TableBody"
-            style={{ height: "100%", maxHeight: "450px" }}
-          >
-            {displayedArticulos.map((articulo, index) => {
-              return (
-                <tr key={index} className="TrBody">
-                  <td className="" style={{ paddingLeft: "10px" }}>
-                    <Checkbox />
-                  </td>
-                  {Object.values(articulo).map((value, index) => {
-                    return (
-                      <td
-                        key={index}
-                        style={{ paddingLeft: "30px" }}
-                        className="TdBody"
-                      >
-                        {value}
-                      </td>
-                    );
-                  })}
-                  <td
-                    className="TdBody"
-                    style={{ paddingLeft: "40px" }}
-                    onClick={() => setArticulo(articulo)}
-                  >
-                    <EditIcon />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </Box>
-
-      <Box
-        bg={"#d7d7d7"}
-        px={1}
-        pb={1}
-        borderBottomLeftRadius={{ base: "0px", md: "20px" }}
-        borderBottomRightRadius={{ base: "0px", md: "20px" }}
-        color={"black"}
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Box
-          p={3}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          gap={"1rem"}
-        >
-          <Text
-            display={{ base: "none", md: "inline-flex" }}
-            textStyle={"RobotoRegularBold"}
-          >
-            {totalResults} elementos
-          </Text>
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={getMasArticulos}
-          />
-        </Box>
-      </Box>
-      <Editar/>
-    </Box>
+      <Editar />
+    </>
   );
 }

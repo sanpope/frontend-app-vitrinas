@@ -22,6 +22,7 @@ import Vitrina from "../component/Vitrina";
 import { useNavigate } from "react-router-dom";
 import Agregar from "../component/Agregar";
 import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
+
 import xmlToJSON from "../services/XmlToJsonConverter";
 import dataXmlVitrinas from "../services/vitrinasData";
 
@@ -100,7 +101,7 @@ export default function ModalVitrinas({
         size={"xl"}
         scrollBehavior={"inside"}
       >
-        <ModalOverlay className="overlay-vitrinas" />
+        <ModalOverlay className="overlay-vitrinas" bg={"rgba(0, 0, 0, 0.2)"} />
         <ModalContent
           ml={isDeskMenuOpen && !isSmallScreen ? BIG_WIDTH : SMALL_WIDTH}
           justifyContent="flex-center"
@@ -125,7 +126,7 @@ export default function ModalVitrinas({
           </Box>
           <ModalBody
             display={"flex"}
-            justifyContent={"center"}
+            justifyContent={"flex-start"}
             flexWrap={"wrap"}
             gap={{ base: "0px", md: "20px" }}
             flexDir={"row"}

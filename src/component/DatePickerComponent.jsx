@@ -96,7 +96,6 @@ const DateRangePicker = () => {
                 onChange={(date) => setStartDate(date)}
                 selectsStart
                 startDate={startDate}
-                endDate={endDate}
                 inline
               />
             </Box>
@@ -124,7 +123,6 @@ const DateRangePicker = () => {
                 selected={endDate}
                 onChange={(date) => setEndDate(date)}
                 selectsEnd
-                startDate={startDate}
                 endDate={endDate}
                 minDate={startDate}
                 inline

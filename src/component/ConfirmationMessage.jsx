@@ -29,7 +29,7 @@ export default function ConfirmationMessage({
   return (
     <Box>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
+        <ModalOverlay bg={"rgba(0, 0, 0, 0.2)"} />
         <ModalContent
           borderRadius={"10px"}
           height={"auto"}

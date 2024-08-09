@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
@@ -10,10 +10,40 @@ import WarningIcon from "../assets/images/WarningIcon";
 import PlusCircleIcon from "../assets/images/PlusCircleIcon";
 import AgregarAsesor from "../component/AgregarAsesor";
 import AsesorContainer from "../component/AsesorContainer";
+import MensajeInfoEstaVitrina from "../component/MensajeInfoEstaVitrina";
+import xmlToJSON from "../services/XmlToJsonConverter";
+import estaVitrina from "../services/estaVitrina";
 
 export default function EstaVitrina() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
+  const [infoTotalVitrina, setInfoTotalVitrina] = useState(null);
+
+  useEffect(() => {
+    parseData();
+  }, []);
+
+  const parseData = () => {
+    const resumenInfo = xmlToJSON(estaVitrina);
+    const datosDeVitrina = resumenInfo.estaVitrina;
+
+    const asesoresArray = datosDeVitrina?.asesores?.asesor.map((asesor) => ({
+      nombre: asesor?.nombre["#text"],
+      usuario: asesor?.usuario["#text"],
+      contraseña: asesor?.contraseña["#text"],
+    }));
+
+    const infoVitrina = {
+      ciudadDeVitrina: datosDeVitrina.ciudadDeVitrina["#text"],
+      fechaDeCreacion: datosDeVitrina.fechaDeCreacion["#text"],
+      mensaje: datosDeVitrina.mensaje["#text"],
+      nombreDeVitrina: datosDeVitrina.nombreDeVitrina["#text"],
+      asesores: asesoresArray,
+    };
+
+    setInfoTotalVitrina(infoVitrina);
+  };
+
   const {
     isOpen: isFirstModalOpen,
     onOpen: onFirstModalOpen,
@@ -56,16 +86,32 @@ export default function EstaVitrina() {
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
-        <Text textStyle={" RobotoBody"}>
-          {name} - {city}
-        </Text>
         <Box
           display={"flex"}
           flexDirection={{ base: "column", md: "row" }}
           justifyContent={{ base: "flex-start", md: "space-between" }}
           alignItems={{ base: "flex-start", md: "center" }}
         >
-          <Text textStyle={"RobotoTitleBold"}>Esta Vitrina</Text>
+          <Box display={"flex"} flexDirection={"column"} p={1}>
+            <Text textStyle={"RobotoBodyBold"}>
+              {infoTotalVitrina?.nombreDeVitrina}
+            </Text>
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"space-around"}
+              gap={"10px"}
+            >
+              <Text textStyle={"RobotoBodyBold"}>Ciudad:</Text>
+              <Text textStyle={"RobotoBody"}>
+                {infoTotalVitrina?.ciudadDeVitrina}
+              </Text>
+              <Text textStyle={"RobotoBodyBold"}>Fecha de creación:</Text>
+              <Text textStyle={"RobotoBody"}>
+                {infoTotalVitrina?.fechaDeCreacion}
+              </Text>
+            </Box>
+          </Box>
           <Box
             display={"flex"}
             flexDirection={{ base: "column", sm: "row" }}
@@ -120,15 +166,22 @@ export default function EstaVitrina() {
         </Box>
       </Box>
       <Box display={"flex"} flexDir={"column"} gap={"20px"}>
+        <Text textStyle={"RobotoBodyBold"}>Asesores:</Text>
+
         <Box display={"flex"} flexWrap={"wrap"} gap={"20px"}>
-          <AsesorContainer
-            isFirstModalOpen={isFourthModalOpen}
-            onFirstModalOpen={onFourthModalOpen}
-            onFirstModalClose={onFourthModalClose}
-            isSecondModalOpen={isFifthModalOpen}
-            onSecondModalOpen={onFifthModalOpen}
-            onSecondModalClose={onFifthModalClose}
-          />
+          {infoTotalVitrina?.asesores?.map((asesor) => (
+            <AsesorContainer
+              asesor={asesor.nombre}
+              email={asesor.usuario}
+              password={asesor.contraseña}
+              isFirstModalOpen={isFourthModalOpen}
+              onFirstModalOpen={onFourthModalOpen}
+              onFirstModalClose={onFourthModalClose}
+              isSecondModalOpen={isFifthModalOpen}
+              onSecondModalOpen={onFifthModalOpen}
+              onSecondModalClose={onFifthModalClose}
+            />
+          ))}
         </Box>
 
         <StandardButton
@@ -149,6 +202,7 @@ export default function EstaVitrina() {
           onClose={onThirdModalClose}
         />
       </Box>
+      <MensajeInfoEstaVitrina />
     </Box>
   );
 }

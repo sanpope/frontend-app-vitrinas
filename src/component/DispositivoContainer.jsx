@@ -9,12 +9,8 @@ export default function DispositivoContainer({
   icon,
   title = "Título",
   emoji,
-  description = "Agregar descripción",
-  date = newDate.toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  }),
+  description,
+  date,
   text2,
   description2,
 }) {
@@ -25,33 +21,46 @@ export default function DispositivoContainer({
       bg={"white"}
       display="flex"
       flexDirection={"column"}
-      alignItems={"flex-start"}
-      justifyContent="center"
       borderRadius={"30px"}
-      p={"20px"}
-      gap={"15px"}
+      p={3}
     >
-      {icon}
-      <Text textStyle={"RobotoBodyBold"} color={"black"}>
-        {title}
-      </Text>
+      <Box h={"40px"} w={"100%"} mb={2}>
+        {icon}
+      </Box>
+
       <Box
         w={"100%"}
+        h={"100%"}
         display={"flex"}
-        alignItems={"center"}
-        justifyContent={"flex-start"}
-        columnGap={"6px"}
+        flexDirection={"column"}
+        alignItems={"flex-start"}
+        justifyContent={"center"}
+        gap={2}
       >
-        {emoji}
-        <Text textStyle={"RobotoBodyBold"} color={"grey"}>
+        <Text textStyle={"RobotoBodyBold"} color={"black"}>
+          {title}
+        </Text>
+
+        <Text
+          textStyle={"RobotoBodyBold"}
+          color={"grey"}
+          display={"flex"}
+          gap={"5px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          {emoji}
           {description}
         </Text>
+
+        <Text textStyle={"RobotoBodyBold"} display={"flex"} gap={"5px"}>
+          {text2}
+          <span style={{ fontSize: "16px", color: "grey" }}>
+            {description2}
+          </span>
+        </Text>
+        <Text textStyle={"RobotoRegularBold"}>ÚLtima conexión el {date}</Text>
       </Box>
-      <Text textStyle={"RobotoBodyBold"}>
-        {text2}{" "}
-        <span style={{ fontSize: "16px", color: "grey" }}>{description2}</span>
-      </Text>
-      <Text textStyle={"RobotoRegularBold"}>ÚLtima conexión el {date}</Text>
     </Box>
   );
 }

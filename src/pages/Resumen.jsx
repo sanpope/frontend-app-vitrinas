@@ -68,7 +68,6 @@ export default function Resumen() {
 
   const parseData = () => {
     const resumenInfo = xmlToJSON(resumenData);
-    console.log(resumenInfo);
     //Tiempo de Inactividad
     const tiempoInactividad =
       resumenInfo?.datosDeVitrina?.actividadReciente?.inactividad?.["#text"];
@@ -218,7 +217,6 @@ export default function Resumen() {
     //Actualizaciones de Inventario
     const ActualizacionesInventario =
       resumenInfo?.datosDeVitrina?.resumenDeVisitas?.verificacionesPdtes;
-    console.log(ActualizacionesInventario.modificacion);
     if (
       ActualizacionesInventario &&
       Array.isArray(ActualizacionesInventario.modificacion)
@@ -252,8 +250,6 @@ export default function Resumen() {
     //Productos con Poco Stock
     const ProductosPocoStock =
       resumenInfo?.datosDeVitrina?.resumenDeVisitas?.reposicionesUrg;
-    console.log(ProductosPocoStock);
-    console.log(ProductosPocoStock.reposicionesUrg);
     if (ProductosPocoStock && Array.isArray(ProductosPocoStock.producto)) {
       const prodPcoStock = ProductosPocoStock.producto;
 
@@ -425,7 +421,7 @@ export default function Resumen() {
           title={"Ventas meses anteriores"}
           icon={<CashRegisterIcon />}
           children={
-            <Box w={"100%"} h={"100%"}>
+            <Box w={"100%"} h={"100%"} flexGrow={1} flexShrink={1}>
               <ResumenVentaMesAnterior
                 resumenVentaMesAnterior={
                   totalMesesAnteriores ? totalMesesAnteriores : []
@@ -458,11 +454,12 @@ export default function Resumen() {
           height={ContainerHeight + "px"}
           minHeight={"215px"}
           minW={"262px"}
+          maxW={"220px"}
           flex={"1 1 auto"}
           title={"Evolución de venta diaria"}
           icon={<BadgeDollarIcon />}
           children={
-            <Box w={"100%"} maxW={"220px"} h={"100%"}>
+            <Box w={"100%"} h={"100%"} flexGrow={1} flexShrink={1}>
               <EvolucionVentaDiaria
                 labels={labelsEvolucionVD}
                 dataPoints={dataPointsEvolucionVD}

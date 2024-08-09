@@ -63,7 +63,15 @@ export default function CardMovimientosInventario({
           ></Box>
           <Text textStyle={"RobotoRegularBold"}>Productos Ingresados:</Text>
         </Box>
-      
+        <UnorderedList p={1}>
+          {ProdIngr?.map((prod, index) => (
+            <ListItem key={index}>
+              <Text textStyle={"RobotoRegular"}>
+                {prod.nombre} x {prod.cantidad} unds.
+              </Text>
+            </ListItem>
+          ))}
+        </UnorderedList>
       </Box>
       <Box display={"flex"} flexDirection={"column"}>
         <Box
@@ -82,9 +90,11 @@ export default function CardMovimientosInventario({
           <Text textStyle={"RobotoRegularBold"}>Productos Retirados:</Text>
         </Box>
         <UnorderedList p={1}>
-          {ProdRet.map((prod, index) => (
-            <ListItem key={index} >
-              <Text textStyle={"RobotoRegular"}>{prod}</Text>
+          {ProdRet?.map((prod, index) => (
+            <ListItem key={index}>
+              <Text textStyle={"RobotoRegular"}>
+                {prod.nombre} x {prod.cantidad} unds.
+              </Text>
             </ListItem>
           ))}
         </UnorderedList>

@@ -19,70 +19,6 @@ body {
   justify-content: flex-start !important;
 }
 
-.Table {
-  width: 100%;
-  min-width: 900px;
-  table-layout: fixed;
-  overflow-x: auto;
-}
-
-.TableHead {
-  background-color: black;
-  color: white;
-}
-
-.TableHead,
-.TableBody {
-  display: block;
-}
-
-.TrHead {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 60px;
-  display: flex; /* Flex para alinear el contenido */
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.TrBody {
-  display: flex; /* Flex para alinear el contenido */
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.TableBody {
-  background-color: white;
-
-  overflow-y: auto;
-}
-.ThHead {
-  flex-grow: 1;
-}
-.ThHead,
-.TdBody {
-  font-size: 14px;
-  text-align: left;
-  overflow-x: hidden;
-  text-wrap: wrap;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.ThHead {
-  text-align: center;
-  flex: 2 1 150px;
-}
-
-.TdBody {
-  max-width: 100px;
-  flex-grow: 1;
-}
-
-.TrHead:last-child {
-  text-align: end;
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
   border-bottom-right-radius: 20px;
@@ -107,6 +43,14 @@ body {
   .dashboard-grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .dashboard-grid-container-resumen {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .thCheckBoxInventario {
+    padding: 22px;
+  }
 }
 
 /* Large screens (desktops) */
@@ -120,18 +64,11 @@ body {
   grid-template-columns: 1fr;
 }
 
-/* Medium screens (tablets) */
-@media screen and (min-width: 1040px) {
-  .dashboard-grid-container-resumen {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .container {
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Oculta el scrollbar predeterminado */
-  position: relative; /* Asegura que el contenido adicional no afecte la posición */
+  overflow: hidden;
+  position: relative;
 }
 
 .scroll-wrapper {
@@ -161,4 +98,81 @@ body {
 .scroll-wrapper {
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
+}
+
+.content-table {
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+  overflow-x: auto;
+  background-color: white;
+  border-collapse: collapse;
+}
+
+
+
+.content-table thead {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: black;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.content-table tbody {
+  width: 100%;
+  min-height: 400px;
+  overflow-y: auto;
+  
+  height: 100%;
+}
+
+.content-table th,
+.content-table td {
+  padding: 10px 5px;
+  font-size: 14px;
+}
+
+.content-table tbody tr {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.checkBox {
+  width: 50px;
+  text-align: center;
+}
+
+.ventastTh:nth-child(1),
+.ventasTd:nth-child(1) {
+  padding-left: 20px;
+}
+
+.ventastTh:nth-child(3),
+.ventastTh:nth-child(4),
+.ventastTh:nth-child(5),
+.ventastTh:nth-child(6) {
+  text-align: center;
+}
+
+.ventasTd:nth-child(3),
+.ventasTd:nth-child(6),
+.ProdTd:nth-child(3),
+.ProdTd:nth-child(4),
+.ProdTd:nth-child(5),
+.ProdTd:nth-child(6),
+.ProdTd:nth-child(7),
+.AsesorTh:nth-child(6) {
+  text-align: center;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }

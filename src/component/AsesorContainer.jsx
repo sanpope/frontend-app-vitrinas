@@ -25,6 +25,7 @@ export default function AsesorContainer({
     <Box
       w={"100%"}
       maxW={"280px"}
+      flexGrow={1}
       bg={"white"}
       display="flex"
       flexDirection={"column"}

@@ -74,17 +74,19 @@ export default function CardCorreccionesInventario({
             <Box display={"flex"} flexDirection={"column"} p={2}>
               <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
                 <Text textStyle={"RobotoRegularBold"}>Nombre:</Text>
-                <Text textStyle={"RobotoRegular"}>{producto.Nombre}</Text>
+                <Text textStyle={"RobotoRegular"}>{producto.nombre}</Text>
               </Box>
 
               <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
                 <Text textStyle={"RobotoRegularBold"}>Unidades:</Text>
-                <Text textStyle={"RobotoRegular"}>{producto.Unidades}</Text>
+                <Text textStyle={"RobotoRegular"}>{producto.cantidad}</Text>
               </Box>
 
               <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
                 <Text textStyle={"RobotoRegularBold"}>Motivo:</Text>
-                <Text textStyle={"RobotoRegular"}>{producto.Motivo}</Text>
+                <Text textStyle={"RobotoRegular"}>
+                  {producto.motivoDeCorreccion}
+                </Text>
               </Box>
 
               <Box
@@ -95,7 +97,7 @@ export default function CardCorreccionesInventario({
               >
                 <Text textStyle={"RobotoRegularBold"}>Nota:</Text>
                 <Text textStyle={"RobotoRegular"} w={"100%"}>
-                  {producto.Nota}
+                  {producto.nota}
                 </Text>
               </Box>
             </Box>

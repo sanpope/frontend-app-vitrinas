@@ -122,7 +122,6 @@ export default function SideBar({ setLoggedIn }) {
   return (
     <Box
       w={isSmallScreen ? SMALL_WIDTH : ""}
-      p={{ base: "5px", md: "10px" }}
       h={"100%"}
       bg={"black"}
       display={"flex"}
@@ -131,10 +130,11 @@ export default function SideBar({ setLoggedIn }) {
     >
       <Box
         w="100%"
+        h="100%"
+        overflowY={"auto"}
         display="flex"
-        alignItems="center"
-        justifyContent="center"
         flexDirection={"column"}
+        p={{ base: "5px", md: "10px" }}
         gap="10px"
       >
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -255,7 +255,8 @@ export default function SideBar({ setLoggedIn }) {
               <Link key={index} to={route.path}>
                 <StandardButton
                   variant={
-                    route.path === router.pathname
+                    route.path === router.pathname ||
+                    (isSubMenuOPen && route.label === "Vitrinas")
                       ? "RED_GREY"
                       : "BLACK_PRIMARY"
                   }
@@ -282,14 +283,14 @@ export default function SideBar({ setLoggedIn }) {
       </Box>
 
       <Box
-        w="100%"
+        w={isDeskMenuOpen ? "230px" : "100%"}
         display={"flex"}
-        alignItems="center"
+        alignItems={"center"}
         justifyContent={"center"}
-        gap="10px"
+        gap={"15px"}
         bottom={"40px"}
         cursor={"pointer"}
-        mb={"2rem"}
+        my={"2rem"}
       >
         <SignOutIcon width={"24px"} height={"24px"} />
         {isDeskMenuOpen && !isSmallScreen ? (

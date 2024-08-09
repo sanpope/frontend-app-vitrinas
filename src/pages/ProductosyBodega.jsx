@@ -25,46 +25,78 @@ import IngresarProducto from "../component/Ingresar_Editar_Producto";
 import Despachar from "../component/Despachar";
 import Transferir from "../component/Transferir";
 import TablaProductosBodega from "../component/TablaProductosBodega";
-import tablaProductosData from "../DummieData/tablaProductosData";
 
-const lista1 = [
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-  { nombre: "Alejandra Gutiérrez" },
-];
-
-const lista2 = [
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-  { nombre: "Categoría" },
-];
+import xmlToJSON from "../services/XmlToJsonConverter";
+import {
+  bodegaProductos,
+  categoriasProductos,
+  proveedoresProductos,
+} from "../services/productosYBodegaData";
 
 export default function ProductosyBodega() {
   const [busqueda, setBusqueda] = useState(null);
-  const [isSmallScreen] = useMediaQuery("(max-width: 475px)");
-
-  const [tablaProductos, setTablaProductos] = useState(tablaProductosData);
-
-  const [displayedArticulos, setDisplayedArticulos] =
-    useState(tablaProductosData);
-
-  const [totalResults, setTotalResults] = useState(tablaProductos.length);
+  const [tablaProductos, setTablaProductos] = useState(null);
+  const [displayedArticulos, setDisplayedArticulos] = useState(null);
+  const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
   const [isAscendent, setIsAscendent] = useState(false);
   const [sortingBy, setSortingBy] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsToShow, setRowsToShow] = useState(20);
-  const totalPages = Math.ceil(tablaProductos.length / rowsToShow);
+  const totalPages = Math.ceil(tablaProductos?.length / rowsToShow);
+  const [totalProveedores, setTotalProveedores] = useState(null);
+  const [totalCategorias, setTotalCategorias] = useState(null);
+
+  useEffect(() => {
+    parseData();
+  }, []);
+
+  useEffect(() => {
+    getMasArticulos(1);
+  }, [tablaProductos]);
+
+  const parseData = () => {
+    const ProductosBodega = xmlToJSON(bodegaProductos);
+    const TotalProductos = ProductosBodega?.productosDelNegocio?.producto;
+    const arrayProdsBodega = TotalProductos?.map((prod) => {
+      const nombre = prod?.nombre["#text"];
+      const codigo = prod?.codigo["#text"];
+      const precio = prod?.precio["#text"];
+      const costo = prod?.costo["#text"];
+      const bodega = prod?.bodega["#text"];
+      const vitrinas = prod?.vitrinas["#text"];
+      const proveedor = prod?.proveedor["#text"];
+      const categoria = prod?.categoria["#text"];
+
+      return {
+        nombre,
+        codigo,
+        precio,
+        costo,
+        bodega,
+        vitrinas,
+        proveedor,
+        categoria,
+      };
+    });
+    setTablaProductos(arrayProdsBodega);
+    setTotalResults(arrayProdsBodega.length);
+    setDisplayedArticulos(arrayProdsBodega);
+
+    const Proveedores = xmlToJSON(proveedoresProductos);
+    const TotalProveedores = Proveedores?.proveedoresDelNegocio?.proveedor;
+    const arrayProveedores = TotalProveedores?.map((prove) => {
+      return { nombre: prove?.["#text"] };
+    });
+    setTotalProveedores(arrayProveedores);
+
+    const Categorias = xmlToJSON(categoriasProductos);
+    const TotalCategorias = Categorias?.categoriasDelNegocio?.categoria;
+    const arrCategorias = TotalCategorias?.map((cat) => {
+      return { nombre: cat?.["#text"] };
+    });
+    setTotalCategorias(arrCategorias);
+  };
 
   const {
     isOpen: isFirstModalOpen,
@@ -132,23 +164,25 @@ export default function ProductosyBodega() {
   }, [busqueda]);
 
   const Busqueda = (textToSearch) => {
-    let result = tablaProductos.filter((element) => {
+    let result = tablaProductos?.filter((element) => {
       if (
-        element.Producto.toString()
+        element?.nombre
+          ?.toString()
           .toLowerCase()
-          .includes(textToSearch.toLowerCase()) ||
-        element.Proveedor.toString()
+          .includes(textToSearch?.toLowerCase()) ||
+        element?.proveedor
+          ?.toString()
           .toLowerCase()
-          .includes(textToSearch.toLowerCase()) ||
-        element.Categorias.toString()
+          .includes(textToSearch?.toLowerCase()) ||
+        element?.categoria
+          ?.toString()
           .toLowerCase()
-          .includes(textToSearch.toLowerCase())
+          .includes(textToSearch?.toLowerCase())
       ) {
         return element;
       }
     });
     setDisplayedArticulos(result);
-    console.log(result);
   };
 
   useEffect(() => {
@@ -157,20 +191,20 @@ export default function ProductosyBodega() {
 
       switch (sortingBy) {
         case "productos":
-          articulosCopy.sort((a, b) =>
-            isAscendent
-              ? a.Producto.localeCompare(b.Producto)
-              : b.Producto.localeCompare(a.Producto),
-          );
+          articulosCopy?.sort((a, b) => {
+            return isAscendent
+              ? a?.nombre.localeCompare(b?.nombre)
+              : b?.nombre.localeCompare(a?.nombre);
+          });
           break;
         case "bodega":
-          articulosCopy.sort((a, b) =>
-            isAscendent ? a.Bodega - b.Bodega : b.Bodega - a.Bodega,
+          articulosCopy?.sort((a, b) =>
+            isAscendent ? a.bodega - b.bodega : b.bodega - a.bodega,
           );
           break;
         case "vitrinas":
-          articulosCopy.sort((a, b) =>
-            isAscendent ? a.Vitrinas - b.Vitrinas : b.Vitrinas - a.Vitrinas,
+          articulosCopy?.sort((a, b) =>
+            isAscendent ? a.vitrinas - b.vitrinas : b.vitrinas - a.vitrinas,
           );
           break;
         default:
@@ -184,7 +218,7 @@ export default function ProductosyBodega() {
     toggleLoading(true);
     setCurrentPage(pageNumber);
     setDisplayedArticulos(
-      tablaProductos.slice(
+      tablaProductos?.slice(
         (pageNumber - 1) * rowsToShow,
         (pageNumber - 1) * rowsToShow + rowsToShow,
       ),
@@ -192,11 +226,9 @@ export default function ProductosyBodega() {
   };
 
   const handleConfirmarDelete = (Prod) => {
-    console.log(Prod);
     const codigoProd = Prod.Codigo;
     let copy = [...displayedArticulos];
     let prodToDelete = copy.filter((p) => p.Codigo != codigoProd);
-    console.log(prodToDelete);
     setTablaProductos(prodToDelete);
   };
 
@@ -228,7 +260,7 @@ export default function ProductosyBodega() {
         bg={"white"}
         borderTop={"1px"}
         borderTopColor={"mainBg"}
-        py={2}
+        py={"1.25rem"}
       >
         <Box
           w={"100%"}
@@ -256,78 +288,91 @@ export default function ProductosyBodega() {
           flexDirection={{ base: "column", md: "row" }}
           justifyContent={{ base: "flex-start", md: "center" }}
           alignItems={{ base: "flex-start", md: "center" }}
-          p={{ base: "15px", md: "5px" }}
-          gap={2}
         >
-          <StandardButton
-            variant={"WHITE_RED"}
-            borderRadius="20px"
-            py={"17px"}
-            w={{ base: "160px", md: "fit-content" }}
-            fontSize={"14px"}
-            fontWeight={"400"}
-            onClick={onFirstModalOpen}
-            children={
-              <Text
-                textAlign={"left"}
-                textStyle={{ base: "RobotoTinyBold", md: "RobotoRegularBold" }}
-              >
-                Ingresar Nuevo Producto
-              </Text>
-            }
-          ></StandardButton>
-          <IngresarProducto
-            isOpen={isFirstModalOpen}
-            onOpen={onFirstModalOpen}
-            onClose={onFirstModalClose}
-          />
-          <StandardButton
-            variant={"WHITE_RED"}
-            borderRadius="20px"
-            py={"17px"}
-            w={{ base: "160px", md: "fit-content" }}
-            fontSize={"14px"}
-            fontWeight={"400"}
-            onClick={onSecondModalOpen}
-            children={
-              <Text
-                textAlign={"left"}
-                textStyle={{ base: "RobotoTinyBold", md: "RobotoRegularBold" }}
-              >
-                Despachar Producto
-              </Text>
-            }
-          ></StandardButton>
-          <Despachar
-            isOpen={isSecondModalOpen}
-            onOpen={onSecondModalOpen}
-            onClose={onSecondModalClose}
-          />
-          <StandardButton
-            variant={"WHITE_RED"}
-            borderRadius="20px"
-            py={"17px"}
-            w={{ base: "160px", md: "fit-content" }}
-            fontSize={"14px"}
-            fontWeight={"400"}
-            onClick={onThirdModalOpen}
-            children={
-              <Text
-                textAlign={"left"}
-                textStyle={{ base: "RobotoTinyBold", md: "RobotoRegularBold" }}
-              >
-                Transferir Productos
-              </Text>
-            }
-          ></StandardButton>
-          <Transferir
-            isOpen={isThirdModalOpen}
-            onOpen={onThirdModalOpen}
-            onClose={onThirdModalClose}
-          />
+          <Box m={1}>
+            <StandardButton
+              variant={"WHITE_RED"}
+              borderRadius="20px"
+              py={"17px"}
+              w={{ base: "160px", md: "fit-content" }}
+              fontSize={"14px"}
+              fontWeight={"400"}
+              onClick={onFirstModalOpen}
+              children={
+                <Text
+                  textAlign={"left"}
+                  textStyle={{
+                    base: "RobotoTinyBold",
+                    md: "RobotoRegularBold",
+                  }}
+                >
+                  Ingresar Nuevo Producto
+                </Text>
+              }
+            ></StandardButton>
+            <IngresarProducto
+              isOpen={isFirstModalOpen}
+              onOpen={onFirstModalOpen}
+              onClose={onFirstModalClose}
+            />
+          </Box>
+          <Box m={1}>
+            <StandardButton
+              variant={"WHITE_RED"}
+              borderRadius="20px"
+              py={"17px"}
+              w={{ base: "160px", md: "fit-content" }}
+              fontSize={"14px"}
+              fontWeight={"400"}
+              onClick={onSecondModalOpen}
+              children={
+                <Text
+                  textAlign={"left"}
+                  textStyle={{
+                    base: "RobotoTinyBold",
+                    md: "RobotoRegularBold",
+                  }}
+                >
+                  Despachar Producto
+                </Text>
+              }
+            ></StandardButton>
+            <Despachar
+              isOpen={isSecondModalOpen}
+              onOpen={onSecondModalOpen}
+              onClose={onSecondModalClose}
+            />
+          </Box>
+          <Box m={1}>
+            <StandardButton
+              variant={"WHITE_RED"}
+              borderRadius="20px"
+              py={"17px"}
+              w={{ base: "160px", md: "fit-content" }}
+              fontSize={"14px"}
+              fontWeight={"400"}
+              onClick={onThirdModalOpen}
+              children={
+                <Text
+                  textAlign={"left"}
+                  textStyle={{
+                    base: "RobotoTinyBold",
+                    md: "RobotoRegularBold",
+                  }}
+                >
+                  Transferir Productos
+                </Text>
+              }
+            ></StandardButton>
+            <Transferir
+              isOpen={isThirdModalOpen}
+              onOpen={onThirdModalOpen}
+              onClose={onThirdModalClose}
+            />
+          </Box>
         </Box>
       </Box>
-      <Box gap={"10px"} p={"20px"} w={"100%"}>
+      <Box display="flex" flexDir={"column"} h="100%" p={"20px"} w={"100%"}>
         {
           <TablaProductosBodega
             isFirstModalOpen={isFourthModalOpen}
@@ -348,15 +393,15 @@ export default function ProductosyBodega() {
             isSixthModalOpen={isNinthModalOpen}
             onSixthModalOpen={onNinthModalOpen}
             onSixthModalClose={onNinthModalClose}
-            lista1={lista1}
-            lista2={lista2}
-            displayedArticulos={displayedArticulos}
             handleSortingClick={handleSortingClick}
             totalResults={totalResults}
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
             funcConfirmar={handleConfirmarDelete}
+            lista1={totalProveedores ? totalProveedores : []}
+            lista2={totalCategorias ? totalCategorias : []}
+            displayedArticulos={displayedArticulos ? displayedArticulos : []}
           />
         }
       </Box>
