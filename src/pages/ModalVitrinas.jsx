@@ -16,7 +16,7 @@ import {
 import LeftTriangleIcon from "../assets/images/LeftTriangleIcon";
 import StandardButton from "../component/ui/buttons/standard";
 import { useSelector, useDispatch } from "react-redux";
-import { setCity, setDispositivo, setName } from "../store/slices/vitrina";
+import { setListaDeVitrinas, setCity, setName } from "../store/slices/vitrina";
 
 import Vitrina from "../component/Vitrina";
 import { useNavigate } from "react-router-dom";
@@ -53,7 +53,6 @@ export default function ModalVitrinas({
     dispatch(setCity(cityName));
 
     dispatch(setName(vitrinaName));
-    //dispatch(setVitrinaActive(0));
 
     navigate("/resumen");
     onFirstModalClose();
@@ -74,16 +73,19 @@ export default function ModalVitrinas({
   useEffect(() => {
     const DataVitrina = xmlToJSON(dataXmlVitrinas).vitrinas.vitrina;
     const vitrinasObj = {};
+    const vitrinasList = [];
 
     for (let i = 0; i < DataVitrina.length; i++) {
       const city = DataVitrina[i].ciudad["#text"];
       const vitrina = DataVitrina[i].nombre["#text"];
+      vitrinasList.push(vitrina);
       if (!(city in vitrinasObj)) {
         vitrinasObj[city] = [];
       }
       vitrinasObj[city].push(vitrina);
     }
     setCiudadesVitrinas(vitrinasObj);
+    dispatch(setListaDeVitrinas(vitrinasList));
   }, []);
 
   const handleFirstModalClose = () => {

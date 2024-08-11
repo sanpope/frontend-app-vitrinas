@@ -37,6 +37,7 @@ import {
 
 import xmlToJSON from "../services/XmlToJsonConverter";
 import homePageData from "../services/homePageData";
+import fetchXMLData from "../services/fetchXmlData";
 
 const url = "";
 

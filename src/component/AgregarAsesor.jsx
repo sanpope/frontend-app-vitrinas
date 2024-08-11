@@ -10,16 +10,22 @@ import {
   Modal,
   FormControl,
   FormLabel,
+  Select,
 } from "@chakra-ui/react";
 
 import TextInput from "../component/ui/textInput";
 import StandardButton from "../component/ui/buttons/standard";
+import { useSelector, useDispatch } from "react-redux";
 
-export default function AgregarAsesor({  isOpen, onOpen, onClose }) {
-  const [name, setName] = useState("");
-  const [vitrina, setVitrina] = useState("");
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
+export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
+  const [name, setName] = useState(null);
+  const [vitrina, setVitrina] = useState(null);
+  const [user, setUser] = useState(null);
+  const [password, setPassword] = useState(null);
+
+  const totalVitrinas = useSelector(
+    (state) => state.vitrinaReducer.listaDeVitrinas,
+  );
 
   const saveName = (e) => {
     setName(e);
@@ -64,7 +70,7 @@ export default function AgregarAsesor({  isOpen, onOpen, onClose }) {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={(e) => EditarAsesor(e)}>
+            <FormControl onSubmit={(e) => EditarAsesor(e)} isRequired>
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -96,13 +102,12 @@ export default function AgregarAsesor({  isOpen, onOpen, onClose }) {
                 </span>
                 Vitrina
               </FormLabel>
-              <TextInput
-                type="text"
-                placeholder="example"
-                required
-                onChange={(e) => saveVitrina(e)}
-                value={vitrina}
-              />
+              <Select>
+                {totalVitrinas?.map((vit) => (
+                  <option>{vit}</option>
+                ))}
+              </Select>
+
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
