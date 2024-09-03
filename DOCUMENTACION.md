@@ -1,6 +1,6 @@
 # Información relevante sobre este proyecto
 
-En este proyecto debe crearse todo el frontend del sistema de gestión de vitrinas. El administrador del negocio utilizará esta app para gestionar la información relevante que se obtiene de las distintas vitrinas (puntos de venta) en tiempo real. En la app podrá encontrar, entre otras cosas, información sobre ventas, inventarios, visitas realizadas por asesores, predicciones de desempeño, novedades generales, etc.
+En este proyecto debe crearse todo el frontend del sistema de gestión de vitrinas. El administrador del negocio utilizará esta app para gestionar toda la información relevante que las distintas vitrinas (puntos de venta) pueden ofrecer en tiempo real. En la app podrá encontrar, entre otras cosas, información sobre ventas, inventarios, visitas realizadas por asesores, predicciones de desempeño, novedades generales, etc.
 
 ## Diseño de interfaz
 
