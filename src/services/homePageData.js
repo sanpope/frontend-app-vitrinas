@@ -6,11 +6,11 @@ export default `  <datosDeNegocio>
 		</vitrina>
 	</vitrinas>
 	<resumenDeNegocio>
-		<ventaTotalMes>
+		<ventaTotalDelMes>
 			<valor>22.000.000</valor>
 			<porcentajeDeCrecimiento>55</porcentajeDeCrecimiento>
-		</ventaTotalMes>
-		<ventaUltimosMeses>
+		</ventaTotalDelMes>
+		<ventaDeUltimosOnceMeses>
 			<ventaDeMes>
 				<mes>1</mes>
 				<valor>500</valor>
@@ -35,8 +35,8 @@ export default `  <datosDeNegocio>
 				<mes>6</mes>
 				<valor>400</valor>
 			</ventaDeMes>
-		</ventaUltimosMeses>
-		<vitrinasConMasVtasDelMes>
+		</ventaDeUltimosOnceMeses>
+		<vitrinasConMasVentasEnElMes>
 			<vitrina>
 				<nombre>Corales de India</nombre>
 				<venta>2.100.000</venta>
@@ -49,8 +49,8 @@ export default `  <datosDeNegocio>
 				<nombre>Double Tree Bogotá</nombre>
 				<venta>500.000</venta>
 			</vitrina>
-		</vitrinasConMasVtasDelMes>
-		<vitrinasConMasVtas>
+		</vitrinasConMasVentasEnElMes>
+		<vitrinasConMasVentas>
 			<vitrina>
 				<nombre>Corales de India</nombre>
 				<venta>2.100.000</venta>
@@ -63,8 +63,8 @@ export default `  <datosDeNegocio>
 				<nombre>Double Tree Bogotá</nombre>
 				<venta>500.000</venta>
 			</vitrina>
-		</vitrinasConMasVtas>
-		<categoriasPopulares>
+		</vitrinasConMasVentas>
+		<categoriasMasPopulares>
 			<categoria>
 				<nombre>Ropa</nombre>
 				<porcentaje>95</porcentaje>
@@ -85,8 +85,8 @@ export default `  <datosDeNegocio>
 				<nombre>Otros</nombre>
 				<porcentaje>10</porcentaje>
 			</categoria>
-		</categoriasPopulares>
-		<productosPopulares>
+		</categoriasMasPopulares>
+		<productosMasPopulares>
 			<producto>
 				<nombre>Camisetas</nombre>
 				<porcentaje>95.5</porcentaje>
@@ -167,7 +167,7 @@ export default `  <datosDeNegocio>
 				<nombre>Ropa interior</nombre>
 				<porcentaje>97.0</porcentaje>
 			</producto>
-		</productosPopulares>
+		</productosMasPopulares>
 	</resumenDeNegocio>
 	<actualidad>
 		<despachosActuales>
@@ -247,159 +247,73 @@ export default `  <datosDeNegocio>
 				<cantidadDeProductosDespachados>35</cantidadDeProductosDespachados>
 			</despacho>
 		</despachosActuales>
-		<visitasNoVerificadas>
+		<visitasSinVerificar>
 			<visita>
-				<idVisita>1</idVisita>
-				<fechaHora>06/Ene 10:00AM</fechaHora>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
 				<asesor>Juan Pérez</asesor>
-				<verificada>true</verificada>
 				<ingresos>10</ingresos>
 				<retiros>5</retiros>
-				<correccionesDeInventario>2</correccionesDeInventario>
-				<revertida>true</revertida>
+				<correcciones>2</correcciones>
 			</visita>
 			<visita>
-				<idVisita>2</idVisita>
-				<fechaHora>07/Feb 11:30AM</fechaHora>
-				<asesor>María López</asesor>
-				<verificada>false</verificada>
-				<ingresos>12</ingresos>
-				<retiros>3</retiros>
-				<correccionesDeInventario>1</correccionesDeInventario>
-				<revertida>false</revertida>
-			</visita>
-			<visita>
-				<idVisita>3</idVisita>
-				<fechaHora>08/Mar 01:00PM</fechaHora>
-				<asesor>Carlos Gómez</asesor>
-				<verificada>true</verificada>
-				<ingresos>8</ingresos>
-				<retiros>6</retiros>
-				<correccionesDeInventario>0</correccionesDeInventario>
-				<revertida>true</revertida>
-			</visita>
-			<visita>
-				<idVisita>4</idVisita>
-				<fechaHora>09/Abr 09:45AM</fechaHora>
-				<asesor>Lucía Martínez</asesor>
-				<verificada>false</verificada>
-				<ingresos>15</ingresos>
-				<retiros>4</retiros>
-				<correccionesDeInventario>3</correccionesDeInventario>
-				<revertida>false</revertida>
-			</visita>
-			<visita>
-				<idVisita>5</idVisita>
-				<fechaHora>10/May 03:20PM</fechaHora>
-				<asesor>Jorge Fernández</asesor>
-				<verificada>true</verificada>
-				<ingresos>9</ingresos>
-				<retiros>7</retiros>
-				<correccionesDeInventario>1</correccionesDeInventario>
-				<revertida>true</revertida>
-			</visita>
-			<visita>
-				<idVisita>6</idVisita>
-				<fechaHora>11/Jun 02:15PM</fechaHora>
-				<asesor>Laura Sánchez</asesor>
-				<verificada>false</verificada>
-				<ingresos>13</ingresos>
-				<retiros>2</retiros>
-				<correccionesDeInventario>4</correccionesDeInventario>
-				<revertida>false</revertida>
-			</visita>
-			<visita>
-				<idVisita>7</idVisita>
-				<fechaHora>12/Jul 12:05PM</fechaHora>
-				<asesor>Antonio Ruiz</asesor>
-				<verificada>true</verificada>
-				<ingresos>11</ingresos>
-				<retiros>5</retiros>
-				<correccionesDeInventario>2</correccionesDeInventario>
-				<revertida>true</revertida>
-			</visita>
-			<visita>
-				<idVisita>8</idVisita>
-				<fechaHora>13/Ago 04:50PM</fechaHora>
-				<asesor>Patricia Torres</asesor>
-				<verificada>false</verificada>
-				<ingresos>7</ingresos>
-				<retiros>6</retiros>
-				<correccionesDeInventario>1</correccionesDeInventario>
-				<revertida>false</revertida>
-			</visita>
-			<visita>
-				<idVisita>9</idVisita>
-				<fechaHora>14/Sep 01:40PM</fechaHora>
-				<asesor>Raúl Ramírez</asesor>
-				<verificada>true</verificada>
-				<ingresos>14</ingresos>
-				<retiros>3</retiros>
-				<correccionesDeInventario>0</correccionesDeInventario>
-				<revertida>true</revertida>
-			</visita>
-			<visita>
-				<idVisita>10</idVisita>
-				<fechaHora>15/Oct 09:55AM</fechaHora>
-				<asesor>Sandra Navarro</asesor>
-				<verificada>false</verificada>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
 				<ingresos>10</ingresos>
-				<retiros>4</retiros>
-				<correccionesDeInventario>2</correccionesDeInventario>
-				<revertida>false</revertida>
-			</visita>
-			<visita>
-				<idVisita>11</idVisita>
-				<fechaHora>16/Nov 03:10PM</fechaHora>
-				<asesor>Fernando Castro</asesor>
-				<verificada>true</verificada>
-				<ingresos>9</ingresos>
 				<retiros>5</retiros>
-				<correccionesDeInventario>3</correccionesDeInventario>
-				<revertida>true</revertida>
+				<correcciones>2</correcciones>
 			</visita>
 			<visita>
-				<idVisita>12</idVisita>
-				<fechaHora>17/Dic 10:25AM</fechaHora>
-				<asesor>Rosa Gutiérrez</asesor>
-				<verificada>false</verificada>
-				<ingresos>12</ingresos>
-				<retiros>6</retiros>
-				<correccionesDeInventario>1</correccionesDeInventario>
-				<revertida>false</revertida>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
+				<ingresos>10</ingresos>
+				<retiros>5</retiros>
+				<correcciones>2</correcciones>
 			</visita>
 			<visita>
-				<idVisita>13</idVisita>
-				<fechaHora>18/Ene 11:50AM</fechaHora>
-				<asesor>Alberto Jiménez</asesor>
-				<verificada>true</verificada>
-				<ingresos>8</ingresos>
-				<retiros>7</retiros>
-				<correccionesDeInventario>0</correccionesDeInventario>
-				<revertida>true</revertida>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
+				<ingresos>10</ingresos>
+				<retiros>5</retiros>
+				<correcciones>2</correcciones>
 			</visita>
 			<visita>
-				<idVisita>14</idVisita>
-				<fechaHora>19/Feb 02:35PM</fechaHora>
-				<asesor>Gabriela Herrera</asesor>
-				<verificada>false</verificada>
-				<ingresos>15</ingresos>
-				<retiros>3</retiros>
-				<correccionesDeInventario>2</correccionesDeInventario>
-				<revertida>false</revertida>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
+				<ingresos>10</ingresos>
+				<retiros>5</retiros>
+				<correcciones>2</correcciones>
 			</visita>
 			<visita>
-				<idVisita>15</idVisita>
-				<fechaHora>20/Mar 12:20PM</fechaHora>
-				<asesor>Ricardo Ortiz</asesor>
-				<verificada>true</verificada>
-				<ingresos>13</ingresos>
-				<retiros>2</retiros>
-				<correccionesDeInventario>4</correccionesDeInventario>
-				<revertida>true</revertida>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
+				<ingresos>10</ingresos>
+				<retiros>5</retiros>
+				<correcciones>2</correcciones>
 			</visita>
-		</visitasNoVerificadas>
-		<dispositivosFallidos>
+			<visita>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
+				<ingresos>10</ingresos>
+				<retiros>5</retiros>
+				<correcciones>2</correcciones>
+			</visita>
+			<visita>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Corales de Indias</vitrina>
+				<asesor>Juan Pérez</asesor>
+				<ingresos>10</ingresos>
+				<retiros>5</retiros>
+				<correcciones>2</correcciones>
+			</visita>
+		</visitasSinVerificar>
+		<dispositivosConProblemas>
 			<dispositivo>
 				<vitrina>Tienda Central</vitrina>
 				<detalleDeEstado>Con fallas</detalleDeEstado>
@@ -475,6 +389,6 @@ export default `  <datosDeNegocio>
 				<detalleDeEstado>Con fallas</detalleDeEstado>
 				<fechaDelProblema>06/Mar 2:50PM</fechaDelProblema>
 			</dispositivo>
-		</dispositivosFallidos>
+		</dispositivosConProblemas>
 	</actualidad>
 </datosDeNegocio>`;

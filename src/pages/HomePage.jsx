@@ -43,7 +43,9 @@ const url = "";
 
 const PADDING = 15;
 
+
 export default function HomePage() {
+
   const dispatch = useDispatch();
   const { height } = useWindowDimensions();
   const ventaTotalMes = useSelector(
@@ -52,8 +54,7 @@ export default function HomePage() {
   const name = useSelector((state) => state.userReducer.userName);
 
   const [ventasMesesAnteriores, setVentaMesesAnteriores] = useState(null);
-  const [VitrinasConMasVtasDelMes, setVitrinasConMasVtasDelMes] =
-    useState(null);
+  const [VitrinasConMasVtasDelMes, setVitrinasConMasVtasDelMes] = useState(null);
   const [labels, setLabels] = useState(null);
   const [dataChart, setDataChart] = useState(null);
   const [topTotalVitrinas, setTopTotalVitrinas] = useState(null);
@@ -64,21 +65,55 @@ export default function HomePage() {
   const [totalVisitasNoVerif, setTotalVisiasNoVerif] = useState(null);
 
   useEffect(() => {
-    parseData();
-    //serverConexion();
+    const fetchData = async () => {
+      const estructXML = await obtenerDatos();
+      console.log(estructXML);
+      parseData(estructXML);
+    };
+
+    fetchData();
   }, []);
 
-  const parseData = () => {
-    const resumenInfo = xmlToJSON(homePageData);
+  const obtenerDatos = async () => {
 
-    //Ventas del Mes
+    try {
+      console.log("Intento de obtener datos");
+  
+      const respuesta = await fetch('http://localhost:8080/app/rest/negocio/resumen', {
+        method: 'GET',
+        headers: {}
+      });
+  
+      if (respuesta.ok) {
+          
+        console.log("Datos recibidos");
+  
+        const datos = await respuesta.text();
+        return datos;
+  
+      } else {
+  
+        console.log("Hubo un error, los datos no han podido recibirse");
+        return homePageData;
+      }
+  
+    } catch (error) {
+  
+        console.error('Hubo un problema con la solicitud fetch:', error);
+        return homePageData;
+    }
+  };
+
+  const parseData = (estructuraXML) => {
+
+    const resumenInfo = xmlToJSON(estructuraXML);
+
+    //Venta del Mes
     const Valor =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.ventaTotalMes?.valor[
-        "#text"
-      ];
+      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.ventaTotaDellMes?.valor["#text"];
+
     const Porcentaje =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.ventaTotalMes
-        ?.porcentajeDeCrecimiento["#text"];
+      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.ventaTotalDelMes?.porcentajeDeCrecimiento["#text"];
 
     if (Valor && Porcentaje) {
       dispatch(
@@ -87,9 +122,10 @@ export default function HomePage() {
     }
 
     //Ventas de Meses Anteriores
-    const ventaUltimosMeses =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.ventaUltimosMeses;
+    const ventaUltimosMeses = resumenInfo?.datosDeNegocio?.resumenDeNegocio?.ventaDeUltimosOnceMeses;
+
     if (ventaUltimosMeses && Array.isArray(ventaUltimosMeses.ventaDeMes)) {
+
       const ventasMesesAnt = ventaUltimosMeses.ventaDeMes;
 
       const arrVentasMesAnt = ventasMesesAnt.map((venta) => {
@@ -97,16 +133,15 @@ export default function HomePage() {
         const valor = venta.valor?.["#text"];
         return { mes, valor };
       });
+
       setVentaMesesAnteriores(arrVentasMesAnt);
+
     } else {
-      setVentaMesesAnteriores([
-        "No se encontraron ventas de los últimos meses.",
-      ]);
+      setVentaMesesAnteriores(["No se encontraron ventas de los últimos meses"]);
     }
 
     //Top Vitrinas del Mes
-    const TopVitrinasDelMes =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.vitrinasConMasVtasDelMes;
+    const TopVitrinasDelMes = resumenInfo?.datosDeNegocio?.resumenDeNegocio?.vitrinasConMasVentasEnElMes;
 
     if (TopVitrinasDelMes && Array.isArray(TopVitrinasDelMes.vitrina)) {
       const topVitrinasMes = TopVitrinasDelMes.vitrina;
@@ -129,9 +164,9 @@ export default function HomePage() {
       ]);
     }
 
-    // Top Vitrinas
-    const TopVitrinas =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.vitrinasConMasVtas;
+    //Top Vitrinas
+    const TopVitrinas = resumenInfo?.datosDeNegocio?.resumenDeNegocio?.vitrinasConMasVentas;
+
     if (TopVitrinas && Array.isArray(TopVitrinas.vitrina)) {
       const topVitrinas = TopVitrinas.vitrina;
 
@@ -146,12 +181,14 @@ export default function HomePage() {
     }
 
     //Top Categorías
-    const TopCategorias =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.categoriasPopulares;
+    const TopCategorias = resumenInfo?.datosDeNegocio?.resumenDeNegocio?.categoriasMasPopulares;
+
     if (TopCategorias && Array.isArray(TopCategorias.categoria)) {
+
       const topCategorias = TopCategorias.categoria;
 
       const arrTopCategorias = topCategorias.map((categoria) => {
+
         const nombre = categoria.nombre?.["#text"];
         const porcentaje = categoria.porcentaje?.["#text"];
         const icon =
@@ -166,18 +203,23 @@ export default function HomePage() {
           ) : (
             <ShoppingBagIcon />
           );
+
         return { nombre, porcentaje, icon };
       });
+
       setTotalCategorias(arrTopCategorias);
       dispatch(setTopCategoriasGlobal(arrTopCategorias));
+
     } else {
+
       setTotalCategorias([{ nombre: "Top de Categorías no encontradas" }]);
     }
 
     //Top Productos
-    const TopProductos =
-      resumenInfo?.datosDeNegocio?.resumenDeNegocio?.productosPopulares;
+    const TopProductos = resumenInfo?.datosDeNegocio?.resumenDeNegocio?.productosMasPopulares;
+
     if (TopProductos && Array.isArray(TopProductos.producto)) {
+
       const topProductos = TopProductos.producto;
 
       const arrTopProductos = topProductos.map((producto) => {
@@ -185,16 +227,16 @@ export default function HomePage() {
         const porcentaje = producto.porcentaje?.["#text"];
         return { nombre, porcentaje };
       });
+
       setTopTotalProductos(arrTopProductos);
+
     } else {
-      setTopTotalProductos([
-        { nombre: "No se encontraron  Top de Productos." },
-      ]);
+
+      setTopTotalProductos([{ nombre: "No se encontró Top de Productos" }]);
     }
 
     //Dispositivos Averiados
-    const DispositivosAveriados =
-      resumenInfo?.datosDeNegocio?.actualidad?.dispositivosFallidos;
+    const DispositivosAveriados = resumenInfo?.datosDeNegocio?.actualidad?.dispositivosConProblemas;
 
     if (
       DispositivosAveriados &&
@@ -234,40 +276,36 @@ export default function HomePage() {
       setTotalDespachos([{ vitrina: "No se encontraron Despachos Actuales." }]);
     }
 
-    // Visitas No Verificadas
-    const VisitasNoVerificadas =
-      resumenInfo?.datosDeNegocio?.actualidad?.visitasNoVerificadas;
+    //Visitas No Verificadas
+    const VisitasNoVerificadas = resumenInfo?.datosDeNegocio?.actualidad?.visitasSinVerificar;
 
     if (VisitasNoVerificadas && Array.isArray(VisitasNoVerificadas.visita)) {
       const visitasNoVerificadas = VisitasNoVerificadas.visita;
 
       const arrVisitasNoVerificadas = visitasNoVerificadas.map((visita) => {
-        const idVisita = visita.idVisita?.["#text"];
-        const fechaHora = visita.fechaHora?.["#text"];
+
+        const fecha = visita.fecha?.["#text"];
+        const vitrina = visita.vitrina?.["#text"];
         const asesor = visita.asesor?.["#text"];
-        const verificada = visita.verificada?.["#text"];
         const ingresos = visita.ingresos?.["#text"];
         const retiros = visita.retiros?.["#text"];
-        const correccionesDeInventario =
-          visita.correccionesDeInventario?.["#text"];
-        const revertida = visita.revertida?.["#text"];
+        const correcciones = visita.correcciones?.["#text"];
 
         return {
-          idVisita,
-          fechaHora,
+          fecha,
+          vitrina,
           asesor,
-          verificada,
           ingresos,
           retiros,
-          correccionesDeInventario,
-          revertida,
+          correcciones
         };
       });
+
       setTotalVisiasNoVerif(arrVisitasNoVerificadas);
+
     } else {
-      setTotalVisiasNoVerif([
-        { asesor: "No se encontraron Visitas No Verificadas." },
-      ]);
+
+      setTotalVisiasNoVerif([{ asesor: "No se encontraron Visitas No Verificadas" }]);
     }
   };
 
@@ -303,7 +341,7 @@ export default function HomePage() {
         <Container
           height={{ base: "150px", md: ContainerHeight + "px" }}
           minHeight={{ base: "170px", md: "225px" }}
-          title={"Ventas del mes"}
+          title={"Venta del mes"}
           icon={<ReceiptIcon width={"24px"} height={"24px"} />}
           children={
             <Box
@@ -333,7 +371,7 @@ export default function HomePage() {
               >
                 <Text textStyle={"RobotoSubSmall"} color={"success.30"}>
                   {ventaTotalMes != null
-                    ? `+ ${ventaTotalMes.porcentajeDeCrecimiento} con respecto al promedio`
+                    ? `+ ${ventaTotalMes.porcentajeDeCrecimiento}% con respecto al promedio`
                     : "No hay información"}
                 </Text>
                 <GreenArrowICon />
@@ -346,7 +384,7 @@ export default function HomePage() {
           height={ContainerHeight + "px"}
           minHeight={"225px"}
           maxW={"450px"}
-          title={"Ventas de meses anteriores"}
+          title={"Venta en meses anteriores"}
           icon={<ReceiptIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
             <Box w={"100%"} h={"100%"}>

@@ -33,7 +33,7 @@ import EstaVitrina from "./pages/EstaVitrina";
 import ModalVitrinas from "./pages/ModalVitrinas";
 
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(true); // TODO get from cache
+  const [isLoggedIn, setLoggedIn] = useState(false); // TODO get from cache
 
   return (
     <>
@@ -52,7 +52,7 @@ function App() {
             >
               <Header />
               <Routes>
-                <Route element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
                 {routes.map((route, index) => (
                   <Route
                     key={index}
