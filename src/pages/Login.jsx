@@ -12,6 +12,7 @@ import textStyles from "../theme/textStyles";
 import login from "../services/login";
 
 function Login({ setLoggedIn }) {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState(true);
@@ -19,6 +20,7 @@ function Login({ setLoggedIn }) {
   const [errEmail, setErrEmail] = useState("");
   const [errPassword, setErrPassword] = useState("");
   const [errCheck, setErrCheck] = useState("");
+
 
   const onChangeEmail = (e) => {
     let emailLowerCase = e.toLowerCase();
@@ -31,8 +33,10 @@ function Login({ setLoggedIn }) {
   };
 
   const emailValidation = () => {
+
     let result = false;
     const rgExp = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+
     if (rgExp.test(email)) {
       setErrEmail("");
       result = false;
@@ -51,17 +55,21 @@ function Login({ setLoggedIn }) {
   };
 
   const passwordValidation = (pw) => {
+
     setErrPassword("");
     let result = false;
     let msg = "";
 
-    const rgExp =
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{6,15}$/;
+    const rgExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{6,15}$/;
+
     if (rgExp.test(pw)) {
+
       setErrPassword("");
       result = false;
       return result;
+
     } else {
+
       if (pw.length === 0) {
         msg = "El campo no puede estar vacío, agrega una contraseña";
         setErrPassword(msg);
@@ -81,13 +89,21 @@ function Login({ setLoggedIn }) {
   };
 
   const handleLogin = async (e) => {
+    
     e.preventDefault();
     const loginData = await login.login({ user: email, password });
     const validEmail = emailValidation();
     const validPassword = passwordValidation(password);
-    if (!validEmail && !validPassword && loginData.status) {
+
+    /* if (!validEmail && !validPassword && loginData.status) {
+
       setLoggedIn(true);
-    } else {
+
+    } */
+    if (loginData.status) {
+
+      setLoggedIn(true);
+
     }
   };
 

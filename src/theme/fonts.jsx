@@ -11,7 +11,7 @@ export const Fonts = () => (
     styles={`
             @font-face {
                 font-family: 'Roboto';
-                src: url('/fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+                src: url('${process.env.PUBLIC_URL}/fonts/Roboto/Roboto-Regular.ttf') format('truetype');
             }           
         `}
   />

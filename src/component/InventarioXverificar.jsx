@@ -120,7 +120,7 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
                 textAlign={"left"}
                 color={"grey.placeholder"}
               >
-                {visita.fechaHora}
+                {visita.fecha}
               </Text>
               <Box
                 display={"flex"}
@@ -150,7 +150,7 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
                   borderRadius="full"
                   display={"inline-flex"}
                 ></Box>
-                <Text>{visita.correccionesDeInventario}</Text>
+                <Text>{visita.correcciones}</Text>
               </Box>
             </Box>
           </Box>
