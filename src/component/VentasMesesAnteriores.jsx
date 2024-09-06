@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
+import { Text } from "@chakra-ui/react";
 
 ChartJS.register(
   CategoryScale,
@@ -94,10 +95,10 @@ const options = {
 
 const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
   const chartData = {
-    labels: VentasMesAnterior.map((d) => d.mes),
+    labels: VentasMesAnterior?.map((d) => d.mes),
     datasets: [
       {
-        data: VentasMesAnterior.map((d) => d.valor),
+        data: VentasMesAnterior?.map((d) => d.valor),
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
@@ -118,7 +119,15 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
     ],
   };
 
-  return <Line data={chartData} options={options} />;
+  return (
+    <>
+      {VentasMesAnterior != null ? (
+        <Line data={chartData} options={options} />
+      ) : (
+        <Text>No existen ventas registradas en los meses anteriores</Text>
+      )}{" "}
+    </>
+  );
 };
 
 export default VentasMesesAnteriores;

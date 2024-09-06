@@ -1,0 +1,203 @@
+<datosDeNegocio>
+	<actualidad>
+		<despachosActuales>
+			<despacho>
+				<cantidadDeProductosDespachados>1</cantidadDeProductosDespachados>
+				<fecha>2024-03-20</fecha>
+				<vitrina>Double Tree Bog</vitrina>
+			</despacho>
+		</despachosActuales>
+		<dispositivosConProblemas>
+			<dispositivo>
+				<detalleDeEstado>No operando</detalleDeEstado>
+				<fechaDelProblema>2024-08-07T13:20</fechaDelProblema>
+				<vitrina>Double Tree Bog</vitrina>
+			</dispositivo>
+			<dispositivo>
+				<detalleDeEstado>No operando</detalleDeEstado>
+				<fechaDelProblema>2024-08-07T13:20</fechaDelProblema>
+				<vitrina>Corales de Indias</vitrina>
+			</dispositivo>
+			<dispositivo>
+				<detalleDeEstado>No operando</detalleDeEstado>
+				<fechaDelProblema>2024-08-07T13:15</fechaDelProblema>
+				<vitrina>Hotel Cota Bog</vitrina>
+			</dispositivo>
+		</dispositivosConProblemas>
+		<visitasSinVerificar>
+			<visita>
+				<correcciones>0</correcciones>
+				<fecha>2024-03-20</fecha>
+				<ingresos>0</ingresos>
+				<retiros>0</retiros>
+				<vitrina>Corales de Indias</vitrina>
+			</visita>
+			<visita>
+				<asesor>Santiago Poveda</asesor>
+				<correcciones>4</correcciones>
+				<fecha>2024-03-10</fecha>
+				<ingresos>12</ingresos>
+				<retiros>0</retiros>
+				<vitrina>Corales de Indias</vitrina>
+			</visita>
+		</visitasSinVerificar>
+	</actualidad>
+	<resumenDeNegocio>
+		<categoriasMasPopulares>
+			<categoria>
+				<nombre>tecnologia</nombre>
+				<porcentaje>52</porcentaje>
+			</categoria>
+			<categoria>
+				<nombre>artesanias</nombre>
+				<porcentaje>29</porcentaje>
+			</categoria>
+			<categoria>
+				<nombre>ropa</nombre>
+				<porcentaje>18</porcentaje>
+			</categoria>
+		</categoriasMasPopulares>
+		<productosMasPopulares>
+			<producto>
+				<nombre>MUÑECA DE TRAPO</nombre>
+				<porcentaje>23</porcentaje>
+			</producto>
+			<producto>
+				<nombre>HELADO DE QUESO CON UVAS PASAS</nombre>
+				<porcentaje>20</porcentaje>
+			</producto>
+			<producto>
+				<nombre>ADAPTADOR UNIVERSAL</nombre>
+				<porcentaje>16</porcentaje>
+			</producto>
+			<producto>
+				<nombre>TERMO PARA CAFÉ</nombre>
+				<porcentaje>14</porcentaje>
+			</producto>
+			<producto>
+				<nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+				<porcentaje>14</porcentaje>
+			</producto>
+			<producto>
+				<nombre>CARGADOR TIPO C</nombre>
+				<porcentaje>10</porcentaje>
+			</producto>
+		</productosMasPopulares>
+		<ventaTotalDelMes>
+			<porcentajeDeCrecimiento>-100</porcentajeDeCrecimiento>
+			<valor>0.0</valor>
+		</ventaTotalDelMes>
+		<ventaDeUltimosOnceMeses>
+			<ventaDeMes>
+				<mes>8</mes>
+				<valor>121000.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>7</mes>
+				<valor>591700.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>6</mes>
+				<valor>15900.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>5</mes>
+				<valor>258000.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>4</mes>
+				<valor>0.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>3</mes>
+				<valor>52551.5</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>2</mes>
+				<valor>0.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>1</mes>
+				<valor>0.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>12</mes>
+				<valor>0.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>11</mes>
+				<valor>0.0</valor>
+			</ventaDeMes>
+			<ventaDeMes>
+				<mes>10</mes>
+				<valor>0.0</valor>
+			</ventaDeMes>
+		</ventaDeUltimosOnceMeses>
+		<vitrinasConMasVentas>
+			<vitrina>
+				<nombre>Double Tree Bog</nombre>
+				<venta>588250.25</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Corales de Indias</nombre>
+				<venta>400901.25</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Hotel Cota Bog</nombre>
+				<venta>50000.0</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Hotel Costa Azul</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Hotel Sonesta Med</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+		</vitrinasConMasVentas>
+		<vitrinasConMasVentasEnElMes>
+			<vitrina>
+				<nombre>Corales de Indias</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Double Tree Bog</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Hotel Costa Azul</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Hotel Cota Bog</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+			<vitrina>
+				<nombre>Hotel Sonesta Med</nombre>
+				<venta>0.0</venta>
+			</vitrina>
+		</vitrinasConMasVentasEnElMes>
+	</resumenDeNegocio>
+	<vitrinas>
+		<vitrina>
+			<ciudad>Cartagena</ciudad>
+			<nombre>Corales de Indias</nombre>
+		</vitrina>
+		<vitrina>
+			<ciudad>Bogota</ciudad>
+			<nombre>Double Tree Bog</nombre>
+		</vitrina>
+		<vitrina>
+			<ciudad>Santa Marta</ciudad>
+			<nombre>Hotel Costa Azul</nombre>
+		</vitrina>
+		<vitrina>
+			<ciudad>Bogotá</ciudad>
+			<nombre>Hotel Cota Bog</nombre>
+		</vitrina>
+		<vitrina>
+			<ciudad>Medellín</ciudad>
+			<nombre>Hotel Sonesta Med</nombre>
+		</vitrina>
+	</vitrinas>
+</datosDeNegocio>
