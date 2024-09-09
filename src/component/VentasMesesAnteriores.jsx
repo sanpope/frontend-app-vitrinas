@@ -66,17 +66,20 @@ const options = {
       },
       ticks: {
         color: "black",
-        beginAtZero: false,
+        beginAtZero: true,
+        min: 0,
+        max: 500000,
         stepSize: 5000,
+        maxTicksLimit: 3,
         callback: (value) => {
           if (value === 0) {
             return "0k";
-          } else if (value > 0.0 && value < 10000.0) {
+          } else if (value > 0 && value <= 500000) {
             return "5k";
-          } else if (value >= 10000.0) {
+          } else if (value > 0 &&  value >= 1000000) {
             return "10k";
           } else {
-            return "";
+            return null; // No mostrar otras marcas
           }
         },
       },

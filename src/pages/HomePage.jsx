@@ -104,8 +104,6 @@ export default function HomePage() {
         },
       })
       .then((response) => {
-        console.log(response.status);
-        console.log(typeof response.status);
         const data = response.data;
         setOutput(data); // Guardamos el XML en estado para mostrarlo
 
@@ -113,7 +111,6 @@ export default function HomePage() {
         const xmlText = response.data;
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-        console.log(xmlDoc);
         vitrinasData(xmlDoc);
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
         setVentaMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
@@ -180,7 +177,6 @@ export default function HomePage() {
         valor: valor,
       });
     }
-    console.log(infoTotalVentasAnt);
     return infoTotalVentasAnt;
   };
 
@@ -217,26 +213,21 @@ export default function HomePage() {
   const getTopVitrinas = (xml) => {
     let infoTotalVitrinas = [];
     let topVitrinas = xml.querySelector("vitrinasConMasVentas");
-    console.log(topVitrinas);
     let totalTopVitrinas = topVitrinas.querySelectorAll("vitrina");
-    console.log(totalTopVitrinas);
     for (let i = 0; i < 3; i++) {
       let nombre =
         totalTopVitrinas[i].getElementsByTagName("nombre")[0].textContent;
-      console.log(nombre);
       let venta = new Intl.NumberFormat("es-ES", {
         maximumFractionDigits: 0,
       }).format(
         totalTopVitrinas[i].getElementsByTagName("venta")[0].textContent,
       );
-      console.log(venta);
 
       infoTotalVitrinas.push({
         nombre: nombre,
         venta: venta,
       });
     }
-    console.log(infoTotalVitrinas);
     return infoTotalVitrinas;
   };
 
@@ -268,14 +259,50 @@ export default function HomePage() {
     let topProductos = productos.querySelectorAll("producto");
 
     for (let i = 0; i < topProductos.length; i++) {
-      const nombre =
+      let nombre =
         topProductos[i].getElementsByTagName("nombre")[0].textContent;
+      nombre = nombre.toLowerCase();
+      nombre = nombre.split(" ");
+
+      for (let i = 0; i < nombre.length; i++) {
+        nombre[i] = nombre[i][0].toUpperCase() + nombre[i].substr(1);
+      }
+      nombre = nombre.join(" ");
+
       const porcentaje =
         topProductos[i].getElementsByTagName("porcentaje")[0].textContent;
       TopProductos.push({ nombre, porcentaje });
     }
     return TopProductos;
   };
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+
+    const options = {
+      day: "2-digit",
+      month: "short", // Mes abreviado
+      hour: "numeric", // Esto elimina el cero inicial en las horas
+      minute: "2-digit",
+      hour12: true, // Para formato 12 horas (AM/PM)
+    };
+
+    let formattedDate = date.toLocaleString("es-ES", options);
+
+    // Convertir la inicial del mes a mayúscula
+    formattedDate = formattedDate.replace(
+      /(\d{2}) (\w{3}),/, // Captura el día y el mes abreviado
+      (match, day, month) =>
+        `${day}/${month.charAt(0).toUpperCase()}${month.slice(1)},`,
+    );
+
+    // Convertir cualquier variación de "a. m." o "p. m." a "AM" o "PM" (quitamos puntos y espacios)
+    formattedDate = formattedDate
+      .replace(/\s?a\.?\s?m\.?/i, "AM")
+      .replace(/\s?p\.?\s?m\.?/i, "PM");
+
+    return formattedDate;
+  }
 
   const getDispositivosAveriados = (xml) => {
     const dispositivosArr = [];
@@ -288,10 +315,17 @@ export default function HomePage() {
       const detalleDeEstado =
         totalDispositivos[i].getElementsByTagName("detalleDeEstado")[0]
           .textContent;
-      const fechaDelProblema =
+      let fechaDelProblema =
         totalDispositivos[i].getElementsByTagName("fechaDelProblema")[0]
           .textContent;
-      dispositivosArr.push({ vitrina, detalleDeEstado, fechaDelProblema });
+
+      fechaDelProblema = formatDate(fechaDelProblema);
+
+      dispositivosArr.push({
+        vitrina,
+        detalleDeEstado,
+        fechaDelProblema,
+      });
     }
     return dispositivosArr;
   };
@@ -321,9 +355,8 @@ export default function HomePage() {
   const getInventarioPorVerificar = (xml) => {
     const visitasArr = [];
     let visitas = xml.querySelector("visitasSinVerificar");
-    console.log(visitas);
+
     let totalVisitas = visitas.querySelectorAll("visita");
-    console.log(totalVisitas);
 
     for (let i = 0; i < totalVisitas.length; i++) {
       const fecha =
@@ -334,6 +367,8 @@ export default function HomePage() {
 
       const asesor =
         totalVisitas[i].getElementsByTagName("asesor")[0].textContent;
+
+      //ToDo, Verificar la longitud del nombre del asesor y si está vacio asignar N/A
 
       const ingresos =
         totalVisitas[i].getElementsByTagName("ingresos")[0].textContent;
@@ -353,7 +388,6 @@ export default function HomePage() {
         correcciones,
       });
     }
-    console.log(visitasArr);
     return visitasArr;
   };
 

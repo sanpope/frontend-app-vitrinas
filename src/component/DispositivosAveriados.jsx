@@ -99,9 +99,9 @@ export default function DispositivosAveriados({ listadoDispositivos }) {
                 >
                   <Box
                     bg={
-                      dispositivo.detalleDeEstado === "Con fallas"
-                        ? "#FFD80C"
-                        : "red"
+                      dispositivo.detalleDeEstado === "No operando"
+                        ? "red"
+                        : "#FFD80C"
                     }
                     w={3}
                     h={3}
