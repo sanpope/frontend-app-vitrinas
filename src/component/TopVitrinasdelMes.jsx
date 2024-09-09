@@ -22,7 +22,7 @@ const TopVitrinasdelMes = ({
           "#BBBBBB",
         ],
         borderWidth: 1,
-        cutout: "75%",
+        cutout: "65%",
       },
     ],
   };
@@ -40,7 +40,7 @@ const TopVitrinasdelMes = ({
 
   return (
     <Box display={"flex"} justifyContent={"center"} alignItems={"center"} p={3}>
-      <Box h={"50%"} display={{ base: "none", sm: "inline-flex" }}>
+      <Box  h={"50%"} display={{ base: "none", sm: "inline-flex" }}>
         <Doughnut data={chartData} options={options} />
       </Box>
     </Box>

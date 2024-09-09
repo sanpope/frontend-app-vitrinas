@@ -71,9 +71,9 @@ const options = {
         callback: (value) => {
           if (value === 0) {
             return "0k";
-          } else if (value > 0 && value < 10000) {
+          } else if (value > 0.0 && value < 10000.0) {
             return "5k";
-          } else if (value >= 10000) {
+          } else if (value >= 10000.0) {
             return "10k";
           } else {
             return "";
@@ -95,22 +95,18 @@ const options = {
 
 const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
   const chartData = {
-    labels: VentasMesAnterior?.map((d) => d.mes),
+    labels: VentasMesAnterior?.map((d) => d.mes).sort(function (a, b) {
+      return a - b;
+    }),
     datasets: [
       {
         data: VentasMesAnterior?.map((d) => d.valor),
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: [
-          "#000000",
-          "#000000",
-          "#000000",
-          "#000000",
-          "#000000",
-          "#000000",
-          "#FF0000",
-        ],
+        pointBackgroundColor: VentasMesAnterior?.map((_, index) =>
+          index === VentasMesAnterior.length - 1 ? "#FF0000" : "#000000",
+        ),
         pointRadius: 6,
         pointBorderWidth: 2,
         pointBorderColor: "white",
@@ -125,7 +121,7 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
         <Line data={chartData} options={options} />
       ) : (
         <Text>No existen ventas registradas en los meses anteriores</Text>
-      )}{" "}
+      )}
     </>
   );
 };
