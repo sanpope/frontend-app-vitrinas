@@ -23,8 +23,7 @@ import { useNavigate } from "react-router-dom";
 import Agregar from "../component/Agregar";
 import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import dataXmlVitrinas from "../services/vitrinasData";
+import axios from "axios";
 
 export default function ModalVitrinas({
   isFirstModalOpen,
@@ -40,6 +39,7 @@ export default function ModalVitrinas({
 
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
   const [ciudadesVitrinas, setCiudadesVitrinas] = useState(null);
+
   const {
     isOpen: isSecondModalOpen,
     onOpen: onSecondModalOpen,
@@ -49,35 +49,98 @@ export default function ModalVitrinas({
   const [newVitrinaName, setNewVitrinaName] = useState("");
   const [newVitrinaCity, setNewVitrinaCity] = useState("");
 
-  const handleVitrinaClick = (cityName, vitrinaName) => {
+  const handleVitrinaClick = async (cityName, vitrinaName) => {
     dispatch(setCity(cityName));
-
     dispatch(setName(vitrinaName));
+    const url =
+      "http://34.176.231.167:8080/app/rest/vitrina/resumen-de-actividad";
 
-    navigate("/resumen");
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+        params: {
+          nombre: vitrinaName,
+        },
+      });
+
+      // Si el servidor responde con XML, puedes manejarlo aquí
+      console.log(response.data); // response.data contendrá el XML
+      navigate("/resumen");
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+
     onFirstModalClose();
   };
 
-  const saveVitrinaCity = (e) => {
-    setNewVitrinaCity(e.target.value);
-  };
+  const createNewVitrina = (city, name) => {
+    const formData = new URLSearchParams();
+    formData.append("nombre", name);
+    formData.append("ciudad", city);
 
-  const saveVitrinaName = (e) => {
-    setNewVitrinaName(e);
-  };
-
-  const createNewVitrina = () => {
     //ToDO Agregar vitrina POST/rest/vitrina
+    const url = "http://34.176.231.167:8080/app/rest/negocio/vitrinas";
+    axios
+      .post(url, formData, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error fetching the XML data: ", error);
+      });
+    onSecondModalClose();
   };
 
   useEffect(() => {
-    const DataVitrina = xmlToJSON(dataXmlVitrinas).vitrinas.vitrina;
-    const vitrinasObj = {};
-    const vitrinasList = [];
+    getVitrinasInfo();
+  }, [createNewVitrina]);
 
-    for (let i = 0; i < DataVitrina.length; i++) {
-      const city = DataVitrina[i].ciudad["#text"];
-      const vitrina = DataVitrina[i].nombre["#text"];
+  const handleFirstModalClose = () => {
+    if (showOptions === undefined) {
+      navigate("/");
+    }
+    onFirstModalClose();
+  };
+
+  const getVitrinasInfo = () => {
+    const url = "http://34.176.231.167:8080/app/rest/vitrina";
+    axios
+      .get(url, {
+        headers: {
+          "Content-Type": "application/xml; charset=utf-8",
+        },
+      })
+      .then((response) => {
+        const data = response.data;
+        //setOutput(data); // Guardamos el XML en estado para mostrarlo
+        // Parseamos el XML
+        const xmlText = response.data;
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        dispatch(setListaDeVitrinas(vitrinasData(xmlDoc)));
+      })
+      .catch((error) => {
+        console.error("Error fetching the XML data: ", error);
+        return error;
+      });
+  };
+
+  const vitrinasData = (xml) => {
+    const vitrinasList = [];
+    let DataVitrina = xml.querySelector("vitrinas");
+    let totalVitrinas = DataVitrina.querySelectorAll("vitrina");
+    const vitrinasObj = {};
+
+    for (let i = 0; i < totalVitrinas.length; i++) {
+      let city = totalVitrinas[i].getElementsByTagName("ciudad")[0].textContent;
+      let vitrina =
+        totalVitrinas[i].getElementsByTagName("nombre")[0].textContent;
       vitrinasList.push(vitrina);
       if (!(city in vitrinasObj)) {
         vitrinasObj[city] = [];
@@ -85,14 +148,7 @@ export default function ModalVitrinas({
       vitrinasObj[city].push(vitrina);
     }
     setCiudadesVitrinas(vitrinasObj);
-    dispatch(setListaDeVitrinas(vitrinasList));
-  }, []);
-
-  const handleFirstModalClose = () => {
-    if (showOptions === undefined) {
-      navigate("/");
-    }
-    onFirstModalClose();
+    return vitrinasList;
   };
 
   return (
@@ -197,6 +253,7 @@ export default function ModalVitrinas({
               onClick={onSecondModalClose}
               desc={"Vitrina"}
               desc2={"Nombre de la vitrina"}
+              funcAgregar={createNewVitrina}
             />
           </ModalFooter>
         </ModalContent>

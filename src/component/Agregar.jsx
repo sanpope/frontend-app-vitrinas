@@ -22,18 +22,21 @@ export default function Agregar({
   isOpen,
   onOpen,
   onClose,
-  Agregar,
+  funcAgregar,
 }) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
 
   const saveCity = (e) => {
+    console.log(e.target.value);
     setCity(e.target.value);
   };
 
   const saveName = (e) => {
+    console.log(e);
     setName(e);
   };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -62,7 +65,7 @@ export default function Agregar({
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={Agregar} pt={"10px"}>
+            <FormControl pt={"10px"}>
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -93,9 +96,19 @@ export default function Agregar({
                   },
                 }}
               >
-                <option>Bogotá</option>
-                <option>Medellín</option>
+                <option>Bogota</option>
+                <option>Medellin</option>
                 <option>Cali</option>
+                <option>Barranquilla</option>
+                <option>Bucaramanga</option>
+                <option>Manizales</option>
+                <option>Pereira</option>
+                <option>Cucuta</option>
+                <option>Pasto</option>
+                <option>Ibague</option>
+                <option>Monteria</option>
+                <option>Cartagena</option>
+                <option>Villavicencio</option>
               </Select>
               <FormLabel display="flex" alignItems="center" pt={"10px"}>
                 <span
@@ -140,6 +153,7 @@ export default function Agregar({
             fontSize="14px"
             fontWeight="400"
             type={"submit"}
+            onClick={() => funcAgregar(city, name)}
           >
             Guardar
           </StandardButton>

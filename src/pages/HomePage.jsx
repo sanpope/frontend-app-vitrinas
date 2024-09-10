@@ -111,7 +111,7 @@ export default function HomePage() {
         const xmlText = response.data;
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-        vitrinasData(xmlDoc);
+       
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
         setVentaMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
         setVitrinasConMasVtasDelMes(getVitrinasVentasMes(xmlDoc));
@@ -121,30 +121,14 @@ export default function HomePage() {
         setTopTotalProductos(getTopProductos(xmlDoc));
         setTotalDispAv(getDispositivosAveriados(xmlDoc));
         setTotalDespachos(getDespachosActuales(xmlDoc));
-        setTotalVisiasNoVerif(getInventarioPorVerificar(xmlDoc));
+        //setTotalVisiasNoVerif(getInventarioPorVerificar(xmlDoc));
       })
       .catch((error) => {
         console.error("Error fetching the XML data: ", error);
       });
   };
 
-  const vitrinasData = (xml) => {
-    let infoVentaTotalArr = [];
-    let vitrinas = xml.querySelector("vitrinas");
-    let totalVitrinas = vitrinas.querySelectorAll("vitrina");
-    for (let i = 0; i < totalVitrinas.length; i++) {
-      let ciudad =
-        totalVitrinas[i].getElementsByTagName("ciudad")[0].textContent;
-      let nombre =
-        totalVitrinas[i].getElementsByTagName("nombre")[0].textContent;
-
-      infoVentaTotalArr.push({
-        ciudad: ciudad,
-        nombre: nombre,
-      });
-    }
-    return infoVentaTotalArr;
-  };
+  
 
   const getVentaDelMes = (xml) => {
     let resumenDelNegocio = xml.querySelector("resumenDeNegocio");
