@@ -13,25 +13,32 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import TextInput from "./ui/textInput";
 import StandardButton from "./ui/buttons/standard";
 import ConfirmationMessage from "./ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
 
-export default function EditarExistencia({ isOpen, onOpen, onClose, articulo }) {
+export default function EditarExistencia({
+  isOpen,
+  onOpen,
+  onClose,
+  articulo,
+}) {
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
     onClose: onConfirmationModalClose,
   } = useDisclosure();
 
+  const [categoria, setCategoria] = useState("");
+  const [nombre, setNombre] = useState("");
+
   // TODO make a bunch of text input fields
 
   useEffect(() => {
     // TODO if articulo is not null, set every single text input field now
-  }, [isOpen, articulo])
-
+  }, [isOpen, articulo]);
 
   return (
     <>
@@ -75,7 +82,7 @@ export default function EditarExistencia({ isOpen, onOpen, onClose, articulo }) 
                   alignItems={"flex-start"}
                 >
                   <FormLabel>Nombre del producto</FormLabel>
-                  <TextInput placeholder={"Nombre"} />
+                  <TextInput placeholder={"nombre"} />
                   <FormLabel display="flex" alignItems="center">
                     Código
                   </FormLabel>
@@ -96,8 +103,7 @@ export default function EditarExistencia({ isOpen, onOpen, onClose, articulo }) 
                     </FormLabel>
                     <Select
                       required
-                      placeholder="Tecnología"
-                      onChange={(e) => e}
+                      onChange={(e) => setCategoria(e.target.value)}
                       sx={{
                         borderColor: "mainBg",
                         borderWidth: "1px",
@@ -112,9 +118,12 @@ export default function EditarExistencia({ isOpen, onOpen, onClose, articulo }) 
                         },
                       }}
                     >
-                      <option>Opt 1</option>
-                      <option>Opt 2</option>
-                      <option>Opt 3</option>
+                      <option>Tecnologia</option>
+                      <option>Ropa</option>
+                      <option>Joyas</option>
+                      <option>Artesanias</option>
+                      <option>Belleza</option>
+                      <option>Otros</option>
                     </Select>
                     <FormLabel display="flex" alignItems="center">
                       Precio

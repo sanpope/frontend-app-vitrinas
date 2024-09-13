@@ -27,24 +27,46 @@ import Product from "./Product";
 import ConfirmationMessage from "./ConfirmationMessage";
 
 export default function Transferir({
-  vitrina = "Vitrina",
+  vitrina,
   isOpen,
   onOpen,
   onClose,
+  productsList,
 }) {
-  const [productsList, setProductsList] = useState([
-    "Nombre del producto",
-    "Nombre del producto",
-    "Nombre del producto",
-    "Nombre del producto",
-  ]);
   const [active, setActive] = useState(0);
-  const [productosATransferir, setProductosATransferir] = useState(25);
+  const [productosATransferir, setProductosATransferir] = useState(null);
+  const [desde, setDesde] = useState("Bodega");
+  const [hacia, setHacia] = useState(vitrina);
+  const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
+  const [busqueda, setBusqueda] = useState(null);
+
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
     onClose: onConfirmationModalClose,
   } = useDisclosure();
+
+  const handleOnChange = (event) => {
+    const desdeSelected = event.target.value;
+    console.log(desdeSelected);
+    switch (desdeSelected) {
+      case "Bodega":
+        setDesde("Bodega");
+        setHacia(vitrina);
+        break;
+      case vitrina:
+        setDesde(vitrina);
+        setHacia("Bodega");
+        break;
+      default:
+        setDesde("Bodega");
+        setHacia(vitrina);
+        break;
+    }
+  };
+  const onBuscarChange = (e) => {
+    setBusqueda(e);
+  };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -70,29 +92,30 @@ export default function Transferir({
             flexDir={"column"}
             justifyContent={"center"}
             alignItems={"flex-start"}
+            gap={1}
+            p={1}
+            pb={3}
           >
             <Box
-              w={{ base: "100%", lg: "50%" }}
               display={"flex"}
               justifyContent={"space-between"}
               gap={"1.25rem"}
             >
               <Box
-                py={"1.25rem"}
                 display={"flex"}
                 flexDirection={"column"}
                 justifyContent={"space-between"}
-                gap={"1.25rem"}
               >
                 <Text
                   textStyle={"RobotoSubtitleRegular"}
                   color={"grey.placeholder"}
                 >
-                  Se transferiran productos desde
+                  Se transferiran productos desde:
                 </Text>
                 <Select
+                  onChange={handleOnChange}
                   required
-                  placeholder="Bodega"
+                  color={"grey.placeholder"}
                   sx={{
                     borderColor: "mainBg",
                     borderWidth: "1px",
@@ -107,30 +130,26 @@ export default function Transferir({
                     },
                   }}
                 >
-                  <option>La bodega</option>
-                  <option>Nombre de la Vitrina</option>
+                  <option>{"Bodega"}</option>
+                  <option>{vitrina}</option>
                 </Select>
               </Box>
               <Box
                 display={{ base: "none", lg: "flex" }}
                 justifyContent={"center"}
                 alignItems={"flex-end"}
-                p={"1.25rem"}
               >
                 <RightArrowIcon />
               </Box>
               <Box
-                p={"1.25rem"}
                 display={"flex"}
                 flexDirection={"column"}
                 justifyContent={"space-between"}
-                gap={"1.25rem"}
               >
                 <Text
                   textStyle={"RobotoSubtitleRegular"}
                   color={"grey.placeholder"}
-                  p={2}
-                  px={5}
+                  p={1}
                 >
                   Hacia
                 </Text>
@@ -139,10 +158,9 @@ export default function Transferir({
                   borderRadius={"10px"}
                   borderWidth={1}
                   borderColor={"mainBg"}
-                  p={2}
-                  px={5}
+                  p={1}
                 >
-                  {vitrina}
+                  {hacia}
                 </Text>
               </Box>
             </Box>
@@ -183,7 +201,6 @@ export default function Transferir({
                     w={"100%"}
                     height={"120px"}
                     overflowY="scroll"
-                    overflowX="hidden"
                     sx={{
                       "::-webkit-scrollbar": {
                         width: "8px",
@@ -201,11 +218,11 @@ export default function Transferir({
                       },
                     }}
                   >
-                    {productsList.map((product, index) => {
+                    {productsList?.map((product, index) => {
                       return (
                         <ListItem
                           key={index}
-                          w={"95%"}
+                          w={"100%"}
                           borderBottom="1px"
                           borderColor="gray.200"
                           py={"10px"}
@@ -213,7 +230,7 @@ export default function Transferir({
                         >
                           <Checkbox
                             defaultChecked={active === index ? true : false}
-                            text={product}
+                            text={product.nombre}
                             colorScheme={"#1890FF"}
                           />
                         </ListItem>
@@ -307,7 +324,7 @@ export default function Transferir({
             Enviar
           </StandardButton>
           <ConfirmationMessage
-            text={`Se transferirán ${productosATransferir} productos de la bodega hacia la vitrina `}
+            text={`Se transferirán ${productosATransferir?.length} productos de la bodega hacia la vitrina `}
             isOpen={isConfirmationModalOpen}
             onOpen={onConfirmationModalOpen}
             onClose={onConfirmationModalClose}

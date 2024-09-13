@@ -6,8 +6,8 @@ export default function TopCategoriaItem({
   catName,
   catPercentage,
   justifyContent,
-  flexDirA, 
-  flexDirB
+  flexDirA,
+  flexDirB,
 }) {
   return (
     <Box
@@ -26,10 +26,17 @@ export default function TopCategoriaItem({
       <Box
         display={"flex"}
         justifyContent={"flex-end"}
-        borderLeftWidth={"2px"}
+        alignItems={"center"}
+        borderLeftWidth={"1px"}
         borderLeftColor={"mainBg"}
+        h={"80%"}
       >
-        <Text textStyle={"RobotoBodyBold"} textAlign={"left"} ml={2}>
+        <Text
+          textStyle={"RobotoBodyBold"}
+          textAlign={"left"}
+          ml={2}
+          minW={"30px"}
+        >
           {catPercentage}%
         </Text>
       </Box>

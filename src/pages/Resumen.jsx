@@ -33,6 +33,9 @@ import { HEADER_HEIGHT } from "../component/Header";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import resumenData from "../services/resumenData";
 
+import axios from "axios";
+import ThumbDownIcon from "../assets/images/ThumbDownIcon";
+
 const PADDING = 15;
 
 export default function Resumen() {
@@ -43,231 +46,336 @@ export default function Resumen() {
 
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
-  const TopCategoriasGlobal = useSelector(
-    (state) => state.homePageReducer.TopCategoriasGlobal,
-  );
+
   const [inactividad, setInactividad] = useState("");
   const [prodslUltimasVentas, setProdsUltimasVentas] = useState(null);
   const [totalVentasDia, setTotalVentasDia] = useState(null);
   const [estadoDelDispositivo, setEtadoDelDispositivo] = useState(null);
   const [totalVentasMes, setTotalVentasMes] = useState(null);
   const [totalMesesAnteriores, setTotalMesesAnteriores] = useState(null);
-  const [intervaloDelDia, setIntervaloDelDia] = useState(null);
-  const [labelsEvolucionVD, setLabelsEvolucionVD] = useState(null);
   const [topTotalCategorias, setTotalCategorias] = useState(null);
-  const [dataPointsEvolucionVD, setDataPointsEvolucionVD] = useState(null);
+
+  const [intervaloDelDia, setIntervaloDelDia] = useState(null);
+
   const [totalDistribucionVentaDiaria, setTotalDistribucionVentaDiaria] =
     useState(null);
   const [actualizacionesInvNoRev, setActualizacionesInvNoRev] = useState(null);
   const [totalProductosPocoStock, setTotalProductosPocoStock] = useState(null);
 
   useEffect(() => {
-    parseData();
-    //serverConexion();
+    getResumenInfo(name);
   }, []);
 
-  const parseData = () => {
-    const resumenInfo = xmlToJSON(resumenData);
-    //Tiempo de Inactividad
-    const tiempoInactividad =
-      resumenInfo?.datosDeVitrina?.actividadReciente?.inactividad?.["#text"];
-    setInactividad(tiempoInactividad ? tiempoInactividad : "0");
+  const getResumenInfo = async (vitrinaName) => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/resumen-de-actividad?nombre=${vitrinaName}`;
 
-    //Últimas ventas
-    const UltimasVentas =
-      resumenInfo?.datosDeVitrina?.actividadReciente?.ultimaVenta;
-    if (UltimasVentas) {
-      setProdsUltimasVentas({
-        fecha: UltimasVentas.fecha?.["#text"],
-        valor: UltimasVentas.valor?.["#text"],
-        masProductos: UltimasVentas.masProductos?.["#text"],
-        prod1: {
-          nombre: UltimasVentas?.prod1?.nombre?.["#text"],
-          cantidad: UltimasVentas?.prod1?.cantidad?.["#text"],
-        },
-        prod2: {
-          nombre: UltimasVentas?.prod2?.nombre?.["#text"],
-          cantidad: UltimasVentas?.prod2?.cantidad?.["#text"],
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
         },
       });
-    } else {
-      setProdsUltimasVentas([
-        { valor: "No se encontraron Visitas No Verificadas." },
-      ]);
+      const xmlText = response.data;
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      setInactividad(getTiempoInactividad(xmlDoc));
+      setProdsUltimasVentas(getUltimasVentas(xmlDoc));
+      setTotalVentasDia(getVentasDia(xmlDoc));
+      setEtadoDelDispositivo(getEstadoDispositivo(xmlDoc));
+      setTotalMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
+      setTotalVentasMes(getVentasMes(xmlDoc));
+      setActualizacionesInvNoRev(getActualizacionesInventario(xmlDoc));
+      setIntervaloDelDia(getEvolucionDiariaVentas(xmlDoc));
+      setTotalCategorias(getTopCategorias(xmlDoc));
+      setTotalDistribucionVentaDiaria(getDistribucionDiaria(xmlDoc));
+      getProductosPocoStock(xmlDoc);
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
     }
+  };
 
-    //Ventas del día
-    const VentasDelDia =
-      resumenInfo?.datosDeVitrina?.actividadReciente?.ventasDelDia;
-    if (VentasDelDia) {
-      setTotalVentasDia({
-        cantidad: VentasDelDia?.cantidad["#text"],
-        porcentajeDeCrecimiento: VentasDelDia?.porcentajeDeCrecimiento["#text"],
-      });
+  function formatString(nombre) {
+    nombre = nombre.toLowerCase();
+    nombre = nombre.split(" ");
+
+    for (let i = 0; i < nombre.length; i++) {
+      nombre[i] = nombre[i][0]?.toUpperCase() + nombre[i].substr(1);
     }
-    //Estado del Dispositivo
-    const estadoDispositivo =
-      resumenInfo?.datosDeVitrina?.resumenDeVisitas?.estadoDelDispositivo?.[
-        "#text"
-      ];
-    setEtadoDelDispositivo(estadoDispositivo ? estadoDispositivo : "");
+    nombre = nombre.join(" ");
+    return nombre;
+  }
 
-    //Ventas del Mes
-    const ventasMes =
-      resumenInfo?.datosDeVitrina?.actividadGeneral?.ventaMesActual;
-    setTotalVentasMes(
-      ventasMes
-        ? {
-            valor: ventasMes?.valor?.["#text"],
-            porcentajeDeCrecimiento:
-              ventasMes?.porcentajeDeCrecimiento?.["#text"],
-          }
-        : { valor: "No hay Registros" },
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = {
+      day: "2-digit",
+      month: "short", // Mes abreviado
+      hour: "numeric", // Esto elimina el cero inicial en las horas
+      minute: "2-digit",
+      hour12: true, // Para formato 12 horas (AM/PM)
+    };
+    let formattedDate = date.toLocaleString("es-ES", options);
+    return formattedDate;
+  }
+
+  function convertirFecha(date) {
+    const fecha = new Date(date);
+    // Obtener los componentes de la fecha
+    let day = fecha.getDate();
+    let month = fecha.getMonth() + 1;
+    const year = fecha.getFullYear();
+
+    // Obtener la hora y los minutos
+    let horas = fecha.getHours();
+    let minutos = fecha.getMinutes();
+
+    // Determinar si es AM o PM
+    const ampm = horas >= 12 ? "PM" : "AM";
+
+    // Convertir las horas al formato de 12 horas
+    horas = horas % 12;
+    horas = horas ? horas : 12; // La hora 0 debe ser 12
+    minutos = minutos < 10 ? "0" + minutos : minutos; // Asegurar que los minutos tengan dos dígitos
+
+    // Asegurar que el día y el month tengan dos dígitos
+    day = day < 10 ? "0" + day : day;
+    month = month < 10 ? "0" + month : month;
+
+    // Formatear la fecha y la hora por separado
+    const fechaFormateada = `${month}/${day}/${year}`;
+    const horaFormateada = `${horas}:${minutos}${ampm}`;
+
+    return { fecha: fechaFormateada, hora: horaFormateada };
+  }
+
+  const getTiempoInactividad = (xml) => {
+    const resumenActividad = xml.querySelector("resumenDeActividadReciente");
+    const inactividad =
+      resumenActividad.getElementsByTagName("inactividad")[0].textContent;
+    return inactividad?.length ? inactividad : null;
+  };
+
+  const getUltimasVentas = (xml) => {
+    const actividadReciente = xml.querySelector("resumenDeActividadReciente");
+    let valor = new Intl.NumberFormat("es-ES", {
+      maximumFractionDigits: 0,
+    }).format(actividadReciente?.getElementsByTagName("valor")[0].textContent);
+    let fecha = formatDate(
+      actividadReciente?.getElementsByTagName("fecha")[0].textContent,
     );
+    let masProductos =
+      actividadReciente?.getElementsByTagName("masProductos")[0].textContent;
+    let producto1 = actividadReciente?.querySelector("producto1");
+    let producto2 = actividadReciente?.querySelector("producto2");
 
-    //Ventas meses anteriores
-    const VentaMesesAnteriores =
-      resumenInfo?.datosDeVitrina?.actividadGeneral?.ventasDeUltimosMeses;
+    let prod1 = {
+      nombre: formatString(
+        producto1?.getElementsByTagName("nombre")[0].textContent,
+      ),
+      cantidad: producto1?.getElementsByTagName("cantidad")[0].textContent,
+    };
 
-    if (
-      VentaMesesAnteriores &&
-      Array.isArray(VentaMesesAnteriores.ventaDeMes)
-    ) {
-      const ventamesesant = VentaMesesAnteriores.ventaDeMes;
+    let prod2 = {
+      nombre: formatString(
+        producto2?.getElementsByTagName("nombre")[0].textContent,
+      ),
+      cantidad: producto2?.getElementsByTagName("cantidad")[0].textContent,
+    };
 
-      const arrVentaMesesAnteriores = ventamesesant?.map((venta) => {
-        const mes = venta?.mes["#text"];
-        const valor = venta?.valor["#text"];
-        return { mes, valor };
+    return { valor, fecha, masProductos, prod1, prod2 };
+  };
+
+  const getVentasDia = (xml) => {
+    const resumenActividad = xml.querySelector("resumenDeActividadReciente");
+    let ventasDelDia = resumenActividad.querySelector("ventasDelDia");
+    let cantidad = ventasDelDia.getElementsByTagName("cantidad")[0].textContent;
+    let porcentajeDeCrecimiento =
+      ventasDelDia.getElementsByTagName("porcentajeDeCrecimiento")[0]
+        .textContent / 100;
+    return { cantidad, porcentajeDeCrecimiento };
+  };
+
+  const getEstadoDispositivo = (xml) => {
+    const estaVitrina = xml.querySelector("sobreEstaVitrina");
+    const estadoDispositivo = estaVitrina.getElementsByTagName(
+      "estadoDelDispositivo",
+    )[0].textContent;
+    return estadoDispositivo;
+  };
+
+  const getVentasMes = (xml) => {
+    const ventasDelMes = xml.querySelector("ventaDelMes");
+    let porcentajeDeCrecimiento =
+      ventasDelMes.getElementsByTagName("porcentajeDeCrecimiento")[0]
+        .textContent / 100;
+    let valor = new Intl.NumberFormat("es-ES", {
+      maximumFractionDigits: 0,
+    }).format(ventasDelMes.getElementsByTagName("valor")[0].textContent);
+
+    return { valor, porcentajeDeCrecimiento };
+  };
+
+  const getVentaMesesAnteriores = (xml) => {
+    let infoTotalVentasAnt = [];
+    let totalVentasAnt = xml.querySelector("ventasDeUltimosMeses");
+    let totalVentasArr = totalVentasAnt.querySelectorAll("ventaDeMes");
+    for (let i = 0; i < totalVentasArr.length; i++) {
+      let mes = totalVentasArr[i].getElementsByTagName("mes")[0].textContent;
+      let valor =
+        totalVentasArr[i].getElementsByTagName("valor")[0].textContent;
+      infoTotalVentasAnt.push({
+        mes: mes,
+        valor: valor,
       });
-      setTotalMesesAnteriores(arrVentaMesesAnteriores);
-    } else {
-      setTotalMesesAnteriores([
-        { valor: "No se encontraron Despachos Actuales." },
-      ]);
+    }
+    return infoTotalVentasAnt;
+  };
+
+  const getActualizacionesInventario = (xml) => {
+    let actualizacionesInventarioArr = [];
+    const actualizacionesInventario = xml.querySelector(
+      "modificacionesDeInventarioNoRevisadas",
+    );
+    const modificaciones =
+      actualizacionesInventario.querySelectorAll("modificacion");
+
+    for (let i = 0; i < modificaciones.length; i++) {
+      const fechaHora = modificaciones[i].getAttribute("fechaHora");
+      const { fecha, hora } = convertirFecha(fechaHora);
+      const cantidadProductosIngresados = modificaciones[
+        i
+      ].getElementsByTagName("cantidadProductosIngresados")[0].textContent;
+      const cantidadProductosRetirados = modificaciones[i].getElementsByTagName(
+        "cantidadProductosRetirados",
+      )[0].textContent;
+      const cantidadDeCorrecciones = modificaciones[i].getElementsByTagName(
+        "cantidadDeCorrecciones",
+      )[0].textContent;
+
+      actualizacionesInventarioArr.push({
+        fecha,
+        hora,
+        cantidadProductosIngresados,
+        cantidadProductosRetirados,
+        cantidadDeCorrecciones,
+      });
     }
 
-    //Evolucion venta diaria
-    const EvolucionDiaria =
-      resumenInfo?.datosDeVitrina?.actividadGeneral?.intervalosDelDia;
-    const arrDias = [];
-    const arrPorc = [];
-    if (EvolucionDiaria && Array.isArray(EvolucionDiaria.intervaloDelDia)) {
-      const evolucionVentD = EvolucionDiaria.intervaloDelDia;
-      const arrayEvolucionDiaria = evolucionVentD.map((venta) => {
-        const intervalo = venta?.intervalo?.["#text"];
-        arrDias.push(intervalo);
-        const porcentajeDeVentas = venta?.porcentajeDeVentas?.["#text"];
-        arrPorc.push(porcentajeDeVentas);
-        return { intervalo, porcentajeDeVentas };
+    return actualizacionesInventarioArr;
+  };
+
+  const getEvolucionDiariaVentas = (xml) => {
+    let infoTotalVentasDia = [];
+    let totalVentasDia = xml.querySelector("ventasDeDiasDelMes");
+    let totalVentasArr = totalVentasDia.querySelectorAll("ventaDia");
+    for (let i = 0; i < totalVentasArr.length; i++) {
+      let dia = totalVentasArr[i].getElementsByTagName("dia")[0].textContent;
+      let valor =
+        totalVentasArr[i].getElementsByTagName("valor")[0].textContent;
+      infoTotalVentasDia.push({
+        dia: dia,
+        valor: valor,
       });
-      setIntervaloDelDia(arrayEvolucionDiaria);
-      setLabelsEvolucionVD(arrDias);
-      setDataPointsEvolucionVD(arrPorc);
     }
+    return infoTotalVentasDia;
+  };
 
-    //Top Categorias
+  function capitalizeFirstLetter(str) {
+    if (!str) return ""; // Retorna vacío si el string está vacío o indefinido
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
 
-    const TopCategorias =
-      resumenInfo?.datosDeVitrina?.actividadGeneral?.categorias;
-    if (TopCategorias && Array.isArray(TopCategorias.categoria)) {
-      const topCategorias = TopCategorias.categoria;
+  const getTopCategorias = (xml) => {
+    const totalCategoriasArr = [];
+    let categorias = xml.querySelector("categoriasMasPopulares");
+    let totalTopCategorias = categorias.querySelectorAll("categoria");
 
-      const arrTopCategorias = topCategorias.map((categoria) => {
-        const nombre = categoria.nombre?.["#text"];
-        const porcentaje = categoria.porcentajeDeLasVentas?.["#text"];
-        const icon =
-          nombre === "Ropa" ? (
-            <TshirtIcon />
-          ) : nombre === "Artesanías" ? (
-            <MugIcon />
-          ) : nombre === "Joyas" ? (
-            <GemIcon />
-          ) : nombre === "Tecnología" ? (
-            <HeadphonesIcon />
-          ) : (
-            <ShoppingBagIcon />
-          );
-        return { nombre, porcentaje, icon };
+    for (let i = 0; i < totalTopCategorias.length; i++) {
+      const iconMap = {
+        ropa: <TshirtIcon />,
+        artesanias: <MugIcon />,
+        joyas: <GemIcon />,
+        tecnologia: <HeadphonesIcon />,
+      };
+      let nombre =
+        totalTopCategorias[i].getElementsByTagName("nombre")[0].textContent;
+      const icon = iconMap[nombre] || <ShoppingBagIcon />;
+
+      const porcentaje = totalTopCategorias[i].getElementsByTagName(
+        "porcentajeDeLasVentas",
+      )[0].textContent;
+
+      if (nombre === "") {
+        nombre = "Otros";
+      }
+
+      nombre = capitalizeFirstLetter(nombre);
+
+      totalCategoriasArr.push({ nombre, porcentaje, icon });
+    }
+    return totalCategoriasArr;
+  };
+
+  const getDistribucionDiaria = (xml) => {
+    let infoTotalDistribucion = [];
+    let totalDistribucion = xml.querySelector("porcentajeDeIntervalos");
+    let distribucionesVentasArr =
+      totalDistribucion.querySelectorAll("intervaloDelDia");
+    for (let i = 0; i < distribucionesVentasArr.length; i++) {
+      let hora =
+        distribucionesVentasArr[i].getElementsByTagName("intervalo")[0]
+          .textContent;
+      switch (hora) {
+        case "0a5":
+          hora = "0-6am";
+          break;
+        case "5a10":
+          hora = "6-10am";
+          break;
+        case "10a15":
+          hora = "10-1pm";
+          break;
+        case "15a20":
+          hora = "1-8pm";
+          break;
+        case "20a24":
+          hora = "8-12pm";
+          break;
+        default:
+          break;
+      }
+      let valor = Math.trunc(
+        distribucionesVentasArr[i].getElementsByTagName("porcentajeDeVentas")[0]
+          .textContent,
+      );
+      infoTotalDistribucion.push({
+        hora: hora,
+        valor: valor,
       });
-      setTotalCategorias(arrTopCategorias);
-    } else {
-      setTotalCategorias([{ nombre: "Top de Categorías no encontradas" }]);
     }
+    return infoTotalDistribucion;
+  };
 
-    // Distribucion diaria de ventas
-    const DistribucionDV =
-      resumenInfo?.datosDeVitrina?.actividadGeneral?.ventasDeDiasDelMes;
-    if (DistribucionDV && Array.isArray(DistribucionDV.ventaDia)) {
-      const distrVentaMes = DistribucionDV.ventaDia;
-
-      const arrDistribucionDV = distrVentaMes?.map((ventaDia) => {
-        const dia = ventaDia?.dia?.["#text"];
-        const valor = ventaDia?.valor?.["#text"];
-        return { dia, valor };
-      });
-
-      setTotalDistribucionVentaDiaria(arrDistribucionDV);
-    } else {
-      setTotalDistribucionVentaDiaria([
-        { dia: "No se encontraron Despachos Actuales." },
-      ]);
-    }
-
-    //Actualizaciones de Inventario
-    const ActualizacionesInventario =
-      resumenInfo?.datosDeVitrina?.resumenDeVisitas?.verificacionesPdtes;
-    if (
-      ActualizacionesInventario &&
-      Array.isArray(ActualizacionesInventario.modificacion)
-    ) {
-      const actualNoRev = ActualizacionesInventario.modificacion;
-
-      const arrActualizacionesInventario = actualNoRev?.map((modificacion) => {
-        const fechaHora = modificacion?.fechaHora?.["#text"];
-        const cantidadProductosIngresados =
-          modificacion?.cantidadProductosIngresados?.["#text"];
-        const cantidadProductosRetirados =
-          modificacion?.cantidadProductosRetirados?.["#text"];
-        const cantidadDeCorrecciones =
-          modificacion?.cantidadDeCorrecciones?.["#text"];
-
-        return {
-          fechaHora,
-          cantidadProductosIngresados,
-          cantidadProductosRetirados,
-          cantidadDeCorrecciones,
-        };
-      });
-
-      setActualizacionesInvNoRev(arrActualizacionesInventario);
-    } else {
-      setActualizacionesInvNoRev([
-        { fechaHora: "No se encontraron Despachos Actuales." },
-      ]);
-    }
-
-    //Productos con Poco Stock
-    const ProductosPocoStock =
-      resumenInfo?.datosDeVitrina?.resumenDeVisitas?.reposicionesUrg;
-    if (ProductosPocoStock && Array.isArray(ProductosPocoStock.producto)) {
-      const prodPcoStock = ProductosPocoStock.producto;
-
-      const arrProductosPocoStock = prodPcoStock?.map((producto) => {
-        const nombre = producto?.nombre?.["#text"];
-        const existenciasActuales = producto?.existenciasActuales?.["#text"];
-        const cantidadMinima = producto?.cantidadMinima?.["#text"];
-
-        return {
+  const getProductosPocoStock = (xml) => {
+    const totalProdsPocoStockArr = [];
+    const prodsPocoStock = xml.querySelector("productosConPocoStock");
+    const productos = prodsPocoStock.querySelectorAll("producto");
+    if (productos.length > 0) {
+      for (let i = 0; i < productos.length; i++) {
+        const nombre = productos?.[i].getElementsByTagName("")[0].textContent;
+        const existenciasActuales =
+          productos?.[i].getElementsByTagName("")[0].textContent;
+        const cantidadMinima =
+          productos?.[i].getElementsByTagName("")[0].textContent;
+        totalProdsPocoStockArr.push({
           nombre,
           existenciasActuales,
           cantidadMinima,
-        };
-      });
-
-      setTotalProductosPocoStock(arrProductosPocoStock);
+        });
+      }
+      return totalProdsPocoStockArr;
     } else {
-      setTotalProductosPocoStock([{ nombre: "No encontrados." }]);
+      return null;
     }
   };
 
@@ -309,7 +417,7 @@ export default function Resumen() {
               alignItems={"center"}
             >
               <Text textStyle={"RobotoeBannerBold"} color={"black"}>
-                {inactividad} Hrs.
+                {inactividad != null ? inactividad : 0} Hrs.
               </Text>
             </Box>
           }
@@ -374,10 +482,15 @@ export default function Resumen() {
           <MobileIcon width={"40px"} fill={"#00BC4F"} />
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
           <Box display={"flex"} justifyContent={"flex-start"}>
-            <ThumbUpIcon />{" "}
+            {estadoDelDispositivo === "Ok" ? (
+              <ThumbUpIcon />
+            ) : (
+              <ThumbDownIcon />
+            )}
             <Text textStyle={"RobotoBodyBold"}>{estadoDelDispositivo}</Text>
           </Box>
         </Box>
+
         <Container
           height={ContainerHeight + "px"}
           minHeight="215px"
@@ -460,13 +573,11 @@ export default function Resumen() {
           icon={<BadgeDollarIcon />}
           children={
             <Box w={"100%"} h={"100%"} flexGrow={1} flexShrink={1}>
-              <EvolucionVentaDiaria
-                labels={labelsEvolucionVD}
-                dataPoints={dataPointsEvolucionVD}
-              />
+              <EvolucionVentaDiaria evolucionVentaDiaria={intervaloDelDia} />
             </Box>
           }
         />
+
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
@@ -475,7 +586,7 @@ export default function Resumen() {
           icon={<StartIcon />}
           title={"Top Categorías"}
           children={
-            <Box w={"100%"} display={"flex"} flexDirection={"column"}>
+            <Box w={"100%"} display={"flex"} flexDirection={"column"} gap={1}>
               {topTotalCategorias?.map((cat, index) => (
                 <TopCategoriaItem
                   key={index}
@@ -530,7 +641,7 @@ export default function Resumen() {
             >
               <PocoStock
                 productosConPocoStock={
-                  totalProductosPocoStock ? totalProductosPocoStock : []
+                  totalProductosPocoStock ? totalProductosPocoStock : null
                 }
               />
             </Box>

@@ -6,7 +6,6 @@ import BiggerThanICon from "../assets/images/BiggerThanIcon";
 export default function ActualizacionesInventario({
   actualizacionesInventarioNV,
 }) {
- 
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = actualizacionesInventarioNV.length;
   const handlePageChange = (newPage) => {
@@ -15,7 +14,7 @@ export default function ActualizacionesInventario({
     }
   };
   const currentItem = actualizacionesInventarioNV[currentPage - 1];
-  
+
   return (
     <Box
       w={"100%"}
@@ -33,15 +32,36 @@ export default function ActualizacionesInventario({
         borderBottomWidth={1}
         pb={1}
       >
-        <Text color="grey.placeholder" textStyle={"RobotoBodyBold"}>
+        <Text
+          color="grey.placeholder"
+          textStyle={"RobotoBodyBold"}
+          flexGrow={1}
+          textAlign={"center"}
+        >
           Visita
         </Text>
-        <Box width={"1.5px"} height="100%" bg="grey.placeholder"></Box>
-        <Text color="grey.placeholder" textStyle={"RobotoBody"}>
-          {currentItem?.fechaHora}
+
+        <Text
+          color="grey.placeholder"
+          textStyle={"RobotoBody"}
+          flexGrow={2}
+          borderRightWidth={"2px"}
+          borderRightColor={"grey.placeholder"}
+          borderLeftWidth={"2px"}
+          borderLeftColor={"grey.placeholder"}
+          textAlign={"center"}
+        >
+          {currentItem?.fecha}
         </Text>
-        <Box width={"1.5px"} height="100%" bg="grey.placeholder"></Box>
-        <Text color="grey.placeholder" textStyle={"RobotoBody"}></Text>
+
+        <Text
+          color="grey.placeholder"
+          textStyle={"RobotoBody"}
+          flexGrow={1}
+          textAlign={"center"}
+        >
+          {currentItem?.hora}
+        </Text>
       </Box>
       <Box
         w={"100%"}

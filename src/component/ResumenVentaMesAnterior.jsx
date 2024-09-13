@@ -25,9 +25,12 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
   const pointBackgroundColor = resumenVentaMesAnterior.map((_, index) =>
     index === resumenVentaMesAnterior.length - 1 ? "#FF0000" : "#000000",
   );
-
   const chartData = {
-    labels: resumenVentaMesAnterior.map((d) => d.mes),
+    labels: resumenVentaMesAnterior
+      .map((d) => d.mes)
+      .sort(function (a, b) {
+        return a - b;
+      }),
     datasets: [
       {
         data: resumenVentaMesAnterior.map((d) => d.valor),
@@ -86,17 +89,20 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
         },
         ticks: {
           color: "black",
-          beginAtZero: false,
+          beginAtZero: true,
+          min: 0,
+          max: 5000,
           stepSize: 5000,
+          maxTicksLimit: 3,
           callback: (value) => {
             if (value === 0) {
               return "0k";
-            } else if (value > 0 && value < 10000) {
+            } else if (value > 0 && value <= 5000) {
               return "5k";
-            } else if (value >= 10000) {
+            } else if (value > 0 && value >= 5000) {
               return "10k";
             } else {
-              return "";
+              return null; // No mostrar otras marcas
             }
           },
         },

@@ -68,35 +68,8 @@ export default function HomePage() {
     savingData();
   }, []);
 
-  const obtenerDatos = async () => {
-    try {
-      console.log("Intento de obtener datos");
-
-      const respuesta = await fetch(
-        "http://localhost:8080/app/rest/negocio/resumen",
-        {
-          method: "GET",
-          headers: {},
-        },
-      );
-
-      if (respuesta.ok) {
-        console.log("Datos recibidos");
-        const datos = await respuesta.text();
-        console.log(datos);
-        return datos;
-      } else {
-        console.log("Hubo un error, los datos no han podido recibirse");
-        return homePageData;
-      }
-    } catch (error) {
-      console.error("Hubo un problema con la solicitud fetch:", error);
-      return homePageData;
-    }
-  };
-
   const savingData = async () => {
-    const url = "http://34.176.231.167:8080/app/rest/negocio/resumen";
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/resumen`;
     axios
       .get(url, {
         headers: {
@@ -104,14 +77,11 @@ export default function HomePage() {
         },
       })
       .then((response) => {
-        const data = response.data;
-        setOutput(data); // Guardamos el XML en estado para mostrarlo
-
         // Parseamos el XML
         const xmlText = response.data;
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-       
+
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
         setVentaMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
         setVitrinasConMasVtasDelMes(getVitrinasVentasMes(xmlDoc));
@@ -121,14 +91,12 @@ export default function HomePage() {
         setTopTotalProductos(getTopProductos(xmlDoc));
         setTotalDispAv(getDispositivosAveriados(xmlDoc));
         setTotalDespachos(getDespachosActuales(xmlDoc));
-        //setTotalVisiasNoVerif(getInventarioPorVerificar(xmlDoc));
+        setTotalVisiasNoVerif(getInventarioPorVerificar(xmlDoc));
       })
       .catch((error) => {
         console.error("Error fetching the XML data: ", error);
       });
   };
-
-  
 
   const getVentaDelMes = (xml) => {
     let resumenDelNegocio = xml.querySelector("resumenDeNegocio");
@@ -137,8 +105,13 @@ export default function HomePage() {
     const porcentajeDeCrecimiento = infoTotalVentas.getElementsByTagName(
       "porcentajeDeCrecimiento",
     )[0].textContent;
-    const valor = infoTotalVentas.getElementsByTagName("valor")[0].textContent;
 
+    let valor = new Intl.NumberFormat("es-ES", {
+      maximumFractionDigits: 0,
+    }).format(infoTotalVentas.getElementsByTagName("valor")[0].textContent);
+    if (valor == 0 || valor.length === 0) {
+      valor = 0;
+    }
     let total = {
       valor,
       porcentajeDeCrecimiento,
@@ -215,23 +188,32 @@ export default function HomePage() {
     return infoTotalVitrinas;
   };
 
+  function capitalizeFirstLetter(str) {
+    if (!str) return ""; // Retorna vacío si el string está vacío o indefinido
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
   const getTopCategorias = (xml) => {
     const totalCategoriasArr = [];
     let categorias = xml.querySelector("categoriasMasPopulares");
     let totalTopCategorias = categorias.querySelectorAll("categoria");
 
     for (let i = 0; i < totalTopCategorias.length; i++) {
-      const nombre =
-        totalTopCategorias[i].getElementsByTagName("nombre")[0].textContent;
-      const porcentaje =
-        totalTopCategorias[i].getElementsByTagName("porcentaje")[0].textContent;
       const iconMap = {
         ropa: <TshirtIcon />,
         artesanias: <MugIcon />,
         joyas: <GemIcon />,
         tecnologia: <HeadphonesIcon />,
       };
+      let nombre =
+        totalTopCategorias[i].getElementsByTagName("nombre")[0].textContent;
       const icon = iconMap[nombre] || <ShoppingBagIcon />;
+
+      const porcentaje =
+        totalTopCategorias[i].getElementsByTagName("porcentaje")[0].textContent;
+
+      nombre = capitalizeFirstLetter(nombre);
+
       totalCategoriasArr.push({ nombre, porcentaje, icon });
     }
     return totalCategoriasArr;
@@ -416,7 +398,7 @@ export default function HomePage() {
                   }}
                   color={"black"}
                 >
-                  ${ventaTotalMes != null ? ` ${ventaTotalMes.valor}` : "0"}
+                  $ {ventaTotalMes != null ? `${ventaTotalMes.valor}` : "0"}
                 </Text>
               </Box>
               <Box
@@ -426,7 +408,7 @@ export default function HomePage() {
               >
                 <Text textStyle={"RobotoSubSmall"} color={"success.10"}>
                   {ventaTotalMes != null
-                    ? `${ventaTotalMes.porcentajeDeCrecimiento}% con respecto al promedio`
+                    ? `+${ventaTotalMes.porcentajeDeCrecimiento}% con respecto al promedio`
                     : "No se cuenta con información registrada."}
                 </Text>
                 {ventaTotalMes != null ? <GreenArrowICon /> : null}

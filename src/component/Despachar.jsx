@@ -74,47 +74,46 @@ export default function Despachar({
               flexDir={"column"}
               justifyContent={"center"}
               alignItems={"flex-start"}
+              gap={1}
+              p={1}
+              pb={3}
             >
               <Box
-                w={{ base: "100%", lg: "50%" }}
                 display={"flex"}
                 justifyContent={"space-around"}
                 gap={"1.25rem"}
               >
                 <Box
-                  py={"1.25rem"}
                   display={"flex"}
                   flexDirection={"column"}
-                  gap={"1.25rem"}
+                  justifyContent={"space-between"}
                 >
                   <Text
                     textStyle={"RobotoSubtitleRegular"}
                     color={"grey.placeholder"}
                   >
-                    Se despacharán productos desde
+                    Se despacharán productos desde:
                   </Text>
-                  <Text textStyle={"RobotoSubtitleRegular"}>Bodega</Text>
+                  <Text textStyle={"RobotoSubtitleRegular"} p={1}>
+                    Bodega
+                  </Text>
                 </Box>
                 <Box
                   display={{ base: "none", lg: "flex" }}
                   justifyContent={"center"}
                   alignItems={"flex-end"}
-                  p={"1.25rem"}
                 >
                   <RightArrowIcon />
                 </Box>
                 <Box
-                  p={"1.25rem"}
                   display={"flex"}
                   flexDirection={"column"}
                   justifyContent={"space-between"}
-                  gap={"1.25rem"}
                 >
                   <Text
                     textStyle={"RobotoSubtitleRegular"}
                     color={"grey.placeholder"}
-                    p={2}
-                    px={5}
+                    p={1}
                   >
                     Hacia
                   </Text>
@@ -123,8 +122,7 @@ export default function Despachar({
                     borderRadius={"10px"}
                     borderWidth={1}
                     borderColor={"mainBg"}
-                    p={2}
-                    px={5}
+                    p={1}
                   >
                     {vitrina}
                   </Text>

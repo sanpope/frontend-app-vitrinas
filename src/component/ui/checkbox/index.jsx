@@ -9,6 +9,7 @@ export default function Checkbox({
   disabled,
   colorScheme = "red",
   checkIcon = <FileCheckIcon />,
+  onClick
 }) {
   return (
     <ChakraCheckbox
@@ -23,6 +24,7 @@ export default function Checkbox({
         },
       }}
       iconColor="white"
+      onClick={onClick}
     >
       {text}
     </ChakraCheckbox>

@@ -22,13 +22,17 @@ ChartJS.register(
   Legend,
 );
 
-const EvolucionVentaDiaria = ({ labels, dataPoints }) => {
+const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
   const data = {
-    labels: labels,
+    labels: evolucionVentaDiaria
+      ?.map((d) => d.dia)
+      .sort(function (a, b) {
+        return a - b;
+      }),
     datasets: [
       {
+        data: evolucionVentaDiaria?.map((d) => d.valor < 0 ? 0 : d.valor),
         label: "Ventas",
-        data: dataPoints,
         borderColor: "red",
         backgroundColor: "red",
         pointBackgroundColor: "red",
@@ -36,7 +40,7 @@ const EvolucionVentaDiaria = ({ labels, dataPoints }) => {
         pointHoverBackgroundColor: "red",
         pointHoverBorderColor: "red",
         borderWidth: 2,
-        pointRadius: 6,
+        pointRadius: 3,
         pointHoverRadius: 8,
         pointStyle: "circle",
       },
@@ -59,18 +63,19 @@ const EvolucionVentaDiaria = ({ labels, dataPoints }) => {
           title: titleTooltip,
           label: function (context) {
             const value = context.raw;
-            return value !== undefined && !isNaN(value)
-              ? `$${value?.toFixed(3)}`
-              : "";
+            return value !== undefined && !isNaN(value) ? value : "";
           },
         },
       },
     },
     scales: {
       y: {
-        beginAtZero: false,
+        beginAtZero: true,
         ticks: {
-          stepSize: 100,
+          min: 0,
+          suggestedMin: 0,
+          stepSize: 200000,
+          maxTicksLimit: 5,
         },
         border: {
           display: false,
@@ -79,11 +84,7 @@ const EvolucionVentaDiaria = ({ labels, dataPoints }) => {
         },
       },
       x: {
-        ticks: {
-          color: (context) => {
-            return context.label === "Hoy" ? "green" : "black";
-          },
-        },
+        ticks: {},
         border: {
           display: false,
           dash: [2, 6],

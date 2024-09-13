@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, list, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import Despachar from "../component/Despachar";
 import Transferir from "../component/Transferir";
@@ -16,6 +17,7 @@ import SearchIcon from "../assets/images/SearchIcon";
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
+
   const [tablaInventario, setTablaInventario] = useState(null);
   const [displayedArticulos, setDisplayedArticulos] = useState(tablaInventario);
   const [totalResults, setTotalResults] = useState(null);
@@ -24,52 +26,18 @@ export default function Inventario() {
   const [rowsToShow, setRowsToShow] = useState(30);
   const [busqueda, setBusqueda] = useState(null);
 
-  const [selectedArticulo, setArticulo] = useState(null);
+  
+  const [selectedArticulo, setSelectedArticulo] = useState(null);
 
   const totalPages = Math.ceil(tablaInventario?.length / rowsToShow);
 
   useEffect(() => {
-    parseData();
+    getInventarioInfo(name);
   }, []);
 
   useEffect(() => {
     getMasArticulos(1);
   }, [tablaInventario]);
-
-  const parseData = () => {
-    const resumenInfo = xmlToJSON(inventarioData);
-    const totalProductos =
-      resumenInfo?.datosDeInventario?.inventario?.productos;
-
-    if (totalProductos && Array.isArray(totalProductos?.producto)) {
-      const listadoProductos = totalProductos?.producto;
-      const arrTotalProductos = listadoProductos?.map((producto) => {
-        const codigo = producto?.codigo["#text"];
-        const nombre = producto?.nombre["#text"];
-        const categoria = producto?.categoria["#text"];
-        const precio = producto?.precio["#text"];
-        const costo = producto?.costo["#text"];
-        const existencia = producto?.existencia["#text"];
-        const exisVerificadas = producto?.exisVerificadas["#text"];
-        const stockMin = producto?.stockMin["#text"];
-        const stockMax = producto?.stockMax["#text"];
-        return {
-          codigo,
-          nombre,
-          categoria,
-          precio,
-          costo,
-          existencia,
-          exisVerificadas,
-          stockMin,
-          stockMax,
-        };
-      });
-      setTablaInventario(arrTotalProductos);
-      setTotalResults(arrTotalProductos.length);
-    } else {
-    }
-  };
 
   const getMasArticulos = (pageNumber) => {
     toggleLoading(true);
@@ -133,6 +101,95 @@ export default function Inventario() {
     setBusqueda(e);
   };
 
+  const getInventarioInfo = async (vitrinaName) => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario?vitrina=${vitrinaName}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      const xmlText = response.data;
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      setTablaInventario(getProductos(xmlDoc));
+      setTotalResults(tablaInventario?.length);
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
+
+  function formatString(string) {
+    string = string.toLowerCase();
+    string = string.split(" ");
+
+    for (let i = 0; i < string.length; i++) {
+      string[i] = string[i][0]?.toUpperCase() + string[i].substr(1);
+    }
+    string = string.join(" ");
+    return string;
+  }
+
+  function capitalizeFirstLetter(str) {
+    if (!str) return ""; // Retorna vacío si el string está vacío o indefinido
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
+  const getProductos = (xml) => {
+    const totalProdsArr = [];
+    const inventarios = xml.querySelector("inventarios");
+    const listadoProds = inventarios.querySelectorAll("producto");
+    if (listadoProds?.length > 0) {
+      for (let i = 0; i < listadoProds.length; i++) {
+        const codigo =
+          listadoProds[i]?.getElementsByTagName("codigo")[0].textContent;
+        let nombre = formatString(
+          listadoProds[i]?.getElementsByTagName("nombre")[0].textContent,
+        );
+        const categoria = capitalizeFirstLetter(
+          listadoProds[i]?.getElementsByTagName("categoria")[0].textContent,
+        );
+        const precio = new Intl.NumberFormat("es-ES", {
+          maximumFractionDigits: 0,
+        }).format(
+          listadoProds[i]?.getElementsByTagName("precio")[0].textContent,
+        );
+        const costo = new Intl.NumberFormat("es-ES", {
+          maximumFractionDigits: 0,
+        }).format(
+          listadoProds[i]?.getElementsByTagName("costo")[0].textContent,
+        );
+        const existencia =
+          listadoProds[i]?.getElementsByTagName("existencias")[0].textContent;
+        const exisVerificadas = listadoProds[i]?.getElementsByTagName(
+          "existenciasVerificadas",
+        )[0].textContent;
+        const stockMin =
+          listadoProds[i]?.getElementsByTagName("stockMinimo")[0].textContent;
+        const stockMax =
+          listadoProds[i]?.getElementsByTagName("stockMaximo")[0].textContent;
+
+        totalProdsArr.push({
+          codigo,
+          nombre,
+          categoria,
+          precio,
+          costo,
+          existencia,
+          exisVerificadas,
+          stockMin,
+          stockMax,
+        });
+      }
+      return totalProdsArr;
+    } else {
+      return null;
+    }
+  };
+
+  const handleProdClick = async (index, articulo) => {};
+
   return (
     <Box
       bg={"mainBg"}
@@ -178,6 +235,7 @@ export default function Inventario() {
               isOpen={isFirstModalOpen}
               onOpen={onFirstModalOpen}
               onClose={onFirstModalClose}
+              vitrina={name}
             />
             <StandardButton
               variant={"WHITE_RED"}
@@ -194,6 +252,8 @@ export default function Inventario() {
               isOpen={isSecondModalOpen}
               onOpen={onSecondModalOpen}
               onClose={onSecondModalClose}
+              vitrina={name}
+              productsList={tablaInventario}
             />
           </Box>
         </Box>
@@ -222,7 +282,9 @@ export default function Inventario() {
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
-            setArticulo={setArticulo}
+            setArticulo={setSelectedArticulo}
+           
+            handleArtClick={handleProdClick}
           />
         }
       </Box>
@@ -232,8 +294,8 @@ export default function Inventario() {
       />
       <EditarExistencia
         isOpen={!!selectedArticulo}
-        onClose={() => setArticulo(null)}
         articulo={selectedArticulo}
+        onClose={() => setSelectedArticulo(null)}
       />
     </Box>
   );

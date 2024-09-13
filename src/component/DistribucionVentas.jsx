@@ -21,8 +21,6 @@ ChartJS.register(
 );
 
 const DistribucionVentas = ({ distribucionVentas }) => {
-  const canvasRef = React.useRef(null);
-
   const createGradient = (ctx, chartArea) => {
     const gradient = ctx.createLinearGradient(0, 0, 0, chartArea.bottom);
     gradient.addColorStop(0, "rgba(255, 0, 0, 1)");
@@ -31,7 +29,7 @@ const DistribucionVentas = ({ distribucionVentas }) => {
   };
 
   const chartData = {
-    labels: distribucionVentas.map((d) => d.dia),
+    labels: distribucionVentas.map((d) => d.hora),
     datasets: [
       {
         data: distribucionVentas.map((d) => d.valor),
@@ -63,37 +61,9 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     ],
   };
 
-  const formatHour = (hora) => {
-    const [start, endWithSuffix] = hora.split("-");
-    const [end, suffix] = endWithSuffix.match(/\d+|am|pm/g);
-
-    const formatTime = (time, suffix) => {
-      let hours = parseInt(time);
-      let period = suffix || "am";
-
-      if (hours >= 12) {
-        period = "pm";
-        if (hours > 12) {
-          hours -= 12;
-        }
-      } else if (hours === 0) {
-        hours = 12;
-      }
-
-      return `${hours}:00${period}`;
-    };
-
-    const formattedStart = formatTime(start, suffix);
-    const formattedEnd = formatTime(end, suffix);
-
-    return `${formattedStart} - ${formattedEnd}`;
-  };
-
   const titleTooltip = (tooltipItems) => {
     const [tooltipItem] = tooltipItems;
     const dataIndex = tooltipItem.dataIndex;
-    const formattedHour = formatHour(chartData.labels[dataIndex]);
-    return formattedHour;
   };
 
   const labelTooltip = (tooltipItem) => {
@@ -134,8 +104,8 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     scales: {
       y: {
         beginAtZero: false,
-        min: 0.5,
-        max: 45,
+        min: 0,
+        max: 100,
         grace: "10%",
 
         title: {
@@ -144,17 +114,17 @@ const DistribucionVentas = ({ distribucionVentas }) => {
         ticks: {
           callback: (value) => {
             if (value < 5) {
-              return "05%";
-            } else if (value >= 5 && value === 10) {
-              return "10%";
-            } else if (value > 10 && value < 30) {
-              return "15%";
-            } else if (value >= 30 && value < 40) {
-              return "30%";
-            } else if (value >= 40) {
+              return "0%";
+            } else if (value >= 5 && value <= 20) {
+              return "20%";
+            } else if (value > 20 && value <= 40) {
               return "40%";
+            } else if (value >= 40 && value <= 60) {
+              return "60%";
+            } else if (value >= 60 && value <= 80) {
+              return "80%";
             } else {
-              return "50%";
+              return "100%";
             }
           },
         },

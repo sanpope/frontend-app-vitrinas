@@ -34,55 +34,65 @@ export default function TablaInventario({
   getMasArticulos,
   setArticulo,
 }) {
+  const [active, setActive] = useState(0);
   return (
     <>
-      <Contenedor maxHeight={"470px"}>
-        <thead className="">
-          <tr className="">
-            <th className="checkBox">
-              <Checkbox />
-            </th>
-            {HEADERS?.map((name, index) => (
-              <th key={index} className="inventTh">
-                {name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody className="">
-          {displayedArticulos?.map((articulo, index) => {
-            return (
-              <tr key={index} className="">
-                <td className="checkBox">
+      {displayedArticulos != null ? (
+        <>
+          <Contenedor maxHeight={"470px"}>
+            <thead className="">
+              <tr className="">
+                <th className="checkBox">
                   <Checkbox />
-                </td>
-                {Object.values(articulo).map((value, index) => {
-                  return (
-                    <td key={index} className="inventTd">
-                      {value}
-                    </td>
-                  );
-                })}
-                <td
-                  className="iconContainer"
-                  onClick={() => setArticulo(articulo)}
-                >
-                  <EditIcon width="18px" height="18px" />
-                </td>
+                </th>
+                {HEADERS?.map((name, index) => (
+                  <th key={index} className="inventTh">
+                    {name}
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </Contenedor>
-      <BottomTable
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={getMasArticulos}
-        totalResults={totalResults}
-      />
+            </thead>
 
-      <Editar />
+            <tbody className="">
+              {displayedArticulos?.map((articulo, index) => {
+                return (
+                  <tr key={index} className="" style={{ cursor: "pointer" }}>
+                    <td className="checkBox">
+                      <Checkbox
+                        onClick={() => setActive(index)}
+                        defaultChecked={active === index ? true : false}
+                      />
+                    </td>
+                    {Object.values(articulo).map((value, index) => {
+                      return (
+                        <td key={index} className="inventTd">
+                          {value}
+                        </td>
+                      );
+                    })}
+                    <td
+                      className="iconContainer"
+                      onClick={() => setArticulo(articulo)}
+                    >
+                      <EditIcon width="18px" height="18px" />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Contenedor>
+          <BottomTable
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={getMasArticulos}
+            totalResults={totalResults}
+          />
+
+          <Editar />
+        </>
+      ) : (
+        <Text>No se encontraron productos</Text>
+      )}
     </>
   );
 }

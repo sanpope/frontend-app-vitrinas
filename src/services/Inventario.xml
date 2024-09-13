@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<datosDeInventario>
+	<fechaUltimaVerificacion>2024-09-28</fechaUltimaVerificacion>
+	<inventarios>
+		<producto>
+			<categoria>recuerdos</categoria>
+			<codigo>4227</codigo>
+			<costo>16000.0</costo>
+			<existencias>18</existencias>
+			<existenciasVerificadas>16</existenciasVerificadas>
+			<nombre>BOTILITO COLOMBIANO CON DISEÑO</nombre>
+			<precio>25000.0</precio>
+			<proveedor>Tienda Kiosko</proveedor>
+			<stockMaximo>25</stockMaximo>
+			<stockMinimo>10</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>ropa</categoria>
+			<codigo>11111</codigo>
+			<costo>22000.0</costo>
+			<existencias>11</existencias>
+			<existenciasVerificadas>12</existenciasVerificadas>
+			<nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+			<precio>59900.0</precio>
+			<proveedor>Tienda Kiosko</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>tecnologia</categoria>
+			<codigo>44444</codigo>
+			<costo>25000.0</costo>
+			<existencias>9</existencias>
+			<existenciasVerificadas>10</existenciasVerificadas>
+			<nombre>CARGADOR TIPO C</nombre>
+			<precio>49900.0</precio>
+			<proveedor>IGoma Tech</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>tecnologia</categoria>
+			<codigo>66666</codigo>
+			<costo>5000.0</costo>
+			<existencias>7</existencias>
+			<existenciasVerificadas>5</existenciasVerificadas>
+			<nombre>ADAPTADOR UNIVERSAL</nombre>
+			<precio>15900.0</precio>
+			<proveedor>Generico</proveedor>
+			<stockMaximo>10</stockMaximo>
+			<stockMinimo>2</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>artesanias</categoria>
+			<codigo>88888</codigo>
+			<costo>3500.0</costo>
+			<existencias>10</existencias>
+			<existenciasVerificadas>8</existenciasVerificadas>
+			<nombre>LLAVERO DE COLOMBIA</nombre>
+			<precio>15000.0</precio>
+			<proveedor>Generico</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>artesanias</categoria>
+			<codigo>99999</codigo>
+			<costo>120000.0</costo>
+			<existencias>8</existencias>
+			<existenciasVerificadas>0</existenciasVerificadas>
+			<nombre>SOMBRERO VUELTIAO</nombre>
+			<precio>159000.0</precio>
+			<proveedor>Juan Valdez</proveedor>
+			<stockMaximo>8</stockMaximo>
+			<stockMinimo>0</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>joyas</categoria>
+			<codigo>123123</codigo>
+			<costo>21900.0</costo>
+			<existencias>12</existencias>
+			<existenciasVerificadas>10</existenciasVerificadas>
+			<nombre>COLLAR DE BRONCE CON DIJE</nombre>
+			<precio>39900.0</precio>
+			<proveedor>Maru</proveedor>
+			<stockMaximo>20</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>ropa</categoria>
+			<codigo>234234</codigo>
+			<costo>22000.0</costo>
+			<existencias>20</existencias>
+			<existenciasVerificadas>18</existenciasVerificadas>
+			<nombre>CAMISETA DE COLOMBIA MUJER</nombre>
+			<precio>59900.0</precio>
+			<proveedor>Tienda Kiosko</proveedor>
+			<stockMaximo>25</stockMaximo>
+			<stockMinimo>10</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>ropa</categoria>
+			<codigo>345345</codigo>
+			<costo>15000.0</costo>
+			<existencias>15</existencias>
+			<existenciasVerificadas>12</existenciasVerificadas>
+			<nombre>GORRA DE COLOMBIA CON DISEÑO</nombre>
+			<precio>29900.0</precio>
+			<proveedor>Tienda Kiosko</proveedor>
+			<stockMaximo>20</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>joyas</categoria>
+			<codigo>432109</codigo>
+			<costo>100000.0</costo>
+			<existencias>25</existencias>
+			<existenciasVerificadas>22</existenciasVerificadas>
+			<nombre>ARETES DE ORO</nombre>
+			<precio>150000.0</precio>
+			<proveedor>Maru</proveedor>
+			<stockMaximo>30</stockMaximo>
+			<stockMinimo>15</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>artesanias</categoria>
+			<codigo>456456</codigo>
+			<costo>37000.0</costo>
+			<existencias>8</existencias>
+			<existenciasVerificadas>6</existenciasVerificadas>
+			<nombre>CAFÉ EN GRANO ORIGEN HUILA 62g</nombre>
+			<precio>45900.0</precio>
+			<proveedor>Juan Valdez</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>3</stockMinimo>
+		</producto>
+		<producto>
+			<codigo>512512</codigo>
+			<costo>19900.0</costo>
+			<existencias>45</existencias>
+			<existenciasVerificadas>10</existenciasVerificadas>
+			<nombre>COLLAR DE CUERO CON DIJE</nombre>
+			<precio>36900.0</precio>
+			<proveedor>Maru</proveedor>
+			<stockMaximo>80</stockMaximo>
+			<stockMinimo>40</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>belleza</categoria>
+			<codigo>543210</codigo>
+			<costo>12000.0</costo>
+			<existencias>10</existencias>
+			<existenciasVerificadas>9</existenciasVerificadas>
+			<nombre>LABIAL HIDRATANTE</nombre>
+			<precio>20000.0</precio>
+			<proveedor>Generico</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>3</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>tecnologia</categoria>
+			<codigo>567567</codigo>
+			<costo>37000.0</costo>
+			<existencias>5</existencias>
+			<existenciasVerificadas>5</existenciasVerificadas>
+			<nombre>CARGADOR PARA IPHONE</nombre>
+			<precio>59900.0</precio>
+			<proveedor>IGoma Tech</proveedor>
+			<stockMaximo>10</stockMaximo>
+			<stockMinimo>2</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>tecnologia</categoria>
+			<codigo>654321</codigo>
+			<costo>20000.0</costo>
+			<existencias>15</existencias>
+			<existenciasVerificadas>14</existenciasVerificadas>
+			<nombre>ADAPTADOR DE CORRIENTE</nombre>
+			<precio>35000.0</precio>
+			<proveedor>IGoma Tech</proveedor>
+			<stockMaximo>20</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>belleza</categoria>
+			<codigo>678678</codigo>
+			<costo>5000.0</costo>
+			<existencias>10</existencias>
+			<existenciasVerificadas>8</existenciasVerificadas>
+			<nombre>MAQUILLAJE BÁSICO</nombre>
+			<precio>8900.0</precio>
+			<proveedor>Generico</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>artesanias</categoria>
+			<codigo>765432</codigo>
+			<costo>30000.0</costo>
+			<existencias>20</existencias>
+			<existenciasVerificadas>18</existenciasVerificadas>
+			<nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+			<precio>40000.0</precio>
+			<proveedor>Juan Valdez</proveedor>
+			<stockMaximo>25</stockMaximo>
+			<stockMinimo>10</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>tecnologia</categoria>
+			<codigo>765765</codigo>
+			<costo>15000.0</costo>
+			<existencias>25</existencias>
+			<existenciasVerificadas>20</existenciasVerificadas>
+			<nombre>TERMO PARA CAFÉ</nombre>
+			<precio>29000.0</precio>
+			<proveedor>IGoma Tech</proveedor>
+			<stockMaximo>30</stockMaximo>
+			<stockMinimo>15</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>ropa</categoria>
+			<codigo>876543</codigo>
+			<costo>32000.0</costo>
+			<existencias>8</existencias>
+			<existenciasVerificadas>7</existenciasVerificadas>
+			<nombre>CAMISETA TIPO POLO</nombre>
+			<precio>55000.0</precio>
+			<proveedor>Tienda Kiosko</proveedor>
+			<stockMaximo>15</stockMaximo>
+			<stockMinimo>3</stockMinimo>
+		</producto>
+		<producto>
+			<categoria>ropa</categoria>
+			<codigo>987654</codigo>
+			<costo>30000.0</costo>
+			<existencias>12</existencias>
+			<existenciasVerificadas>10</existenciasVerificadas>
+			<nombre>SOMBRERO PLAYERO</nombre>
+			<precio>45000.0</precio>
+			<proveedor>Tienda Kiosko</proveedor>
+			<stockMaximo>20</stockMaximo>
+			<stockMinimo>5</stockMinimo>
+		</producto>
+	</inventarios>
+	<verificacionesDeCambiosPendientes>
+		<modificacion>
+			<cantidadDeCambios>42</cantidadDeCambios>
+			<fecha>2024-09-28</fecha>
+		</modificacion>
+		<modificacion>
+			<cantidadDeCambios>27</cantidadDeCambios>
+			<fecha>2024-09-18</fecha>
+		</modificacion>
+		<modificacion>
+			<cantidadDeCambios>35</cantidadDeCambios>
+			<fecha>2024-09-12</fecha>
+		</modificacion>
+	</verificacionesDeCambiosPendientes>
+</datosDeInventario>

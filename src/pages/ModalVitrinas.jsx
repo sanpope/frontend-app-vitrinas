@@ -24,6 +24,7 @@ import Agregar from "../component/Agregar";
 import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
 
 import axios from "axios";
+import Loader from "../component/Loader";
 
 export default function ModalVitrinas({
   isFirstModalOpen,
@@ -46,14 +47,10 @@ export default function ModalVitrinas({
     onClose: onSecondModalClose,
   } = useDisclosure();
 
-  const [newVitrinaName, setNewVitrinaName] = useState("");
-  const [newVitrinaCity, setNewVitrinaCity] = useState("");
-
   const handleVitrinaClick = async (cityName, vitrinaName) => {
     dispatch(setCity(cityName));
     dispatch(setName(vitrinaName));
-    const url =
-      "http://34.176.231.167:8080/app/rest/vitrina/resumen-de-actividad";
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/resumen-de-actividad`;
 
     try {
       const response = await axios.get(url, {
@@ -66,8 +63,11 @@ export default function ModalVitrinas({
       });
 
       // Si el servidor responde con XML, puedes manejarlo aquí
-      console.log(response.data); // response.data contendrá el XML
-      navigate("/resumen");
+      const data = response.data;
+      // Parseamos el XML
+      if (data) {
+        navigate("/resumen");
+      }
     } catch (error) {
       console.error("Error fetching XML data:", error);
     }
@@ -81,7 +81,7 @@ export default function ModalVitrinas({
     formData.append("ciudad", city);
 
     //ToDO Agregar vitrina POST/rest/vitrina
-    const url = "http://34.176.231.167:8080/app/rest/negocio/vitrinas";
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/vitrinas`;
     axios
       .post(url, formData, {
         headers: {
@@ -99,7 +99,7 @@ export default function ModalVitrinas({
 
   useEffect(() => {
     getVitrinasInfo();
-  }, [createNewVitrina]);
+  }, []);
 
   const handleFirstModalClose = () => {
     if (showOptions === undefined) {
@@ -108,9 +108,9 @@ export default function ModalVitrinas({
     onFirstModalClose();
   };
 
-  const getVitrinasInfo = () => {
-    const url = "http://34.176.231.167:8080/app/rest/vitrina";
-    axios
+  const getVitrinasInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina`;
+    await axios
       .get(url, {
         headers: {
           "Content-Type": "application/xml; charset=utf-8",
@@ -118,7 +118,6 @@ export default function ModalVitrinas({
       })
       .then((response) => {
         const data = response.data;
-        //setOutput(data); // Guardamos el XML en estado para mostrarlo
         // Parseamos el XML
         const xmlText = response.data;
         const parser = new DOMParser();
