@@ -3,6 +3,8 @@ import { Checkbox as ChakraCheckbox } from "@chakra-ui/react";
 import FileCheckIcon from "../../../assets/images/FileCheckIcon";
 
 export default function Checkbox({
+  checked,
+  setChecked,
   text,
   defaultChecked,
   size,
@@ -13,6 +15,8 @@ export default function Checkbox({
 }) {
   return (
     <ChakraCheckbox
+      checked={checked}
+      onChange={setChecked}
       checkIcon={checkIcon}
       defaultChecked={defaultChecked ?? false}
       disabled={disabled}

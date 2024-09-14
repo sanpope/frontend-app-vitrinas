@@ -12,18 +12,38 @@ import {
   Select,
   Text,
   useDisclosure,
+  Input,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import TextInput from "./ui/textInput";
 import StandardButton from "./ui/buttons/standard";
 import ConfirmationMessage from "./ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
+import { useSelector, useDispatch } from "react-redux";
+
+import axios from "axios";
+import { parseData, parseTextFields } from "../utils/xmlParse";
+
+const FIELD_NAMES = [
+  "categoria",
+  "codigo",
+  "costo",
+  "existencias",
+  "existenciasVerificadas",
+  "nombre",
+  "precio",
+  "proveedor",
+  "stockMaximo",
+  "stockMinimo",
+];
 
 export default function EditarExistencia({
   isOpen,
   onOpen,
   onClose,
   articulo,
+  setTablaInventario,
+  setDisplayedArticulos,
 }) {
   const {
     isOpen: isConfirmationModalOpen,
@@ -31,14 +51,109 @@ export default function EditarExistencia({
     onClose: onConfirmationModalClose,
   } = useDisclosure();
 
-  const [categoria, setCategoria] = useState("");
-  const [nombre, setNombre] = useState("");
+  const vitrinaName = useSelector((state) => state.vitrinaReducer.name);
+  const [loading, setLoading] = useState(false);
 
-  // TODO make a bunch of text input fields
+  const [nombre, setNombre] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [proveedor, setProveedor] = useState("");
+  const [precio, setPrecio] = useState("");
+  const [costo, setCosto] = useState("");
+  const [existencia, setExistencia] = useState("");
+  const [exisVerificada, setExisVerificada] = useState();
+  const [stockMin, setStockMin] = useState("");
+  const [stockMax, setStockMax] = useState("");
+  const disabled = true;
 
   useEffect(() => {
-    // TODO if articulo is not null, set every single text input field now
-  }, [isOpen, articulo]);
+    if (articulo) {
+      const {
+        codigo,
+        nombre,
+        categoria,
+        precio,
+        costo,
+        existencia,
+        exisVerificadas,
+        stockMin,
+        stockMax,
+        proveedor,
+      } = articulo;
+      setNombre(nombre);
+      setCodigo(codigo);
+      setCategoria(categoria);
+      setPrecio(precio);
+      setCosto(costo);
+      setExistencia(existencia);
+      setExisVerificada(exisVerificadas);
+      setStockMin(stockMin);
+      setStockMax(stockMax);
+      setProveedor(proveedor);
+    }
+  }, [articulo]);
+
+  const updateProducto = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos?vitrina=${vitrinaName}&producto=${codigo}`,
+        {
+          cantidad: Number(existencia),
+          stockMinimo: Number(stockMin),
+          stockMaximo: Number(stockMax),
+        },
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      const xmlDoc = parseData(response.data);
+      const updatedData = parseTextFields(xmlDoc, FIELD_NAMES);
+      setTablaInventario((prevState) => {
+        let copy = [...prevState];
+        var index = copy
+          .map((producto) => producto.codigo)
+          .indexOf(updatedData.codigo);
+        copy[index]["existencia"] = updatedData.existencias;
+        copy[index]["stockMin"] = updatedData.stockMinimo;
+        copy[index]["stockMax"] = updatedData.stockMaximo;
+        return copy;
+      });
+
+      setDisplayedArticulos((prevState) => {
+        let copy = [...prevState];
+        var index = copy
+          .map((producto) => producto.codigo)
+          .indexOf(updatedData.codigo);
+        copy[index]["existencia"] = updatedData.existencias;
+        copy[index]["stockMin"] = updatedData.stockMinimo;
+        copy[index]["stockMax"] = updatedData.stockMaximo;
+        return copy;
+      });
+
+      onClose();
+    } catch (error) {
+      if (error.response) {
+        // La solicitud fue enviada pero el servidor respondió con un código de error
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        // La solicitud fue enviada pero no se recibió respuesta
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        // Ocurrió un error en la configuración de la solicitud
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -82,11 +197,20 @@ export default function EditarExistencia({
                   alignItems={"flex-start"}
                 >
                   <FormLabel>Nombre del producto</FormLabel>
-                  <TextInput placeholder={"nombre"} />
+                  <TextInput
+                    onChange={(val) => setNombre(val)}
+                    value={nombre}
+                    isDisabled={disabled}
+                  />
                   <FormLabel display="flex" alignItems="center">
                     Código
                   </FormLabel>
-                  <TextInput placeholder={"Codigo"} />
+                  <Input
+                    value={codigo}
+                    isDisabled={disabled}
+                    _hover={{ cursor: "not-allowed" }}
+                    color={disabled ? "grey.placeholder" : "black"}
+                  />
                 </Box>
                 <Box w={"100%"} display={"flex"} gap={"10px"}>
                   <Box
@@ -103,7 +227,7 @@ export default function EditarExistencia({
                     </FormLabel>
                     <Select
                       required
-                      onChange={(e) => setCategoria(e.target.value)}
+                      onChange={(val) => setCategoria(val.target.value)}
                       sx={{
                         borderColor: "mainBg",
                         borderWidth: "1px",
@@ -128,15 +252,25 @@ export default function EditarExistencia({
                     <FormLabel display="flex" alignItems="center">
                       Precio
                     </FormLabel>
-                    <TextInput placeholder={"Precio"} />
+                    <TextInput
+                      onChange={(val) => setPrecio(val)}
+                      value={precio}
+                      isDisabled={disabled}
+                    />
                     <FormLabel display="flex" alignItems="center">
                       Existencia
                     </FormLabel>
-                    <TextInput placeholder={"Cantidad"} />
+                    <TextInput
+                      onChange={(val) => setExistencia(val)}
+                      value={existencia}
+                    />
                     <FormLabel display="flex" alignItems="center">
                       Stock mínimo
                     </FormLabel>
-                    <TextInput placeholder={"Cantidad"} />
+                    <TextInput
+                      onChange={(val) => setStockMin(val)}
+                      value={stockMin}
+                    />
                   </Box>
                   <Box
                     pt={"10px"}
@@ -150,19 +284,36 @@ export default function EditarExistencia({
                     <FormLabel display="flex" alignItems="center">
                       Nombre del proveedor
                     </FormLabel>
-                    <TextInput placeholder={"Nombre"} />
+                    <TextInput
+                      onChange={(val) => setProveedor(val)}
+                      value={proveedor}
+                      isDisabled={disabled}
+                    />
                     <FormLabel display="flex" alignItems="center">
                       Costo
                     </FormLabel>
-                    <TextInput placeholder={"Costo"} />
+                    <TextInput
+                      onChange={(val) => setCosto(val)}
+                      value={costo}
+                      isDisabled={disabled}
+                    />
                     <FormLabel display="flex" alignItems="center">
                       Existencia verificada
                     </FormLabel>
-                    <TextInput placeholder={"Cantidad"} />
+                    <TextInput
+                      onChange={(val) => setExisVerificada(val)}
+                      value={exisVerificada}
+                      isDisabled={disabled}
+                    />
                     <FormLabel display="flex" alignItems="center">
                       Stock máximo
                     </FormLabel>
-                    <TextInput placeholder={"Cantidad"} />
+                    <TextInput
+                      onChange={(val) => {
+                        setStockMax(val);
+                      }}
+                      value={stockMax}
+                    />
                   </Box>
                 </Box>
               </FormControl>
@@ -198,6 +349,8 @@ export default function EditarExistencia({
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
+              funcConfirmar={updateProducto}
+              isLoading={loading}
             />
           </ModalFooter>
         </ModalContent>

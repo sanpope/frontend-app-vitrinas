@@ -58,23 +58,25 @@ export default function TablaInventario({
                 return (
                   <tr key={index} className="" style={{ cursor: "pointer" }}>
                     <td className="checkBox">
-                      <Checkbox
-                        onClick={() => setActive(index)}
-                        defaultChecked={active === index ? true : false}
-                      />
+                      <Checkbox onClick={() => setActive(index)} />
                     </td>
-                    {Object.values(articulo).map((value, index) => {
-                      return (
-                        <td key={index} className="inventTd">
-                          {value}
-                        </td>
-                      );
-                    })}
-                    <td
-                      className="iconContainer"
-                      onClick={() => setArticulo(articulo)}
-                    >
-                      <EditIcon width="18px" height="18px" />
+                    {Object.entries(articulo)
+                      .filter((keyValArr) => {
+                        return keyValArr[0] != "proveedor";
+                      })
+                      .map((keyValArr, index) => {
+                        return (
+                          <td key={index} className="inventTd">
+                            {keyValArr[1]}
+                          </td>
+                        );
+                      })}
+                    <td className="iconContainer">
+                      <EditIcon
+                        width="18px"
+                        height="18px"
+                        onClick={() => setArticulo(articulo)}
+                      />
                     </td>
                   </tr>
                 );

@@ -15,7 +15,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StandardButton from "./ui/buttons/standard";
 import RightArrowIcon from "../assets/images/RightArrowIcon";
 import FilterIcon from "../assets/images/FilterIcon";
@@ -33,12 +33,30 @@ export default function Transferir({
   onClose,
   productsList,
 }) {
-  const [active, setActive] = useState(0);
-  const [productosATransferir, setProductosATransferir] = useState(null);
+  const [activeCodigos, setActiveCodigos] = useState([]);
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
+  const [totalProducts, setTotalProducts] = useState(productsList);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
+  const [productosATransferir, setProductosATransferir] = useState([]);
   const [busqueda, setBusqueda] = useState(null);
+  const [currentProduct, setCurrentProduct] = useState(null);
+
+  useEffect(() => {
+    if (busqueda) {
+      Busqueda(busqueda);
+    } else {
+    }
+  }, [busqueda]);
+
+  const getProductSelected = (index, product) => {
+    console.log(product);
+    // setProductosATransferir((...prevState) => {
+    //   let copy = prevState;
+    //   copy.push(product);
+    //   return copy;
+    // });
+  };
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -64,9 +82,46 @@ export default function Transferir({
         break;
     }
   };
+
+  const Busqueda = (textToSearch) => {
+    let result = totalProducts?.filter((element) => {
+      if (
+        element?.nombre
+          ?.toString()
+          .toLowerCase()
+          .includes(textToSearch?.toLowerCase())
+      ) {
+        return element;
+      }
+    });
+    setDisplayedArticulos(result);
+  };
+
   const onBuscarChange = (e) => {
     setBusqueda(e);
   };
+
+  const handleCheck = (codigo) => {
+    const isChecked = activeCodigos.includes(codigo)
+    if(isChecked) {
+      setActiveCodigos(prev => {
+        const index = prev.findIndex(code => code === codigo)
+        if (index !== -1) {
+          const copy = [...prev]
+          copy.splice(index, 1);
+          return copy;
+        }
+      })
+    } else {
+      setActiveCodigos(prev => [...prev, codigo])
+    }
+  }
+
+  const transferProds = (prod, val) => {
+    console.log(val);
+    console.log(prod);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -191,7 +246,12 @@ export default function Transferir({
                   justifyContent={"space-between"}
                   gap={"0.625rem"}
                 >
-                  <TextInput placeholder={"Buscar"} leftIcon={<SearchIcon />} />
+                  <TextInput
+                    placeholder={"Buscar"}
+                    leftIcon={<SearchIcon />}
+                    onChange={(e) => onBuscarChange(e)}
+                    value={busqueda}
+                  />
                   <FilterIcon />
                 </FormLabel>
 
@@ -218,7 +278,7 @@ export default function Transferir({
                       },
                     }}
                   >
-                    {productsList?.map((product, index) => {
+                    {displayedArticulos?.map((product, index) => {
                       return (
                         <ListItem
                           key={index}
@@ -226,10 +286,14 @@ export default function Transferir({
                           borderBottom="1px"
                           borderColor="gray.200"
                           py={"10px"}
-                          onClick={() => setActive(index)}
                         >
                           <Checkbox
-                            defaultChecked={active === index ? true : false}
+                            onClick={() => {
+                              console.log("Clicked: ", index);
+                              getProductSelected(index, product);
+                            }}
+                            checked={activeCodigos.includes(product.codigo)}
+                            setChecked={() => handleCheck(product.codigo)}
                             text={product.nombre}
                             colorScheme={"#1890FF"}
                           />
@@ -291,9 +355,40 @@ export default function Transferir({
                     },
                   }}
                 >
-                  <Product />
-                  <Product />
-                  <Product />
+                  <UnorderedList
+                    styleType="none"
+                    w={"100%"}
+                    height={"120px"}
+                    overflowY="scroll"
+                    sx={{
+                      "::-webkit-scrollbar": {
+                        width: "8px",
+                        height: "4px",
+                      },
+                      "::-webkit-scrollbar-track": {
+                        background: "tranparent",
+                      },
+                      "::-webkit-scrollbar-thumb": {
+                        background: "gray.200",
+                        borderRadius: "10px",
+                      },
+                      "::-webkit-scrollbar-thumb:hover": {
+                        background: "gray.200",
+                      },
+                    }}
+                  >
+                    {productosATransferir?.map((product, index) => {
+                      return (
+                        <ListItem key={index}>
+                          <Product
+                            setProdCantidad={(val) =>
+                              transferProds(product, val)
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </UnorderedList>
                 </FormLabel>
               </FormControl>
             </Box>

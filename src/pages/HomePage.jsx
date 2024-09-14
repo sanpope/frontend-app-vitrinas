@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, ListItem, OrderedList, Text } from "@chakra-ui/react";
+import axios from "axios";
 
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
 import StarIcon from "../../src/assets/images/StarIcon";
@@ -23,23 +24,14 @@ import VentasMesesAnteriores from "../component/VentasMesesAnteriores";
 import TopVitrinasdelMes from "../component/TopVitrinasdelMes";
 import ItemsTopVitrinasdelMes from "../component/ItemsTopVitrinasdelMes";
 import DispositivosAveriados from "../component/DispositivosAveriados";
-import axios from "axios";
+
 import DespachosActuales from "../component/DespachosActuales";
 import InventarioXverificar from "../component/InventarioXverificar";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HEADER_HEIGHT } from "../component/Header";
 
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setVentaTotalMes,
-  setTopCategoriasGlobal,
-} from "../store/slices/homePage";
-
-import xmlToJSON from "../services/XmlToJsonConverter";
-import homePageData from "../services/homePageData";
-import fetchXMLData from "../services/fetchXmlData";
-
-const url = "";
+import { setVentaTotalMes } from "../store/slices/homePage";
 
 const PADDING = 15;
 

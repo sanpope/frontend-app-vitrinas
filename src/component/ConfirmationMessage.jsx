@@ -25,7 +25,14 @@ export default function ConfirmationMessage({
   funcConfirmar,
   buttonText = "Confirmar",
   focusRow,
+  isLoading,
 }) {
+
+  async function handleClick() {
+    await funcConfirmar(focusRow);
+    onClose();
+  }
+
   return (
     <Box>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -66,6 +73,7 @@ export default function ConfirmationMessage({
               fontSize="14px"
               fontWeight="400"
               onClick={onClose}
+              disabled={isLoading}
             >
               Cancelar
             </StandardButton>
@@ -76,10 +84,8 @@ export default function ConfirmationMessage({
               w={"50%"}
               fontSize="14px"
               fontWeight="400"
-              onClick={() => {
-                funcConfirmar(focusRow);
-                onClose();
-              }}
+              onClick={handleClick}
+              isLoading={isLoading}
             >
               {buttonText}
             </StandardButton>

@@ -9,10 +9,10 @@ import TablaInventario from "../component/TablaInventario";
 import EditarExistencia from "../component/EditarExistencia";
 import Note from "../component/Note";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import inventarioData from "../services/inventarioData";
+
 import TextInput from "../component/ui/textInput";
 import SearchIcon from "../assets/images/SearchIcon";
+import { parseData } from "../utils/xmlParse";
 
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -26,7 +26,6 @@ export default function Inventario() {
   const [rowsToShow, setRowsToShow] = useState(30);
   const [busqueda, setBusqueda] = useState(null);
 
-  
   const [selectedArticulo, setSelectedArticulo] = useState(null);
 
   const totalPages = Math.ceil(tablaInventario?.length / rowsToShow);
@@ -110,9 +109,7 @@ export default function Inventario() {
           Accept: "application/xml",
         },
       });
-      const xmlText = response.data;
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      const xmlDoc = parseData(response.data);
       setTablaInventario(getProductos(xmlDoc));
       setTotalResults(tablaInventario?.length);
     } catch (error) {
@@ -170,6 +167,9 @@ export default function Inventario() {
         const stockMax =
           listadoProds[i]?.getElementsByTagName("stockMaximo")[0].textContent;
 
+        const proveedor =
+          listadoProds[i]?.getElementsByTagName("proveedor")[0].textContent;
+
         totalProdsArr.push({
           codigo,
           nombre,
@@ -180,6 +180,7 @@ export default function Inventario() {
           exisVerificadas,
           stockMin,
           stockMax,
+          proveedor,
         });
       }
       return totalProdsArr;
@@ -248,13 +249,16 @@ export default function Inventario() {
             >
               Transferir
             </StandardButton>
-            <Transferir
-              isOpen={isSecondModalOpen}
-              onOpen={onSecondModalOpen}
-              onClose={onSecondModalClose}
-              vitrina={name}
-              productsList={tablaInventario}
-            />
+            {isSecondModalOpen &&
+              <Transferir
+                isOpen={isSecondModalOpen}
+                onOpen={onSecondModalOpen}
+                onClose={onSecondModalClose}
+                vitrina={name}
+                productsList={tablaInventario}
+              
+              />
+            }
           </Box>
         </Box>
         <Box
@@ -283,7 +287,6 @@ export default function Inventario() {
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
             setArticulo={setSelectedArticulo}
-           
             handleArtClick={handleProdClick}
           />
         }
@@ -296,6 +299,8 @@ export default function Inventario() {
         isOpen={!!selectedArticulo}
         articulo={selectedArticulo}
         onClose={() => setSelectedArticulo(null)}
+        setTablaInventario={setTablaInventario}
+        setDisplayedArticulos={setDisplayedArticulos}
       />
     </Box>
   );
