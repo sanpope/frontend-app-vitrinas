@@ -8,34 +8,34 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Center,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import TextInput from "./ui/textInput";
 import CloseIcon from "../assets/images/CloseIcon";
 
 export default function Product({
-  productName = "Nombre del Producto",
-  stock = 20,
+  productName,
+  stock,
   setProdCantidad,
   deleteProduct,
+  producto,
 }) {
   const [message, setMessage] = useState("");
   const [value, setValue] = useState(null);
-
-  // useEffect(() => {
-  //   if (value) {
-  //     setProdCantidad(value);
-  //   } else {
-  //   }
-  // }, [value]);
 
   const handleOnChange = (e) => {
     if (e > 0 && e <= stock) {
       setValue(e);
       setMessage("");
+      setProdCantidad(e);
     } else if (e > stock) {
       setMessage("La cantidad no puede superar el stock.");
     }
+  };
+
+  const handleClick = () => {
+    deleteProduct(producto);
   };
   return (
     <>
@@ -48,9 +48,11 @@ export default function Product({
         justifyContent={"space-around"}
         p={"10px"}
       >
-        <Text textStyle={"RobotoBody"}>{productName}</Text>
-        <Text
-          w={"80px"}
+        <Text w={"150px"} textStyle={"RobotoBody"}>
+          {productName}
+        </Text>
+        <Center
+          minW={"60px"}
           h={`32px`}
           textStyle={"RobotoBody"}
           borderColor="mainBg"
@@ -61,7 +63,7 @@ export default function Product({
           cursor={"not-allowed"}
         >
           {stock}
-        </Text>
+        </Center>
 
         <NumberInput
           defaultValue={0}
@@ -83,7 +85,7 @@ export default function Product({
           </NumberInputStepper>
         </NumberInput>
 
-        <CloseIcon width="15px" height="15px" onClick={deleteProduct} />
+        <CloseIcon width="15px" height="15px" onClick={handleClick} />
       </Box>
       <Text color={"red.100"}>{message}</Text>
     </>

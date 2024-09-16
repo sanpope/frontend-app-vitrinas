@@ -15,7 +15,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import StandardButton from "./ui/buttons/standard";
 import RightArrowIcon from "../assets/images/RightArrowIcon";
 import FilterIcon from "../assets/images/FilterIcon";
@@ -25,6 +25,10 @@ import Checkbox from "./ui/checkbox";
 import colors from "../theme/colors";
 import Product from "./Product";
 import ConfirmationMessage from "./ConfirmationMessage";
+import axios from "axios";
+
+import { parseData } from "../utils/xmlParse";
+import { generateProductsListXML } from "../utils/xmlParse";
 
 export default function Transferir({
   vitrina,
@@ -33,14 +37,13 @@ export default function Transferir({
   onClose,
   productsList,
 }) {
-  const [activeCodigos, setActiveCodigos] = useState([]);
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
   const [totalProducts, setTotalProducts] = useState(productsList);
+  const [activeProdcs, setActiveProdcs] = useState([]);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
-  const [productosATransferir, setProductosATransferir] = useState([]);
   const [busqueda, setBusqueda] = useState(null);
-  const [currentProduct, setCurrentProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (busqueda) {
@@ -48,15 +51,6 @@ export default function Transferir({
     } else {
     }
   }, [busqueda]);
-
-  const getProductSelected = (index, product) => {
-    console.log(product);
-    // setProductosATransferir((...prevState) => {
-    //   let copy = prevState;
-    //   copy.push(product);
-    //   return copy;
-    // });
-  };
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -66,7 +60,6 @@ export default function Transferir({
 
   const handleOnChange = (event) => {
     const desdeSelected = event.target.value;
-    console.log(desdeSelected);
     switch (desdeSelected) {
       case "Bodega":
         setDesde("Bodega");
@@ -101,25 +94,91 @@ export default function Transferir({
     setBusqueda(e);
   };
 
-  const handleCheck = (codigo) => {
-    const isChecked = activeCodigos.includes(codigo)
-    if(isChecked) {
-      setActiveCodigos(prev => {
-        const index = prev.findIndex(code => code === codigo)
+  const handleCheck = (producto) => {
+    const isChecked = activeProdcs.find(
+      (item) => item.codigo === producto.codigo,
+    );
+    if (isChecked) {
+      deleteProductFromList(producto);
+    } else {
+      const nuevoProducto = { ...producto, cantidad: 0 };
+      setActiveProdcs((prev) => [...prev, nuevoProducto]);
+    }
+  };
+
+  const setProdCantidad = (val, prod) => {
+    const isProdExists = activeProdcs?.find(
+      (item) => item.codigo === prod.codigo,
+    );
+    if (isProdExists) {
+      setActiveProdcs((prev) => {
+        const index = prev.findIndex((item) => item.codigo === prod.codigo);
         if (index !== -1) {
-          const copy = [...prev]
-          copy.splice(index, 1);
+          const copy = [...prev];
+          copy[index]["cantidad"] = val;
           return copy;
         }
-      })
-    } else {
-      setActiveCodigos(prev => [...prev, codigo])
+      });
     }
-  }
+  };
 
-  const transferProds = (prod, val) => {
-    console.log(val);
-    console.log(prod);
+  const deleteProductFromList = (prod) => {
+    setActiveProdcs((prev) => {
+      const index = prev.findIndex((item) => item.codigo === prod.codigo);
+      if (index !== -1) {
+        const copy = [...prev];
+        copy.splice(index, 1);
+        return copy;
+      }
+    });
+  };
+
+  const ProductListItem = useCallback(
+    (product, index) => {
+      const isActive = activeProdcs.find((currentProduct) => {
+        return currentProduct.codigo === product.codigo;
+      });
+
+      return (
+        <ListItem
+          key={index}
+          w={"100%"}
+          borderBottom="1px"
+          borderColor="gray.200"
+          py={"10px"}
+        >
+          <Checkbox
+            checked={isActive}
+            setChecked={() => handleCheck(product)}
+            text={product.nombre}
+            colorScheme={"#1890FF"}
+          />
+        </ListItem>
+      );
+    },
+    [activeProdcs],
+  );
+
+  const transferirProdcs = async () => {
+    setLoading(true);
+    const xmlData = generateProductsListXML(activeProdcs);
+    const haciaVitrina = hacia === vitrina ? true : false;
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}&haciaVitrina=${haciaVitrina}`;
+
+    try {
+      const response = await axios.put(url, null, {
+        headers: {
+          "Content-Type": "text/xml",
+          Accept: "application/xml",
+        },
+      });
+      const xmlDoc = parseData(response.data);
+      console.log(xmlDoc);
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -279,26 +338,7 @@ export default function Transferir({
                     }}
                   >
                     {displayedArticulos?.map((product, index) => {
-                      return (
-                        <ListItem
-                          key={index}
-                          w={"100%"}
-                          borderBottom="1px"
-                          borderColor="gray.200"
-                          py={"10px"}
-                        >
-                          <Checkbox
-                            onClick={() => {
-                              console.log("Clicked: ", index);
-                              getProductSelected(index, product);
-                            }}
-                            checked={activeCodigos.includes(product.codigo)}
-                            setChecked={() => handleCheck(product.codigo)}
-                            text={product.nombre}
-                            colorScheme={"#1890FF"}
-                          />
-                        </ListItem>
-                      );
+                      return ProductListItem(product, index);
                     })}
                   </UnorderedList>
                 </FormLabel>
@@ -310,10 +350,9 @@ export default function Transferir({
               borderRadius={"20px"}
               border="1px"
               borderColor="gray.200"
-              p={"15px"}
             >
               <FormControl w={"100%"} display={"flex"} flexDirection={"column"}>
-                <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                <Text textStyle={"RobotoSubtitleBold"} p={"10px"}>
                   Productos a transferir
                 </Text>
                 <Box
@@ -377,13 +416,17 @@ export default function Transferir({
                       },
                     }}
                   >
-                    {productosATransferir?.map((product, index) => {
+                    {activeProdcs?.map((product, index) => {
                       return (
                         <ListItem key={index}>
                           <Product
+                            productName={product.nombre}
+                            stock={product.stockMax}
+                            producto={product}
                             setProdCantidad={(val) =>
-                              transferProds(product, val)
+                              setProdCantidad(val, product)
                             }
+                            deleteProduct={deleteProductFromList}
                           />
                         </ListItem>
                       );
@@ -419,10 +462,12 @@ export default function Transferir({
             Enviar
           </StandardButton>
           <ConfirmationMessage
-            text={`Se transferirán ${productosATransferir?.length} productos de la bodega hacia la vitrina `}
+            text={`Se transferirán ${activeProdcs?.length} productos desde ${desde} hacia ${hacia} `}
             isOpen={isConfirmationModalOpen}
             onOpen={onConfirmationModalOpen}
             onClose={onConfirmationModalClose}
+            funcConfirmar={transferirProdcs}
+            isLoading={loading}
           />
         </ModalFooter>
       </ModalContent>

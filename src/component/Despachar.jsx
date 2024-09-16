@@ -17,7 +17,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StandardButton from "./ui/buttons/standard";
 import RightArrowIcon from "../assets/images/RightArrowIcon";
 import FilterIcon from "../assets/images/FilterIcon";
@@ -27,26 +27,114 @@ import Checkbox from "./ui/checkbox";
 import colors from "../theme/colors";
 import Product from "./Product";
 import ConfirmationMessage from "./ConfirmationMessage";
+import axios from "axios";
+import { parseData } from "../utils/xmlParse";
 
 export default function Despachar({
-  vitrina = "Vitrina",
+  vitrina,
   isOpen,
   onOpen,
   onClose,
+  productsList,
 }) {
-  const [productsList, setProductsList] = useState([
-    "Nombre del producto",
-    "Nombre del producto",
-    "Nombre del producto",
-    "Nombre del producto",
-  ]);
-  const [active, setActive] = useState(0);
   const [productosADespachar, setProductosADespachar] = useState(25);
+  const [totalProducts, setTotalProducts] = useState(productsList);
+  const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
+  const [activeProdcs, setActiveProdcs] = useState([]);
+  const [busqueda, setBusqueda] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (busqueda) {
+      Busqueda(busqueda);
+    } else {
+    }
+  }, [busqueda]);
+
   const {
     isOpen: isConfirmationModalOpen,
     onOpen: onConfirmationModalOpen,
     onClose: onConfirmationModalClose,
   } = useDisclosure();
+
+  const Busqueda = (textToSearch) => {
+    let result = totalProducts?.filter((element) => {
+      if (
+        element?.nombre
+          ?.toString()
+          .toLowerCase()
+          .includes(textToSearch?.toLowerCase())
+      ) {
+        return element;
+      }
+    });
+    setDisplayedArticulos(result);
+  };
+
+  const onBuscarChange = (e) => {
+    setBusqueda(e);
+  };
+
+  const handleCheck = (producto) => {
+    const isChecked = activeProdcs.find(
+      (item) => item.codigo === producto.codigo,
+    );
+    if (isChecked) {
+      deleteProductFromList(producto);
+    } else {
+      const nuevoProducto = { ...producto, cantidad: 0 };
+      setActiveProdcs((prev) => [...prev, nuevoProducto]);
+    }
+  };
+
+  const setProdCantidad = (val, prod) => {
+    const isProdExists = activeProdcs?.find(
+      (item) => item.codigo === prod.codigo,
+    );
+    if (isProdExists) {
+      setActiveProdcs((prev) => {
+        const index = prev.findIndex((item) => item.codigo === prod.codigo);
+        if (index !== -1) {
+          const copy = [...prev];
+          copy[index]["cantidad"] = val;
+          return copy;
+        }
+      });
+    }
+  };
+
+  const deleteProductFromList = (prod) => {
+    setActiveProdcs((prev) => {
+      const index = prev.findIndex((item) => item.codigo === prod.codigo);
+      if (index !== -1) {
+        const copy = [...prev];
+        copy.splice(index, 1);
+        return copy;
+      }
+    });
+  };
+
+  const despacharProdcs = async () => {
+    setLoading(true);
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}`;
+
+    try {
+      const response = await axios.put(
+        url,
+        {},
+        {
+          headers: {
+            Accept: "application/xml",
+          },
+        },
+      );
+      const xmlDoc = parseData(response.data);
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box>
@@ -158,6 +246,8 @@ export default function Despachar({
                     <TextInput
                       placeholder={"Buscar"}
                       leftIcon={<SearchIcon />}
+                      onChange={(e) => onBuscarChange(e)}
+                      value={busqueda}
                     />
                     <FilterIcon />
                   </FormLabel>
@@ -186,7 +276,10 @@ export default function Despachar({
                         },
                       }}
                     >
-                      {productsList.map((product, index) => {
+                      {displayedArticulos.map((product, index) => {
+                        const isActive = activeProdcs.find((currentProduct) => {
+                          return currentProduct.codigo === product.codigo;
+                        });
                         return (
                           <ListItem
                             key={index}
@@ -194,11 +287,11 @@ export default function Despachar({
                             borderBottom="1px"
                             borderColor="gray.200"
                             py={"10px"}
-                            onClick={() => setActive(index)}
                           >
                             <Checkbox
-                              defaultChecked={active === index ? true : false}
-                              text={product}
+                              checked={isActive}
+                              setChecked={() => handleCheck(product)}
+                              text={product.nombre}
                               colorScheme={"#1890FF"}
                             />
                           </ListItem>
@@ -263,9 +356,44 @@ export default function Despachar({
                       },
                     }}
                   >
-                    <Product />
-                    <Product />
-                    <Product />
+                    <UnorderedList
+                      styleType="none"
+                      w={"100%"}
+                      height={"120px"}
+                      overflowY="scroll"
+                      sx={{
+                        "::-webkit-scrollbar": {
+                          width: "8px",
+                          height: "4px",
+                        },
+                        "::-webkit-scrollbar-track": {
+                          background: "tranparent",
+                        },
+                        "::-webkit-scrollbar-thumb": {
+                          background: "gray.200",
+                          borderRadius: "10px",
+                        },
+                        "::-webkit-scrollbar-thumb:hover": {
+                          background: "gray.200",
+                        },
+                      }}
+                    >
+                      {activeProdcs?.map((product, index) => {
+                        return (
+                          <ListItem key={index}>
+                            <Product
+                              productName={product.nombre}
+                              stock={product.stockMax}
+                              producto={product}
+                              setProdCantidad={(val) =>
+                                setProdCantidad(val, product)
+                              }
+                              deleteProduct={deleteProductFromList}
+                            />
+                          </ListItem>
+                        );
+                      })}
+                    </UnorderedList>
                   </FormLabel>
                 </FormControl>
               </Box>
@@ -302,6 +430,7 @@ export default function Despachar({
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
+              isLoading={loading}
             />
           </ModalFooter>
         </ModalContent>

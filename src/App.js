@@ -33,7 +33,7 @@ import EstaVitrina from "./pages/EstaVitrina";
 import ModalVitrinas from "./pages/ModalVitrinas";
   
 function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false); // TODO get from cache
+  const [isLoggedIn, setLoggedIn] = useState(true); // TODO get from cache
 
   return (
     <>

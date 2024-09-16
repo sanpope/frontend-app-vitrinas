@@ -9,7 +9,6 @@ import TablaInventario from "../component/TablaInventario";
 import EditarExistencia from "../component/EditarExistencia";
 import Note from "../component/Note";
 
-
 import TextInput from "../component/ui/textInput";
 import SearchIcon from "../assets/images/SearchIcon";
 import { parseData } from "../utils/xmlParse";
@@ -232,12 +231,15 @@ export default function Inventario() {
             >
               Despachar
             </StandardButton>
-            <Despachar
-              isOpen={isFirstModalOpen}
-              onOpen={onFirstModalOpen}
-              onClose={onFirstModalClose}
-              vitrina={name}
-            />
+            {isFirstModalOpen && (
+              <Despachar
+                isOpen={isFirstModalOpen}
+                onOpen={onFirstModalOpen}
+                onClose={onFirstModalClose}
+                vitrina={name}
+                productsList={tablaInventario}
+              />
+            )}
             <StandardButton
               variant={"WHITE_RED"}
               borderRadius="20px"
@@ -249,16 +251,15 @@ export default function Inventario() {
             >
               Transferir
             </StandardButton>
-            {isSecondModalOpen &&
+            {isSecondModalOpen && (
               <Transferir
                 isOpen={isSecondModalOpen}
                 onOpen={onSecondModalOpen}
                 onClose={onSecondModalClose}
                 vitrina={name}
                 productsList={tablaInventario}
-              
               />
-            }
+            )}
           </Box>
         </Box>
         <Box

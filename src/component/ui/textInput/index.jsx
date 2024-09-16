@@ -60,23 +60,6 @@ export default function TextInput(props) {
         </FormLabel>
       )}
       <InputGroup
-        // _focusWithin={{
-        //   borderColor: getBorderColor(true),
-        //   ".chakra-input__left-addon": {
-        //     borderColor: `${innerBorderColor} !important`,
-        //   },
-        //   ".chakra-input": {
-        //     borderTopColor: `${innerBorderColor} !important`,
-        //     borderBottomColor: `${innerBorderColor} !important`,
-        //     borderLeftColor: `${
-        //       leftIcon ? "transparent" : innerBorderColor
-        //     } !important`,
-        //     borderRightColor: `${
-        //       rightIcon ? "transparent" : innerBorderColor
-        //     } !important`,
-        //   },
-        // }}
-        // borderColor={getBorderColor(false)}
         borderWidth="1px"
         borderRadius="5px"
         h={`40px`}

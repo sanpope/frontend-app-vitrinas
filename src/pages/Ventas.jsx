@@ -12,6 +12,7 @@ import HandsUsdIcon from "../assets/images/HandsUsdIcon";
 
 import xmlToJSON from "../services/XmlToJsonConverter";
 import ventasData from "../services/ventasData";
+import axios from "axios";
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -32,7 +33,7 @@ export default function Ventas() {
   const totalPages = Math.ceil(tablaVentas?.length / rowsToShow);
 
   useEffect(() => {
-    parseData();
+    getIntervaloVentas();
   }, []);
 
   useEffect(() => {
@@ -151,6 +152,40 @@ export default function Ventas() {
   React.useEffect(() => {
     getMasArticulos(1);
   }, []);
+
+  const getIntervaloVentas = async () => {
+    //setLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=01%2F09%2F2024&numeroDeElementos=15&fechaLimite=16%2F09%2F2024`,
+        null,
+        {
+          headers: {
+            Accept: "application/xml",
+          },
+        },
+      );
+
+      const xmlDoc = parseData(response.data);
+      console.log(xmlDoc);
+    } catch (error) {
+      if (error.response) {
+        // La solicitud fue enviada pero el servidor respondió con un código de error
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        // La solicitud fue enviada pero no se recibió respuesta
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        // Ocurrió un error en la configuración de la solicitud
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+    }
+  };
 
   return (
     <Box
