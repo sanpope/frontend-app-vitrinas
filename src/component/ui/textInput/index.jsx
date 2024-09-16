@@ -15,6 +15,7 @@ import ErrorMessage from "../errorMessage";
 // import { FIELD_SIZE } from "#/types/consts";
 
 import EyeIcon from "../../../assets/images/EyeIcon";
+import EyeOffIcon from "../../../assets/images/EyeOffIcon";
 import useColorFormatConverter from "../../../theme/useColorFormatConverter";
 
 export default function TextInput(props) {
@@ -162,7 +163,7 @@ export default function TextInput(props) {
         )}
         {isPassword && (
           <InputRightElement h="full" onClick={handleClick} cursor="pointer">
-            <EyeIcon />
+            {show ? <EyeIcon /> : <EyeOffIcon />}
           </InputRightElement>
         )}
       </InputGroup>

@@ -1,4 +1,4 @@
-const EyeIcon = ({ width = "12", height = "8", fill = "#020202", onClick, p}) => {
+const EyeIcon = ({ width = "18", height = "18", fill = "#020202", onClick, p}) => {
   return (
     <svg
       width={width}
