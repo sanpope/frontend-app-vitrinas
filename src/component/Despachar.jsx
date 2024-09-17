@@ -17,7 +17,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import StandardButton from "./ui/buttons/standard";
 import RightArrowIcon from "../assets/images/RightArrowIcon";
 import FilterIcon from "../assets/images/FilterIcon";
@@ -113,6 +113,31 @@ export default function Despachar({
       }
     });
   };
+
+  const ProductListItem = useCallback(
+    (product, index) => {
+      const isActive = activeProdcs.find((currentProduct) => {
+        return currentProduct.codigo === product.codigo;
+      });
+      return (
+        <ListItem
+          key={index}
+          w="100%"
+          borderBottom="1px"
+          borderColor="gray.200"
+          py={"10px"}
+        >
+          <Checkbox
+            checked={!!isActive}
+            setChecked={() => handleCheck(product)}
+            text={product.nombre}
+            colorScheme={"#1890FF"}
+          />
+        </ListItem>
+      );
+    },
+    [activeProdcs],
+  );
 
   const despacharProdcs = async () => {
     setLoading(true);
@@ -259,6 +284,8 @@ export default function Despachar({
                       height={"120px"}
                       overflowY="scroll"
                       overflowX="hidden"
+                      m={0}
+                      px={1}
                       sx={{
                         "::-webkit-scrollbar": {
                           width: "8px",
@@ -277,25 +304,7 @@ export default function Despachar({
                       }}
                     >
                       {displayedArticulos.map((product, index) => {
-                        const isActive = activeProdcs.find((currentProduct) => {
-                          return currentProduct.codigo === product.codigo;
-                        });
-                        return (
-                          <ListItem
-                            key={index}
-                            w={"95%"}
-                            borderBottom="1px"
-                            borderColor="gray.200"
-                            py={"10px"}
-                          >
-                            <Checkbox
-                              checked={isActive}
-                              setChecked={() => handleCheck(product)}
-                              text={product.nombre}
-                              colorScheme={"#1890FF"}
-                            />
-                          </ListItem>
-                        );
+                        return ProductListItem(product, index);
                       })}
                     </UnorderedList>
                   </FormLabel>

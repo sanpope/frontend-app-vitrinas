@@ -123,6 +123,7 @@ export default function Transferir({
   };
 
   const deleteProductFromList = (prod) => {
+    console.log("Deleting...")
     setActiveProdcs((prev) => {
       const index = prev.findIndex((item) => item.codigo === prod.codigo);
       if (index !== -1) {
@@ -148,7 +149,7 @@ export default function Transferir({
           py={"10px"}
         >
           <Checkbox
-            checked={isActive}
+            checked={!!isActive}
             setChecked={() => handleCheck(product)}
             text={product.nombre}
             colorScheme={"#1890FF"}
@@ -173,7 +174,7 @@ export default function Transferir({
         },
       });
       const xmlDoc = parseData(response.data);
-      console.log(xmlDoc);
+      // console.log(xmlDoc);
     } catch (error) {
       console.error("Error fetching XML data:", error);
     } finally {
@@ -318,6 +319,8 @@ export default function Transferir({
                   <UnorderedList
                     styleType="none"
                     w={"100%"}
+                    m={0}
+                    px={1}
                     height={"120px"}
                     overflowY="scroll"
                     sx={{

@@ -154,10 +154,11 @@ export default function Ventas() {
   }, []);
 
   const getIntervaloVentas = async () => {
+    
     //setLoading(true);
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=01%2F09%2F2024&numeroDeElementos=15&fechaLimite=16%2F09%2F2024`,
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${""}&numeroDeElementos=${15}&fechaLimite=${""}`,
         null,
         {
           headers: {

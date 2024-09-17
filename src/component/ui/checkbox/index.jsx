@@ -15,7 +15,7 @@ export default function Checkbox({
 }) {
   return (
     <ChakraCheckbox
-      checked={checked}
+      isChecked={checked}
       onChange={setChecked}
       checkIcon={checkIcon}
       defaultChecked={defaultChecked ?? false}
