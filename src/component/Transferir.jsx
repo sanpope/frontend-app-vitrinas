@@ -123,7 +123,6 @@ export default function Transferir({
   };
 
   const deleteProductFromList = (prod) => {
-    console.log("Deleting...")
     setActiveProdcs((prev) => {
       const index = prev.findIndex((item) => item.codigo === prod.codigo);
       if (index !== -1) {
@@ -162,23 +161,27 @@ export default function Transferir({
 
   const transferirProdcs = async () => {
     setLoading(true);
-    const xmlData = generateProductsListXML(activeProdcs);
+    const xmlData = generateProductsListXML(activeProdcs).toString();
+    console.log(xmlData.length);
     const haciaVitrina = hacia === vitrina ? true : false;
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}&haciaVitrina=${haciaVitrina}`;
-
-    try {
-      const response = await axios.put(url, null, {
-        headers: {
-          "Content-Type": "text/xml",
-          Accept: "application/xml",
-        },
-      });
-      const xmlDoc = parseData(response.data);
-      // console.log(xmlDoc);
-    } catch (error) {
-      console.error("Error fetching XML data:", error);
-    } finally {
-      setLoading(false);
+    if (xmlData.length > 0) {
+      fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/xml" },
+        body: xmlData.toString(),
+      })
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+          onClose();
+        })
+        .then((data) => console.log(data))
+        .catch((error) => {
+          console.error("Error: ", error);
+        });
+    } else {
+      alert("Agrega los productos a transferir");
     }
   };
 
@@ -461,6 +464,7 @@ export default function Transferir({
             fontSize="14px"
             fontWeight="400"
             onClick={onConfirmationModalOpen}
+            disabled={activeProdcs.length > 0 ? false : true}
           >
             Enviar
           </StandardButton>

@@ -28,7 +28,7 @@ import colors from "../theme/colors";
 import Product from "./Product";
 import ConfirmationMessage from "./ConfirmationMessage";
 import axios from "axios";
-import { parseData } from "../utils/xmlParse";
+import { generateProductsListXML, parseData } from "../utils/xmlParse";
 
 export default function Despachar({
   vitrina,
@@ -140,25 +140,24 @@ export default function Despachar({
   );
 
   const despacharProdcs = async () => {
+    const xmlData = generateProductsListXML(activeProdcs).toString();
     setLoading(true);
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}`;
-
-    try {
-      const response = await axios.put(
-        url,
-        {},
-        {
-          headers: {
-            Accept: "application/xml",
-          },
-        },
-      );
-      const xmlDoc = parseData(response.data);
-    } catch (error) {
-      console.error("Error fetching XML data:", error);
-    } finally {
-      setLoading(false);
-    }
+    fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/xml" },
+      body: xmlData.toString(),
+    })
+      .then((response) => {
+        console.log(response);
+        setLoading(false);
+        
+      })
+      .then((data) => console.log(data))
+      .catch((error) => {
+        console.error("Error: ", error);
+        setLoading(false);
+      });
   };
 
   return (
@@ -440,6 +439,7 @@ export default function Despachar({
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
               isLoading={loading}
+              funcConfirmar={despacharProdcs}
             />
           </ModalFooter>
         </ModalContent>

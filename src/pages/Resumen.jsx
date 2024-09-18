@@ -30,11 +30,15 @@ import PocoStock from "../component/PocoStock";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HEADER_HEIGHT } from "../component/Header";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import resumenData from "../services/resumenData";
-
 import axios from "axios";
 import ThumbDownIcon from "../assets/images/ThumbDownIcon";
+import {
+  formatString,
+  formatDate,
+  convertirFecha,
+  capitalizeFirstLetter,
+  formatearNumero,
+} from "../utils/formatting";
 
 const PADDING = 15;
 
@@ -94,60 +98,6 @@ export default function Resumen() {
     }
   };
 
-  function formatString(nombre) {
-    nombre = nombre.toLowerCase();
-    nombre = nombre.split(" ");
-
-    for (let i = 0; i < nombre.length; i++) {
-      nombre[i] = nombre[i][0]?.toUpperCase() + nombre[i].substr(1);
-    }
-    nombre = nombre.join(" ");
-    return nombre;
-  }
-
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = {
-      day: "2-digit",
-      month: "short", // Mes abreviado
-      hour: "numeric", // Esto elimina el cero inicial en las horas
-      minute: "2-digit",
-      hour12: true, // Para formato 12 horas (AM/PM)
-    };
-    let formattedDate = date.toLocaleString("es-ES", options);
-    return formattedDate;
-  }
-
-  function convertirFecha(date) {
-    const fecha = new Date(date);
-    // Obtener los componentes de la fecha
-    let day = fecha.getDate();
-    let month = fecha.getMonth() + 1;
-    const year = fecha.getFullYear();
-
-    // Obtener la hora y los minutos
-    let horas = fecha.getHours();
-    let minutos = fecha.getMinutes();
-
-    // Determinar si es AM o PM
-    const ampm = horas >= 12 ? "PM" : "AM";
-
-    // Convertir las horas al formato de 12 horas
-    horas = horas % 12;
-    horas = horas ? horas : 12; // La hora 0 debe ser 12
-    minutos = minutos < 10 ? "0" + minutos : minutos; // Asegurar que los minutos tengan dos dígitos
-
-    // Asegurar que el día y el month tengan dos dígitos
-    day = day < 10 ? "0" + day : day;
-    month = month < 10 ? "0" + month : month;
-
-    // Formatear la fecha y la hora por separado
-    const fechaFormateada = `${month}/${day}/${year}`;
-    const horaFormateada = `${horas}:${minutos}${ampm}`;
-
-    return { fecha: fechaFormateada, hora: horaFormateada };
-  }
-
   const getTiempoInactividad = (xml) => {
     const resumenActividad = xml.querySelector("resumenDeActividadReciente");
     const inactividad =
@@ -157,9 +107,9 @@ export default function Resumen() {
 
   const getUltimasVentas = (xml) => {
     const actividadReciente = xml.querySelector("resumenDeActividadReciente");
-    let valor = new Intl.NumberFormat("es-ES", {
-      maximumFractionDigits: 0,
-    }).format(actividadReciente?.getElementsByTagName("valor")[0].textContent);
+    let valor = formatearNumero(
+      actividadReciente?.getElementsByTagName("valor")[0].textContent,
+    );
     let fecha = formatDate(
       actividadReciente?.getElementsByTagName("fecha")[0].textContent,
     );
@@ -208,9 +158,9 @@ export default function Resumen() {
     let porcentajeDeCrecimiento =
       ventasDelMes.getElementsByTagName("porcentajeDeCrecimiento")[0]
         .textContent / 100;
-    let valor = new Intl.NumberFormat("es-ES", {
-      maximumFractionDigits: 0,
-    }).format(ventasDelMes.getElementsByTagName("valor")[0].textContent);
+    let valor = formatearNumero(
+      ventasDelMes.getElementsByTagName("valor")[0].textContent,
+    );
 
     return { valor, porcentajeDeCrecimiento };
   };
@@ -279,11 +229,6 @@ export default function Resumen() {
     }
     return infoTotalVentasDia;
   };
-
-  function capitalizeFirstLetter(str) {
-    if (!str) return ""; // Retorna vacío si el string está vacío o indefinido
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  }
 
   const getTopCategorias = (xml) => {
     const totalCategoriasArr = [];
@@ -572,7 +517,12 @@ export default function Resumen() {
           title={"Evolución de venta diaria"}
           icon={<BadgeDollarIcon />}
           children={
-            <Box w={"100%"} h={"100%"} flexGrow={1} flexShrink={1}>
+            <Box
+              w={"600px"}
+              overflowX={"scroll"}
+              h={"100%"}
+              
+            >
               <EvolucionVentaDiaria evolucionVentaDiaria={intervaloDelDia} />
             </Box>
           }
@@ -581,7 +531,7 @@ export default function Resumen() {
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          minW={"262px"}
+          maxW={"262px"}
           flex={"1 1 auto"}
           icon={<StartIcon />}
           title={"Top Categorías"}

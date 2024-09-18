@@ -31,7 +31,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
       }),
     datasets: [
       {
-        data: evolucionVentaDiaria?.map((d) => d.valor < 0 ? 0 : d.valor),
+        data: evolucionVentaDiaria?.map((d) => (d.valor < 0 ? 0 : d.valor)),
         label: "Ventas",
         borderColor: "red",
         backgroundColor: "red",
@@ -84,6 +84,8 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
         },
       },
       x: {
+        min: 0,
+
         ticks: {},
         border: {
           display: false,
@@ -94,7 +96,23 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
     },
   };
 
-  return <Line data={data} options={options} />;
+  return (
+    <Box
+      width="100%"
+      overflowX="auto"
+      css={{
+        "&::-webkit-scrollbar": { display: "none" },
+        "-ms-overflow-style": "none",
+        "scrollbar-width": "none",
+      }}
+    >
+      <Box minWidth="600px">
+        {" "}
+        {/* Ajusta este valor según lo necesites */}
+        <Line data={data} options={options} />
+      </Box>
+    </Box>
+  );
 };
 
 export default EvolucionVentaDiaria;

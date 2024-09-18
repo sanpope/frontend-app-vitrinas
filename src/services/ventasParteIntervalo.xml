@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ventasYDevoluciones>
+	<devoluciones>
+		<devolucion>
+			<fechaHora>2024-09-05T12:15</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>2</cantidad>
+					<codigo>543210</codigo>
+					<nombre>LABIAL HIDRATANTE</nombre>
+					<precio>20000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>654321</codigo>
+					<nombre>ADAPTADOR DE CORRIENTE</nombre>
+					<precio>35000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>432109</codigo>
+					<nombre>ARETES DE ORO</nombre>
+					<precio>150000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>130000.0</valor>
+		</devolucion>
+	</devoluciones>
+	<ventas>
+		<venta>
+			<fechaHora>2024-09-12T14:30</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>109876</codigo>
+					<nombre>BOLSO ARTESANAL</nombre>
+					<precio>120000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>45000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T19:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>198765</codigo>
+					<nombre>CREMA FACIAL</nombre>
+					<precio>35000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>35000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T18:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>2</cantidad>
+					<codigo>109876</codigo>
+					<nombre>BOLSO ARTESANAL</nombre>
+					<precio>120000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>240000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T17:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>432109</codigo>
+					<nombre>ARETES DE ORO</nombre>
+					<precio>90000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>90000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T16:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>2</cantidad>
+					<codigo>543210</codigo>
+					<nombre>LABIAL HIDRATANTE</nombre>
+					<precio>20000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>40000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T15:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>765432</codigo>
+					<nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+					<precio>40000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>654321</codigo>
+					<nombre>ADAPTADOR DE CORRIENTE</nombre>
+					<precio>35000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>75000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T14:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>987654</codigo>
+					<nombre>SOMBRERO PLAYERO</nombre>
+					<precio>45000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>2</cantidad>
+					<codigo>876543</codigo>
+					<nombre>CAMISETA TIPO POLO</nombre>
+					<precio>55000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>140000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T13:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>432109</codigo>
+					<nombre>ARETES DE ORO</nombre>
+					<precio>150000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>765765</codigo>
+					<nombre>TERMO PARA CAFÉ</nombre>
+					<precio>29000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>60000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T12:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>543210</codigo>
+					<nombre>LABIAL HIDRATANTE</nombre>
+					<precio>20000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>20000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T11:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>3</cantidad>
+					<codigo>765432</codigo>
+					<nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+					<precio>40000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>2</cantidad>
+					<codigo>654321</codigo>
+					<nombre>ADAPTADOR DE CORRIENTE</nombre>
+					<precio>35000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>160000.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-10T10:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>2</cantidad>
+					<codigo>987654</codigo>
+					<nombre>SOMBRERO PLAYERO</nombre>
+					<precio>45000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>876543</codigo>
+					<nombre>CAMISETA TIPO POLO</nombre>
+					<precio>55000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>112500.0</valor>
+		</venta>
+		<venta>
+			<fechaHora>2024-09-01T10:00</fechaHora>
+			<generadaEnCorreccion>false</generadaEnCorreccion>
+			<productosAfectados>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>987654</codigo>
+					<nombre>SOMBRERO PLAYERO</nombre>
+					<precio>45000.0</precio>
+				</producto>
+				<producto>
+					<cantidad>1</cantidad>
+					<codigo>765432</codigo>
+					<nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+					<precio>40000.0</precio>
+				</producto>
+			</productosAfectados>
+			<valor>85000.0</valor>
+		</venta>
+	</ventas>
+</ventasYDevoluciones>
+
+

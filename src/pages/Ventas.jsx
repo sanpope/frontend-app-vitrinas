@@ -13,6 +13,7 @@ import HandsUsdIcon from "../assets/images/HandsUsdIcon";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import ventasData from "../services/ventasData";
 import axios from "axios";
+import { parseData } from "../utils/xmlParse";
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -23,17 +24,19 @@ export default function Ventas() {
   const [tablaDevoluciones, setTablaDevoluciones] = useState([]);
   const [listadoProductos, setListadoProductos] = useState(null);
 
-  const [displayedArticulos, setDisplayedArticulos] = useState(
-    tablaVentas ? tablaVentas : [],
-  );
+  const [displayedArticulos, setDisplayedArticulos] = useState(null);
   const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(11);
+  const [rowsToShow, setRowsToShow] = useState(15);
   const totalPages = Math.ceil(tablaVentas?.length / rowsToShow);
 
   useEffect(() => {
     getIntervaloVentas();
+  }, []);
+
+  useEffect(() => {
+    getMasArticulos(1);
   }, []);
 
   useEffect(() => {
@@ -59,81 +62,6 @@ export default function Ventas() {
     }
   }, [selectedOption]);
 
-  const parseData = () => {
-    const resumenInfo = xmlToJSON(ventasData);
-    const totalVentas =
-      resumenInfo?.datosDeVentas?.ventasYDevoluciones?.vtasDeIntervalo;
-    const totalDevoluciones =
-      resumenInfo?.datosDeVentas?.ventasYDevoluciones?.devDeIntervalo;
-    const infoTotalVentas = [];
-    const infoTotalDevs = [];
-
-    totalVentas.forEach((intervaloVenta) => {
-      const { totalVtas, venta } = intervaloVenta;
-      const { codigo, fechaHora, valor, generadaEnCorreccion, prodsAfectados } =
-        venta;
-      // Crear un objeto para la información de la venta
-      let ventaInfo = {
-        totalVtas: totalVtas["#text"],
-        valor: valor["#text"],
-        codigo: codigo["#text"],
-        fechaHora: fechaHora["#text"],
-        generadaEnCorreccion: generadaEnCorreccion["#text"],
-        prodsAMostrar: [],
-        totalProds: [],
-      };
-
-      prodsAfectados.producto.forEach((producto, index) => {
-        const productoInfo = {
-          nombre: producto.nombre["#text"],
-          cantidad: producto.cantidad["#text"],
-        };
-        ventaInfo.totalProds.push(productoInfo);
-
-        if (index < 2) {
-          ventaInfo[`nombre${index + 1}`] = productoInfo.nombre;
-          ventaInfo[`cantidad${index + 1}`] = productoInfo.cantidad;
-          ventaInfo.prodsAMostrar.push(productoInfo);
-        }
-      });
-      infoTotalVentas.push(ventaInfo);
-    });
-    setTablaVentas(infoTotalVentas);
-
-    totalDevoluciones.forEach((intervaloDev) => {
-      const { totalDevs, devolucion } = intervaloDev;
-      const { codigo, fechaHora, valor, generadaEnCorreccion, prodsAfectados } =
-        devolucion;
-      // Crear un objeto para la información de la dev
-      let devInfo = {
-        totalDevs: totalDevs["#text"],
-        valor: valor["#text"],
-        codigo: codigo["#text"],
-        fechaHora: fechaHora["#text"],
-        generadaEnCorreccion: generadaEnCorreccion["#text"],
-        prodsAMostrar: [],
-        totalProds: [],
-      };
-
-      prodsAfectados.producto.forEach((producto, index) => {
-        const productoInfo = {
-          nombre: producto.nombre["#text"],
-          cantidad: producto.cantidad["#text"],
-        };
-        devInfo.totalProds.push(productoInfo);
-
-        if (index < 2) {
-          devInfo[`nombre${index + 1}`] = productoInfo.nombre;
-          devInfo[`cantidad${index + 1}`] = productoInfo.cantidad;
-          devInfo.prodsAMostrar.push(productoInfo);
-        }
-      });
-      infoTotalDevs.push(devInfo);
-    });
-    setTablaDevoluciones(infoTotalDevs);
-    setTotalResults([...infoTotalDevs, ...infoTotalVentas].length);
-  };
-
   const handleSelectChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -149,26 +77,100 @@ export default function Ventas() {
     );
   };
 
-  React.useEffect(() => {
-    getMasArticulos(1);
-  }, []);
+  const getVentasyDevoluciones = (xml) => {
+    const devoluciones = xml.getElementsByTagName("devolucion");
+    const ventas = xml.getElementsByTagName("venta");
+
+    // Array para almacenar la información extraída
+    const result = {
+      devoluciones: [],
+      ventas: [],
+    };
+
+    // Iteramos sobre devoluciones
+    for (let i = 0; i < devoluciones.length; i++) {
+      const devolucion = devoluciones[i];
+      const fechaHora =
+        devolucion.getElementsByTagName("fechaHora")[0].textContent;
+      const generadaEnCorreccion = devolucion.getElementsByTagName(
+        "generadaEnCorreccion",
+      )[0].textContent;
+      const productos = devolucion.getElementsByTagName("producto");
+
+      // Almacenamos los productos afectados
+      const productosAfectados = [];
+      for (let j = 0; j < productos.length; j++) {
+        productosAfectados.push({
+          cantidad:
+            productos[j].getElementsByTagName("cantidad")[0].textContent,
+          codigo: productos[j].getElementsByTagName("codigo")[0].textContent,
+          nombre: productos[j].getElementsByTagName("nombre")[0].textContent,
+          precio: productos[j].getElementsByTagName("precio")[0].textContent,
+        });
+      }
+
+      // Guardamos la devolución en el array
+      result.devoluciones.push({
+        fechaHora,
+        generadaEnCorreccion,
+        productosAfectados,
+        valor: devolucion.getElementsByTagName("valor")[0].textContent,
+      });
+    }
+
+    // Iteramos sobre ventas
+    for (let i = 0; i < ventas.length; i++) {
+      const venta = ventas[i];
+      const fechaHora = venta.getElementsByTagName("fechaHora")[0].textContent;
+      const generadaEnCorreccion = venta.getElementsByTagName(
+        "generadaEnCorreccion",
+      )[0].textContent;
+      const productos = venta.getElementsByTagName("producto");
+
+      // Almacenamos los productos afectados
+      const productosAfectados = [];
+      for (let j = 0; j < productos.length; j++) {
+        productosAfectados.push({
+          cantidad:
+            productos[j].getElementsByTagName("cantidad")[0].textContent,
+          codigo: productos[j].getElementsByTagName("codigo")[0].textContent,
+          nombre: productos[j].getElementsByTagName("nombre")[0].textContent,
+          precio: productos[j].getElementsByTagName("precio")[0].textContent,
+        });
+      }
+
+      // Guardamos la venta en el array
+      result.ventas.push({
+        fechaHora,
+        generadaEnCorreccion,
+        productosAfectados,
+        valor: venta.getElementsByTagName("valor")[0].textContent,
+      });
+    }
+    console.log(result);
+    return result;
+  };
 
   const getIntervaloVentas = async () => {
-    
-    //setLoading(true);
+    let fechaInicio = "2024-09-01";
+    let fechaFin = "2024-09-17";
+    let url1 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${fechaInicio}&numeroDeElementos=${rowsToShow}&fechaLimite=${fechaFin}`;
+    let url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&numeroDeElementos=${rowsToShow}`;
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${""}&numeroDeElementos=${15}&fechaLimite=${""}`,
-        null,
-        {
-          headers: {
-            Accept: "application/xml",
-          },
+      const response = await axios.get(url2, {
+        headers: {
+          "Content-Type": "application/xml",
         },
-      );
+      });
+      console.log(response);
 
       const xmlDoc = parseData(response.data);
       console.log(xmlDoc);
+      // const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+      // setTablaVentas(ventas);
+      // setTablaDevoluciones(devoluciones);
+      // setTotalResults([...ventas, ...devoluciones]?.length);
+      // setDisplayedArticulos([...ventas, ...devoluciones]);
     } catch (error) {
       if (error.response) {
         // La solicitud fue enviada pero el servidor respondió con un código de error
@@ -207,7 +209,7 @@ export default function Ventas() {
         <Box
           display={"flex"}
           flexDir={"column"}
-          gap={"10px"}
+          gap={{ base: "20px", lg: "10px" }}
           flex={"1 1 200px"}
         >
           <Text textStyle={" RobotoBody"}>
@@ -222,6 +224,7 @@ export default function Ventas() {
           flex={"1 1 200px"}
           gap={"10px"}
           flexWrap={{ base: "wrap", md: "nowrap" }}
+          py={{ base: "15px", lg: "0px" }}
         >
           <DatePickerComponent />
           <Select
@@ -255,6 +258,7 @@ export default function Ventas() {
                 : "Productos"
           }
           productosRestantes={listadoProductos?.length - 2}
+          selectedOption={selectedOption}
         />
       </Box>
 

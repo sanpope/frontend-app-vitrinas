@@ -32,6 +32,11 @@ import { HEADER_HEIGHT } from "../component/Header";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setVentaTotalMes } from "../store/slices/homePage";
+import {
+  capitalizeFirstLetter,
+  formatDate,
+  formatearNumero,
+} from "../utils/formatting";
 
 const PADDING = 15;
 
@@ -98,9 +103,9 @@ export default function HomePage() {
       "porcentajeDeCrecimiento",
     )[0].textContent;
 
-    let valor = new Intl.NumberFormat("es-ES", {
-      maximumFractionDigits: 0,
-    }).format(infoTotalVentas.getElementsByTagName("valor")[0].textContent);
+    let valor = formatearNumero(
+      infoTotalVentas.getElementsByTagName("valor")[0].textContent,
+    );
     if (valor == 0 || valor.length === 0) {
       valor = 0;
     }
@@ -141,9 +146,7 @@ export default function HomePage() {
         totalVentasVitrinasMes[i].getElementsByTagName("nombre")[0].textContent;
       arrLabels.push(nombre);
 
-      let venta = new Intl.NumberFormat("es-ES", {
-        maximumFractionDigits: 0,
-      }).format(
+      let venta = formatearNumero(
         totalVentasVitrinasMes[i].getElementsByTagName("venta")[0].textContent,
       );
 
@@ -166,9 +169,7 @@ export default function HomePage() {
     for (let i = 0; i < 3; i++) {
       let nombre =
         totalTopVitrinas[i].getElementsByTagName("nombre")[0].textContent;
-      let venta = new Intl.NumberFormat("es-ES", {
-        maximumFractionDigits: 0,
-      }).format(
+      let venta = formatearNumero(
         totalTopVitrinas[i].getElementsByTagName("venta")[0].textContent,
       );
 
@@ -179,11 +180,6 @@ export default function HomePage() {
     }
     return infoTotalVitrinas;
   };
-
-  function capitalizeFirstLetter(str) {
-    if (!str) return ""; // Retorna vacío si el string está vacío o indefinido
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  }
 
   const getTopCategorias = (xml) => {
     const totalCategoriasArr = [];
@@ -233,34 +229,6 @@ export default function HomePage() {
     }
     return TopProductos;
   };
-
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-
-    const options = {
-      day: "2-digit",
-      month: "short", // Mes abreviado
-      hour: "numeric", // Esto elimina el cero inicial en las horas
-      minute: "2-digit",
-      hour12: true, // Para formato 12 horas (AM/PM)
-    };
-
-    let formattedDate = date.toLocaleString("es-ES", options);
-
-    // Convertir la inicial del mes a mayúscula
-    formattedDate = formattedDate.replace(
-      /(\d{2}) (\w{3}),/, // Captura el día y el mes abreviado
-      (match, day, month) =>
-        `${day}/${month.charAt(0).toUpperCase()}${month.slice(1)},`,
-    );
-
-    // Convertir cualquier variación de "a. m." o "p. m." a "AM" o "PM" (quitamos puntos y espacios)
-    formattedDate = formattedDate
-      .replace(/\s?a\.?\s?m\.?/i, "AM")
-      .replace(/\s?p\.?\s?m\.?/i, "PM");
-
-    return formattedDate;
-  }
 
   const getDispositivosAveriados = (xml) => {
     const dispositivosArr = [];

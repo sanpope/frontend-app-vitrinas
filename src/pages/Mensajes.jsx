@@ -4,7 +4,7 @@ import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
-
+import axios from "axios";
 import Message from "../component/Message";
 
 import xmlToJSON from "../services/XmlToJsonConverter";
@@ -17,6 +17,7 @@ export default function Mensajes() {
 
   useEffect(() => {
     parseData();
+    getMensajes();
   }, []);
 
   const parseData = () => {
@@ -35,6 +36,38 @@ export default function Mensajes() {
         return { id, fechaHora, visto, remitente, asunto, contenido };
       });
       setTotalMensajes(arrayMensajes);
+    }
+  };
+
+  const getMensajes = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/ vitrina/mensajes?vitrina=${name}`,
+        {
+          headers: {
+            Accept: "application/xml",
+          },
+        },
+      );
+
+      const xmlDoc = parseData(response.data);
+      console.log(xmlDoc);
+    } catch (error) {
+      if (error.response) {
+        // La solicitud fue enviada pero el servidor respondió con un código de error
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        // La solicitud fue enviada pero no se recibió respuesta
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        // Ocurrió un error en la configuración de la solicitud
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
     }
   };
 
@@ -94,8 +127,9 @@ export default function Mensajes() {
         </Box>
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"20px"} py={"10px"}>
-        {totalMensajes?.map((mensaje) => (
+        {totalMensajes?.map((mensaje, index) => (
           <Message
+            key={index}
             name={mensaje.remitente}
             subject={mensaje.asunto}
             message={mensaje.contenido}

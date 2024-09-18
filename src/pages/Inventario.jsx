@@ -11,7 +11,12 @@ import Note from "../component/Note";
 
 import TextInput from "../component/ui/textInput";
 import SearchIcon from "../assets/images/SearchIcon";
-import { parseData } from "../utils/xmlParse";
+import { parseData, parseTextFields } from "../utils/xmlParse";
+import {
+  capitalizeFirstLetter,
+  formatString,
+  formatearNumero,
+} from "../utils/formatting";
 
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -24,6 +29,8 @@ export default function Inventario() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsToShow, setRowsToShow] = useState(30);
   const [busqueda, setBusqueda] = useState(null);
+  const [verificacionesPendientes, setVerificacionesPendientes] =
+    useState(null);
 
   const [selectedArticulo, setSelectedArticulo] = useState(null);
 
@@ -101,7 +108,6 @@ export default function Inventario() {
 
   const getInventarioInfo = async (vitrinaName) => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario?vitrina=${vitrinaName}`;
-
     try {
       const response = await axios.get(url, {
         headers: {
@@ -111,26 +117,11 @@ export default function Inventario() {
       const xmlDoc = parseData(response.data);
       setTablaInventario(getProductos(xmlDoc));
       setTotalResults(tablaInventario?.length);
+      setVerificacionesPendientes(getPendienteXverificar(xmlDoc));
     } catch (error) {
       console.error("Error fetching XML data:", error);
     }
   };
-
-  function formatString(string) {
-    string = string.toLowerCase();
-    string = string.split(" ");
-
-    for (let i = 0; i < string.length; i++) {
-      string[i] = string[i][0]?.toUpperCase() + string[i].substr(1);
-    }
-    string = string.join(" ");
-    return string;
-  }
-
-  function capitalizeFirstLetter(str) {
-    if (!str) return ""; // Retorna vacío si el string está vacío o indefinido
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  }
 
   const getProductos = (xml) => {
     const totalProdsArr = [];
@@ -146,14 +137,10 @@ export default function Inventario() {
         const categoria = capitalizeFirstLetter(
           listadoProds[i]?.getElementsByTagName("categoria")[0].textContent,
         );
-        const precio = new Intl.NumberFormat("es-ES", {
-          maximumFractionDigits: 0,
-        }).format(
+        const precio = formatearNumero(
           listadoProds[i]?.getElementsByTagName("precio")[0].textContent,
         );
-        const costo = new Intl.NumberFormat("es-ES", {
-          maximumFractionDigits: 0,
-        }).format(
+        const costo = formatearNumero(
           listadoProds[i]?.getElementsByTagName("costo")[0].textContent,
         );
         const existencia =
@@ -186,6 +173,26 @@ export default function Inventario() {
     } else {
       return null;
     }
+  };
+
+  const getPendienteXverificar = (xml) => {
+    const totalVerificaciones = xml.querySelector(
+      "verificacionesDeCambiosPendientes",
+    );
+    const totalModificaciones =
+      totalVerificaciones.querySelectorAll("modificacion");
+    const totalVerifPendientes = [];
+    if (totalModificaciones.length > 0) {
+      for (let i = 0; i < totalModificaciones.length; i++) {
+        const cantidadDeCambios =
+          totalModificaciones[i]?.getElementsByTagName("cantidadDeCambios")[0]
+            .textContent;
+        const fecha =
+          totalModificaciones[i]?.getElementsByTagName("fecha")[0].textContent;
+        totalVerifPendientes.push({ cantidadDeCambios, fecha });
+      }
+    }
+    return totalVerifPendientes;
   };
 
   const handleProdClick = async (index, articulo) => {};
@@ -294,7 +301,8 @@ export default function Inventario() {
       </Box>
       <Note
         text1={"Pendiente verificar actualizaciones realizadas en visitas del:"}
-        text2={"01/04/2024, 15/03/2024 y 01/03/2024"}
+        arr={verificacionesPendientes ? verificacionesPendientes : null}
+        text2={"No se encontraron visitas pendientes"}
       />
       <EditarExistencia
         isOpen={!!selectedArticulo}

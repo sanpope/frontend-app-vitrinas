@@ -15,6 +15,7 @@ import {
 import StandardButton from "./ui/buttons/standard";
 import ClockIcon from "../assets/images/ClockIcon";
 import UsdCircleIcon from "../assets/images/UsdCircleIcon";
+import { capitalizeFirstLetter, formatearNumero, formatFecha } from "../utils/formatting";
 
 export default function VerExistencias({
   fecha,
@@ -23,6 +24,7 @@ export default function VerExistencias({
   isOpen,
   onOpen,
   onClose,
+  text,
 }) {
   return (
     <>
@@ -36,7 +38,7 @@ export default function VerExistencias({
             borderTopRadius="20px"
           >
             <Text textStyle={"RobotoSubtitle"} color={"white"}>
-              Productos vendidos
+              Productos Afectados
             </Text>
           </ModalHeader>
           <ModalBody display={"flex"} flexDirection={"column"} p={"20px"}>
@@ -56,7 +58,9 @@ export default function VerExistencias({
                 gap={"5px"}
               >
                 <ClockIcon width={"13px"} />
-                <Text textStyle={"RobotoRegularBold"}>{fecha}</Text>
+                <Text textStyle={"RobotoRegularBold"}>
+                  {formatFecha(fecha)}
+                </Text>
               </Box>
               <Box
                 flexGrow={1}
@@ -66,7 +70,7 @@ export default function VerExistencias({
                 gap={"5px"}
               >
                 <UsdCircleIcon width={"20px"} />
-                <Text textStyle={"RobotoRegularBold"}>${total}</Text>
+                <Text textStyle={"RobotoRegularBold"}>${formatearNumero(total)}</Text>
               </Box>
             </Box>
             <Box
@@ -117,7 +121,7 @@ export default function VerExistencias({
                     pr={"15px"}
                   >
                     <Text textStyle={"RobotoBody"} color={"black"}>
-                      {producto.nombre}
+                      {capitalizeFirstLetter(producto.nombre)}
                     </Text>
                     <Text textStyle={"RobotoBody"} color={"black"}>
                       {producto.cantidad}

@@ -55,8 +55,6 @@ export default function Dispositivo() {
       fechaConexionApp:
         datosDispositivo?.app?.fechaDeLaUltimaConexion?.["#text"],
     };
-
-    console.log(infoDisp);
     setInfoDispositivo(infoDisp);
   };
 

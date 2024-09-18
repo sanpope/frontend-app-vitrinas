@@ -12,6 +12,11 @@ import VerExistencias from "./VerExistencias";
 import Note from "../component/Note";
 import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
+import {
+  formatFecha,
+  formatearNumero,
+  capitalizeFirstLetter,
+} from "../utils/formatting";
 
 export default function TablaVentas({
   displayedArticulos,
@@ -20,6 +25,7 @@ export default function TablaVentas({
   totalPages,
   getMasArticulos,
   tableTitle,
+  selectedOption,
   productosRestantes,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -61,25 +67,45 @@ export default function TablaVentas({
             return (
               <tr key={articuloIndex} className="">
                 <td className="ventasTd">{articulo.codigo}</td>
-                <td className="ventasTd">{articulo.fechaHora}</td>
-                <td className="ventasTd">${articulo.valor}</td>
+                <td className="ventasTd">{formatFecha(articulo.fechaHora)}</td>
+                <td className="ventasTd">${formatearNumero(articulo.valor)}</td>
                 <td className="ventasTd">
-                  <UnorderedList>
-                    <ListItem>
-                      {articulo.nombre1} x {articulo.cantidad1} unds
-                    </ListItem>
-                    <ListItem>
-                      {articulo.nombre2} x {articulo.cantidad2} unds
-                      <span style={{ fontWeight: "bolder" }}>
-                        y {productosRestantes} más ...
-                      </span>
-                    </ListItem>
+                  <UnorderedList
+                    sx={{
+                      "::-webkit-scrollbar": {
+                        width: "8px",
+                        height: "4px",
+                      },
+                      "::-webkit-scrollbar-track": {
+                        background: "tranparent",
+                      },
+                      "::-webkit-scrollbar-thumb": {
+                        background: "gray.200",
+                        borderRadius: "10px",
+                      },
+                      "::-webkit-scrollbar-thumb:hover": {
+                        background: "gray.200",
+                      },
+                    }}
+                  >
+                    {articulo.productosAfectados
+                      .slice(0, 2)
+                      .map((articulo, index) => (
+                        <ListItem key={index}>
+                          {capitalizeFirstLetter(articulo.nombre)} x
+                          {articulo.cantidad} unds
+                        </ListItem>
+                      ))}
+                    <span style={{ fontWeight: "bolder" }}>
+                      y {articulo.productosAfectados.length} más...
+                    </span>
                   </UnorderedList>
                 </td>
                 <td className="ventasTd">
                   {articulo?.generadaEnCorreccion === "true" ? (
                     <Note
-                      text1={
+                      arr={null}
+                      text2={
                         "¡Transacción generada por un asesor para corregir inventario!  "
                       }
                     />
@@ -103,9 +129,10 @@ export default function TablaVentas({
                   <VerExistencias
                     isOpen={isOpen}
                     onClose={onClose}
-                    productos={prods}
+                    productos={articulo.productosAfectados}
                     fecha={fechaAct}
                     total={valorTotal}
+                   
                   />
                 </td>
               </tr>
