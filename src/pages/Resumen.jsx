@@ -39,6 +39,7 @@ import {
   capitalizeFirstLetter,
   formatearNumero,
 } from "../utils/formatting";
+import { parseData } from "../utils/xmlParse";
 
 const PADDING = 15;
 
@@ -79,9 +80,8 @@ export default function Resumen() {
           Accept: "application/xml",
         },
       });
-      const xmlText = response.data;
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      
+      const xmlDoc = parseData(response.data);
       setInactividad(getTiempoInactividad(xmlDoc));
       setProdsUltimasVentas(getUltimasVentas(xmlDoc));
       setTotalVentasDia(getVentasDia(xmlDoc));

@@ -203,8 +203,8 @@ export default function ModalVitrinas({
                       maxH={"200px"}
                     >
                       <Text textStyle={"RobotoBodyBold"}>{ciudad}</Text>
-                      {vitrinas.map((name) => (
-                        <ListItem ml={2}>
+                      {vitrinas.map((name, index) => (
+                        <ListItem ml={2} key={index}>
                           <Text
                             textStyle={"RobotoBody"}
                             onClick={() => handleVitrinaClick(ciudad, name)}

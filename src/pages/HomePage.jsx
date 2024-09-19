@@ -37,6 +37,7 @@ import {
   formatDate,
   formatearNumero,
 } from "../utils/formatting";
+import { parseData } from "../utils/xmlParse";
 
 const PADDING = 15;
 
@@ -75,9 +76,8 @@ export default function HomePage() {
       })
       .then((response) => {
         // Parseamos el XML
-        const xmlText = response.data;
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        
+        const xmlDoc = parseData(response.data);
 
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
         setVentaMesesAnteriores(getVentaMesesAnteriores(xmlDoc));

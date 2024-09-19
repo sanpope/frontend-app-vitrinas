@@ -19,9 +19,7 @@ import StandardButton from "./ui/buttons/standard";
 import SwapRightIcon from "../assets/images/SwapRightIcon";
 import CalendarIcon from "../assets/images/CalendarIcon";
 
-const DateRangePicker = () => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
   const {
     isOpen: isStartOpen,
     onOpen: onStartOpen,
@@ -33,6 +31,7 @@ const DateRangePicker = () => {
     onClose: onEndClose,
   } = useDisclosure();
   const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
+  const today = new Date();
 
   return (
     <Box
@@ -48,7 +47,15 @@ const DateRangePicker = () => {
         <InputGroup>
           <Input
             placeholder="Start date"
-            value={startDate ? startDate.toLocaleDateString() : ""}
+            value={
+              startDate
+                ? startDate.toLocaleString("es-ES", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
+                : ""
+            }
             readOnly
             onClick={onStartOpen}
             fontSize={"1rem"}
@@ -57,7 +64,7 @@ const DateRangePicker = () => {
             borderBottomWidth={"0px"}
             borderRightWidth={"0px"}
             borderLeftWidth={"0px"}
-            color={"mainBg"}
+            color={"black"}
             cursor={"pointer"}
           />
           <InputRightElement width="4.5rem">
@@ -69,7 +76,15 @@ const DateRangePicker = () => {
         <InputGroup>
           <Input
             placeholder="End date"
-            value={endDate ? endDate.toLocaleDateString() : ""}
+            value={
+              endDate
+                ? endDate.toLocaleString("es-ES", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
+                : ""
+            }
             readOnly
             onClick={onEndOpen}
             fontSize={"1rem"}
@@ -78,10 +93,10 @@ const DateRangePicker = () => {
             borderBottomWidth={"0px"}
             borderRightWidth={"0px"}
             borderLeftWidth={"0px"}
-            color={"mainBg"}
+            color={"black"}
             cursor={"pointer"}
           />
-          <InputRightElement width="4.5rem">
+          <InputRightElement width="3.5rem">
             {!isSmallScreen ? <CalendarIcon /> : <></>}
           </InputRightElement>
         </InputGroup>
@@ -125,6 +140,7 @@ const DateRangePicker = () => {
                 selectsEnd
                 endDate={endDate}
                 minDate={startDate}
+                maxDate={today}
                 inline
               />
             </Box>

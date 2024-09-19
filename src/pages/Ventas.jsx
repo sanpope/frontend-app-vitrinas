@@ -10,10 +10,11 @@ import CoinsIcon from "../assets/images/CoinsIcon";
 import ChartLineDownIcon from "../assets/images/ChartLineDownIcon";
 import HandsUsdIcon from "../assets/images/HandsUsdIcon";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import ventasData from "../services/ventasData";
 import axios from "axios";
 import { parseData } from "../utils/xmlParse";
+import { formatearNumero, formattingDate } from "../utils/formatting";
+
+const ROWS_TO_SHOW = 30;
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -28,11 +29,18 @@ export default function Ventas() {
   const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(15);
-  const totalPages = Math.ceil(tablaVentas?.length / rowsToShow);
+
+  const totalPages = Math.ceil(tablaVentas?.length / ROWS_TO_SHOW);
+
+  const [totalVendidoIntervalo, setTotalVendidoIntervalo] = useState();
+  const [totalDevueltoIntervalo, setTotalDevueltoIntervalo] = useState();
+  const [ingresoRecibidoIntervalo, setIngresoRecibido] = useState();
+
+  const [fechaInicio, setFechaInicio] = useState(null);
+  const [fechaFin, setFechaFin] = useState(null);
 
   useEffect(() => {
-    getIntervaloVentas();
+    getTotalIntervaloVentas();
   }, []);
 
   useEffect(() => {
@@ -71,15 +79,16 @@ export default function Ventas() {
     setCurrentPage(pageNumber);
     setDisplayedArticulos(
       tablaVentas?.slice(
-        (pageNumber - 1) * rowsToShow,
-        (pageNumber - 1) * rowsToShow + rowsToShow,
+        (pageNumber - 1) * ROWS_TO_SHOW,
+        (pageNumber - 1) * ROWS_TO_SHOW + ROWS_TO_SHOW,
       ),
     );
   };
 
   const getVentasyDevoluciones = (xml) => {
-    const devoluciones = xml.getElementsByTagName("devolucion");
-    const ventas = xml.getElementsByTagName("venta");
+    const ventasYDevoluciones = xml.querySelector("ventasYDevoluciones");
+    const devoluciones = ventasYDevoluciones.querySelectorAll("devolucion");
+    const ventas = ventasYDevoluciones.querySelectorAll("venta");
 
     // Array para almacenar la información extraída
     const result = {
@@ -147,30 +156,75 @@ export default function Ventas() {
         valor: venta.getElementsByTagName("valor")[0].textContent,
       });
     }
-    console.log(result);
     return result;
   };
 
-  const getIntervaloVentas = async () => {
-    let fechaInicio = "2024-09-01";
-    let fechaFin = "2024-09-17";
-    let url1 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${fechaInicio}&numeroDeElementos=${rowsToShow}&fechaLimite=${fechaFin}`;
-    let url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&numeroDeElementos=${rowsToShow}`;
+  const getIntervaloVentas = async (date1, date2) => {
+    let fecha1 = formattingDate(date1);
+    let fecha2 = formattingDate(date2);
+
+    const url1 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${fecha1}&numeroDeElementos=${ROWS_TO_SHOW}&fechaLimite=${fecha2}`;
+
+    try {
+      const response = await axios.get(url1, {
+        headers: {
+          "Content-Type": "application/xml",
+        },
+      });
+      const xmlDoc = parseData(response.data);
+      console.log(xmlDoc);
+      const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+      setTablaVentas(ventas);
+      setTablaDevoluciones(devoluciones);
+      setTotalResults([...ventas, ...devoluciones]?.length);
+      setDisplayedArticulos([...ventas, ...devoluciones]);
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+    }
+  };
+
+  const getTotalIntervaloVentas = async () => {
+    let fecha2 = new Date();
+    let fecha1 = new Date(fecha2.getFullYear(), fecha2.getMonth(), 1);
+    setFechaInicio(fecha1);
+    setFechaFin(fecha2);
+    fecha2 = formattingDate(fecha2);
+    fecha1 = formattingDate(fecha1);
+
+    const url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fecha1}&fechaFin=${fecha2}&numeroDeElementos=${ROWS_TO_SHOW}`;
+
     try {
       const response = await axios.get(url2, {
         headers: {
           "Content-Type": "application/xml",
         },
       });
-      console.log(response);
-
       const xmlDoc = parseData(response.data);
-      console.log(xmlDoc);
-      // const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
-      // setTablaVentas(ventas);
-      // setTablaDevoluciones(devoluciones);
-      // setTotalResults([...ventas, ...devoluciones]?.length);
-      // setDisplayedArticulos([...ventas, ...devoluciones]);
+      const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+      setTotalVendidoIntervalo(
+        xmlDoc?.getElementsByTagName("ventaTotal")[0]?.textContent,
+      );
+      setTotalDevueltoIntervalo(
+        xmlDoc?.getElementsByTagName("devolucionTotal")[0]?.textContent,
+      );
+      setIngresoRecibido(
+        xmlDoc?.getElementsByTagName("ingresoReal")[0]?.textContent,
+      );
+      setTablaVentas(ventas);
+      setTablaDevoluciones(devoluciones);
+      setTotalResults([...ventas, ...devoluciones]?.length);
+      setDisplayedArticulos([...ventas, ...devoluciones]);
     } catch (error) {
       if (error.response) {
         // La solicitud fue enviada pero el servidor respondió con un código de error
@@ -226,7 +280,18 @@ export default function Ventas() {
           flexWrap={{ base: "wrap", md: "nowrap" }}
           py={{ base: "15px", lg: "0px" }}
         >
-          <DatePickerComponent />
+          <DatePickerComponent
+            startDate={fechaInicio}
+            setStartDate={(date) => {
+              getIntervaloVentas(date, fechaFin);
+              setFechaInicio(date);
+            }}
+            endDate={fechaFin}
+            setEndDate={(date) => {
+              getIntervaloVentas(fechaInicio, date);
+              setFechaFin(date);
+            }}
+          />
           <Select
             borderColor={"grey.placeholder"}
             bg={"white"}
@@ -285,7 +350,7 @@ export default function Ventas() {
               p={"20px"}
             >
               <Text textStyle={"RobotoHeader"} color={"success.30"}>
-                $22.000.000
+                ${formatearNumero(totalVendidoIntervalo)}
               </Text>
             </Box>
           }
@@ -303,7 +368,9 @@ export default function Ventas() {
               alignItems={"flex-start"}
               p={"20px"}
             >
-              <Text textStyle={"RobotoSubheading"}>$2.000</Text>
+              <Text textStyle={"RobotoSubheading"}>
+                ${formatearNumero(totalDevueltoIntervalo)}
+              </Text>
             </Box>
           }
         />
@@ -320,7 +387,10 @@ export default function Ventas() {
               alignItems={"flex-start"}
               p={"20px"}
             >
-              <Text textStyle={"RobotoSubheading"}>$10.000</Text>
+              <Text textStyle={"RobotoSubheading"}>
+                {" "}
+                ${formatearNumero(ingresoRecibidoIntervalo)}
+              </Text>
             </Box>
           }
         />

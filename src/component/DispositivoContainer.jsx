@@ -41,17 +41,19 @@ export default function DispositivoContainer({
           {title}
         </Text>
 
-        <Text
-          textStyle={"RobotoBodyBold"}
-          color={"grey"}
+        <Box
           display={"flex"}
           gap={"5px"}
           justifyContent={"center"}
           alignItems={"center"}
         >
-          {emoji}
-          {description}
-        </Text>
+          <Text textStyle={"RobotoBodyBold"} color={"grey"}>
+            {emoji}
+          </Text>
+          <Text textStyle={"RobotoBodyBold"} color={"grey"}>
+            {description}
+          </Text>
+        </Box>
 
         <Text textStyle={"RobotoBodyBold"} display={"flex"} gap={"5px"}>
           {text2}

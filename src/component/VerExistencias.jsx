@@ -21,6 +21,7 @@ export default function VerExistencias({
   fecha,
   total,
   productos,
+  totalProdcs, 
   isOpen,
   onOpen,
   onClose,

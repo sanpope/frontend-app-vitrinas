@@ -10,9 +10,10 @@ import ThumbDownIcon from "../assets/images/ThumbDownIcon";
 import WifiIcon from "../assets/images/WifiIcon";
 import DispositivoContainer from "../component/DispositivoContainer";
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import dispositivoData from "../services/dispositivoData";
+import { parseData } from "../utils/xmlParse";
+import { capitalizeFirstLetter, convertirFecha } from "../utils/formatting";
 
 export default function Dispositivo() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -20,42 +21,68 @@ export default function Dispositivo() {
   const [infoDispositivo, setInfoDispositivo] = useState(null);
 
   useEffect(() => {
-    parseData();
+    savingDispositivoData();
   }, []);
 
-  const parseData = () => {
-    const resumenInfo = xmlToJSON(dispositivoData);
-    const datosDispositivo = resumenInfo?.dispositivo;
+  const savingDispositivoData = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo?vitrina=${name}`;
+    axios
+      .get(url, {
+        headers: {
+          "Content-Type": "application/xml; charset=utf-8",
+        },
+      })
+      .then((response) => {
+        const xmlDoc = parseData(response.data);
+        setInfoDispositivo(dispositivoData(xmlDoc));
+      })
+      .catch((error) => {
+        console.error("Error fetching the XML data: ", error);
+      });
+  };
 
-    const infoDisp = {
-      detalleDeEstado: datosDispositivo?.estado?.detalleDeEstado["#text"],
-      estado: datosDispositivo?.estado?.estado["#text"],
-      fechaConexionDispositivo:
-        datosDispositivo?.estado?.fechaDeLaUltimaConexion["#text"],
-      bateria: datosDispositivo?.bateria["#text"],
-      conectadoAInternet: datosDispositivo?.conInternet?.conectado["#text"],
-      fechaConexionInternet:
-        datosDispositivo?.conInternet?.fechaDeLaUltimaConexion["#text"],
-      impresoraConectada:
-        datosDispositivo?.perifericos?.impresora?.conectado["#text"],
-      fechaConexionImpresora:
-        datosDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion[
-          "#text"
-        ],
-      estadoDePapel:
-        datosDispositivo?.perifericos?.impresora?.estadoPapel["#text"],
-      escanerConectado:
-        datosDispositivo?.perifericos?.escaner?.conectado["#text"],
-      fechaConexionEscaner:
-        datosDispositivo?.perifericos?.escaner?.fechaDeLaUltimaConexion?.[
-          "#text"
-        ],
-      ejecucionApp: datosDispositivo?.app?.ejecucion?.["#text"],
-      pantallaActiva: datosDispositivo?.app?.pantallaActiva["#text"],
-      fechaConexionApp:
-        datosDispositivo?.app?.fechaDeLaUltimaConexion?.["#text"],
+  const dispositivoData = (xmlDoc) => {
+    const dispositivo = {
+      aplicacion: {
+        enEjecucion: xmlDoc.getElementsByTagName("enEjecucion")[0].textContent,
+        pantallaActiva: capitalizeFirstLetter(
+          xmlDoc.getElementsByTagName("pantallaActiva")[0].textContent,
+        ),
+      },
+      conexionAInternet: {
+        conectado: xmlDoc.getElementsByTagName("conectado")[0].textContent,
+        fechaDeLaUltimaConexion: xmlDoc.getElementsByTagName(
+          "fechaDeLaUltimaConexion",
+        )[0].textContent,
+      },
+      estado: {
+        detalleDeEstado:
+          xmlDoc.getElementsByTagName("detalleDeEstado")[0].textContent,
+        estado: xmlDoc.getElementsByTagName("estado")[1].textContent, // el segundo "estado" está en esta sección
+      },
+      perifericos: {
+        escaner: {
+          conectado: xmlDoc
+            .getElementsByTagName("conexionAEscaner")[0]
+            .getElementsByTagName("conectado")[0].textContent,
+          fechaDeLaUltimaConexion: xmlDoc
+            .getElementsByTagName("conexionAEscaner")[0]
+            .getElementsByTagName("fechaDeLaUltimaConexion")[0].textContent,
+        },
+        impresora: {
+          conectado: xmlDoc
+            .getElementsByTagName("conexionAImpresora")[0]
+            .getElementsByTagName("conectado")[0].textContent,
+          estadoPapel:
+            xmlDoc.getElementsByTagName("estadoPapel")[0].textContent,
+          fechaDeLaUltimaConexion: xmlDoc
+            .getElementsByTagName("conexionAImpresora")[0]
+            .getElementsByTagName("fechaDeLaUltimaConexion")[0].textContent,
+        },
+      },
+      bateria: xmlDoc.getElementsByTagName("bateria")[0].textContent,
     };
-    setInfoDispositivo(infoDisp);
+    return dispositivo;
   };
 
   return (
@@ -81,81 +108,93 @@ export default function Dispositivo() {
         <DispositivoContainer
           icon={<MobileIcon />}
           title={"Estado del Dispositivo:"}
-          emoji={infoDispositivo?.detalleDeEstado ? <SadFaceIcon /> : null}
-          description={infoDispositivo?.estado}
-          date={infoDispositivo?.fechaConexionDispositivo}
+          emoji={
+            infoDispositivo?.estado?.estado === "No operando" ? (
+              <SadFaceIcon />
+            ) : null
+          }
+          description={infoDispositivo?.estado?.detalleDeEstado}
+          date={
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion
+          }
         />
+
         <DispositivoContainer
           icon={<WifiIcon />}
           title={"Conexión a internet:"}
           emoji={
-            infoDispositivo?.conectadoAInternet === "false" ? (
+            infoDispositivo?.conexionAInternet?.conectado === "false" ? (
               <ThumbDownIcon />
             ) : (
               <ThumbUpIcon />
             )
           }
           description={
-            infoDispositivo?.conectadoAInternet === "false"
+            infoDispositivo?.conexionAInternet?.conectado === "false"
               ? "No conectado"
               : "Conectado"
           }
-          date={infoDispositivo?.fechaConexionInternet}
+          date={infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion}
         />
+
         <DispositivoContainer
           icon={<PrinterIcon />}
           title={"Conexión a impresora:"}
           emoji={
-            infoDispositivo?.impresoraConectada === "true" ? (
+            infoDispositivo?.perifericos?.impresora?.conectado === "true" ? (
               <ThumbUpIcon />
             ) : (
               <ThumbDownIcon />
             )
           }
           description={
-            infoDispositivo?.impresoraConectada === "true"
+            infoDispositivo?.perifericos?.impresora?.conectado
               ? "Conectado"
               : "No Conectado"
           }
           text2={"Estado del papel:"}
-          description2={infoDispositivo?.estadoDePapel}
-          date={infoDispositivo?.fechaConexionImpresora}
+          description2={infoDispositivo?.perifericos?.impresora?.estadoPapel}
+          date={
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion
+          }
         />
         <DispositivoContainer
           icon={<ConexionIcon />}
           title={"Conexión a escáner de códigos:"}
           emoji={
-            infoDispositivo?.escanerConectado === "true" ? (
+            infoDispositivo?.perifericos?.escaner?.conectado === "true" ? (
               <ThumbUpIcon />
             ) : (
               <ThumbDownIcon />
             )
           }
           description={
-            infoDispositivo?.escanerConectado === "true"
+            infoDispositivo?.perifericos?.escaner?.conectado === "true"
               ? "Conectado"
               : "No Conectado"
           }
-          date={infoDispositivo?.fechaConexionEscaner}
+          date={infoDispositivo?.perifericos?.escaner?.fechaDeLaUltimaConexion}
         />
         <DispositivoContainer
           icon={<DevIcon />}
           title={"Aplicación:"}
           emoji={
-            infoDispositivo?.ejecucionApp === "false" ? (
+            infoDispositivo?.aplicacion?.enEjecucion === "false" ? (
               <ThumbDownIcon />
             ) : (
               <ThumbUpIcon />
             )
           }
           description={
-            infoDispositivo?.ejecucionApp === "false"
+            infoDispositivo?.aplicacion?.enEjecucion === "false"
               ? "No ejecutándose"
               : "Ejecutándose"
           }
           text2={"Pantalla activa:"}
-          description2={infoDispositivo?.pantallaActiva}
-          date={infoDispositivo?.fechaConexionApp}
+          description2={infoDispositivo?.aplicacion?.pantallaActiva}
+          date={
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion
+          }
         />
       </Box>
     </Box>

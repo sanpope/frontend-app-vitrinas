@@ -130,9 +130,9 @@ export default function TablaVentas({
                     isOpen={isOpen}
                     onClose={onClose}
                     productos={articulo.productosAfectados}
+                    totalProdcs={articulo.productosAfectados.length}
                     fecha={fechaAct}
                     total={valorTotal}
-                   
                   />
                 </td>
               </tr>
