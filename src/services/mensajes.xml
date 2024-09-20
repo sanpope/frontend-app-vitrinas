@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mensajes>
+	<mensaje>
+		<asunto>Verificación de inventario</asunto>
+		<contenido>Por favor verificar el inventario antes del cierre de mes.</contenido>
+		<fechaHora>2024-09-20T14:30</fechaHora>
+		<id>14</id>
+		<remitente>Pedro Técnico</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Verificación de inventario</asunto>
+		<contenido>Por favor verificar el inventario antes del cierre de mes.</contenido>
+		<fechaHora>2024-09-20T14:30</fechaHora>
+		<id>24</id>
+		<remitente>Pedro Técnico</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Solicitud de adaptadores</asunto>
+		<contenido>Necesitamos adaptadores para los nuevos dispositivos.</contenido>
+		<fechaHora>2024-09-12T16:00</fechaHora>
+		<id>13</id>
+		<remitente>Marta Recepción</remitente>
+		<visto>true</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Problema con scanner</asunto>
+		<contenido>El scanner no está funcionando adecuadamente. Se requiere soporte técnico.</contenido>
+		<fechaHora>2024-09-11T09:00</fechaHora>
+		<id>12</id>
+		<remitente>Ingrith Recepción</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Falla en pantalla</asunto>
+		<contenido>La pantalla táctil no responde correctamente. Favor revisar.</contenido>
+		<fechaHora>2024-09-10T15:00</fechaHora>
+		<id>11</id>
+		<remitente>Luis Técnico</remitente>
+		<visto>true</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Falla en pantalla</asunto>
+		<contenido>La pantalla táctil no responde correctamente. Favor revisar.</contenido>
+		<fechaHora>2024-09-10T15:00</fechaHora>
+		<id>21</id>
+		<remitente>Luis Técnico</remitente>
+		<visto>true</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Stock bajo</asunto>
+		<contenido>El stock de productos está bajo. Urge reposición.</contenido>
+		<fechaHora>2024-09-09T13:30</fechaHora>
+		<id>10</id>
+		<remitente>María Administrativa</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Solicitud de inventario</asunto>
+		<contenido>Requerimos un informe actualizado del inventario.</contenido>
+		<fechaHora>2024-09-08T11:15</fechaHora>
+		<id>9</id>
+		<remitente>Pedro Ventas</remitente>
+		<visto>true</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Consulta de precios</asunto>
+		<contenido>Por favor enviar la lista de precios actualizada.</contenido>
+		<fechaHora>2024-09-07T08:30</fechaHora>
+		<id>8</id>
+		<remitente>Ingrith Recepción</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Falta de tickets</asunto>
+		<contenido>Estamos sin tickets para la impresora. Urge el envío.</contenido>
+		<fechaHora>2024-09-06T14:45</fechaHora>
+		<id>7</id>
+		<remitente>Carlos Técnico</remitente>
+		<visto>true</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Problemas con impresora</asunto>
+		<contenido>La impresora no está funcionando correctamente. Se requiere revisión.</contenido>
+		<fechaHora>2024-08-30T09:30</fechaHora>
+		<id>6</id>
+		<remitente>Marta Recepción</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Stock de adaptadores</asunto>
+		<contenido>Favor enviar adaptadores para los dispositivos faltantes.</contenido>
+		<fechaHora>2024-08-25T10:00</fechaHora>
+		<id>5</id>
+		<remitente>Luis Administrador</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Impresora sin papel</asunto>
+		<contenido>La impresora de tickets se quedó sin papel. Favor enviar cuanto antes</contenido>
+		<fechaHora>2024-08-21T07:53</fechaHora>
+		<id>3</id>
+		<remitente>Maria Recepción</remitente>
+		<visto>false</visto>
+	</mensaje>
+	<mensaje>
+		<asunto>Solicitud de adaptadores</asunto>
+		<contenido>Nos urgen adaptadores. Por favor enviar cuanto antes</contenido>
+		<fechaHora>2024-08-20T17:53</fechaHora>
+		<id>1</id>
+		<remitente>Ingrith Recepción</remitente>
+		<visto>true</visto>
+	</mensaje>
+</mensajes>

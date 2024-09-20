@@ -263,6 +263,28 @@ const BUTTON_VARIANTS = {
       color: "white",
     },
   },
+  DISABLED: {
+    normal: {
+      bg: "grey",
+      borderColor: "grey",
+      color: "grey.placeholder",
+    },
+    hover: {
+      bg: "#535253",
+      borderColor: "#535253",
+      color: "white",
+    },
+    disabled: {
+      bg: "grey.60",
+      borderColor: "grey.60",
+      color: "white",
+    },
+    active: {
+      bg: "#1b1b1b",
+      borderColor: "#1b1b1b",
+      color: "white",
+    },
+  },
 };
 
 export default BUTTON_VARIANTS;

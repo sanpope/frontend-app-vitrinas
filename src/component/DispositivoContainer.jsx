@@ -24,7 +24,7 @@ export default function DispositivoContainer({
       borderRadius={"30px"}
       p={3}
     >
-      <Box h={"40px"} w={"100%"} mb={2}>
+      <Box w={"100%"} mb={2}>
         {icon}
       </Box>
 
@@ -50,7 +50,7 @@ export default function DispositivoContainer({
           <Text textStyle={"RobotoBodyBold"} color={"grey"}>
             {emoji}
           </Text>
-          <Text textStyle={"RobotoBodyBold"} color={"grey"}>
+          <Text textStyle={"RobotoBodyBold"} color={"grey"} textAlign={"justify"}>
             {description}
           </Text>
         </Box>
@@ -61,8 +61,10 @@ export default function DispositivoContainer({
             {description2}
           </span>
         </Text>
-        <Text textStyle={"RobotoRegularBold"}>ÚLtima conexión el {date}</Text>
       </Box>
+      <Text p={1} textStyle={"RobotoRegularBold"}>
+        ÚLtima conexión el {date}
+      </Text>
     </Box>
   );
 }

@@ -27,16 +27,10 @@ export default function ProductosEnDespacho({
     minute: "2-digit",
     hour12: true,
   }),
-  total = "245.000",
-  products = [
-    { Nombre: "Producto 1", Cantidad: 45 },
-    { Nombre: "Producto 2", Cantidad: 45 },
-    { Nombre: "Producto 3", Cantidad: 45 },
-    { Nombre: "Producto 4", Cantidad: 45 },
-    { Nombre: "Producto 5", Cantidad: 45 },
-    { Nombre: "Producto 6", Cantidad: 45 },
-    { Nombre: "Producto 7", Cantidad: 45 },
-  ],
+
+  products,
+  handleIngresarProductos,
+  isLoading,
 }) {
   return (
     <>
@@ -54,65 +48,21 @@ export default function ProductosEnDespacho({
             </Text>
           </ModalHeader>
           <ModalBody display={"flex"} flexDirection={"column"} p={"20px"}>
-            <Box w={"100%"} display={"flex"} gap={"20px"} py={"10px"}>
-              <Text textStyle={"RobotoRegularBold"}>
-                Fecha del despacho: {date} {hour}
-              </Text>
-            </Box>
-            <Box
-              w={"100%"}
-              display={"flex"}
-              flexDir={"column"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Box
-                w={"100%"}
-                display={"flex"}
-                borderBottom="1px"
-                borderColor="gray.200"
-                alignItems={"center"}
-                justifyContent={"space-between"}
-                py={"10px"}
-              >
-                <Text
-                  textStyle={"RobotoRegularBold"}
-                  color={"grey.placeholder"}
+            {products != null && products?.length > 0 ? (
+              <>
+                <Box w={"100%"} display={"flex"} gap={"20px"} py={"10px"}>
+                  <Text textStyle={"RobotoRegularBold"}>
+                    Fecha del despacho: {date} {hour}
+                  </Text>
+                </Box>
+                <Box
+                  w={"100%"}
+                  display={"flex"}
+                  flexDir={"column"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
                 >
-                  Producto
-                </Text>
-                <Text
-                  textStyle={"RobotoRegularBold"}
-                  color={"grey.placeholder"}
-                >
-                  Unidades
-                </Text>
-              </Box>
-              <Box
-                w={"100%"}
-                height={"100px"}
-                overflowY="scroll"
-                overflowX="hidden"
-                sx={{
-                  "::-webkit-scrollbar": {
-                    width: "8px",
-                    height: "4px",
-                  },
-                  "::-webkit-scrollbar-track": {
-                    background: "tranparent",
-                  },
-                  "::-webkit-scrollbar-thumb": {
-                    background: "gray.200",
-                    borderRadius: "10px",
-                  },
-                  "::-webkit-scrollbar-thumb:hover": {
-                    background: "gray.200",
-                  },
-                }}
-              >
-                {products.map((producto, index) => (
                   <Box
-                    key={index}
                     w={"100%"}
                     display={"flex"}
                     borderBottom="1px"
@@ -120,18 +70,70 @@ export default function ProductosEnDespacho({
                     alignItems={"center"}
                     justifyContent={"space-between"}
                     py={"10px"}
-                    pr={"15px"}
                   >
-                    <Text textStyle={"RobotoBody"} color={"black"}>
-                      {producto.Nombre}
+                    <Text
+                      textStyle={"RobotoRegularBold"}
+                      color={"grey.placeholder"}
+                    >
+                      Producto
                     </Text>
-                    <Text textStyle={"RobotoBody"} color={"black"}>
-                      {producto.Cantidad}
+                    <Text
+                      textStyle={"RobotoRegularBold"}
+                      color={"grey.placeholder"}
+                    >
+                      Unidades
                     </Text>
                   </Box>
-                ))}
-              </Box>
-            </Box>
+                  <Box
+                    w={"100%"}
+                    height={"100px"}
+                    overflowY="scroll"
+                    overflowX="hidden"
+                    sx={{
+                      "::-webkit-scrollbar": {
+                        width: "8px",
+                        height: "4px",
+                      },
+                      "::-webkit-scrollbar-track": {
+                        background: "tranparent",
+                      },
+                      "::-webkit-scrollbar-thumb": {
+                        background: "gray.200",
+                        borderRadius: "10px",
+                      },
+                      "::-webkit-scrollbar-thumb:hover": {
+                        background: "gray.200",
+                      },
+                    }}
+                  >
+                    {products?.map((producto, index) => (
+                      <Box
+                        key={index}
+                        w={"100%"}
+                        display={"flex"}
+                        borderBottom="1px"
+                        borderColor="gray.200"
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                        py={"10px"}
+                        pr={"15px"}
+                      >
+                        <Text textStyle={"RobotoBody"} color={"black"}>
+                          {producto.nombre}
+                        </Text>
+                        <Text textStyle={"RobotoBody"} color={"black"}>
+                          {producto.cantidad}
+                        </Text>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              </>
+            ) : (
+              <Text w={"100%"} h={"100%"}>
+                No se encontraron Productos pendiente para Despacho
+              </Text>
+            )}
           </ModalBody>
 
           <ModalFooter
@@ -152,14 +154,24 @@ export default function ProductosEnDespacho({
               Salir
             </StandardButton>
             <StandardButton
-              variant={"RED_PRIMARY"}
+              variant={
+                products != null && products?.length > 0
+                  ? "RED_PRIMARY"
+                  : "DISABLED"
+              }
               borderRadius="20px"
               py={"17px"}
               px={"20px"}
               w={"fit-content"}
               fontSize={"0.875rem"}
               fontWeight="400"
-              onClick={onClose}
+              onClick={handleIngresarProductos}
+              disabled={products != null && products?.length > 0 ? false : true}
+              cursor={
+                products != null && products?.length > 0
+                  ? "cursor"
+                  : "not-allowed"
+              }
             >
               Ingresar todos los productos en despacho
             </StandardButton>

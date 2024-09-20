@@ -30,6 +30,7 @@ export default function ActualizacionesInventario({
         bg: "red.40",
         transition: "all 0.2s ease-in-out",
       }}
+      cursor={"pointer"}
     >
       <Box
         display={"flex"}
@@ -106,6 +107,7 @@ export default function ActualizacionesInventario({
         display={"flex"}
         justifyContent={"flex-start"}
         alignItems={"center"}
+        cursor={"grab"}
       >
         {verificada === "true" ? <VerifiedIcon /> : <NoVerifiedIcon />}
       </Box>

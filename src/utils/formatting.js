@@ -109,3 +109,13 @@ export const formattingDate = (date) => {
 
   return `${year}-${month}-${day}`;
 };
+
+// Se recibe una fecha como texto y necesitamos el formato 07/08/2024
+export function formatStringToDate(dateString) {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); 
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}

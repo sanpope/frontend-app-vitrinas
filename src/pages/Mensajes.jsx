@@ -9,6 +9,8 @@ import Message from "../component/Message";
 
 import xmlToJSON from "../services/XmlToJsonConverter";
 import mensajesData from "../services/mensajesData";
+import { parseData } from "../utils/xmlParse";
+import { formatFecha } from "../utils/formatting";
 
 export default function Mensajes() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -16,11 +18,10 @@ export default function Mensajes() {
   const [totalMensajes, setTotalMensajes] = useState(null);
 
   useEffect(() => {
-    parseData();
-    getMensajes();
+    getMensajesVitrina();
   }, []);
 
-  const parseData = () => {
+  const parserData = () => {
     const resumenInfo = xmlToJSON(mensajesData);
     const Mensajes = resumenInfo.mensajes;
 
@@ -38,37 +39,54 @@ export default function Mensajes() {
       setTotalMensajes(arrayMensajes);
     }
   };
-
-  const getMensajes = async () => {
+  const getMensajesVitrina = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/ vitrina/mensajes?vitrina=${name}`,
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}`,
         {
           headers: {
-            Accept: "application/xml",
+            "Content-Type": "application/xml",
           },
         },
       );
-
       const xmlDoc = parseData(response.data);
-      console.log(xmlDoc);
+      setTotalMensajes(getMensajes(xmlDoc));
     } catch (error) {
       if (error.response) {
-        // La solicitud fue enviada pero el servidor respondió con un código de error
         console.error(
           "Error en la respuesta del servidor:",
           error.response.status,
         );
         console.error("Detalles:", error.response.data);
       } else if (error.request) {
-        // La solicitud fue enviada pero no se recibió respuesta
         console.error("No se recibió respuesta del servidor:", error.request);
       } else {
-        // Ocurrió un error en la configuración de la solicitud
         console.error("Error en la solicitud:", error.message);
       }
     } finally {
     }
+  };
+
+  const getMensajes = (xml) => {
+    const mensajes = xml.querySelector("mensajes");
+    const totalMensajes = mensajes.querySelectorAll("mensaje");
+    let mensajesArr = [];
+    for (let i = 0; i < totalMensajes?.length; i++) {
+      mensajesArr.push({
+        id: totalMensajes[i]?.getElementsByTagName("id")[0].textContent,
+        fechaHora: formatFecha(
+          totalMensajes[i]?.getElementsByTagName("fechaHora")[0].textContent,
+        ),
+        visto: totalMensajes[i]?.getElementsByTagName("visto")[0].textContent,
+        remitente:
+          totalMensajes[i]?.getElementsByTagName("remitente")[0].textContent,
+        asunto: totalMensajes[i]?.getElementsByTagName("asunto")[0].textContent,
+        contenido:
+          totalMensajes[i]?.getElementsByTagName("contenido")[0].textContent,
+      });
+    }
+    console.log(mensajesArr);
+    return mensajesArr;
   };
 
   const {

@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
 import { parseData } from "../utils/xmlParse";
-import { capitalizeFirstLetter, convertirFecha } from "../utils/formatting";
+import { capitalizeFirstLetter, formatStringToDate } from "../utils/formatting";
 
 export default function Dispositivo() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -115,7 +115,8 @@ export default function Dispositivo() {
           }
           description={infoDispositivo?.estado?.detalleDeEstado}
           date={
-            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion
+            formatStringToDate(infoDispositivo?.perifericos?.impresora
+              ?.fechaDeLaUltimaConexion)
           }
         />
 
@@ -134,7 +135,9 @@ export default function Dispositivo() {
               ? "No conectado"
               : "Conectado"
           }
-          date={infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion}
+          date={formatStringToDate(
+            infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion,
+          )}
         />
 
         <DispositivoContainer
@@ -154,9 +157,9 @@ export default function Dispositivo() {
           }
           text2={"Estado del papel:"}
           description2={infoDispositivo?.perifericos?.impresora?.estadoPapel}
-          date={
-            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion
-          }
+          date={formatStringToDate(
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion,
+          )}
         />
         <DispositivoContainer
           icon={<ConexionIcon />}
@@ -173,8 +176,11 @@ export default function Dispositivo() {
               ? "Conectado"
               : "No Conectado"
           }
-          date={infoDispositivo?.perifericos?.escaner?.fechaDeLaUltimaConexion}
+          date={formatStringToDate(
+            infoDispositivo?.perifericos?.escaner?.fechaDeLaUltimaConexion,
+          )}
         />
+
         <DispositivoContainer
           icon={<DevIcon />}
           title={"Aplicación:"}
@@ -192,9 +198,9 @@ export default function Dispositivo() {
           }
           text2={"Pantalla activa:"}
           description2={infoDispositivo?.aplicacion?.pantallaActiva}
-          date={
-            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion
-          }
+          date={formatStringToDate(
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion,
+          )}
         />
       </Box>
     </Box>

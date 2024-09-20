@@ -1,0 +1,719 @@
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<acontecimientosDeVisita>
+    <correcciones>
+        <correccion>
+            <fechaHora>2024-08-28T18:00</fechaHora>
+            <idVisita>5600</idVisita>
+            <productos/>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-08-20T09:15</fechaHora>
+            <idVisita>5599</idVisita>
+            <productos>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>2</cantidadCorregida>
+                    <codigo>765765</codigo>
+                    <motivoDeCorreccion>Extras</motivoDeCorreccion>
+                    <nombre>TERMO PARA CAFÉ</nombre>
+                    <nota>Dos collares añadidos debido a un error previo</nota>
+                </producto>
+            </productos>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-08-15T15:45</fechaHora>
+            <idVisita>5588</idVisita>
+            <productos>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>3</cantidadCorregida>
+                    <codigo>987654</codigo>
+                    <motivoDeCorreccion>Extras</motivoDeCorreccion>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                    <nota>Se agregaron tres sombreros adicionales</nota>
+                </producto>
+                <producto>
+                    <adicion>false</adicion>
+                    <cantidadCorregida>1</cantidadCorregida>
+                    <codigo>654321</codigo>
+                    <motivoDeCorreccion>Faltantes</motivoDeCorreccion>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                    <nota>Se retiró un adaptador faltante</nota>
+                </producto>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>1</cantidadCorregida>
+                    <codigo>543210</codigo>
+                    <motivoDeCorreccion>Garantias</motivoDeCorreccion>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                    <nota>Un labial agregado por corrección</nota>
+                </producto>
+            </productos>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-08-10T12:30</fechaHora>
+            <idVisita>5577</idVisita>
+            <productos>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>2</cantidadCorregida>
+                    <codigo>765432</codigo>
+                    <motivoDeCorreccion>Extras</motivoDeCorreccion>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                    <nota>Se añadieron dos cafés adicionales</nota>
+                </producto>
+                <producto>
+                    <adicion>false</adicion>
+                    <cantidadCorregida>1</cantidadCorregida>
+                    <codigo>543210</codigo>
+                    <motivoDeCorreccion>Faltantes</motivoDeCorreccion>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                    <nota>Faltaba un labial en el inventario</nota>
+                </producto>
+                <producto>
+                    <adicion>false</adicion>
+                    <cantidadCorregida>2</cantidadCorregida>
+                    <codigo>432109</codigo>
+                    <motivoDeCorreccion>Garantias</motivoDeCorreccion>
+                    <nombre>ARETES DE ORO</nombre>
+                    <nota>Se devolvieron dos pares de aretes</nota>
+                </producto>
+            </productos>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-08-05T10:00</fechaHora>
+            <idVisita>5566</idVisita>
+            <productos>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>2</cantidadCorregida>
+                    <codigo>987654</codigo>
+                    <motivoDeCorreccion>Extras</motivoDeCorreccion>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                    <nota>Se agregaron dos sombreros que faltaban</nota>
+                </producto>
+                <producto>
+                    <adicion>false</adicion>
+                    <cantidadCorregida>1</cantidadCorregida>
+                    <codigo>876543</codigo>
+                    <motivoDeCorreccion>Faltantes</motivoDeCorreccion>
+                    <nombre>CAMISETA TIPO POLO</nombre>
+                    <nota>Faltaba una camiseta en el inventario</nota>
+                </producto>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>1</cantidadCorregida>
+                    <codigo>765432</codigo>
+                    <motivoDeCorreccion>Garantias</motivoDeCorreccion>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                    <nota>Una unidad de café reemplazada por garantía</nota>
+                </producto>
+            </productos>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-03-20T15:15:49</fechaHora>
+            <idVisita>2222</idVisita>
+            <productos/>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-03-10T10:15:49</fechaHora>
+            <idVisita>1122</idVisita>
+            <productos>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>3</cantidadCorregida>
+                    <codigo>66666</codigo>
+                    <motivoDeCorreccion>Extras</motivoDeCorreccion>
+                    <nombre>ADAPTADOR UNIVERSAL</nombre>
+                    <nota></nota>
+                </producto>
+                <producto>
+                    <adicion>false</adicion>
+                    <cantidadCorregida>1</cantidadCorregida>
+                    <codigo>88888</codigo>
+                    <motivoDeCorreccion>Faltantes</motivoDeCorreccion>
+                    <nombre>LLAVERO DE COLOMBIA</nombre>
+                    <nota></nota>
+                </producto>
+            </productos>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-03-01T20:00:49</fechaHora>
+            <idVisita>1111</idVisita>
+            <productos/>
+        </correccion>
+    </correcciones>
+    <movimientos>
+        <movimiento>
+            <fechaHora>2024-08-30T14:00</fechaHora>
+            <hechoEnVisita>false</hechoEnVisita>
+            <idVisita></idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>654321</codigo>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados/>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-28T18:00</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>5600</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>8</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>876543</codigo>
+                    <nombre>CAMISETA TIPO POLO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+                <producto>
+                    <cantidad>7</cantidad>
+                    <codigo>654321</codigo>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>9</cantidad>
+                    <codigo>543210</codigo>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>4</cantidad>
+                    <codigo>432109</codigo>
+                    <nombre>ARETES DE ORO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>765765</codigo>
+                    <nombre>TERMO PARA CAFÉ</nombre>
+                </producto>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>109876</codigo>
+                    <nombre>BOLSO ARTESANAL</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>44444</codigo>
+                    <nombre>CARGADOR TIPO C</nombre>
+                </producto>
+                <producto>
+                    <cantidad>1</cantidad>
+                    <codigo>11111</codigo>
+                    <nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-20T12:48:39</fechaHora>
+            <hechoEnVisita>false</hechoEnVisita>
+            <idVisita></idVisita>
+            <productosIngresados/>
+            <productosRetirados>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>512512</codigo>
+                    <nombre>COLLAR DE CUERO CON DIJE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>11111</codigo>
+                    <nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-20T09:30</fechaHora>
+            <hechoEnVisita>false</hechoEnVisita>
+            <idVisita></idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>7</cantidad>
+                    <codigo>543210</codigo>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>765765</codigo>
+                    <nombre>TERMO PARA CAFÉ</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>432109</codigo>
+                    <nombre>ARETES DE ORO</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-20T09:15</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>5599</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>765765</codigo>
+                    <nombre>TERMO PARA CAFÉ</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>432109</codigo>
+                    <nombre>ARETES DE ORO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>543210</codigo>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>4227</codigo>
+                    <nombre>BOTILITO COLOMBIANO CON DISEÑO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>11111</codigo>
+                    <nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>1</cantidad>
+                    <codigo>44444</codigo>
+                    <nombre>CARGADOR TIPO C</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-15T15:45</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>5588</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>432109</codigo>
+                    <nombre>ARETES DE ORO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>4</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>876543</codigo>
+                    <nombre>CAMISETA TIPO POLO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+                <producto>
+                    <cantidad>8</cantidad>
+                    <codigo>654321</codigo>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>7</cantidad>
+                    <codigo>543210</codigo>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>4</cantidad>
+                    <codigo>44444</codigo>
+                    <nombre>CARGADOR TIPO C</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>11111</codigo>
+                    <nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-10T12:30</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>5577</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>654321</codigo>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>10</cantidad>
+                    <codigo>543210</codigo>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>432109</codigo>
+                    <nombre>ARETES DE ORO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>98765</codigo>
+                    <nombre>PULSERA DE CUERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>1</cantidad>
+                    <codigo>876543</codigo>
+                    <nombre>CAMISETA TIPO POLO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>77777</codigo>
+                    <nombre>MUÑECA DE TRAPO</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-05T10:00</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>5566</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>10</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>876543</codigo>
+                    <nombre>CAMISETA TIPO POLO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>4</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+                <producto>
+                    <cantidad>8</cantidad>
+                    <codigo>654321</codigo>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>543210</codigo>
+                    <nombre>LABIAL HIDRATANTE</nombre>
+                </producto>
+                <producto>
+                    <cantidad>7</cantidad>
+                    <codigo>432109</codigo>
+                    <nombre>ARETES DE ORO</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>76543</codigo>
+                    <nombre>TERMÓMETRO DIGITAL</nombre>
+                </producto>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>77777</codigo>
+                    <nombre>MUÑECA DE TRAPO</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-03-20T20:05</fechaHora>
+            <hechoEnVisita>false</hechoEnVisita>
+            <idVisita></idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>2</cantidad>
+                    <codigo>66666</codigo>
+                    <nombre>ADAPTADOR UNIVERSAL</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados/>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-03-20T15:15:49</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>2222</idVisita>
+            <productosIngresados/>
+            <productosRetirados/>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-03-17T11:45</fechaHora>
+            <hechoEnVisita>false</hechoEnVisita>
+            <idVisita></idVisita>
+            <productosIngresados/>
+            <productosRetirados>
+                <producto>
+                    <cantidad>1</cantidad>
+                    <codigo>11111</codigo>
+                    <nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+                </producto>
+            </productosRetirados>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-03-10T10:15:49</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>1122</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>4</cantidad>
+                    <codigo>44444</codigo>
+                    <nombre>CARGADOR TIPO C</nombre>
+                </producto>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>66666</codigo>
+                    <nombre>ADAPTADOR UNIVERSAL</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>99999</codigo>
+                    <nombre>SOMBRERO VUELTIAO</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados/>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-03-01T20:00:49</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>1111</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>4</cantidad>
+                    <codigo>11111</codigo>
+                    <nombre>CAMISETA DE COLOMBIA HOMBRE</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados/>
+        </movimiento>
+    </movimientos>
+    <visitas>
+        <visita>
+            <asesor>Santiago Poveda</asesor>
+            <correccionesDeInventario>0</correccionesDeInventario>
+            <fechaHora>2024-08-28T18:00</fechaHora>
+            <idVisita>5600</idVisita>
+            <ingresos>44</ingresos>
+            <retiros>4</retiros>
+            <revertida>false</revertida>
+            <verificada>false</verificada>
+        </visita>
+        <visita>
+            <asesor>Edgar Poveda</asesor>
+            <correccionesDeInventario>2</correccionesDeInventario>
+            <fechaHora>2024-08-20T09:15</fechaHora>
+            <idVisita>5599</idVisita>
+            <ingresos>16</ingresos>
+            <retiros>6</retiros>
+            <revertida>false</revertida>
+            <verificada>false</verificada>
+        </visita>
+        <visita>
+            <asesor>Nicolas Poveda</asesor>
+            <correccionesDeInventario>5</correccionesDeInventario>
+            <fechaHora>2024-08-15T15:45</fechaHora>
+            <idVisita>5588</idVisita>
+            <ingresos>37</ingresos>
+            <retiros>2</retiros>
+            <revertida>false</revertida>
+            <verificada>true</verificada>
+        </visita>
+        <visita>
+            <asesor>Edgar Poveda</asesor>
+            <correccionesDeInventario>5</correccionesDeInventario>
+            <fechaHora>2024-08-10T12:30</fechaHora>
+            <idVisita>5577</idVisita>
+            <ingresos>24</ingresos>
+            <retiros>6</retiros>
+            <revertida>false</revertida>
+            <verificada>true</verificada>
+        </visita>
+        <visita>
+            <asesor>Santiago Poveda</asesor>
+            <correccionesDeInventario>4</correccionesDeInventario>
+            <fechaHora>2024-08-05T10:00</fechaHora>
+            <idVisita>5566</idVisita>
+            <ingresos>36</ingresos>
+            <retiros>5</retiros>
+            <revertida>false</revertida>
+            <verificada>true</verificada>
+        </visita>
+        <visita>
+            <asesor>Edgar Poveda</asesor>
+            <correccionesDeInventario>0</correccionesDeInventario>
+            <fechaHora>2024-03-20T15:15:49</fechaHora>
+            <idVisita>2222</idVisita>
+            <ingresos>0</ingresos>
+            <retiros>0</retiros>
+            <revertida>true</revertida>
+            <verificada>false</verificada>
+        </visita>
+        <visita>
+            <asesor>Santiago Poveda</asesor>
+            <correccionesDeInventario>4</correccionesDeInventario>
+            <fechaHora>2024-03-10T10:15:49</fechaHora>
+            <idVisita>1122</idVisita>
+            <ingresos>12</ingresos>
+            <retiros>0</retiros>
+            <revertida>false</revertida>
+            <verificada>false</verificada>
+        </visita>
+        <visita>
+            <asesor>Santiago Poveda</asesor>
+            <correccionesDeInventario>0</correccionesDeInventario>
+            <fechaHora>2024-03-01T20:00:49</fechaHora>
+            <idVisita>1111</idVisita>
+            <ingresos>4</ingresos>
+            <retiros>0</retiros>
+            <revertida>false</revertida>
+            <verificada>true</verificada>
+        </visita>
+    </visitas>
+</acontecimientosDeVisita>
+
+
+
+<acontecimientosDeVisita>
+    <correcciones>
+        <correccion>
+            <fechaHora>2024-08-28T18:00</fechaHora>
+            <idVisita>5600</idVisita>
+            <productos/>
+        </correccion>
+        <correccion>
+            <fechaHora>2024-08-20T09:15</fechaHora>
+            <idVisita>5599</idVisita>
+            <productos>
+                <producto>
+                    <adicion>true</adicion>
+                    <cantidadCorregida>2</cantidadCorregida>
+                    <codigo>765765</codigo>
+                    <motivoDeCorreccion>Extras</motivoDeCorreccion>
+                    <nombre>TERMO PARA CAFÉ</nombre>
+                    <nota>Dos collares añadidos debido a un error previo</nota>
+                </producto>
+            </productos>
+        </correccion>
+    </correcciones>
+    <movimientos>
+        <movimiento>
+            <fechaHora>2024-08-30T14:00</fechaHora>
+            <hechoEnVisita>false</hechoEnVisita>
+            <idVisita></idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+                <producto>
+                    <cantidad>3</cantidad>
+                    <codigo>654321</codigo>
+                    <nombre>ADAPTADOR DE CORRIENTE</nombre>
+                </producto>
+            </productosIngresados>
+            <productosRetirados/>
+        </movimiento>
+        <movimiento>
+            <fechaHora>2024-08-28T18:00</fechaHora>
+            <hechoEnVisita>true</hechoEnVisita>
+            <idVisita>5600</idVisita>
+            <productosIngresados>
+                <producto>
+                    <cantidad>8</cantidad>
+                    <codigo>987654</codigo>
+                    <nombre>SOMBRERO PLAYERO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>5</cantidad>
+                    <codigo>876543</codigo>
+                    <nombre>CAMISETA TIPO POLO</nombre>
+                </producto>
+                <producto>
+                    <cantidad>6</cantidad>
+                    <codigo>765432</codigo>
+                    <nombre>CAFE DE ORIGEN SIERRA 250g</nombre>
+                </producto>
+    </movimientos>
+     <visitas>
+        <visita>
+            <asesor>Santiago Poveda</asesor>
+            <correccionesDeInventario>0</correccionesDeInventario>
+            <fechaHora>2024-08-28T18:00</fechaHora>
+            <idVisita>5600</idVisita>
+            <ingresos>44</ingresos>
+            <retiros>4</retiros>
+            <revertida>false</revertida>
+            <verificada>false</verificada>
+        </visita>
+        <visita>
+            <asesor>Edgar Poveda</asesor>
+            <correccionesDeInventario>2</correccionesDeInventario>
+            <fechaHora>2024-08-20T09:15</fechaHora>
+            <idVisita>5599</idVisita>
+            <ingresos>16</ingresos>
+            <retiros>6</retiros>
+            <revertida>false</revertida>
+            <verificada>false</verificada>
+        </visita>
+        <visita>
+            <asesor>Nicolas Poveda</asesor>
+            <correccionesDeInventario>5</correccionesDeInventario>
+            <fechaHora>2024-08-15T15:45</fechaHora>
+            <idVisita>5588</idVisita>
+            <ingresos>37</ingresos>
+            <retiros>2</retiros>
+            <revertida>false</revertida>
+            <verificada>true</verificada>
+        </visita>
+     </visitas>
+</acontecimientosDeVisita>
+
