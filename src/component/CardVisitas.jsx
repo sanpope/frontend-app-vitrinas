@@ -1,9 +1,13 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import React from "react";
 import UserIcon from "../assets/images/UserIcon";
 import ClockICon from "../assets/images/ClockIcon";
 import VerifiedIcon from "../assets/images/VerifiedIcon";
 import NoVerifiedIcon from "../assets/images/NoVerified";
+import StandardButton from "./ui/buttons/standard";
+
+import CheckVerifiedIcon from "../assets/images/CheckVerifiedIcon";
+import CloseNoVerifiedIcon from "../assets/images/CloseNoVerifiedIcon";
 
 export default function ActualizacionesInventario({
   asesor,
@@ -12,6 +16,10 @@ export default function ActualizacionesInventario({
   retiros,
   correcciones,
   verificada,
+  visitaSelected,
+  setVisitaSelected,
+  isSelected,
+  verificarVisita,
 }) {
   return (
     <Box
@@ -25,12 +33,13 @@ export default function ActualizacionesInventario({
       gap={2}
       borderBottomColor={"grey.placeholder"}
       borderBlockEndWidth={1}
-      bg="white"
+      bg={isSelected ? "red.40" : "white"}
       _hover={{
         bg: "red.40",
         transition: "all 0.2s ease-in-out",
       }}
       cursor={"pointer"}
+      onClick={setVisitaSelected}
     >
       <Box
         display={"flex"}
@@ -102,15 +111,28 @@ export default function ActualizacionesInventario({
         </Text>
         <Text textStyle={"RobotoRegular"}>{correcciones}</Text>
       </Box>
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"flex-start"}
-        alignItems={"center"}
-        cursor={"grab"}
+
+      <StandardButton
+        w={"110px"}
+        height={"20px"}
+        variant={verificada === "true" ? "VERIFIED" : "NO_VERIFIED"}
+        fontSize={"12px"}
+        cursor={verificada === "true" ? "not-allowed" : "grab"}
+        borderWidth={".5px"}
+        borderRadius={"2px"}
+        textStyle={"RobotoNano"}
+        leftIcon={
+          verificada === "true" ? (
+            <CheckVerifiedIcon />
+          ) : (
+            <CloseNoVerifiedIcon />
+          )
+        }
+        disabled={verificada === "true" ? true : false}
+        onClick={verificada === "true" ? null : verificarVisita}
       >
-        {verificada === "true" ? <VerifiedIcon /> : <NoVerifiedIcon />}
-      </Box>
+        {verificada === "true" ? "Verificada" : "No verificada"}
+      </StandardButton>
     </Box>
   );
 }

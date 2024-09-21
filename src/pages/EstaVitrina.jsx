@@ -13,36 +13,22 @@ import AsesorContainer from "../component/AsesorContainer";
 import MensajeInfoEstaVitrina from "../component/MensajeInfoEstaVitrina";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import estaVitrina from "../services/estaVitrina";
-
+import { parseData } from "../utils/xmlParse";
+import axios from "axios";
+import MensajeInfo from "../component/MensajeInfo";
+import { setCity, setName } from "../store/slices/vitrina";
 export default function EstaVitrina() {
+  const dispatch = useDispatch();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [infoTotalVitrina, setInfoTotalVitrina] = useState(null);
 
+  const [updatedName, setUpdatedName] = useState("");
+  const [updatedCity, setUpdatedCity] = useState("");
+
   useEffect(() => {
-    parseData();
+    getInfoVitrina();
   }, []);
-
-  const parseData = () => {
-    const resumenInfo = xmlToJSON(estaVitrina);
-    const datosDeVitrina = resumenInfo.estaVitrina;
-
-    const asesoresArray = datosDeVitrina?.asesores?.asesor.map((asesor) => ({
-      nombre: asesor?.nombre["#text"],
-      usuario: asesor?.usuario["#text"],
-      contraseña: asesor?.contraseña["#text"],
-    }));
-
-    const infoVitrina = {
-      ciudadDeVitrina: datosDeVitrina.ciudadDeVitrina["#text"],
-      fechaDeCreacion: datosDeVitrina.fechaDeCreacion["#text"],
-      mensaje: datosDeVitrina.mensaje["#text"],
-      nombreDeVitrina: datosDeVitrina.nombreDeVitrina["#text"],
-      asesores: asesoresArray,
-    };
-
-    setInfoTotalVitrina(infoVitrina);
-  };
 
   const {
     isOpen: isFirstModalOpen,
@@ -73,6 +59,165 @@ export default function EstaVitrina() {
     onOpen: onFifthModalOpen,
     onClose: onFifthModalClose,
   } = useDisclosure();
+
+  const getInfoVitrina = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/info?vitrina=${name}`,
+        {
+          headers: {
+            "Content-Type": "application/xml",
+          },
+        },
+      );
+
+      const xmlDoc = parseData(response.data);
+      const infoVitrina = getInfoEstaVitrina(xmlDoc);
+      setInfoTotalVitrina(infoVitrina);
+      setUpdatedCity(infoVitrina.ciudadDeVitrina);
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+    }
+  };
+
+  const getInfoEstaVitrina = (xml) => {
+    const estaVitrina = xml.querySelector("estaVitrina");
+    console.log(estaVitrina);
+    const asesores = xml.querySelector("asesores");
+    const totalAsesores = asesores.querySelectorAll("asesor");
+    let asesoresArr = [];
+    for (let i = 0; i < totalAsesores?.length; i++) {
+      asesoresArr.push({
+        nombre:
+          totalAsesores[i]?.getElementsByTagName("nombre")[0]?.textContent,
+        usuario:
+          totalAsesores[i]?.getElementsByTagName("usuario")[0]?.textContent,
+        contraseña:
+          totalAsesores[i]?.getElementsByTagName("contraseña")[0]?.textContent,
+      });
+    }
+    const infoVitrina = {
+      ciudadDeVitrina:
+        estaVitrina.getElementsByTagName("ciudadDeVitrina")[0]?.textContent,
+      fechaDeCreacion:
+        estaVitrina.getElementsByTagName("fechaDeCreacion")[0]?.textContent,
+      mensaje: estaVitrina.getElementsByTagName("mensaje")[0]?.textContent,
+      nombreDeVitrina:
+        estaVitrina.getElementsByTagName("nombreDeVitrina")[0]?.textContent,
+      asesores: asesoresArr,
+    };
+
+    return infoVitrina;
+  };
+
+  const updateVitrina = async (nombre, ciudad) => {
+    const params = new URLSearchParams();
+    params.append("nuevoNombre", `${nombre}`);
+    params.append("nuevaCiudad", `${ciudad}`);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina?nombre=${name}`,
+        params,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      console.log(response.data);
+      if (response.data) {
+        dispatch(setCity(nombre));
+        dispatch(setName(ciudad));
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+      onFirstModalClose();
+    }
+  };
+
+  // const updateProducto = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.put(
+  //       `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos?vitrina=${vitrinaName}&producto=${codigo}`,
+  //       {
+  //         cantidad: Number(existencia),
+  //         stockMinimo: Number(stockMin),
+  //         stockMaximo: Number(stockMax),
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/x-www-form-urlencoded",
+  //         },
+  //       },
+  //     );
+
+  //     const xmlDoc = parseData(response.data);
+  //     const updatedData = parseTextFields(xmlDoc, FIELD_NAMES);
+  //     setTablaInventario((prevState) => {
+  //       let copy = [...prevState];
+  //       var index = copy
+  //         .map((producto) => producto.codigo)
+  //         .indexOf(updatedData.codigo);
+  //       copy[index]["existencia"] = updatedData.existencias;
+  //       copy[index]["stockMin"] = updatedData.stockMinimo;
+  //       copy[index]["stockMax"] = updatedData.stockMaximo;
+  //       return copy;
+  //     });
+
+  //     setDisplayedArticulos((prevState) => {
+  //       let copy = [...prevState];
+  //       var index = copy
+  //         .map((producto) => producto.codigo)
+  //         .indexOf(updatedData.codigo);
+  //       copy[index]["existencia"] = updatedData.existencias;
+  //       copy[index]["stockMin"] = updatedData.stockMinimo;
+  //       copy[index]["stockMax"] = updatedData.stockMaximo;
+  //       return copy;
+  //     });
+
+  //     onClose();
+  //   } catch (error) {
+  //     if (error.response) {
+  //       // La solicitud fue enviada pero el servidor respondió con un código de error
+  //       console.error(
+  //         "Error en la respuesta del servidor:",
+  //         error.response.status,
+  //       );
+  //       console.error("Detalles:", error.response.data);
+  //     } else if (error.request) {
+  //       // La solicitud fue enviada pero no se recibió respuesta
+  //       console.error("No se recibió respuesta del servidor:", error.request);
+  //     } else {
+  //       // Ocurrió un error en la configuración de la solicitud
+  //       console.error("Error en la solicitud:", error.message);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <Box
@@ -138,6 +283,11 @@ export default function EstaVitrina() {
               onClick={onFirstModalClose}
               desc={"Vitrina"}
               desc2={"Vitrina"}
+              name={updatedName}
+              setName={setUpdatedName}
+              city={updatedCity}
+              setCity={setUpdatedCity}
+              Editar={updateVitrina}
             />
             <StandardButton
               variant={"WHITE_RED"}
@@ -169,19 +319,23 @@ export default function EstaVitrina() {
         <Text textStyle={"RobotoBodyBold"}>Asesores:</Text>
 
         <Box display={"flex"} flexWrap={"wrap"} gap={"20px"}>
-          {infoTotalVitrina?.asesores?.map((asesor) => (
-            <AsesorContainer
-              asesor={asesor.nombre}
-              email={asesor.usuario}
-              password={asesor.contraseña}
-              isFirstModalOpen={isFourthModalOpen}
-              onFirstModalOpen={onFourthModalOpen}
-              onFirstModalClose={onFourthModalClose}
-              isSecondModalOpen={isFifthModalOpen}
-              onSecondModalOpen={onFifthModalOpen}
-              onSecondModalClose={onFifthModalClose}
-            />
-          ))}
+          {infoTotalVitrina != null ? (
+            infoTotalVitrina?.asesores?.map((asesor) => (
+              <AsesorContainer
+                asesor={asesor.nombre}
+                email={asesor.usuario}
+                password={asesor.contraseña}
+                isFirstModalOpen={isFourthModalOpen}
+                onFirstModalOpen={onFourthModalOpen}
+                onFirstModalClose={onFourthModalClose}
+                isSecondModalOpen={isFifthModalOpen}
+                onSecondModalOpen={onFifthModalOpen}
+                onSecondModalClose={onFifthModalClose}
+              />
+            ))
+          ) : (
+            <Text>No se encontraron Asesores asignados a esta vitrina.</Text>
+          )}
         </Box>
 
         <StandardButton
@@ -202,7 +356,7 @@ export default function EstaVitrina() {
           onClose={onThirdModalClose}
         />
       </Box>
-      <MensajeInfoEstaVitrina />
+      <MensajeInfo mensaje={infoTotalVitrina?.mensaje} />
     </Box>
   );
 }

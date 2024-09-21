@@ -181,6 +181,7 @@ export default function SideBar({ setLoggedIn }) {
                       route.label === "Vitrinas"
                         ? () => {
                             onFirstModalOpen();
+                            
                           }
                         : null
                     }

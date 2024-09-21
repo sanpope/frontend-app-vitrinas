@@ -69,7 +69,7 @@ export default function Resumen() {
 
   useEffect(() => {
     getResumenInfo(name);
-  }, []);
+  }, [name]);
 
   const getResumenInfo = async (vitrinaName) => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/resumen-de-actividad?nombre=${vitrinaName}`;
@@ -80,7 +80,7 @@ export default function Resumen() {
           Accept: "application/xml",
         },
       });
-      
+
       const xmlDoc = parseData(response.data);
       setInactividad(getTiempoInactividad(xmlDoc));
       setProdsUltimasVentas(getUltimasVentas(xmlDoc));
@@ -517,12 +517,7 @@ export default function Resumen() {
           title={"Evolución de venta diaria"}
           icon={<BadgeDollarIcon />}
           children={
-            <Box
-              w={"600px"}
-              overflowX={"scroll"}
-              h={"100%"}
-              
-            >
+            <Box w={"600px"} overflowX={"scroll"} h={"100%"}>
               <EvolucionVentaDiaria evolucionVentaDiaria={intervaloDelDia} />
             </Box>
           }

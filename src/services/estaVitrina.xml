@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<estaVitrina>
+	<asesores>
+		<asesor>
+			<contraseña>123Santiago</contraseña>
+			<nombre>Santiago Poveda</nombre>
+			<usuario>Sanpope</usuario>
+		</asesor>
+		<asesor>
+			<contraseña>123Nicolas</contraseña>
+			<nombre>Nicolas Poveda</nombre>
+			<usuario>Nipope</usuario>
+		</asesor>
+	</asesores>
+	<ciudadDeVitrina>Cartagena</ciudadDeVitrina>
+	<fechaDeCreacion>2024-07-30</fechaDeCreacion>
+	<mensaje>Puedes ingresar a la app Kiosko Asesores con tu usuario y clave de administrador</mensaje>
+	<nombreDeVitrina>Corales de Indias</nombreDeVitrina>
+</estaVitrina>

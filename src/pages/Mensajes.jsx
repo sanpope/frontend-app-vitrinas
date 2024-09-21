@@ -7,8 +7,6 @@ import WarningIcon from "../assets/images/WarningIcon";
 import axios from "axios";
 import Message from "../component/Message";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import mensajesData from "../services/mensajesData";
 import { parseData } from "../utils/xmlParse";
 import { formatFecha } from "../utils/formatting";
 
@@ -17,28 +15,22 @@ export default function Mensajes() {
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [totalMensajes, setTotalMensajes] = useState(null);
 
+  const {
+    isOpen: isConfirmationModalOpen,
+    onOpen: onConfirmationModalOpen,
+    onClose: onConfirmationModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isEliminarMensajeOpen,
+    onOpen: onEliminarMensajeOpen,
+    onClose: onEliminarMensajeClose,
+  } = useDisclosure();
+
   useEffect(() => {
     getMensajesVitrina();
   }, []);
 
-  const parserData = () => {
-    const resumenInfo = xmlToJSON(mensajesData);
-    const Mensajes = resumenInfo.mensajes;
-
-    if (Mensajes && Array.isArray(Mensajes.mensaje)) {
-      const listadoMensajes = Mensajes.mensaje;
-      const arrayMensajes = listadoMensajes.map((mensaje) => {
-        const id = mensaje.id["#text"];
-        const fechaHora = mensaje.fechaHora["#text"];
-        const visto = mensaje.visto["#text"];
-        const remitente = mensaje.remitente["#text"];
-        const asunto = mensaje.asunto["#text"];
-        const contenido = mensaje.contenido["#text"];
-        return { id, fechaHora, visto, remitente, asunto, contenido };
-      });
-      setTotalMensajes(arrayMensajes);
-    }
-  };
   const getMensajesVitrina = async () => {
     try {
       const response = await axios.get(
@@ -85,15 +77,50 @@ export default function Mensajes() {
           totalMensajes[i]?.getElementsByTagName("contenido")[0].textContent,
       });
     }
-    console.log(mensajesArr);
     return mensajesArr;
   };
 
-  const {
-    isOpen: isConfirmationModalOpen,
-    onOpen: onConfirmationModalOpen,
-    onClose: onConfirmationModalClose,
-  } = useDisclosure();
+  const deleteMensaje = async (idMensaje, mensaje) => {
+    const id = parseInt(idMensaje);
+    console.log(idMensaje);
+    console.log(mensaje);
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}&idMensaje=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/xml",
+          },
+        },
+      );
+      console.log(response.data);
+      if (response.data) {
+        setTotalMensajes((prev) => {
+          const index = prev.findIndex((item) => item.id === mensaje.id);
+          if (index !== -1) {
+            const copy = [...prev];
+            copy.splice(index, 1);
+            return copy;
+          }
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+      onEliminarMensajeClose();
+    }
+  };
+
   return (
     <Box
       bg={"mainBg"}
@@ -124,19 +151,21 @@ export default function Mensajes() {
             gap={"10px"}
           >
             <StandardButton
-              variant={"RED_PRIMARY"}
+              variant={"DISABLED"}
               borderRadius="20px"
               py={"17px"}
               w={"fit-content"}
               fontSize="14px"
               fontWeight="400"
               onClick={onConfirmationModalOpen}
+              disabled={true}
+              cursor={"not-allowed"}
             >
               Vaciar bendeja de entrada
             </StandardButton>
             <ConfirmationMessage
               icon={<WarningIcon />}
-              text={`¿Estás seguro que desea eliminar a este mensaje?`}
+              text={`¿Estás seguro que desea eliminar Todos los mensajes?`}
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
@@ -146,15 +175,27 @@ export default function Mensajes() {
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"20px"} py={"10px"}>
         {totalMensajes?.map((mensaje, index) => (
-          <Message
-            key={index}
-            name={mensaje.remitente}
-            subject={mensaje.asunto}
-            message={mensaje.contenido}
-            visto={mensaje.visto}
-            fechaHora={mensaje.fechaHora}
-            onClick={onConfirmationModalOpen}
-          />
+          <>
+            <Message
+              key={index}
+              name={mensaje.remitente}
+              subject={mensaje.asunto}
+              message={mensaje.contenido}
+              visto={mensaje.visto}
+              fechaHora={mensaje.fechaHora}
+              onClick={onEliminarMensajeOpen}
+            />
+            <ConfirmationMessage
+              icon={<WarningIcon />}
+              text={`¿Estás seguro que deseas eliminar este mensaje?`}
+              isOpen={isEliminarMensajeOpen}
+              onOpen={onEliminarMensajeOpen}
+              onClose={onEliminarMensajeClose}
+              funcConfirmar={() => {
+                deleteMensaje(mensaje.id, mensaje);
+              }}
+            />
+          </>
         ))}
       </Box>
     </Box>

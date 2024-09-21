@@ -42,6 +42,8 @@ export default function Visitas() {
   const [productosDespachados, setProductosDespachados] = useState(null);
   const [enviarProdcsLoading, setEnviarProdcsLoading] = useState(false);
 
+  const [visitaSelected, setVisitaSelected] = useState(null);
+
   useEffect(() => {
     getIntervaloVisitas(fechaInicio, fechaFin);
   }, [selectedOption]);
@@ -331,14 +333,82 @@ export default function Visitas() {
     return productosArray;
   };
 
+  const setReversionVisita = async (idVisita) => {
+    const id = parseInt(idVisita);
+
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/visitas/reversion-de-visita?vitrina=${name}&idVisita=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/xml",
+          },
+        },
+      );
+      console.log(response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+    }
+  };
+
+  const verificarVisita = async (idVisita, visita) => {
+    const id = parseInt(idVisita);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/visitas/verificacion-de-visita?vitrina=${name}&idVisita=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/xml",
+          },
+        },
+      );
+      console.log(response.data);
+      if(response.data){
+        setTotalVisitas((prev)=>{
+           const index = prev.findIndex((item) => item.idVisita === visita.idVisita);
+           if (index !== -1) {
+             const copy = [...prev];
+             copy[index]["verificada"] = "true";
+             return copy;
+           }
+
+        })
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+    }
+  };
+
   return (
     <Box
       display={"flex"}
       flexDirection={"column"}
       w={"100%"}
       h={"100%"}
-      p={"20px"}
-      overflowY={"scroll"}
+      p={"10px"}
+      overflowY={"hidden"}
     >
       <Box
         display={"flex"}
@@ -393,6 +463,17 @@ export default function Visitas() {
               retiros={visita.retiros}
               correcciones={visita.correccionesDeInventario}
               verificada={visita.verificada}
+              setVisitaSelected={() => {
+                setVisitaSelected(visita);
+              }}
+              isSelected={visitaSelected?.idVisita === visita.idVisita}
+              verificarVisita={
+                visitaSelected
+                  ? () => {
+                      verificarVisita(visita.idVisita, visita);
+                    }
+                  : null
+              }
             />
           ))}
         />
@@ -452,7 +533,7 @@ export default function Visitas() {
           isLoading={enviarProdcsLoading}
         />
         <StandardButton
-          variant={"RED_PRIMARY"}
+          variant={visitaSelected != null ? "RED_PRIMARY" : "DISABLED"}
           borderRadius="20px"
           py={"17px"}
           px={"20px"}
@@ -460,6 +541,8 @@ export default function Visitas() {
           fontSize={{ base: "12px", lg: "14px" }}
           fontWeight="400"
           onClick={onConfirmationModalOpen}
+          disabled={visitaSelected != null ? false : true}
+          cursor={visitaSelected != null ? "cursor" : "not-allowed"}
         >
           {isSmallScreen
             ? "Revertir movimientos"
@@ -471,6 +554,8 @@ export default function Visitas() {
           isOpen={isConfirmationModalOpen}
           onOpen={onConfirmationModalOpen}
           onClose={onConfirmationModalClose}
+          funcConfirmar={setReversionVisita}
+          focusRow={visitaSelected ? visitaSelected.idVisita : null}
         />
       </Box>
     </Box>

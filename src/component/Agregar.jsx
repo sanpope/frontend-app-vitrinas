@@ -96,17 +96,17 @@ export default function Agregar({
                   },
                 }}
               >
-                <option>Bogota</option>
-                <option>Medellin</option>
+                <option>Bogotá</option>
+                <option>Medellín</option>
                 <option>Cali</option>
                 <option>Barranquilla</option>
                 <option>Bucaramanga</option>
                 <option>Manizales</option>
                 <option>Pereira</option>
-                <option>Cucuta</option>
+                <option>Cúcuta</option>
                 <option>Pasto</option>
-                <option>Ibague</option>
-                <option>Monteria</option>
+                <option>Ibagué</option>
+                <option>Montería</option>
                 <option>Cartagena</option>
                 <option>Villavicencio</option>
               </Select>

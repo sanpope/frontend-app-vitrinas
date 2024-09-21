@@ -285,6 +285,72 @@ const BUTTON_VARIANTS = {
       color: "white",
     },
   },
+  VERIFIED: {
+    normal: {
+      bg: "#F6FFED",
+      borderColor: "#B7EB8F",
+      color: "#52C41A",
+    },
+    hover: {
+      bg: "#F6FFED",
+      borderColor: "#B7EB8F",
+      color: "#52C41A",
+    },
+    disabled: {
+      bg: "#F6FFED",
+      borderColor: "#B7EB8F",
+      color: "#52C41A",
+    },
+    active: {
+      bg: "#F6FFED",
+      borderColor: "#B7EB8F",
+      color: "#52C41A",
+    },
+  },
+  NO_VERIFIED: {
+    normal: {
+      bg: "#FFF1F0",
+      borderColor: "#FFA39E",
+      color: "#F5222D",
+    },
+    hover: {
+      bg: "#FFF1F0",
+      borderColor: "#FFA39E",
+      color: "#F5222D",
+    },
+    disabled: {
+      bg: "#FFF1F0",
+      borderColor: "#FFA39E",
+      color: "#F5222D",
+    },
+    active: {
+      bg: "#FFF1F0",
+      borderColor: "#FFA39E",
+      color: "#F5222D",
+    },
+  },
+  INFO: {
+    normal: {
+      bg: "#E6F7FF",
+      borderColor: "#91D5FF",
+      color: "black",
+    },
+    hover: {
+      bg: "#E6F7FF",
+      borderColor: "#91D5FF",
+      color: "black",
+    },
+    disabled: {
+      bg: "#E6F7FF",
+      borderColor: "#91D5FF",
+      color: "black",
+    },
+    active: {
+      bg: "#E6F7FF",
+      borderColor: "#91D5FF",
+      color: "black",
+    },
+  },
 };
 
 export default BUTTON_VARIANTS;

@@ -42,9 +42,6 @@ export default function TablaInventario({
           <Contenedor maxHeight={"470px"}>
             <thead className="">
               <tr className="">
-                <th className="checkBox">
-                  <Checkbox />
-                </th>
                 {HEADERS?.map((name, index) => (
                   <th key={index} className="inventTh">
                     {name}
@@ -57,9 +54,6 @@ export default function TablaInventario({
               {displayedArticulos?.map((articulo, index) => {
                 return (
                   <tr key={index} className="" style={{ cursor: "pointer" }}>
-                    <td className="checkBox">
-                      <Checkbox onClick={() => setActive(index)} />
-                    </td>
                     {Object.entries(articulo)
                       .filter((keyValArr) => {
                         return keyValArr[0] != "proveedor";

@@ -9,8 +9,6 @@ import {
   ModalOverlay,
   Modal,
   Select,
-  FormControl,
-  FormLabel,
 } from "@chakra-ui/react";
 
 import TextInput from "../component/ui/textInput";
@@ -23,16 +21,18 @@ export default function Agregar({
   onOpen,
   onClose,
   Editar,
+  name,
+  setName,
+  city,
+  setCity,
 }) {
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-
-  const saveCity = (e) => {
-    setCity(e.target.value);
+  const saveName = (val) => {
+    console.log(val);
+    setName(val);
   };
-
-  const saveName = (e) => {
-    setName(e);
+  const saveCity = (val) => {
+    console.log(val);
+    setCity(val);
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -60,8 +60,8 @@ export default function Agregar({
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={Editar}>
-              <FormLabel display="flex" alignItems="center">
+            <Box w={"100%"}>
+              <Box display={"flex"} alignItems={"center"} w={"100%"}>
                 <span
                   style={{
                     color: "red",
@@ -72,15 +72,17 @@ export default function Agregar({
                   *
                 </span>
                 {desc2}
-              </FormLabel>
+              </Box>
               <TextInput
+                w={"100%"}
                 type="text"
-                placeholder="example"
+                placeholder={""}
                 required
-                onChange={(e) => saveName(e)}
+                onChange={(val) => saveName(val)}
                 value={name}
               />
-              <FormLabel display="flex" alignItems="center">
+
+              <Box display="flex" alignItems="center" w={"100%"}>
                 <span
                   style={{
                     color: "red",
@@ -91,11 +93,12 @@ export default function Agregar({
                   *
                 </span>
                 Ciudad
-              </FormLabel>
+              </Box>
               <Select
                 required
-                placeholder="Seleccionar"
-                onChange={(e) => saveCity(e)}
+                value={city}
+                placeholder={city}
+                onChange={(val) => saveCity(val.target.value)}
                 sx={{
                   borderColor: "mainBg",
                   borderWidth: "1px",
@@ -113,8 +116,18 @@ export default function Agregar({
                 <option>Bogotá</option>
                 <option>Medellín</option>
                 <option>Cali</option>
+                <option>Barranquilla</option>
+                <option>Bucaramanga</option>
+                <option>Manizales</option>
+                <option>Pereira</option>
+                <option>Cúcuta</option>
+                <option>Pasto</option>
+                <option>Ibagué</option>
+                <option>Montería</option>
+                <option>Cartagena</option>
+                <option>Villavicencio</option>
               </Select>
-            </FormControl>
+            </Box>
           </Box>
         </ModalBody>
 
@@ -131,13 +144,18 @@ export default function Agregar({
             Cancelar
           </StandardButton>
           <StandardButton
-            variant={"BLACK_PRIMARY"}
+            variant={name?.length > 0 ? "RED_PRIMARY" : "DISABLED"}
+            disabled={name?.length > 0 ? false : true}
+            cursor={name?.length > 0 ? "pointer" : "not-allowed"}
             borderRadius="20px"
             py={"17px"}
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            type={"submit"}
+            type={"button"}
+            onClick={() => {
+              Editar(name, city);
+            }}
           >
             Guardar Cambios
           </StandardButton>
