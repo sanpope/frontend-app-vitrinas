@@ -139,6 +139,7 @@ export default function EstaVitrina() {
       if (response.data) {
         dispatch(setCity(nombre));
         dispatch(setName(ciudad));
+        //ToDo Actualizar inmediatamente la lista de vitrinas en el modal
       }
     } catch (error) {
       if (error.response) {
@@ -156,68 +157,6 @@ export default function EstaVitrina() {
       onFirstModalClose();
     }
   };
-
-  // const updateProducto = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axios.put(
-  //       `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos?vitrina=${vitrinaName}&producto=${codigo}`,
-  //       {
-  //         cantidad: Number(existencia),
-  //         stockMinimo: Number(stockMin),
-  //         stockMaximo: Number(stockMax),
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/x-www-form-urlencoded",
-  //         },
-  //       },
-  //     );
-
-  //     const xmlDoc = parseData(response.data);
-  //     const updatedData = parseTextFields(xmlDoc, FIELD_NAMES);
-  //     setTablaInventario((prevState) => {
-  //       let copy = [...prevState];
-  //       var index = copy
-  //         .map((producto) => producto.codigo)
-  //         .indexOf(updatedData.codigo);
-  //       copy[index]["existencia"] = updatedData.existencias;
-  //       copy[index]["stockMin"] = updatedData.stockMinimo;
-  //       copy[index]["stockMax"] = updatedData.stockMaximo;
-  //       return copy;
-  //     });
-
-  //     setDisplayedArticulos((prevState) => {
-  //       let copy = [...prevState];
-  //       var index = copy
-  //         .map((producto) => producto.codigo)
-  //         .indexOf(updatedData.codigo);
-  //       copy[index]["existencia"] = updatedData.existencias;
-  //       copy[index]["stockMin"] = updatedData.stockMinimo;
-  //       copy[index]["stockMax"] = updatedData.stockMaximo;
-  //       return copy;
-  //     });
-
-  //     onClose();
-  //   } catch (error) {
-  //     if (error.response) {
-  //       // La solicitud fue enviada pero el servidor respondió con un código de error
-  //       console.error(
-  //         "Error en la respuesta del servidor:",
-  //         error.response.status,
-  //       );
-  //       console.error("Detalles:", error.response.data);
-  //     } else if (error.request) {
-  //       // La solicitud fue enviada pero no se recibió respuesta
-  //       console.error("No se recibió respuesta del servidor:", error.request);
-  //     } else {
-  //       // Ocurrió un error en la configuración de la solicitud
-  //       console.error("Error en la solicitud:", error.message);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <Box
