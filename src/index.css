@@ -109,7 +109,6 @@ body {
   border-collapse: collapse;
 }
 
-
 .content-table thead {
   position: sticky;
   top: 0;
@@ -126,7 +125,7 @@ body {
   width: 100%;
   min-height: 400px;
   overflow-y: auto;
-  
+
   /* height: 100%; */
 }
 
@@ -140,16 +139,12 @@ body {
   border-bottom: 1px solid #e5e5e5;
 }
 
-.checkBox {
-  width: 50px;
-  text-align: center;
-}
-
 .ventastTh:nth-child(1),
 .ventasTd:nth-child(1) {
   padding-left: 20px;
 }
 
+.inventTh:nth-child(1),
 .ventastTh:nth-child(3),
 .ventastTh:nth-child(4),
 .ventastTh:nth-child(5),
@@ -157,6 +152,7 @@ body {
   text-align: center;
 }
 
+.inventTd:nth-child(1),
 .ventasTd:nth-child(3),
 .ventasTd:nth-child(6),
 .ProdTd:nth-child(3),

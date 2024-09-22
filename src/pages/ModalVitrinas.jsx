@@ -25,6 +25,7 @@ import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
 
 import axios from "axios";
 import Loader from "../component/Loader";
+import { parseData } from "../utils/xmlParse";
 
 export default function ModalVitrinas({
   isFirstModalOpen,
@@ -40,6 +41,7 @@ export default function ModalVitrinas({
 
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
   const [ciudadesVitrinas, setCiudadesVitrinas] = useState(null);
+  const [mensaje, setMensaje] = useState("");
 
   const {
     isOpen: isSecondModalOpen,
@@ -75,26 +77,97 @@ export default function ModalVitrinas({
     onFirstModalClose();
   };
 
-  const createNewVitrina = (city, name) => {
+  const createNewVitrina = async (city, name) => {
     const formData = new URLSearchParams();
     formData.append("nombre", name);
     formData.append("ciudad", city);
-
-    //ToDO Agregar vitrina POST/rest/vitrina
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/vitrinas`;
-    axios
-      .post(url, formData, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error("Error fetching the XML data: ", error);
-      });
-    onSecondModalClose();
+
+    if (city in ciudadesVitrinas) {
+      const index = ciudadesVitrinas[city].findIndex((item) => item === name);
+      if (index !== -1) {
+        // Si el índice es diferente de -1, la vitrina ya existe
+        console.log("La vitrina ya existe");
+        setMensaje("La vitrina ya existe en la ciudad seleccionada!");
+      } else {
+        // Si el índice es -1, la vitrina no existe
+        console.log("Procede con la peticion");
+        // Hacer la petición y agregar la vitrina a la ciudad encontrada
+        try {
+          const response = await axios.post(url, formData, {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          });
+          console.log(response.data);
+          if (response.data) {
+            setCiudadesVitrinas((prev) => {
+              const copy = { ...prev };
+              copy[city].push(name);
+              return copy;
+            });
+            alert("Vitrina Agregada con Éxito");
+          }
+        } catch (error) {
+          if (error.response) {
+            console.error(
+              "Error en la respuesta del servidor:",
+              error.response.status,
+            );
+            console.error("Detalles:", error.response.data);
+            setMensaje(error.response.data);
+          } else if (error.request) {
+            console.error(
+              "No se recibió respuesta del servidor:",
+              error.request,
+            );
+            setMensaje(error.request);
+          } else {
+            console.error("Error en la solicitud:", error.message);
+            setMensaje(error.message);
+          }
+        } finally {
+          setMensaje("");
+          onSecondModalClose();
+        }
+      }
+    } else {
+      console.log("Ciudad no encontrada");
+      try {
+        const response = await axios.post(url, formData, {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        });
+        console.log(response.data);
+        if (response.data) {
+          setCiudadesVitrinas((prev) => {
+            const copy = { ...prev };
+            copy[city] = [name];
+            return copy;
+          });
+          alert("Vitrina Agregada con Éxito");
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error(
+            "Error en la respuesta del servidor:",
+            error.response.status,
+          );
+          setMensaje(error.response.data);
+          console.error("Detalles:", error.response.data);
+        } else if (error.request) {
+          console.error("No se recibió respuesta del servidor:", error.request);
+          setMensaje(error.request);
+        } else {
+          console.error("Error en la solicitud:", error.message);
+          setMensaje(error.message);
+        }
+      } finally {
+        setMensaje("");
+        onSecondModalClose();
+      }
+    }
   };
 
   useEffect(() => {
@@ -117,12 +190,8 @@ export default function ModalVitrinas({
         },
       })
       .then((response) => {
-        const data = response.data;
-        // Parseamos el XML
-        const xmlText = response.data;
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-        dispatch(setListaDeVitrinas(vitrinasData(xmlDoc)));
+        const xmlDoc = parseData(response.data);
+        setCiudadesVitrinas(vitrinasData(xmlDoc));
       })
       .catch((error) => {
         console.error("Error fetching the XML data: ", error);
@@ -146,8 +215,7 @@ export default function ModalVitrinas({
       }
       vitrinasObj[city].push(vitrina);
     }
-    setCiudadesVitrinas(vitrinasObj);
-    return vitrinasList;
+    return vitrinasObj;
   };
 
   return (
@@ -253,6 +321,7 @@ export default function ModalVitrinas({
               desc={"Vitrina"}
               desc2={"Nombre de la vitrina"}
               funcAgregar={createNewVitrina}
+              mensajeError={mensaje}
             />
           </ModalFooter>
         </ModalContent>

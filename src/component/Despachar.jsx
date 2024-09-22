@@ -37,7 +37,6 @@ export default function Despachar({
   onClose,
   productsList,
 }) {
-  const [productosADespachar, setProductosADespachar] = useState(25);
   const [totalProducts, setTotalProducts] = useState(productsList);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
   const [activeProdcs, setActiveProdcs] = useState([]);
@@ -151,7 +150,6 @@ export default function Despachar({
       .then((response) => {
         console.log(response);
         setLoading(false);
-        
       })
       .then((data) => console.log(data))
       .catch((error) => {
@@ -434,7 +432,7 @@ export default function Despachar({
               Enviar
             </StandardButton>
             <ConfirmationMessage
-              text={`Se despacharán ${productosADespachar} productos de la bodega hacia la vitrina `}
+              text={`Se despacharán ${activeProdcs?.length} productos de la bodega hacia la vitrina `}
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}

@@ -23,6 +23,7 @@ export default function Agregar({
   onOpen,
   onClose,
   funcAgregar,
+  mensajeError,
 }) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
@@ -96,7 +97,7 @@ export default function Agregar({
                   },
                 }}
               >
-                <option>Bogotá</option>
+                <option>Bogota</option>
                 <option>Medellín</option>
                 <option>Cali</option>
                 <option>Barranquilla</option>
@@ -158,6 +159,9 @@ export default function Agregar({
             Guardar
           </StandardButton>
         </ModalFooter>
+        <Text p={2} color={"red.100"}>
+          {mensajeError}
+        </Text>
       </ModalContent>
     </Modal>
   );

@@ -33,8 +33,8 @@ export default function Vitrina({ city, names, onClick }) {
         alignItems={"center"}
         gap={"10px"}
         p={"10px"}
-        height={"130px"}
-        overflowY="scroll"
+        h={"130px"}
+        overflowY={"scroll"}
         overflowX="hidden"
         className="scroll-wrapper"
       >

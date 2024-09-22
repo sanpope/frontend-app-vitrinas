@@ -46,13 +46,13 @@ export default function Product({
         borderColor="gray.200"
         alignItems={"center"}
         justifyContent={"space-around"}
-        p={"10px"}
+        p={"5px"}
       >
         <Text w={"150px"} textStyle={"RobotoBody"}>
           {productName}
         </Text>
         <Center
-          minW={"60px"}
+          w={"60px"}
           h={`32px`}
           textStyle={"RobotoBody"}
           borderColor="mainBg"
@@ -69,20 +69,22 @@ export default function Product({
           defaultValue={0}
           min={1}
           max={stock}
+          step={1}
           size="sm"
-          maxW={"80px"}
+          maxW={"60px"}
           h={"30px"}
           required
           borderRadius={"5px"}
-          textAlign={"center"}
           mx={2}
           onChange={handleOnChange}
         >
-          <NumberInputField fontSize={"16px"} textAlign={"center"} />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
+          <NumberInputField
+            fontSize={"16px"}
+            textAlign={"center"}
+            w={"100%"}
+            m={0}
+            p={0}
+          />
         </NumberInput>
 
         <CloseIcon width="15px" height="15px" onClick={handleClick} />
