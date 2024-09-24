@@ -22,8 +22,8 @@ export default function ConfirmationMessage({
   isOpen,
   onOpen,
   onClose,
-  funcConfirmar,
   buttonText = "Confirmar",
+  funcConfirmar,
   focusRow,
   isLoading,
 }) {

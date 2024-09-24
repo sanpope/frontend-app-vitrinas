@@ -26,7 +26,7 @@ export default function Agregar({
   mensajeError,
 }) {
   const [name, setName] = useState("");
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState("Barranquilla");
 
   const saveCity = (e) => {
     console.log(e.target.value);
@@ -81,7 +81,6 @@ export default function Agregar({
               </FormLabel>
               <Select
                 required
-                placeholder="Seleccionar"
                 onChange={(e) => saveCity(e)}
                 sx={{
                   borderColor: "mainBg",
@@ -97,18 +96,18 @@ export default function Agregar({
                   },
                 }}
               >
-                <option>Bogota</option>
-                <option>Medellín</option>
-                <option>Cali</option>
                 <option>Barranquilla</option>
+                <option>Bogotá</option>
                 <option>Bucaramanga</option>
-                <option>Manizales</option>
-                <option>Pereira</option>
-                <option>Cúcuta</option>
-                <option>Pasto</option>
-                <option>Ibagué</option>
-                <option>Montería</option>
+                <option>Cali</option>
                 <option>Cartagena</option>
+                <option>Cúcuta</option>
+                <option>Ibagué</option>
+                <option>Manizales</option>
+                <option>Medellín</option>
+                <option>Montería</option>
+                <option>Pasto</option>
+                <option>Pereira</option>
                 <option>Villavicencio</option>
               </Select>
               <FormLabel display="flex" alignItems="center" pt={"10px"}>
@@ -125,7 +124,7 @@ export default function Agregar({
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Hotel Sonesta"
                 required
                 onChange={(e) => saveName(e)}
                 value={name}

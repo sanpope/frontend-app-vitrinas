@@ -50,9 +50,6 @@ export default function TablaProductosBodega({
       <Contenedor maxHeight={"600px"}>
         <thead className="">
           <tr className="AsesorTr">
-            <th className="checkBox">
-              <Checkbox />
-            </th>
             {HEADERS.map((name, index) => (
               <th key={index} className="AsesorTh">
                 <Box
@@ -99,9 +96,6 @@ export default function TablaProductosBodega({
           {displayedArticulos?.map((articulo, index) => {
             return (
               <tr key={index} className="">
-                <td className="checkBox">
-                  <Checkbox />
-                </td>
                 {Object.values(articulo).map((value, index) => {
                   return (
                     <td key={index} className="AsesorTd">

@@ -16,15 +16,24 @@ import estaVitrina from "../services/estaVitrina";
 import { parseData } from "../utils/xmlParse";
 import axios from "axios";
 import MensajeInfo from "../component/MensajeInfo";
-import { setCity, setName } from "../store/slices/vitrina";
-export default function EstaVitrina() {
-  const dispatch = useDispatch();
-  const city = useSelector((state) => state.vitrinaReducer.city);
-  const name = useSelector((state) => state.vitrinaReducer.name);
-  const [infoTotalVitrina, setInfoTotalVitrina] = useState(null);
+import { setCity, setName, setCiudadesVitrinas } from "../store/slices/vitrina";
+import { useNavigate } from "react-router-dom";
 
-  const [updatedName, setUpdatedName] = useState("");
-  const [updatedCity, setUpdatedCity] = useState("");
+export default function EstaVitrina() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const name = useSelector((state) => state.vitrinaReducer.name);
+  const city = useSelector((state) => state.vitrinaReducer.city);
+  const ciudadesVitrinas = useSelector(
+    (state) => state.vitrinaReducer.ciudadesVitrinas,
+  );
+
+  const [updatedName, setUpdatedName] = useState(name);
+  const [updatedCity, setUpdatedCity] = useState(city);
+
+  const [infoTotalVitrina, setInfoTotalVitrina] = useState(null);
+  const [asesor, setAsesor] = useState(null);
 
   useEffect(() => {
     getInfoVitrina();
@@ -74,26 +83,17 @@ export default function EstaVitrina() {
       const xmlDoc = parseData(response.data);
       const infoVitrina = getInfoEstaVitrina(xmlDoc);
       setInfoTotalVitrina(infoVitrina);
+      console.log(getInfoEstaVitrina(xmlDoc));
       setUpdatedCity(infoVitrina.ciudadDeVitrina);
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
+      onSecondModalClose();
     }
   };
 
   const getInfoEstaVitrina = (xml) => {
     const estaVitrina = xml.querySelector("estaVitrina");
-    console.log(estaVitrina);
     const asesores = xml.querySelector("asesores");
     const totalAsesores = asesores.querySelectorAll("asesor");
     let asesoresArr = [];
@@ -122,13 +122,16 @@ export default function EstaVitrina() {
   };
 
   const updateVitrina = async (nombre, ciudad) => {
-    const params = new URLSearchParams();
-    params.append("nuevoNombre", `${nombre}`);
-    params.append("nuevaCiudad", `${ciudad}`);
+    console.log(ciudadesVitrinas);
+
+    const vitrinaUpdated = new URLSearchParams();
+    vitrinaUpdated.append("nuevoNombre", `${nombre}`);
+    vitrinaUpdated.append("nuevaCiudad", `${ciudad}`);
+
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina?nombre=${name}`,
-        params,
+        vitrinaUpdated,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -136,10 +139,58 @@ export default function EstaVitrina() {
         },
       );
       console.log(response.data);
-      if (response.data) {
-        dispatch(setCity(nombre));
-        dispatch(setName(ciudad));
-        //ToDo Actualizar inmediatamente la lista de vitrinas en el modal
+      if (response) {
+        console.log(response);
+        setUpdatedName(nombre);
+        setUpdatedCity(ciudad);
+        const copy = { ...ciudadesVitrinas };
+        console.log(name);
+        console.log(nombre);
+
+        const index = copy[city].findIndex((item) => item === name);
+        console.log(index);
+        if (index !== -1) {
+          copy[city] = [...copy[city].splice(index, 1, nombre)];
+        } else {
+          copy[city] = [...copy[city], nombre];
+        }
+        console.log(copy);
+
+        dispatch(setCiudadesVitrinas(copy));
+        dispatch(setCity(ciudad));
+        dispatch(setName(nombre));
+        alert("La vitrina se ha actualizado correctamente");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      onFirstModalClose();
+    }
+  };
+
+  const deleteVitrina = async (nombre) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina?nombre=${nombre}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      console.log(response);
+      if (response) {
+        //Eliminar vitrina de la lista de vitrinas
+        const copy = { ...ciudadesVitrinas };
+        const index = copy[city].findIndex((item) => item === name);
+        console.log(index);
+        if (index !== -1) {
+          copy[city] = copy[city].filter((item) => item != name);
+        }
+        console.log(copy);
+
+        dispatch(setCiudadesVitrinas(copy));
+        alert("Vitrina Eliminada, Serás redirigido a la pantalla de Inicio");
       }
     } catch (error) {
       if (error.response) {
@@ -154,7 +205,109 @@ export default function EstaVitrina() {
         console.error("Error en la solicitud:", error.message);
       }
     } finally {
-      onFirstModalClose();
+      onSecondModalClose();
+      navigate("/");
+    }
+  };
+
+  const createAsesor = async (newAsesor) => {
+    const nuevoAsesor = new URLSearchParams();
+    nuevoAsesor.append("nombre", `${newAsesor.nombre}`);
+    nuevoAsesor.append("usuarioApp", `${newAsesor.usuarioApp}`);
+    nuevoAsesor.append("claveApp", `${newAsesor.claveApp}`);
+    newAsesor?.vitrinas?.map((vitrina) => {
+      return nuevoAsesor.append("vitrinas", `${vitrina}`);
+    });
+    nuevoAsesor.append("habilitado", `${newAsesor.habilitado}`);
+    console.log(newAsesor);
+    console.log(nuevoAsesor);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores`,
+        nuevoAsesor,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      console.log(response.data);
+      if (response) {
+        const index = infoTotalVitrina?.asesores?.findIndex(
+          (item) => item.nombre === newAsesor.nombre,
+        );
+        if (index === -1) {
+          setInfoTotalVitrina((prev) => {
+            const copy = { ...prev };
+            copy["asesores"] = [
+              ...copy["asesores"],
+              {
+                nombre: newAsesor.nombre,
+                usuario: newAsesor.usuarioApp,
+                contraseña: newAsesor.claveApp,
+              },
+            ];
+            return copy;
+          });
+        }
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
+      onThirdModalClose();
+    }
+  };
+
+  const deleteAsesor = async (nombre) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${nombre}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      console.log(response);
+      if (response) {
+        setInfoTotalVitrina((prev) => {
+          const copy = { ...prev };
+          const index = copy?.asesores?.findIndex(
+            (item) => item.nombre === nombre,
+          );
+          console.log(index);
+          if (index !== -1) {
+            const result = copy?.asesores?.filter((item) => item.nombre != nombre);
+            copy.asesores = result;
+          }
+          return copy;
+        });
+        alert("Asesor Eliminado correctamente");
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error(
+          "Error en la respuesta del servidor:",
+          error.response.status,
+        );
+        console.error("Detalles:", error.response.data);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        console.error("Error en la solicitud:", error.message);
+      }
+    } finally {
     }
   };
 
@@ -177,9 +330,7 @@ export default function EstaVitrina() {
           alignItems={{ base: "flex-start", md: "center" }}
         >
           <Box display={"flex"} flexDirection={"column"} p={1}>
-            <Text textStyle={"RobotoBodyBold"}>
-              {infoTotalVitrina?.nombreDeVitrina}
-            </Text>
+            <Text textStyle={"RobotoBodyBold"}>{name}</Text>
             <Box
               display={"flex"}
               alignItems={"center"}
@@ -250,6 +401,10 @@ export default function EstaVitrina() {
               }
               colorText2={"red.100"}
               buttonText={"Continuar"}
+              funcConfirmar={() => {
+                console.log("Eliminar");
+                deleteVitrina(name);
+              }}
             />
           </Box>
         </Box>
@@ -270,6 +425,8 @@ export default function EstaVitrina() {
                 isSecondModalOpen={isFifthModalOpen}
                 onSecondModalOpen={onFifthModalOpen}
                 onSecondModalClose={onFifthModalClose}
+                Eliminar={deleteAsesor}
+                focusElem={asesor.nombre}
               />
             ))
           ) : (
@@ -293,9 +450,17 @@ export default function EstaVitrina() {
           isOpen={isThirdModalOpen}
           onOpen={onThirdModalOpen}
           onClose={onThirdModalClose}
+          asesor={asesor}
+          setAsesor={setAsesor}
+          addAsesor={createAsesor}
         />
       </Box>
-      <MensajeInfo mensaje={infoTotalVitrina?.mensaje} />
+
+      {infoTotalVitrina?.mensaje?.length > 0 ? (
+        <MensajeInfo mensaje={infoTotalVitrina?.mensaje} />
+      ) : (
+        <></>
+      )}
     </Box>
   );
 }

@@ -73,13 +73,14 @@ export default function Agregar({
                 </span>
                 {desc2}
               </Box>
+             
               <TextInput
                 w={"100%"}
                 type="text"
-                placeholder={""}
                 required
                 onChange={(val) => saveName(val)}
                 value={name}
+                placeholder={name ? name : "Agrega nombre"}
               />
 
               <Box display="flex" alignItems="center" w={"100%"}>

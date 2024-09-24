@@ -6,12 +6,10 @@ import ConfirmationMessage from "./ConfirmationMessage";
 import EditarAsesor from "./EditarAsesor";
 import WarningIcon from "../assets/images/WarningIcon";
 
-const newDate = new Date();
-
 export default function AsesorContainer({
-  asesor = "Juan Pérez",
-  email = "@juanperez",
-  password = "Alej4525urru",
+  asesor,
+  email,
+  password,
   isFirstModalOpen,
   onFirstModalOpen,
   onFirstModalClose,
@@ -20,6 +18,7 @@ export default function AsesorContainer({
   onSecondModalClose,
   Editar,
   Eliminar,
+  focusElem,
 }) {
   return (
     <Box
@@ -105,6 +104,8 @@ export default function AsesorContainer({
             }
             colorText2={"red.100"}
             buttonText={"Continuar"}
+            funcConfirmar={Eliminar}
+            focusRow={focusElem}
           />
         </Box>
         <Box

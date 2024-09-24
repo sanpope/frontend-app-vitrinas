@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Box,
   Text,
@@ -8,40 +8,94 @@ import {
   ModalHeader,
   ModalOverlay,
   Modal,
-  FormControl,
   FormLabel,
-  Select,
+  Select as ChakraSelect,
 } from "@chakra-ui/react";
+import { Select as ReactSelect } from "chakra-react-select";
 
 import TextInput from "../component/ui/textInput";
 import StandardButton from "../component/ui/buttons/standard";
 import { useSelector, useDispatch } from "react-redux";
 
-export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
-  const [name, setName] = useState(null);
-  const [vitrina, setVitrina] = useState(null);
-  const [user, setUser] = useState(null);
-  const [password, setPassword] = useState(null);
+export default function AgregarAsesor({
+  isOpen,
+  onOpen,
+  onClose,
+  asesor,
+  setAsesor,
+  addAsesor,
+}) {
+  const [name, setName] = useState("");
+  const [vitrinas, setVitrinas] = useState([]);
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [habilitado, setHabilitado] = useState("");
+  const [selectedVitrinas, setSelectedVitrinas] = useState([]);
 
-  const totalVitrinas = useSelector(
-    (state) => state.vitrinaReducer.listaDeVitrinas,
+  const ciudadesVitrinas = useSelector(
+    (state) => state.vitrinaReducer.ciudadesVitrinas,
   );
+
+  const totalVitrinas = Object.values(ciudadesVitrinas).flat();
+
+  const options = totalVitrinas.map((city) => ({
+    label: city,
+    value: city,
+  }));
 
   const saveName = (e) => {
     setName(e);
   };
-  const saveVitrina = (e) => {
-    setVitrina(e.target.value);
-  };
+
   const saveUser = (e) => {
-    setUser(e.target.value);
+    setUser(e);
   };
   const savePassword = (e) => {
-    setPassword(e.target.value);
+    setPassword(e);
   };
 
-  const EditarAsesor = (e) => {
-    e.preventDefault();
+  const saveHabilitado = (e) => {
+    setHabilitado(e);
+  };
+
+  const saveVitrinas = (selectedOptions) => {
+    let arrVit = [];
+    setSelectedVitrinas(() => {
+      selectedOptions.map((opt) => {
+        arrVit.push(opt.label);
+      });
+      return arrVit;
+    });
+  };
+
+  const handleOnClik = () => {
+    addAsesor({
+      nombre: name,
+      usuarioApp: user,
+      claveApp: password,
+      vitrinas: selectedVitrinas,
+      habilitado: habilitado,
+    });
+    setAsesor({
+      nombre: name,
+      usuarioApp: user,
+      claveApp: password,
+      vitrinas: selectedVitrinas,
+      habilitado: habilitado,
+    });
+  };
+
+  const checkFlieds = () => {
+    if (
+      name?.length > 0 &&
+      user?.length > 0 &&
+      password?.length > 0 &&
+      habilitado?.length > 0 &&
+      selectedVitrinas?.length
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -70,7 +124,7 @@ export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={(e) => EditarAsesor(e)} isRequired>
+            <Box w={"100%"}>
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -85,7 +139,7 @@ export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Ingrese el nombre del Asesor"
                 required
                 onChange={(e) => saveName(e)}
                 value={name}
@@ -102,11 +156,13 @@ export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
                 </span>
                 Vitrina
               </FormLabel>
-              <Select>
-                {totalVitrinas?.map((vit) => (
-                  <option>{vit}</option>
-                ))}
-              </Select>
+              <ReactSelect
+                options={options}
+                isMulti
+                closeMenuOnSelect={false}
+                placeholder="Selecciona las vitrinas"
+                onChange={saveVitrinas}
+              ></ReactSelect>
 
               <FormLabel display="flex" alignItems="center">
                 <span
@@ -122,7 +178,7 @@ export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Ingrese Usuario"
                 required
                 onChange={(e) => saveUser(e)}
                 value={user}
@@ -141,12 +197,31 @@ export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Ingrese contraseña"
                 required
                 onChange={(e) => savePassword(e)}
                 value={password}
               />
-            </FormControl>
+              <FormLabel display="flex" alignItems="center">
+                <span
+                  style={{
+                    color: "red",
+                    marginRight: "0.25rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  *
+                </span>
+                Habilitado
+              </FormLabel>
+              <ChakraSelect
+                value={habilitado}
+                onChange={(e) => saveHabilitado(e.target.value)}
+              >
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </ChakraSelect>
+            </Box>
           </Box>
         </ModalBody>
 
@@ -163,13 +238,16 @@ export default function AgregarAsesor({ isOpen, onOpen, onClose }) {
             Cancelar
           </StandardButton>
           <StandardButton
-            variant={"RED_PRIMARY"}
+            variant={checkFlieds() ? "RED_PRIMARY" : "DISABLED"}
             borderRadius="20px"
             py={"17px"}
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            type={"submit"}
+            type={"button"}
+            onClick={checkFlieds() ? handleOnClik : null}
+            disabled={checkFlieds() ? false : true}
+            cursor={checkFlieds() ? "pointer" : "not-allowed"}
           >
             Agregar
           </StandardButton>

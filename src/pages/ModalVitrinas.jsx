@@ -16,7 +16,7 @@ import {
 import LeftTriangleIcon from "../assets/images/LeftTriangleIcon";
 import StandardButton from "../component/ui/buttons/standard";
 import { useSelector, useDispatch } from "react-redux";
-import { setListaDeVitrinas, setCity, setName } from "../store/slices/vitrina";
+import { setCiudadesVitrinas, setCity, setName } from "../store/slices/vitrina";
 
 import Vitrina from "../component/Vitrina";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +40,9 @@ export default function ModalVitrinas({
   );
 
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
-  const [ciudadesVitrinas, setCiudadesVitrinas] = useState(null);
+  const ciudadesVitrinas = useSelector(
+    (state) => state.vitrinaReducer.ciudadesVitrinas,
+  );
   const [mensaje, setMensaje] = useState("");
 
   const {
@@ -64,7 +66,6 @@ export default function ModalVitrinas({
         },
       });
 
-      // Si el servidor responde con XML, puedes manejarlo aquí
       const data = response.data;
       // Parseamos el XML
       if (data) {
@@ -86,13 +87,8 @@ export default function ModalVitrinas({
     if (city in ciudadesVitrinas) {
       const index = ciudadesVitrinas[city].findIndex((item) => item === name);
       if (index !== -1) {
-        // Si el índice es diferente de -1, la vitrina ya existe
-        console.log("La vitrina ya existe");
         setMensaje("La vitrina ya existe en la ciudad seleccionada!");
       } else {
-        // Si el índice es -1, la vitrina no existe
-        console.log("Procede con la peticion");
-        // Hacer la petición y agregar la vitrina a la ciudad encontrada
         try {
           const response = await axios.post(url, formData, {
             headers: {
@@ -101,31 +97,13 @@ export default function ModalVitrinas({
           });
           console.log(response.data);
           if (response.data) {
-            setCiudadesVitrinas((prev) => {
-              const copy = { ...prev };
-              copy[city].push(name);
-              return copy;
-            });
+            const copy = { ...ciudadesVitrinas };
+            copy[city] = [...copy[city], name];
+            dispatch(setCiudadesVitrinas(copy));
             alert("Vitrina Agregada con Éxito");
           }
         } catch (error) {
-          if (error.response) {
-            console.error(
-              "Error en la respuesta del servidor:",
-              error.response.status,
-            );
-            console.error("Detalles:", error.response.data);
-            setMensaje(error.response.data);
-          } else if (error.request) {
-            console.error(
-              "No se recibió respuesta del servidor:",
-              error.request,
-            );
-            setMensaje(error.request);
-          } else {
-            console.error("Error en la solicitud:", error.message);
-            setMensaje(error.message);
-          }
+          console.log(error);
         } finally {
           setMensaje("");
           onSecondModalClose();
@@ -139,13 +117,10 @@ export default function ModalVitrinas({
             "Content-Type": "application/x-www-form-urlencoded",
           },
         });
-        console.log(response.data);
         if (response.data) {
-          setCiudadesVitrinas((prev) => {
-            const copy = { ...prev };
-            copy[city] = [name];
-            return copy;
-          });
+          const copy = { ...ciudadesVitrinas };
+          copy[city] = [name];
+          dispatch(setCiudadesVitrinas(copy));
           alert("Vitrina Agregada con Éxito");
         }
       } catch (error) {
@@ -191,7 +166,7 @@ export default function ModalVitrinas({
       })
       .then((response) => {
         const xmlDoc = parseData(response.data);
-        setCiudadesVitrinas(vitrinasData(xmlDoc));
+        dispatch(setCiudadesVitrinas(vitrinasData(xmlDoc)));
       })
       .catch((error) => {
         console.error("Error fetching the XML data: ", error);
