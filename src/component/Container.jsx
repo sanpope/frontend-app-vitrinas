@@ -10,7 +10,7 @@ export default function Container({
   lineHeight = "normal",
   width,
   children,
-  heightChildren, 
+  heightChildren,
   className,
   ...props
 }) {
@@ -38,7 +38,14 @@ export default function Container({
           </Text>
         ) : null}
       </Box>
-      <Box display="flex" flexGrow={1} height={heightChildren} width="100%" p={2}>
+      <Box
+        display="flex"
+        flexGrow={1}
+        height={heightChildren}
+        width="100%"
+        p={2}
+        h={"100%"}
+      >
         {children}
       </Box>
     </Box>

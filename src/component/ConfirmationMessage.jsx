@@ -27,11 +27,11 @@ export default function ConfirmationMessage({
   focusRow,
   isLoading,
 }) {
-
-  async function handleClick() {
+  const handleClick = async () => {
+    console.log(focusRow);
     await funcConfirmar(focusRow);
     onClose();
-  }
+  };
 
   return (
     <Box>
@@ -51,13 +51,16 @@ export default function ConfirmationMessage({
               gap={"10px"}
             >
               {icon}
-              <Text textStyle={"RobotoBodyBold"}>{text}</Text>
+              <Text textStyle={"RobotoBodyBold"} textAlign={"justify"}>
+                {text}
+              </Text>
             </Box>
             <Box>
               <Text
                 textStyle={"RobotoBody"}
                 color={colorText2}
-                textAlign={"center"}
+                textAlign={"justify"}
+                pt={2}
               >
                 {text2}
               </Text>

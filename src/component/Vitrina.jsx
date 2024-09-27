@@ -26,31 +26,34 @@ export default function Vitrina({ city, names, onClick }) {
       >
         <Text textStyle={"RobotoSubtitle"}>{city}</Text>
       </Box>
-      <Box
-        display={"flex"}
-        flexDir={"column"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        gap={"10px"}
-        p={"10px"}
-        h={"130px"}
-        overflowY={"scroll"}
-        overflowX="hidden"
-        className="scroll-wrapper"
-      >
-        {names.map((name, index) => {
-          return (
-            <Text
-              key={index}
-              textStyle={"RobotoRegular"}
-              _hover={{ color: "red" }}
-              transition="color 0.5s ease"
-              onClick={() => onClick(city, name)}
-            >
-              {name}
-            </Text>
-          );
-        })}
+      <Box p={2}>
+        <Box
+          w={"100%"}
+          display={"flex"}
+          flexDir={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          p={4}
+          h={"130px"}
+          overflowY={"scroll"}
+          className="scroll-wrapper"
+          mb={1}
+        >
+          {names.map((name, index) => {
+            return (
+              <Text
+                key={index}
+                textStyle={"RobotoRegular"}
+                _hover={{ color: "red" }}
+                transition="color 0.5s ease"
+                onClick={() => onClick(city, name)}
+                py={1}
+              >
+                {name}
+              </Text>
+            );
+          })}
+        </Box>
       </Box>
     </Box>
   );

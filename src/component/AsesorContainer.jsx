@@ -1,25 +1,26 @@
 import { Box, Text } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import TrashIcon from "../assets/images/TrashIcon";
 import EditIcon from "../assets/images/EditIcon";
-import ConfirmationMessage from "./ConfirmationMessage";
-import EditarAsesor from "./EditarAsesor";
-import WarningIcon from "../assets/images/WarningIcon";
 
 export default function AsesorContainer({
   asesor,
   email,
   password,
-  isFirstModalOpen,
-  onFirstModalOpen,
-  onFirstModalClose,
-  isSecondModalOpen,
-  onSecondModalOpen,
-  onSecondModalClose,
   Editar,
-  Eliminar,
-  focusElem,
+  openModal,
+  setDeleteAsesor,
 }) {
+
+  const handleEditButton = (asesorName)=>{
+
+  }
+
+  const handleDeleteButton = (asesorName) => {
+    openModal();
+    setDeleteAsesor(asesorName);
+  };
+
   return (
     <Box
       w={"100%"}
@@ -91,21 +92,7 @@ export default function AsesorContainer({
           <TrashIcon
             height={"20px"}
             width={"20px"}
-            onClick={onFirstModalOpen}
-          />
-          <ConfirmationMessage
-            isOpen={isFirstModalOpen}
-            onOpen={onFirstModalOpen}
-            onClose={onFirstModalClose}
-            icon={<WarningIcon />}
-            text={"¿Estás seguro que desea eliminar a este asesor?"}
-            text2={
-              "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-            }
-            colorText2={"red.100"}
-            buttonText={"Continuar"}
-            funcConfirmar={Eliminar}
-            focusRow={focusElem}
+            onClick={() => handleDeleteButton(asesor)}
           />
         </Box>
         <Box
@@ -114,16 +101,7 @@ export default function AsesorContainer({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <EditIcon
-            height={"20px"}
-            width={"20px"}
-            onClick={onSecondModalOpen}
-          />
-          <EditarAsesor
-            isOpen={isSecondModalOpen}
-            onOpen={onSecondModalOpen}
-            onClose={onSecondModalClose}
-          />
+          <EditIcon height={"20px"} width={"20px"} onClick={Editar} />
         </Box>
       </Box>
     </Box>

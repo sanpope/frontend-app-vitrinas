@@ -100,6 +100,23 @@ body {
   scrollbar-color: #888 transparent;
 }
 
+.scroll-hidden {
+  height: 100%;
+  width: calc(100% + 17px);
+  overflow-y: scroll;
+  margin-right: -17px;
+  padding-right: 17px;
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 .content-table {
   width: 100%;
   min-width: 900px;
@@ -125,8 +142,6 @@ body {
   width: 100%;
   min-height: 400px;
   overflow-y: auto;
-
-  /* height: 100%; */
 }
 
 .content-table th,

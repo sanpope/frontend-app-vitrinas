@@ -16,10 +16,11 @@ export default function TopCategoriaItem({
       justifyContent={justifyContent}
       alignItems={"center"}
       flex={"1 1 auto"}
+      maxH={"40px"}
     >
       <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
         {icon}
-        <Text textStyle={"RobotoBody"} px={2}>
+        <Text textStyle={"RobotoBody"} px={2} w={"95px"}>
           {catName}
         </Text>
       </Box>
@@ -27,15 +28,15 @@ export default function TopCategoriaItem({
         display={"flex"}
         justifyContent={"flex-end"}
         alignItems={"center"}
-        borderLeftWidth={"1px"}
-        borderLeftColor={"mainBg"}
         h={"80%"}
       >
         <Text
           textStyle={"RobotoBodyBold"}
           textAlign={"left"}
-          ml={2}
+          pl={2}
           minW={"30px"}
+          borderLeftWidth={"2px"}
+          borderLeftColor={"grey.placeholder"}
         >
           {catPercentage}%
         </Text>

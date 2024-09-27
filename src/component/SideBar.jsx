@@ -136,6 +136,7 @@ export default function SideBar({ setLoggedIn }) {
         flexDirection={"column"}
         p={{ base: "5px", md: "10px" }}
         gap="10px"
+        className="scroll-hidden"
       >
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box display={{ base: "flex", md: "none" }} mt={"10px"}>
@@ -181,7 +182,6 @@ export default function SideBar({ setLoggedIn }) {
                       route.label === "Vitrinas"
                         ? () => {
                             onFirstModalOpen();
-                            
                           }
                         : null
                     }

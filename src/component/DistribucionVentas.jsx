@@ -146,7 +146,11 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     },
   };
 
-  return <Bar data={chartData} options={options} />;
+  return (
+    <Box>
+      <Bar data={chartData} options={options} />
+    </Box>
+  );
 };
 
 export default DistribucionVentas;

@@ -11,7 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
 ChartJS.register(
   CategoryScale,
@@ -30,10 +30,26 @@ const titleTooltip = () => {
 const labelTooltip = (tooltipItem) => {
   const datasetIndex = tooltipItem.datasetIndex;
   const dataIndex = tooltipItem.dataIndex;
-  return `${tooltipItem.dataset.data[dataIndex]}K`;
+  const value = tooltipItem.dataset.data[dataIndex];
+
+  let formattedValue;
+
+  if (value >= 1000000) {
+    // Si es 1 millón o más, dividir por 1,000,000 y añadir 'M'
+    formattedValue = new Intl.NumberFormat().format(value ) + " M";
+  } else if (value >= 1000) {
+    // Si es 1 mil o más, dividir por 1,000 y añadir 'k'
+    formattedValue = new Intl.NumberFormat().format(value ) + " K";
+  } else {
+    // Si es menor que 1000, mostrar el valor tal cual con separadores
+    formattedValue = new Intl.NumberFormat().format(value);
+  }
+
+  return `${formattedValue}`;
 };
 
 const options = {
+  responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: {
@@ -67,19 +83,14 @@ const options = {
       ticks: {
         color: "black",
         beginAtZero: true,
-        min: 0,
-        max: 500000,
-        stepSize: 5000,
         maxTicksLimit: 3,
-        callback: (value) => {
-          if (value === 0) {
-            return "0k";
-          } else if (value > 0 && value <= 500000) {
-            return "5k";
-          } else if (value > 0 &&  value >= 1000000) {
-            return "10k";
+        callback: function (value, index, values) {
+          if (value >= 1000000) {
+            return (value / 1000000).toFixed(1) + "M";
+          } else if (value >= 1000) {
+            return (value / 1000).toFixed(1) + "k";
           } else {
-            return null; // No mostrar otras marcas
+            return value;
           }
         },
       },
@@ -96,19 +107,56 @@ const options = {
   },
 };
 
+let arrVentasMesAnterior;
+const mesesAbreviados = [
+  "Ene",
+  "Feb",
+  "Mar",
+  "Abr",
+  "May",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dic",
+];
+
 const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
+  arrVentasMesAnterior = VentasMesAnterior?.map((d) => {
+    return Number(d?.valor).toLocaleString("es-ES");
+  });
+  const fechaActual = new Date();
+  const mesActual = fechaActual.getMonth();
+  const curretYear = fechaActual.getFullYear();
+  let lastYear = false;
+  const monthLabels = VentasMesAnterior?.map((d) => {
+    let month = mesesAbreviados[Number(d.mes) - 1];
+    if (d.mes === "12") {
+      lastYear = true;
+    }
+    if (lastYear) {
+      let LastYear = (curretYear - 1).toString().slice(-2);
+      month += `-${LastYear}`;
+    }
+    return month;
+  });
+
+ 
+
   const chartData = {
-    labels: VentasMesAnterior?.map((d) => d.mes).sort(function (a, b) {
-      return a - b;
-    }),
+    labels: monthLabels,
     datasets: [
       {
-        data: VentasMesAnterior?.map((d) => d.valor),
+        data: VentasMesAnterior?.map((d) => {
+          return d?.valor;
+        }),
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: VentasMesAnterior?.map((_, index) =>
-          index === VentasMesAnterior.length - 1 ? "#FF0000" : "#000000",
+        pointBackgroundColor: VentasMesAnterior?.map((d) =>
+          d.mes === mesActual.toString() ? "#FF0000" : "#000000",
         ),
         pointRadius: 6,
         pointBorderWidth: 2,
@@ -119,13 +167,13 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
   };
 
   return (
-    <>
+    <Box position={"relative"} height={"95%"} mb={2}>
       {VentasMesAnterior != null ? (
         <Line data={chartData} options={options} />
       ) : (
         <Text>No existen ventas registradas en los meses anteriores</Text>
       )}
-    </>
+    </Box>
   );
 };
 

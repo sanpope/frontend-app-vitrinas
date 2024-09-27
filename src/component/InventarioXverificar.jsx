@@ -4,7 +4,6 @@ import React from "react";
 export default function InventarioXverificar({ visitasNoVerificadas }) {
   return (
     <>
-      {" "}
       {visitasNoVerificadas != null ? (
         <Box
           w={"100%"}
@@ -119,9 +118,9 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
                   justifyContent={"center"}
                   alignItems={"flex-start"}
                 >
-                  <Text textStyle={"RobotoBodyBold"}>{visita.asesor}</Text>
+                  <Text textStyle={"RobotoBodyBold"}>{visita.vitrina}</Text>
                   <Text textStyle={"RobotoRegular"} color={"grey.placeholder"}>
-                    {visita.vitrina}
+                    {visita.asesor}
                   </Text>
                 </Box>
                 <Box

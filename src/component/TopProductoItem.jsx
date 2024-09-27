@@ -8,6 +8,7 @@ export default function TopProductoItem({ prodName, prodPercentage }) {
       flexDirection={{ base: "column", sm: "row" }}
       justifyContent={"space-between"}
       alignItems={"center"}
+      py={2}
     >
       <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
         <Text textStyle={"RobotoBody"}>{prodName}</Text>
@@ -19,10 +20,10 @@ export default function TopProductoItem({ prodName, prodPercentage }) {
         borderLeftColor={"mainBg"}
       >
         <Text
-          minW={"4.40rem"}
+          w={"30px"}
           textStyle={"RobotoBodyBold"}
-          textAlign={"left"}
-          ml={2}
+          textAlign={"rigth"}
+          ml={1}
         >
           {prodPercentage}%
         </Text>

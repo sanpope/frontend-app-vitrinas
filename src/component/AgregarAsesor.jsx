@@ -26,12 +26,10 @@ export default function AgregarAsesor({
   addAsesor,
 }) {
   const [name, setName] = useState("");
-  const [vitrinas, setVitrinas] = useState([]);
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [habilitado, setHabilitado] = useState("");
   const [selectedVitrinas, setSelectedVitrinas] = useState([]);
-
   const ciudadesVitrinas = useSelector(
     (state) => state.vitrinaReducer.ciudadesVitrinas,
   );

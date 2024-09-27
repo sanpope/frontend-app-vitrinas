@@ -10,25 +10,38 @@ import {
   Modal,
   FormControl,
   FormLabel,
+  Select as ChakraSelect,
 } from "@chakra-ui/react";
+import { Select as ReactSelect } from "chakra-react-select";
+import { useSelector, useDispatch } from "react-redux";
 
 import TextInput from "../component/ui/textInput";
 import StandardButton from "../component/ui/buttons/standard";
 
 export default function EditarAsesor({ isOpen, onOpen, onClose }) {
-  const [name, setName] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newUser, setNewUser] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [selectedVitrinas, setSelectedVitrinas] = useState([]);
+  const ciudadesVitrinas = useSelector(
+    (state) => state.vitrinaReducer.ciudadesVitrinas,
+  );
 
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
+  const totalVitrinas = Object.values(ciudadesVitrinas).flat();
+
+  const options = totalVitrinas.map((city) => ({
+    label: city,
+    value: city,
+  }));
 
   const saveName = (e) => {
-    setName(e);
+    setNewName(e);
   };
   const saveUser = (e) => {
-    setUser(e.target.value);
+    setNewUser(e.target.value);
   };
   const savePassword = (e) => {
-    setPassword(e.target.value);
+    setNewPassword(e.target.value);
   };
 
   const EditarAsesor = (e) => {
@@ -61,7 +74,7 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={(e) => EditarAsesor(e)}>
+            <Box w={"100%"}>
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -79,7 +92,7 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
                 placeholder="example"
                 required
                 onChange={(e) => saveName(e)}
-                value={name}
+                value={newName}
               />
 
               <FormLabel display="flex" alignItems="center">
@@ -99,7 +112,7 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
                 placeholder="example"
                 required
                 onChange={(e) => saveUser(e)}
-                value={user}
+                value={newUser}
               />
               <FormLabel display="flex" alignItems="center">
                 <span
@@ -118,9 +131,9 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
                 placeholder="example"
                 required
                 onChange={(e) => savePassword(e)}
-                value={password}
+                value={newPassword}
               />
-            </FormControl>
+            </Box>
           </Box>
         </ModalBody>
 

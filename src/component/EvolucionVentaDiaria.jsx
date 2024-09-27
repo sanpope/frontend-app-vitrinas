@@ -107,8 +107,6 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
       }}
     >
       <Box minWidth="600px">
-        {" "}
-        {/* Ajusta este valor según lo necesites */}
         <Line data={data} options={options} />
       </Box>
     </Box>

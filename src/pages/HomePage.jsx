@@ -76,7 +76,7 @@ export default function HomePage() {
       })
       .then((response) => {
         // Parseamos el XML
-        
+
         const xmlDoc = parseData(response.data);
 
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
@@ -384,7 +384,7 @@ export default function HomePage() {
           title={"Venta en meses anteriores"}
           icon={<ReceiptIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
-            <Box w={"100%"} h={"100%"}>
+            <Box w={"100%"} h={"auto"}>
               <VentasMesesAnteriores
                 VentasMesAnterior={
                   ventasMesesAnteriores != null ? ventasMesesAnteriores : null
@@ -430,7 +430,7 @@ export default function HomePage() {
               <OrderedList
                 display={"flex"}
                 flexDirection={"column"}
-                justifyContent={"space-around"}
+                justifyContent={"center"}
                 pl={"2rem"}
                 gap={"0.300rem"}
                 width="100%"
@@ -462,7 +462,7 @@ export default function HomePage() {
           children={
             <>
               {topTotalCategorias != null ? (
-                <Box h={"100%"} display={"flex"} flexWrap={"wrap"} gap={"1rem"}>
+                <Box h={"100%"} display={"flex"} flexWrap={"wrap"} gap={1}>
                   {topTotalCategorias?.map((cat, index) => (
                     <TopCategoriaItem
                       key={index}
@@ -498,8 +498,8 @@ export default function HomePage() {
                   flexDirection={"column"}
                   maxH={"160px"}
                   overflowY={"scroll"}
-                  width="100%"
-                  className="scroll-wrapper "
+                  w={"100%"}
+                  className="scroll-wrapper"
                 >
                   {topTotalProductos?.map((prod, index) => (
                     <TopProductoItem
@@ -548,11 +548,13 @@ export default function HomePage() {
           title={"Inventario pendiente de verificar"}
           icon={<FileCheckIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
-            <InventarioXverificar
-              visitasNoVerificadas={
-                totalVisitasNoVerif ? totalVisitasNoVerif : null
-              }
-            />
+            <Box w={"100%"}>
+              <InventarioXverificar
+                visitasNoVerificadas={
+                  totalVisitasNoVerif ? totalVisitasNoVerif : null
+                }
+              />
+            </Box>
           }
         />
       </Box>

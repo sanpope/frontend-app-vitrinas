@@ -52,7 +52,7 @@ export default function Resumen() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
 
-  const [inactividad, setInactividad] = useState("");
+  const [inactividad, setInactividad] = useState(null);
   const [prodslUltimasVentas, setProdsUltimasVentas] = useState(null);
   const [totalVentasDia, setTotalVentasDia] = useState(null);
   const [estadoDelDispositivo, setEtadoDelDispositivo] = useState(null);
@@ -142,6 +142,7 @@ export default function Resumen() {
     let porcentajeDeCrecimiento =
       ventasDelDia.getElementsByTagName("porcentajeDeCrecimiento")[0]
         .textContent / 100;
+
     return { cantidad, porcentajeDeCrecimiento };
   };
 
@@ -161,7 +162,6 @@ export default function Resumen() {
     let valor = formatearNumero(
       ventasDelMes.getElementsByTagName("valor")[0].textContent,
     );
-
     return { valor, porcentajeDeCrecimiento };
   };
 
@@ -362,7 +362,7 @@ export default function Resumen() {
               alignItems={"center"}
             >
               <Text textStyle={"RobotoeBannerBold"} color={"black"}>
-                {inactividad != null ? inactividad : 0} Hrs.
+                {inactividad != null ? Math.ceil(inactividad) : 0} Hrs.
               </Text>
             </Box>
           }
@@ -405,8 +405,15 @@ export default function Resumen() {
                 </Text>
               </Box>
 
-              <Text textStyle={"RobotoSubSmall"} color={"#00BC4F"}>
-                +{totalVentasDia?.porcentajeDeCrecimiento}% por encima del
+              <Text
+                textStyle={"RobotoSubSmall"}
+                color={
+                  totalVentasDia?.porcentajeDeCrecimiento > 0
+                    ? "#00BC4F"
+                    : "red"
+                }
+              >
+                {totalVentasDia?.porcentajeDeCrecimiento}% por encima del
                 promedio
               </Text>
             </Box>
@@ -424,7 +431,10 @@ export default function Resumen() {
           flexDir={"column"}
           justifyContent={"space-between"}
         >
-          <MobileIcon width={"40px"} fill={"#00BC4F"} />
+          <MobileIcon
+            width={"40px"}
+            fill={estadoDelDispositivo === "Ok" ? "#00BC4F" : "red"}
+          />
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
           <Box display={"flex"} justifyContent={"flex-start"}>
             {estadoDelDispositivo === "Ok" ? (
@@ -457,14 +467,20 @@ export default function Resumen() {
 
               <Text
                 textStyle={"RobotoSubSmall"}
-                color={"success.30"}
+                color={
+                  totalVentasMes?.porcentajeDeCrecimiento > 0
+                    ? "success.30"
+                    : "red"
+                }
                 display={
-                  totalVentasDia?.porcentajeDeCrecimiento !== null
+                  totalVentasMes?.porcentajeDeCrecimiento !== null
                     ? "flex"
                     : "none"
                 }
               >
-                +{totalVentasMes?.porcentajeDeCrecimiento}% por encima del
+                {" "}
+                {totalVentasMes?.porcentajeDeCrecimiento > 0 ? "+" : "-"}
+                {totalVentasMes?.porcentajeDeCrecimiento}% por encima del
                 promedio
               </Text>
             </Box>
@@ -517,7 +533,12 @@ export default function Resumen() {
           title={"Evolución de venta diaria"}
           icon={<BadgeDollarIcon />}
           children={
-            <Box w={"600px"} overflowX={"scroll"} h={"100%"}>
+            <Box
+              w={"600px"}
+              overflowX={"scroll "}
+              h={"100%"}
+              className="scroll-hidden"
+            >
               <EvolucionVentaDiaria evolucionVentaDiaria={intervaloDelDia} />
             </Box>
           }
@@ -556,7 +577,7 @@ export default function Resumen() {
           title={"Distribución diaria de ventas"}
           icon={<ShippingTimed />}
           children={
-            <Box h={"100%"} display={"flex"} justifyContent={"center"}>
+            <Box display={"flex"} justifyContent={"center"}>
               <DistribucionVentas
                 distribucionVentas={
                   totalDistribucionVentaDiaria
