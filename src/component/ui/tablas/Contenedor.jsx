@@ -1,25 +1,20 @@
 import { Box } from "@chakra-ui/react";
 
-export default function Contenedor({ maxHeight = "600px", children }) {
+export default function Contenedor({ height, children }) {
   return (
     <Box
       position="relative"
-      width="100%"
       display="flex"
       flexDir="column"
-      flexGrow={1}
+      flex={1}
+      height={height}
+      overflow="auto"
+      borderTopLeftRadius={{ base: "0px", md: "20px" }}
+      borderTopRightRadius={{ base: "0px", md: "20px" }}
     >
-      <Box
-        overflowY={"auto"}
-        height="100%"
-        maxHeight={maxHeight}
-        borderTopLeftRadius={{ base: "0px", md: "20px" }}
-        borderTopRightRadius={{ base: "0px", md: "20px" }}
-      >
-        <table className="content-table" style={{ height: "100%" }}>
-          {children}
-        </table>
-      </Box>
+      <table className="content-table" style={{ height: "100%" }}>
+        {children}
+      </table>
     </Box>
   );
 }

@@ -26,14 +26,11 @@ export default function Header() {
     <Box
       bg={"white"}
       height={HEADER_HEIGHT + "px"}
-      flexGrow={1}
-      display={"flex"}
-      alignItems={"center"}
-      justifyContent={"space-between"}
+      display={"block"}
       p={"10px"}
-      flexWrap={{ base: "wrap", md: "nowrap" }}
+      position="relative"
     >
-      <Box display={"inline-flex"} alignItems="center">
+      <Box display="inline-block">
         <BarsMain
           fill={"black"}
           width={"30px"}
@@ -43,22 +40,24 @@ export default function Header() {
       </Box>
       <Box
         display="flex"
+        position="absolute"
+        right={"10px"}
+        top={"50%"}
+        transform="translateY(-50%)"
         alignItems="center"
         justifyContent="flex-end"
         gap={"15px"}
-        flex="1"
-        minW="0"
       >
         <UserIcon
           fill={colors.black}
           width={"17px"}
           height={"17px"}
-          onClick={() => goToProfile()}
+          onClick={goToProfile}
         />
         <Text
           textStyle={"RobotoSubtitle"}
           cursor={"pointer"}
-          onClick={() => goToProfile()}
+          onClick={goToProfile}
         >
           {name}
         </Text>

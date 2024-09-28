@@ -199,14 +199,7 @@ export default function Inventario() {
   const handleProdClick = async (index, articulo) => {};
 
   return (
-    <Box
-      bg={"mainBg"}
-      height={"100%"}
-      display={"flex"}
-      flexDir={"column"}
-      gap={1}
-      p={"1.25rem"}
-    >
+    <Box bg={"mainBg"} p={"1.25rem"} h="calc(100vh - 50px)">
       <Text textStyle={"RobotoBody"}>
         {name} - {city}
       </Text>
@@ -278,7 +271,16 @@ export default function Inventario() {
         </Box>
       </Box>
 
-      <Box display={"flex"} flexDirection={"column"} w={"100%"} flexGrow={1}>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        w={"100%"}
+        h={{
+          base: "calc(100% - 50px - 175px)",
+          lg: "calc(100% - 50px - 130px)",
+        }}
+        mb="8px"
+      >
         {
           <TablaInventario
             displayedArticulos={displayedArticulos}

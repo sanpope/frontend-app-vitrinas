@@ -1,9 +1,8 @@
 import { Box, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import React from "react";
 
-export default function Name({
+export default function Note({
   width = "100%",
-  pl = "10px",
   text1,
   text2,
   arr,
@@ -17,8 +16,7 @@ export default function Name({
       borderWidth={1}
       borderColor={"#FFE58F"}
       bg={"#FFFBE6"}
-      pl={pl}
-      py="0.25rem"
+      p="10px"
     >
       {arr != null && <Text>{text1}</Text>}
       {arr != null ? (

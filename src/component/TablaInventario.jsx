@@ -34,12 +34,12 @@ export default function TablaInventario({
   getMasArticulos,
   setArticulo,
 }) {
-  const [active, setActive] = useState(0);
+
   return (
-    <>
+    <Box h="100%">
       {displayedArticulos != null ? (
         <>
-          <Contenedor maxHeight={"470px"}>
+          <Contenedor height="calc(100% - 60px)">
             <thead className="">
               <tr className="">
                 {HEADERS?.map((name, index) => (
@@ -50,7 +50,7 @@ export default function TablaInventario({
               </tr>
             </thead>
 
-            <tbody className="">
+            <tbody>
               {displayedArticulos?.map((articulo, index) => {
                 return (
                   <tr key={index} className="" style={{ cursor: "pointer" }}>
@@ -89,6 +89,6 @@ export default function TablaInventario({
       ) : (
         <Text>No se encontraron productos</Text>
       )}
-    </>
+    </Box>
   );
 }
