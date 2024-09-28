@@ -141,7 +141,7 @@ export default function Despachar({
   const despacharProdcs = async () => {
     const xmlData = generateProductsListXML(activeProdcs).toString();
     setLoading(true);
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}`;
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/despacho?vitrina=${vitrina}`;
     fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/xml" },
@@ -150,6 +150,7 @@ export default function Despachar({
       .then((response) => {
         console.log(response);
         setLoading(false);
+        onClose();
       })
       .then((data) => console.log(data))
       .catch((error) => {
@@ -225,7 +226,7 @@ export default function Despachar({
                     color={"grey.placeholder"}
                     p={1}
                   >
-                    Hacia
+                    Hacia:
                   </Text>
                   <Text
                     textStyle={"RobotoSubtitleRegular"}
@@ -323,21 +324,27 @@ export default function Despachar({
                   <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
                     Productos a despachar
                   </Text>
-                  <Box
-                    alignSelf={"flex-end"}
-                    mr={"14%"}
-                    display={"flex"}
-                    w={"50%"}
-                    alignItems={"center"}
-                    justifyContent={"space-around"}
-                  >
-                    <Text textStyle={"RobotoBody"} py={"10px"}>
-                      Stock
-                    </Text>
-                    <Text textStyle={"RobotoBody"} py={"10px"}>
-                      Cantidad
-                    </Text>
-                  </Box>
+                  {activeProdcs?.length > 0 ? (
+                    <Box
+                      alignSelf={"flex-end"}
+                      mr={"12%"}
+                      display={"flex"}
+                      w={"50%"}
+                      alignItems={"center"}
+                      justifyContent={"space-around"}
+                    >
+                      <Text textStyle={"RobotoBody"} py={"10px"}>
+                        Stock
+                      </Text>
+                      <Text textStyle={"RobotoBody"} py={"10px"}>
+                        Cantidad
+                      </Text>
+                    </Box>
+                  ) : (
+                    <Box>
+                      <Text>Porfavor seleccione los productos a Despachar</Text>
+                    </Box>
+                  )}
                   <FormLabel
                     display="flex"
                     alignItems="center"
@@ -389,7 +396,7 @@ export default function Despachar({
                           <ListItem key={index}>
                             <Product
                               productName={product.nombre}
-                              stock={product.stockMax}
+                              existencias={product.existencia}
                               producto={product}
                               setProdCantidad={(val) =>
                                 setProdCantidad(val, product)
@@ -419,15 +426,15 @@ export default function Despachar({
               Cancelar
             </StandardButton>
             <StandardButton
-              variant={"RED_PRIMARY"}
+              variant={activeProdcs?.length > 0 ? "RED_PRIMARY" : "DISABLED"}
               borderRadius="20px"
               py={"17px"}
               w={"150px"}
               fontSize="14px"
               fontWeight="400"
               onClick={onConfirmationModalOpen}
-              disabled={true}
-              _disabled={"mainBg"}
+              disabled={activeProdcs?.length > 0 ? false : true}
+              cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
             >
               Enviar
             </StandardButton>

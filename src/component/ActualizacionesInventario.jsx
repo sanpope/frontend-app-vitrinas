@@ -17,8 +17,6 @@ export default function ActualizacionesInventario({
 
   return (
     <Box
-      w={"100%"}
-      h={"100%"}
       display={"flex"}
       flexDirection={"column"}
       justifyContent={"space-between"}
@@ -30,21 +28,20 @@ export default function ActualizacionesInventario({
         justifyContent={"space-between"}
         alignItems={"center"}
         borderBottomWidth={1}
-        pb={1}
       >
         <Text
+          px={1}
           color="grey.placeholder"
           textStyle={"RobotoBodyBold"}
-          flexGrow={1}
           textAlign={"center"}
         >
           Visita
         </Text>
 
         <Text
+          px={1}
           color="grey.placeholder"
           textStyle={"RobotoBody"}
-          flexGrow={2}
           borderRightWidth={"2px"}
           borderRightColor={"grey.placeholder"}
           borderLeftWidth={"2px"}
@@ -55,9 +52,9 @@ export default function ActualizacionesInventario({
         </Text>
 
         <Text
+          px={1}
           color="grey.placeholder"
           textStyle={"RobotoBody"}
-          flexGrow={1}
           textAlign={"center"}
         >
           {currentItem?.hora}
@@ -66,10 +63,11 @@ export default function ActualizacionesInventario({
       <Box
         w={"100%"}
         display={"flex"}
-        flexGrow={1}
         flexDirection={"column"}
         justifyContent={"center"}
         alignItems={"flex-start"}
+        p={1}
+        gap={1}
       >
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box
@@ -77,7 +75,7 @@ export default function ActualizacionesInventario({
             w={3}
             h={3}
             borderRadius="full"
-            mr={"10px"}
+            mr={1}
             display={"inline-flex"}
           ></Box>
           <Text textStyle={"RobotoBody"}>Ingresos</Text>
@@ -91,7 +89,7 @@ export default function ActualizacionesInventario({
             w={3}
             h={3}
             borderRadius="full"
-            mr={"10px"}
+            mr={1}
             display={"inline-flex"}
           ></Box>
           <Text textStyle={"RobotoBody"}>Retiros</Text>
@@ -105,7 +103,7 @@ export default function ActualizacionesInventario({
             w={3}
             h={3}
             borderRadius="full"
-            mr={"10px"}
+            mr={1}
             display={"inline-flex"}
           ></Box>
           <Text textStyle={"RobotoBody"}>Correcciones </Text>
@@ -116,12 +114,7 @@ export default function ActualizacionesInventario({
         </Box>
       </Box>
 
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"flex-end"}
-        alignItems={"center"}
-      >
+      <Box position={"absolute"} bottom={1} right={1} display={"flex"} justifyContent={"flex-end"} alignItems={"center"}>
         <SmallPagination
           currentPage={currentPage}
           totalPages={totalPages}

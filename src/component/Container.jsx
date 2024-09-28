@@ -16,6 +16,7 @@ export default function Container({
 }) {
   return (
     <Box
+    position={"relative"}
       bg={bg}
       borderRadius={"20px"}
       p={3}
@@ -24,6 +25,7 @@ export default function Container({
       width={width}
       className={className}
       {...props}
+
     >
       <Box display="flex" alignItems={"flex-start"} columnGap="6px">
         {icon}
@@ -38,14 +40,7 @@ export default function Container({
           </Text>
         ) : null}
       </Box>
-      <Box
-        display="flex"
-        flexGrow={1}
-        height={heightChildren}
-        width="100%"
-        p={2}
-        h={"100%"}
-      >
+      <Box display="flex" flexGrow={1} height={heightChildren} w={"100%"} p={1}>
         {children}
       </Box>
     </Box>

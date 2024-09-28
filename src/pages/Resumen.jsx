@@ -495,7 +495,7 @@ export default function Resumen() {
           title={"Ventas meses anteriores"}
           icon={<CashRegisterIcon />}
           children={
-            <Box w={"100%"} h={"100%"} flexGrow={1} flexShrink={1}>
+            <Box w={"100%"} h={"100%"}>
               <ResumenVentaMesAnterior
                 resumenVentaMesAnterior={
                   totalMesesAnteriores ? totalMesesAnteriores : []
@@ -516,11 +516,13 @@ export default function Resumen() {
           withLineBreaks={true}
           alignItems={"flex-start"}
           children={
-            <ActualizacionesInventario
-              actualizacionesInventarioNV={
-                actualizacionesInvNoRev ? actualizacionesInvNoRev : []
-              }
-            />
+            <Box p={0}>
+              <ActualizacionesInventario
+                actualizacionesInventarioNV={
+                  actualizacionesInvNoRev ? actualizacionesInvNoRev : []
+                }
+              />
+            </Box>
           }
         />
         <Container

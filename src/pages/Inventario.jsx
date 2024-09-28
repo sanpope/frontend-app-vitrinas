@@ -169,6 +169,7 @@ export default function Inventario() {
           proveedor,
         });
       }
+      console.log(totalProdsArr);
       return totalProdsArr;
     } else {
       return null;
@@ -203,89 +204,80 @@ export default function Inventario() {
       height={"100%"}
       display={"flex"}
       flexDir={"column"}
-      gap={"1.25rem"}
+      gap={1}
       p={"1.25rem"}
     >
-      <Box display={"flex"} flexDir={"column"} gap={"10px"}>
-        <Text textStyle={"RobotoBody"}>
-          {name} - {city}
-        </Text>
+      <Text textStyle={"RobotoBody"}>
+        {name} - {city}
+      </Text>
+      <Text textStyle={"RobotoTitleBold"}>Inventario</Text>
+
+      <Box
+        display={"flex"}
+        flexDirection={{ base: "column-reverse", lg: "row" }}
+        justifyContent={{ base: "flex-start", lg: "space-between" }}
+        alignItems={{ base: "flex-start", lg: "center" }}
+        gap={2}
+        mb={2}
+      >
+        <TextInput
+          w={{ base: "100%", md: "450px" }}
+          placeholder={"Buscar"}
+          leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
+          onChange={(e) => onBuscarChange(e)}
+          value={busqueda}
+        />
+
         <Box
-          w={"100%"}
-          display={"flex"}
-          flexDirection={{ base: "column", md: "row" }}
-          justifyContent={{ base: "flex-start", md: "space-between" }}
-          alignItems={{ base: "flex-start", md: "center" }}
-          flexWrap="wrap"
-        >
-          <Text textStyle={"RobotoTitleBold"}>Inventario</Text>
-          <Box
-            display={"flex"}
-            flexDirection={{ base: "column", sm: "row" }}
-            justifyContent={"center"}
-            alignItems={"center"}
-            gap={{ base: "5px", md: "10px" }}
-            mt={{ base: "10px", md: "0" }}
-          >
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={"150px"}
-              fontSize="14px"
-              fontWeight="400"
-              onClick={onFirstModalOpen}
-            >
-              Despachar
-            </StandardButton>
-            {isFirstModalOpen && (
-              <Despachar
-                isOpen={isFirstModalOpen}
-                onOpen={onFirstModalOpen}
-                onClose={onFirstModalClose}
-                vitrina={name}
-                productsList={tablaInventario}
-              />
-            )}
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={"150px"}
-              fontSize="14px"
-              fontWeight="400"
-              onClick={onSecondModalOpen}
-            >
-              Transferir
-            </StandardButton>
-            {isSecondModalOpen && (
-              <Transferir
-                isOpen={isSecondModalOpen}
-                onOpen={onSecondModalOpen}
-                onClose={onSecondModalClose}
-                vitrina={name}
-                productsList={tablaInventario}
-              />
-            )}
-          </Box>
-        </Box>
-        <Box
-          w={"100%"}
           display={"flex"}
           flexDirection={{ base: "column", sm: "row" }}
-          justifyContent={"flex-start"}
+          justifyContent={"center"}
           alignItems={"center"}
-          gap={"1rem"}
+          gap={{ base: "5px", md: "10px" }}
         >
-          <TextInput
-            maxW={"250px"}
-            placeholder={"Buscar"}
-            leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
-            onChange={(e) => onBuscarChange(e)}
-            value={busqueda}
-          />
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={"150px"}
+            fontSize="14px"
+            fontWeight="400"
+            onClick={onFirstModalOpen}
+          >
+            Despachar
+          </StandardButton>
+          {isFirstModalOpen && (
+            <Despachar
+              isOpen={isFirstModalOpen}
+              onOpen={onFirstModalOpen}
+              onClose={onFirstModalClose}
+              vitrina={name}
+              productsList={tablaInventario}
+            />
+          )}
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={"150px"}
+            fontSize="14px"
+            fontWeight="400"
+            onClick={onSecondModalOpen}
+          >
+            Transferir
+          </StandardButton>
+          {isSecondModalOpen && (
+            <Transferir
+              isOpen={isSecondModalOpen}
+              onOpen={onSecondModalOpen}
+              onClose={onSecondModalClose}
+              vitrina={name}
+              productsList={tablaInventario}
+            />
+          )}
         </Box>
       </Box>
+
       <Box display={"flex"} flexDirection={"column"} w={"100%"} flexGrow={1}>
         {
           <TablaInventario

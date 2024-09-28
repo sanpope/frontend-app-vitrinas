@@ -9,7 +9,7 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
   const isDisabledRight = currentPage === totalPages;
 
   return (
-    <Box display="flex" alignItems="center" m={1}>
+    <Box display="flex" alignItems="center">
       <StandardButton
         variant={"BORDERLESS"}
         isDisabled={isDisabledLeft}

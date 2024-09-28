@@ -16,7 +16,7 @@ import CloseIcon from "../assets/images/CloseIcon";
 
 export default function Product({
   productName,
-  stock,
+  existencias,
   setProdCantidad,
   deleteProduct,
   producto,
@@ -25,12 +25,12 @@ export default function Product({
   const [value, setValue] = useState(null);
 
   const handleOnChange = (e) => {
-    if (e > 0 && e <= stock) {
+    if (e > 0 && e <= existencias) {
       setValue(e);
       setMessage("");
       setProdCantidad(e);
-    } else if (e > stock) {
-      setMessage("La cantidad no puede superar el stock.");
+    } else if (e > existencias) {
+      setMessage("La cantidad no puede superar la existencia.");
     }
   };
 
@@ -62,13 +62,13 @@ export default function Product({
           bg={"mainBg"}
           cursor={"not-allowed"}
         >
-          {stock}
+          {existencias}
         </Center>
 
         <NumberInput
           defaultValue={0}
           min={1}
-          max={stock}
+          max={existencias}
           step={1}
           size="sm"
           maxW={"60px"}

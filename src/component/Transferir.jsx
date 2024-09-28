@@ -269,7 +269,7 @@ export default function Transferir({
                   color={"grey.placeholder"}
                   p={1}
                 >
-                  Hacia
+                  Hacia:
                 </Text>
                 <Text
                   textStyle={"RobotoSubtitleRegular"}
@@ -361,21 +361,27 @@ export default function Transferir({
                 <Text textStyle={"RobotoSubtitleBold"} p={"10px"}>
                   Productos a transferir
                 </Text>
-                <Box
-                  alignSelf={"flex-end"}
-                  mr={"14%"}
-                  display={"flex"}
-                  w={"50%"}
-                  alignItems={"center"}
-                  justifyContent={"space-around"}
-                >
-                  <Text textStyle={"RobotoBody"} py={"10px"}>
-                    Stock
-                  </Text>
-                  <Text textStyle={"RobotoBody"} py={"10px"}>
-                    Cantidad
-                  </Text>
-                </Box>
+                {activeProdcs?.length > 0 ? (
+                  <Box
+                    alignSelf={"flex-end"}
+                    mr={"12%"}
+                    display={"flex"}
+                    w={"50%"}
+                    alignItems={"center"}
+                    justifyContent={"space-around"}
+                  >
+                    <Text textStyle={"RobotoBody"} py={"10px"}>
+                      Stock
+                    </Text>
+                    <Text textStyle={"RobotoBody"} py={"10px"}>
+                      Cantidad
+                    </Text>
+                  </Box>
+                ) : (
+                  <Box p={2}>
+                    <Text>Porfavor seleccione los productos a Transferir</Text>
+                  </Box>
+                )}
                 <FormLabel
                   display="flex"
                   alignItems="center"
@@ -427,7 +433,7 @@ export default function Transferir({
                         <ListItem key={index}>
                           <Product
                             productName={product.nombre}
-                            stock={product.stockMax}
+                            existencias={product.existencia}
                             producto={product}
                             setProdCantidad={(val) =>
                               setProdCantidad(val, product)
@@ -457,14 +463,15 @@ export default function Transferir({
             Cancelar
           </StandardButton>
           <StandardButton
-            variant={"RED_PRIMARY"}
+            variant={activeProdcs?.length > 0 ? "RED_PRIMARY" : "DISABLED"}
             borderRadius="20px"
             py={"17px"}
             w={"150px"}
             fontSize="14px"
             fontWeight="400"
             onClick={onConfirmationModalOpen}
-            disabled={activeProdcs.length > 0 ? false : true}
+            disabled={activeProdcs?.length > 0 ? false : true}
+            cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
           >
             Enviar
           </StandardButton>
