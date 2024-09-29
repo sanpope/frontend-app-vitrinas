@@ -13,13 +13,19 @@ import HandsUsdIcon from "../assets/images/HandsUsdIcon";
 import axios from "axios";
 import { parseData } from "../utils/xmlParse";
 import { formatearNumero, formattingDate } from "../utils/formatting";
+import { HEADER_HEIGHT } from "../component/Header";
 
 const ROWS_TO_SHOW = 30;
+
+const TOP_SECTION_HEIGHT = 64;
+const BOTTOM_SECTION_HEIGHT = 141.5;
+const BOTTOM_SECTION_HEIGHT_MOBILE = 289.5;
+const MARGINS = 16;
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
-  const [selectedOption, setSelectedOption] = useState("Todos");
+  const [selectedOption, setSelectedOption] = useState("Ventas");
 
   const [tablaVentas, setTablaVentas] = useState(null);
   const [tablaDevoluciones, setTablaDevoluciones] = useState([]);
@@ -54,18 +60,12 @@ export default function Ventas() {
   useEffect(() => {
     if (tablaVentas) {
       setDisplayedArticulos(
-        selectedOption === "Todos"
-          ? [...tablaVentas, ...tablaDevoluciones]
-          : selectedOption === "Devoluciones"
-            ? tablaDevoluciones
-            : tablaVentas,
+        selectedOption === "Devoluciones" ? tablaDevoluciones : tablaVentas,
       );
       setTotalResults(
-        selectedOption === "Todos"
-          ? [...tablaVentas, ...tablaDevoluciones].length
-          : selectedOption === "Devoluciones"
-            ? tablaDevoluciones.length
-            : tablaVentas.length,
+        selectedOption === "Devoluciones"
+          ? tablaDevoluciones.length
+          : tablaVentas.length,
       );
     }
   }, [selectedOption]);
@@ -252,13 +252,15 @@ export default function Ventas() {
       flexDir={"column"}
       overflowY={"auto"}
       p={"1.25rem"}
+      h={"calc(100% - " + HEADER_HEIGHT + "px)"}
     >
       <Box
         w={"100%"}
         display={"flex"}
         justifyContent={"space-between"}
-        alignContent={"center"}
+        alignContent={"flex-end"}
         flexWrap={"wrap"}
+        mb={2}
       >
         <Box
           display={"flex"}
@@ -274,7 +276,7 @@ export default function Ventas() {
         <Box
           display={"flex"}
           justifyContent={"flex-end"}
-          alignItems={"center"}
+          alignItems={"flex-end"}
           flex={"1 1 200px"}
           gap={"10px"}
           flexWrap={{ base: "wrap", md: "nowrap" }}
@@ -301,14 +303,22 @@ export default function Ventas() {
             value={selectedOption}
             onChange={handleSelectChange}
           >
-            <option>Todos</option>
             <option>Ventas</option>
             <option>Devoluciones</option>
           </Select>
         </Box>
         <Box></Box>
       </Box>
-      <Box w={"100%"} display="flex" flexDir={"column"} mb="1rem" flexGrow={1}>
+      <Box
+        w={"100%"}
+        display="flex"
+        flexDir={"column"}
+        mb={2}
+        h={{
+          base: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT_MOBILE}px - ${MARGINS}px)`,
+          lg: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT}px - ${MARGINS}px)`,
+        }}
+      >
         <TablaVentas
           displayedArticulos={displayedArticulos}
           totalResults={totalResults}

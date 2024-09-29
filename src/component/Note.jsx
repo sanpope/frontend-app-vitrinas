@@ -9,9 +9,9 @@ export default function Note({
 }) {
   return (
     <Box
-      display={{ base: "flex" }}
+      display="flex"
+      height="70px"
       flexDirection={"column"}
-      justifyContent={"space-around"}
       w={width}
       borderWidth={1}
       borderColor={"#FFE58F"}

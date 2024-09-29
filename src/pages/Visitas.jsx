@@ -374,16 +374,17 @@ export default function Visitas() {
         },
       );
       console.log(response.data);
-      if(response.data){
-        setTotalVisitas((prev)=>{
-           const index = prev.findIndex((item) => item.idVisita === visita.idVisita);
-           if (index !== -1) {
-             const copy = [...prev];
-             copy[index]["verificada"] = "true";
-             return copy;
-           }
-
-        })
+      if (response.data) {
+        setTotalVisitas((prev) => {
+          const index = prev.findIndex(
+            (item) => item.idVisita === visita.idVisita,
+          );
+          if (index !== -1) {
+            const copy = [...prev];
+            copy[index]["verificada"] = "true";
+            return copy;
+          }
+        });
       }
     } catch (error) {
       if (error.response) {
@@ -434,7 +435,6 @@ export default function Visitas() {
                 ? "grey.placeholder"
                 : "black"
             }
-            placeholder={"Selecciona el intervalo"}
             value={selectedOption}
             onChange={(e) => handleSelectChange(e)}
           >

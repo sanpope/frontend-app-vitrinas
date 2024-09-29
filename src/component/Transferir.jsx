@@ -429,6 +429,7 @@ export default function Transferir({
                     }}
                   >
                     {activeProdcs?.map((product, index) => {
+                      console.log(activeProdcs);
                       return (
                         <ListItem key={index}>
                           <Product

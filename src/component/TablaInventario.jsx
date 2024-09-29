@@ -34,12 +34,16 @@ export default function TablaInventario({
   getMasArticulos,
   setArticulo,
 }) {
-
   return (
     <Box h="100%">
-      {displayedArticulos != null ? (
-        <>
-          <Contenedor height="calc(100% - 60px)">
+      <Box
+        h="calc(100% - 60px)"
+        bgColor={"white"}
+        borderTopLeftRadius={{ base: "0px", md: "20px" }}
+        borderTopRightRadius={{ base: "0px", md: "20px" }}
+      >
+        {displayedArticulos != null ? (
+          <Contenedor>
             <thead className="">
               <tr className="">
                 {HEADERS?.map((name, index) => (
@@ -77,18 +81,19 @@ export default function TablaInventario({
               })}
             </tbody>
           </Contenedor>
-          <BottomTable
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={getMasArticulos}
-            totalResults={totalResults}
-          />
-
-          <Editar />
-        </>
-      ) : (
-        <Text>No se encontraron productos</Text>
-      )}
+        ) : (
+          <Box display="flex" h="full" justifyContent={"center"} alignItems={"center"}>
+            <Text>No se encontraron productos</Text>
+          </Box>
+        )}
+      </Box>
+      <BottomTable
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={getMasArticulos}
+        totalResults={totalResults}
+      />
+      <Editar />
     </Box>
   );
 }

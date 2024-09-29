@@ -50,103 +50,113 @@ export default function TablaVentas({
   };
 
   return (
-    <>
-      <Contenedor maxHeight={"460px"}>
-        <thead className="">
-          <tr className="">
-            {HEADERS.map((name, index) => (
-              <th key={index} className="ventastTh">
-                {name}
-              </th>
-            ))}
-          </tr>
-        </thead>
+    <Box h="100%">
+      <Box
+        h="calc(100% - 60px)"
+        bgColor={"white"}
+        borderTopLeftRadius={{ base: "0px", md: "20px" }}
+        borderTopRightRadius={{ base: "0px", md: "20px" }}
+      >
+        <Contenedor>
+          <thead className="">
+            <tr className="">
+              {HEADERS.map((name, index) => (
+                <th key={index} className="ventastTh">
+                  {name}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-        <tbody className="">
-          {displayedArticulos?.map((articulo, articuloIndex) => {
-            return (
-              <tr key={articuloIndex} className="">
-                <td className="ventasTd">{articulo.codigo}</td>
-                <td className="ventasTd">{formatFecha(articulo.fechaHora)}</td>
-                <td className="ventasTd">${formatearNumero(articulo.valor)}</td>
-                <td className="ventasTd">
-                  <UnorderedList
-                    sx={{
-                      "::-webkit-scrollbar": {
-                        width: "8px",
-                        height: "4px",
-                      },
-                      "::-webkit-scrollbar-track": {
-                        background: "tranparent",
-                      },
-                      "::-webkit-scrollbar-thumb": {
-                        background: "gray.200",
-                        borderRadius: "10px",
-                      },
-                      "::-webkit-scrollbar-thumb:hover": {
-                        background: "gray.200",
-                      },
-                    }}
-                  >
-                    {articulo.productosAfectados
-                      .slice(0, 2)
-                      .map((articulo, index) => (
-                        <ListItem key={index}>
-                          {capitalizeFirstLetter(articulo.nombre)} x
-                          {articulo.cantidad} unds
-                        </ListItem>
-                      ))}
-                    <span style={{ fontWeight: "bolder" }}>
-                      y {articulo.productosAfectados.length} más...
-                    </span>
-                  </UnorderedList>
-                </td>
-                <td className="ventasTd">
-                  {articulo?.generadaEnCorreccion === "true" ? (
-                    <Note
-                      arr={null}
-                      text2={
-                        "¡Transacción generada por un asesor para corregir inventario!  "
+          <tbody className="">
+            {displayedArticulos?.map((articulo, articuloIndex) => {
+              return (
+                <tr key={articuloIndex} className="">
+                  <td className="ventasTd">{articulo.codigo}</td>
+                  <td className="ventasTd">
+                    {formatFecha(articulo.fechaHora)}
+                  </td>
+                  <td className="ventasTd">
+                    ${formatearNumero(articulo.valor)}
+                  </td>
+                  <td className="ventasTd">
+                    <UnorderedList
+                      sx={{
+                        "::-webkit-scrollbar": {
+                          width: "8px",
+                          height: "4px",
+                        },
+                        "::-webkit-scrollbar-track": {
+                          background: "tranparent",
+                        },
+                        "::-webkit-scrollbar-thumb": {
+                          background: "gray.200",
+                          borderRadius: "10px",
+                        },
+                        "::-webkit-scrollbar-thumb:hover": {
+                          background: "gray.200",
+                        },
+                      }}
+                    >
+                      {articulo.productosAfectados
+                        .slice(0, 2)
+                        .map((articulo, index) => (
+                          <ListItem key={index}>
+                            {capitalizeFirstLetter(articulo.nombre)} x
+                            {articulo.cantidad} unds
+                          </ListItem>
+                        ))}
+                      <span style={{ fontWeight: "bolder" }}>
+                        y {articulo.productosAfectados.length} más...
+                      </span>
+                    </UnorderedList>
+                  </td>
+                  <td className="ventasTd">
+                    {articulo?.generadaEnCorreccion === "true" ? (
+                      <Note
+                        arr={null}
+                        text2={
+                          "¡Transacción generada por un asesor para corregir inventario!  "
+                        }
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                  <td className="iconContainer" onClick={() => ""}>
+                    <EyeIcon
+                      width="20px"
+                      height="20px"
+                      onClick={() =>
+                        handleOnOpen(
+                          articulo.totalProds,
+                          articulo.fechaHora,
+                          articulo.valor,
+                        )
                       }
+                      p={1}
                     />
-                  ) : (
-                    <></>
-                  )}
-                </td>
-                <td className="iconContainer" onClick={() => ""}>
-                  <EyeIcon
-                    width="20px"
-                    height="20px"
-                    onClick={() =>
-                      handleOnOpen(
-                        articulo.totalProds,
-                        articulo.fechaHora,
-                        articulo.valor,
-                      )
-                    }
-                    p={1}
-                  />
-                  <VerExistencias
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    productos={articulo.productosAfectados}
-                    totalProdcs={articulo.productosAfectados.length}
-                    fecha={fechaAct}
-                    total={valorTotal}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Contenedor>
-
+                    <VerExistencias
+                      isOpen={isOpen}
+                      onClose={onClose}
+                      productos={articulo.productosAfectados}
+                      totalProdcs={articulo.productosAfectados.length}
+                      fecha={fechaAct}
+                      total={valorTotal}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Contenedor>
+      </Box>
       <BottomTable
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={getMasArticulos}
         totalResults={totalResults}
       />
-    </>
+    </Box>
   );
 }

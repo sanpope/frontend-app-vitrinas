@@ -17,6 +17,7 @@ import {
   formatString,
   formatearNumero,
 } from "../utils/formatting";
+import BottomTable from "../component/ui/tablas/Bottom";
 
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -74,13 +75,17 @@ export default function Inventario() {
   } = useDisclosure();
 
   useEffect(() => {
-    if (busqueda) {
+    if (busqueda !== null) {
       Busqueda(busqueda);
-    } else {
     }
   }, [busqueda]);
 
   const Busqueda = (textToSearch) => {
+    if (!textToSearch.length) {
+      setDisplayedArticulos(tablaInventario)
+      return
+    }
+
     let result = tablaInventario?.filter((element) => {
       if (
         element?.nombre
