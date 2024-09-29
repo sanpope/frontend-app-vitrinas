@@ -13,9 +13,11 @@ import SmallRightArrowIcon from "../assets/images/SmallRightArrow";
 import SyncIcon from "../assets/images/SyncIcon";
 import TablaAsesores from "../component/TablaAsesores";
 import AgregarAsesor from "../component/AgregarAsesor";
-
+import { HEADER_HEIGHT } from "../component/Header";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import asesoresData from "../services/asesoresData";
+
+const TOP_HEIGHT = 72;
 
 export default function Asesores() {
   const [tablaAsesores, setTablaAsesores] = useState(null);
@@ -163,73 +165,40 @@ export default function Asesores() {
     <Box
       bg={"mainBg"}
       w={"100%"}
-      height={"100%"}
+      h={"calc(100% - " + HEADER_HEIGHT + "px)"}
       display={"flex"}
       flexDir={"column"}
     >
       <Box
         display={"flex"}
-        flexDir={"column"}
-        gap={"10px"}
-        w={"100%"}
-        bg={"white"}
-        borderTop={"1px"}
-        borderTopColor={"mainBg"}
+        justifyContent={"space-between"}
+        flexDirection={{ base: "column", sm: "row" }}
+        alignItems={"center"}
+        bgColor={"white"}
+        p={"1rem"}
       >
-        <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          flexDirection={{ base: "column", sm: "row" }}
-          alignItems={"center"}
+        <TextInput
+          w="100%"
+          maxWidth="300px"
+          placeholder={"Buscar"}
+          leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
+          onChange={(e) => onBuscarChange(e)}
+          value={busqueda}
+        />
+        <StandardButton
+          variant={"RED_PRIMARY"}
+          borderRadius="20px"
+          py={"17px"}
+          w={"fit-content"}
+          fontSize={"14px"}
+          fontWeight={"400"}
+          onClick={onFirstModalOpen}
+          leftIcon={<PlusCircleIcon />}
         >
-          <Box
-            w={"100%"}
-            maxW={"300px"}
-            order={{ base: "2", sm: "1" }}
-            display={"flex"}
-            justifyContent={"center"}
-            flexDirection={{ base: "column", sm: "row" }}
-            alignItems={"center"}
-            gap={"10px"}
-            p={3}
-          >
-            <TextInput
-              placeholder={"Buscar"}
-              leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
-              onChange={(e) => onBuscarChange(e)}
-              value={busqueda}
-            />
-          </Box>
-          <Box
-            w={"100%"}
-            order={{ base: "1", sm: "2" }}
-            display={"flex"}
-            justifyContent={{ base: "flex.start", sm: "flex-end" }}
-            alignItems={"center"}
-            p={{ base: "0px", md: "1rem" }}
-          >
-            <StandardButton
-              variant={"RED_PRIMARY"}
-              borderRadius="20px"
-              py={"17px"}
-              my={3}
-              w={"fit-content"}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onFirstModalOpen}
-              leftIcon={<PlusCircleIcon />}
-            >
-              Agregar asesor
-            </StandardButton>
-            <AgregarAsesor
-              isOpen={isFirstModalOpen}
-              onOpen={onFirstModalOpen}
-              onClose={onFirstModalClose}
-            />
-          </Box>
-        </Box>
+          Agregar asesor
+        </StandardButton>
       </Box>
-      <Box p={"1.25rem"} w={"100%"} h="100%" display="flex" flexDir={"column"}>
+      <Box p={"1.25rem"} w={"100%"} h={"calc(100% - " + TOP_HEIGHT + "px)"}>
         {
           <TablaAsesores
             isSecondModalOpen={isSecondModalOpen}
@@ -247,6 +216,11 @@ export default function Asesores() {
           />
         }
       </Box>
+      <AgregarAsesor
+        isOpen={isFirstModalOpen}
+        onOpen={onFirstModalOpen}
+        onClose={onFirstModalClose}
+      />
     </Box>
   );
 }

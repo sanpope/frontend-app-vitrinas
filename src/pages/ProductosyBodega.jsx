@@ -1,26 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Text,
-  useDisclosure,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  useMediaQuery,
-} from "@chakra-ui/react";
+import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
-import Editar from "../component/Editar";
-import ConfirmationMessage from "../component/ConfirmationMessage";
-import EditIcon from "../assets/images/EditIcon";
-import TrashIcon from "../assets/images/TrashIcon";
-import WarningIcon from "../assets/images/WarningIcon";
 import SearchIcon from "../assets/images/SearchIcon";
-import PlusCircleIcon from "../assets/images/PlusCircleIcon";
-import SmallRightArrowIcon from "../assets/images/SmallRightArrow";
-import SyncIcon from "../assets/images/SyncIcon";
 import IngresarProducto from "../component/Ingresar_Editar_Producto";
 import Despachar from "../component/Despachar";
 import Transferir from "../component/Transferir";
@@ -32,6 +14,9 @@ import {
   categoriasProductos,
   proveedoresProductos,
 } from "../services/productosYBodegaData";
+import { HEADER_HEIGHT } from "../component/Header";
+
+const TOP_HEIGHT = 72;
 
 export default function ProductosyBodega() {
   const [busqueda, setBusqueda] = useState(null);
@@ -245,11 +230,9 @@ export default function ProductosyBodega() {
     <Box
       bg={"mainBg"}
       w={"100%"}
-      height={"100%"}
+      h={"calc(100% - " + HEADER_HEIGHT + "px)"}
       display={"flex"}
       flexDir={"column"}
-      overflowY={"scroll"}
-      overflowX={"scroll"}
     >
       <Box
         display={"flex"}
@@ -258,121 +241,88 @@ export default function ProductosyBodega() {
         alignItems={{ base: "flex-start", lg: "center" }}
         w={"100%"}
         bg={"white"}
-        borderTop={"1px"}
-        borderTopColor={"mainBg"}
-        py={"1.25rem"}
+        p={"1rem"}
       >
-        <Box
-          w={"100%"}
-          order={{ base: "2", lg: "1" }}
-          display={"flex"}
-          flexDirection={{ base: "column", sm: "row" }}
-          justifyContent={"flex-start"}
-          alignItems={"center"}
-          gap={"1rem"}
-          p={{ base: "5px", md: "10px" }}
-        >
-          <TextInput
-            maxW={"250px"}
-            placeholder={"Buscar"}
-            leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
-            onChange={(e) => onBuscarChange(e)}
-            value={busqueda}
-          />
-        </Box>
+        <TextInput
+          maxWidth="300px"
+          placeholder={"Buscar"}
+          leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
+          onChange={(e) => onBuscarChange(e)}
+          value={busqueda}
+        />
 
         <Box
           w={"100%"}
           display={"flex"}
           order={{ base: "1", lg: "2" }}
           flexDirection={{ base: "column", md: "row" }}
-          justifyContent={{ base: "flex-start", md: "center" }}
+          justifyContent={{ base: "flex-start", md: "flex-end" }}
           alignItems={{ base: "flex-start", md: "center" }}
+          columnGap={"1rem"}
         >
-          <Box m={1}>
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={{ base: "160px", md: "fit-content" }}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onFirstModalOpen}
-              children={
-                <Text
-                  textAlign={"left"}
-                  textStyle={{
-                    base: "RobotoTinyBold",
-                    md: "RobotoRegularBold",
-                  }}
-                >
-                  Ingresar Nuevo Producto
-                </Text>
-              }
-            ></StandardButton>
-            <IngresarProducto
-              isOpen={isFirstModalOpen}
-              onOpen={onFirstModalOpen}
-              onClose={onFirstModalClose}
-            />
-          </Box>
-          <Box m={1}>
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={{ base: "160px", md: "fit-content" }}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onSecondModalOpen}
-              children={
-                <Text
-                  textAlign={"left"}
-                  textStyle={{
-                    base: "RobotoTinyBold",
-                    md: "RobotoRegularBold",
-                  }}
-                >
-                  Despachar Producto
-                </Text>
-              }
-            ></StandardButton>
-            <Despachar
-              isOpen={isSecondModalOpen}
-              onOpen={onSecondModalOpen}
-              onClose={onSecondModalClose}
-            />
-          </Box>
-          <Box m={1}>
-            <StandardButton
-              variant={"WHITE_RED"}
-              borderRadius="20px"
-              py={"17px"}
-              w={{ base: "160px", md: "fit-content" }}
-              fontSize={"14px"}
-              fontWeight={"400"}
-              onClick={onThirdModalOpen}
-              children={
-                <Text
-                  textAlign={"left"}
-                  textStyle={{
-                    base: "RobotoTinyBold",
-                    md: "RobotoRegularBold",
-                  }}
-                >
-                  Transferir Productos
-                </Text>
-              }
-            ></StandardButton>
-            <Transferir
-              isOpen={isThirdModalOpen}
-              onOpen={onThirdModalOpen}
-              onClose={onThirdModalClose}
-            />
-          </Box>
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={{ base: "160px", md: "fit-content" }}
+            fontSize={"14px"}
+            fontWeight={"400"}
+            onClick={onFirstModalOpen}
+            children={
+              <Text
+                textAlign={"left"}
+                textStyle={{
+                  base: "RobotoTinyBold",
+                  md: "RobotoRegularBold",
+                }}
+              >
+                Ingresar Nuevo Producto
+              </Text>
+            }
+          ></StandardButton>
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={{ base: "160px", md: "fit-content" }}
+            fontSize={"14px"}
+            fontWeight={"400"}
+            onClick={onSecondModalOpen}
+            children={
+              <Text
+                textAlign={"left"}
+                textStyle={{
+                  base: "RobotoTinyBold",
+                  md: "RobotoRegularBold",
+                }}
+              >
+                Despachar Producto
+              </Text>
+            }
+          ></StandardButton>
+          <StandardButton
+            variant={"WHITE_RED"}
+            borderRadius="20px"
+            py={"17px"}
+            w={{ base: "160px", md: "fit-content" }}
+            fontSize={"14px"}
+            fontWeight={"400"}
+            onClick={onThirdModalOpen}
+            children={
+              <Text
+                textAlign={"left"}
+                textStyle={{
+                  base: "RobotoTinyBold",
+                  md: "RobotoRegularBold",
+                }}
+              >
+                Transferir Productos
+              </Text>
+            }
+          ></StandardButton>
         </Box>
       </Box>
-      <Box display="flex" flexDir={"column"} h="100%" p={"20px"} w={"100%"}>
+      <Box h={"calc(100% - " + TOP_HEIGHT + "px)"} p={"1.25rem"} w={"100%"}>
         {
           <TablaProductosBodega
             isFirstModalOpen={isFourthModalOpen}
@@ -405,6 +355,21 @@ export default function ProductosyBodega() {
           />
         }
       </Box>
+      <IngresarProducto
+        isOpen={isFirstModalOpen}
+        onOpen={onFirstModalOpen}
+        onClose={onFirstModalClose}
+      />
+      <Despachar
+        isOpen={isSecondModalOpen}
+        onOpen={onSecondModalOpen}
+        onClose={onSecondModalClose}
+      />
+      <Transferir
+        isOpen={isThirdModalOpen}
+        onOpen={onThirdModalOpen}
+        onClose={onThirdModalClose}
+      />
     </Box>
   );
 }

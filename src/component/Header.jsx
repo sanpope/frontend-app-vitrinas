@@ -29,6 +29,7 @@ export default function Header() {
       display={"block"}
       p={"10px"}
       position="relative"
+      borderBottom="1px solid #E2E8F0"
     >
       <Box display="inline-block">
         <BarsMain

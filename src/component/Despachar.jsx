@@ -301,7 +301,7 @@ export default function Despachar({
                         },
                       }}
                     >
-                      {displayedArticulos.map((product, index) => {
+                      {displayedArticulos?.map((product, index) => {
                         return ProductListItem(product, index);
                       })}
                     </UnorderedList>

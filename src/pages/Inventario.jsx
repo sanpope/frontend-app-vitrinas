@@ -17,7 +17,7 @@ import {
   formatString,
   formatearNumero,
 } from "../utils/formatting";
-import BottomTable from "../component/ui/tablas/Bottom";
+import { HEADER_HEIGHT } from "../component/Header";
 
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -204,7 +204,7 @@ export default function Inventario() {
   const handleProdClick = async (index, articulo) => {};
 
   return (
-    <Box bg={"mainBg"} p={"1.25rem"} h="calc(100vh - 50px)">
+    <Box bg={"mainBg"} p={"1.25rem"} h={"calc(100% - " + HEADER_HEIGHT + "px)"}>
       <Text textStyle={"RobotoBody"}>
         {name} - {city}
       </Text>
