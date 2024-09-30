@@ -82,7 +82,12 @@ export default function TablaInventario({
             </tbody>
           </Contenedor>
         ) : (
-          <Box display="flex" h="full" justifyContent={"center"} alignItems={"center"}>
+          <Box
+            display="flex"
+            h="full"
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
             <Text>No se encontraron productos</Text>
           </Box>
         )}

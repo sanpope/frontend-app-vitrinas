@@ -158,7 +158,7 @@ body {
 
 .ventastTh:nth-child(1),
 .ventasTd:nth-child(1) {
-  padding-left: 20px;
+ text-align: center;
 }
 
 .inventTh:nth-child(1),

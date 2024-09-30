@@ -25,11 +25,12 @@ export default function Product({
   const [value, setValue] = useState(null);
 
   const handleOnChange = (e) => {
-    if (e > 0 && e <= existencias) {
+    const cantidad = Number.parseInt(e);
+    if (cantidad > 0 && cantidad <= existencias) {
       setValue(e);
       setMessage("");
       setProdCantidad(e);
-    } else if (e > existencias) {
+    } else if (cantidad > existencias) {
       setMessage("La cantidad no puede superar la existencia.");
     }
   };

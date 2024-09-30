@@ -12,7 +12,7 @@ export default function Contenedor({ children }) {
       borderTopLeftRadius={{ base: "0px", md: "20px" }}
       borderTopRightRadius={{ base: "0px", md: "20px" }}
     >
-      <table className="content-table" style={{ height: "100%", zIndex:10 }}>
+      <table className="content-table" style={{ height: "100%" }}>
         {children}
       </table>
     </Box>

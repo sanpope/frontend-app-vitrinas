@@ -27,8 +27,13 @@ export default function TablaVentas({
   tableTitle,
   selectedOption,
   productosRestantes,
+  setProds,
+  setFecha,
+  setValorTotal,
+  isOpen,
+  onOpen,
+  onClose,
 }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const HEADERS = [
     "Venta",
     "Fecha y Hora",
@@ -38,15 +43,10 @@ export default function TablaVentas({
     "Acciones",
   ];
 
-  const [prods, setProds] = useState(null);
-  const [fechaAct, setFechaActual] = useState(null);
-  const [valorTotal, setValorTotal] = useState(null);
-
-  const handleOnOpen = (prods, date, vTotal) => {
-    setProds(prods);
-    setFechaActual(date);
-    setValorTotal(vTotal);
-    onOpen();
+  const handleOnOpen = (productos, date, vTotal) => {
+    console.log(productos);
+    console.log(date);
+    console.log(vTotal);
   };
 
   return (
@@ -107,7 +107,10 @@ export default function TablaVentas({
                           </ListItem>
                         ))}
                       <span style={{ fontWeight: "bolder" }}>
-                        y {articulo.productosAfectados.length} más...
+                        {articulo.productosAfectados.length - 2 > 0 ? "y " : ""}
+                        {articulo.productosAfectados.length - 2 > 0
+                          ? articulo.productosAfectados.length - 2 + " más..."
+                          : ""}
                       </span>
                     </UnorderedList>
                   </td>
@@ -123,26 +126,18 @@ export default function TablaVentas({
                       <></>
                     )}
                   </td>
-                  <td className="iconContainer" onClick={() => ""}>
+                  <td className="iconContainer">
                     <EyeIcon
                       width="20px"
                       height="20px"
-                      onClick={() =>
-                        handleOnOpen(
-                          articulo.totalProds,
-                          articulo.fechaHora,
-                          articulo.valor,
-                        )
-                      }
+                      onClick={() => {
+                        console.log(articulo);
+                        onOpen();
+                        setProds(articulo.productosAfectados);
+                        setFecha(articulo.fechaHora);
+                        setValorTotal(articulo.valor);
+                      }}
                       p={1}
-                    />
-                    <VerExistencias
-                      isOpen={isOpen}
-                      onClose={onClose}
-                      productos={articulo.productosAfectados}
-                      totalProdcs={articulo.productosAfectados.length}
-                      fecha={fechaAct}
-                      total={valorTotal}
                     />
                   </td>
                 </tr>

@@ -24,7 +24,7 @@ export default function BottomTable({
         textStyle={"RobotoRegularBold"}
         display={{ base: "none", md: "inline-flex" }}
       >
-        {totalResults} elementos
+        {totalResults} Elementos
       </Text>
 
       <Pagination

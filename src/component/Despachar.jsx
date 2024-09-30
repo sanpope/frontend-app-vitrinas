@@ -36,6 +36,7 @@ export default function Despachar({
   onOpen,
   onClose,
   productsList,
+  setProductsList,
 }) {
   const [totalProducts, setTotalProducts] = useState(productsList);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
@@ -44,7 +45,7 @@ export default function Despachar({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (busqueda) {
+    if (busqueda !== null) {
       Busqueda(busqueda);
     } else {
     }
@@ -149,6 +150,22 @@ export default function Despachar({
     })
       .then((response) => {
         console.log(response);
+        if (response) {
+          setProductsList((prev) => {
+            const copy = [...prev];
+            for (let i = 0; i < activeProdcs?.length; i++) {
+              const index = copy.findIndex(
+                (prod) => prod.codigo === activeProdcs[i]?.codigo,
+              );
+              if (index !== -1) {
+                let existencia = copy[index].existencia;
+                let cantidad = activeProdcs[i].cantidad;
+                copy[index].existencia = Number(existencia) + Number(cantidad);
+              }
+            }
+            return copy;
+          });
+        }
         setLoading(false);
         onClose();
       })
@@ -205,7 +222,15 @@ export default function Despachar({
                   >
                     Se despacharán productos desde:
                   </Text>
-                  <Text textStyle={"RobotoSubtitleRegular"} p={1}>
+                  <Text
+                    h={"40px"}
+                    w={"200px"}
+                    textStyle={"RobotoSubtitleRegular"}
+                    borderRadius={"5px"}
+                    borderWidth={1}
+                    borderColor={"mainBg"}
+                    p={2}
+                  >
                     Bodega
                   </Text>
                 </Box>
@@ -229,11 +254,13 @@ export default function Despachar({
                     Hacia:
                   </Text>
                   <Text
+                    h={"40px"}
+                    minW={"200px"}
                     textStyle={"RobotoSubtitleRegular"}
-                    borderRadius={"10px"}
+                    borderRadius={"5px"}
                     borderWidth={1}
                     borderColor={"mainBg"}
-                    p={1}
+                    p={2}
                   >
                     {vitrina}
                   </Text>
@@ -301,6 +328,7 @@ export default function Despachar({
                         },
                       }}
                     >
+                      {console.log(displayedArticulos)}
                       {displayedArticulos?.map((product, index) => {
                         return ProductListItem(product, index);
                       })}
@@ -398,9 +426,10 @@ export default function Despachar({
                               productName={product.nombre}
                               existencias={product.existencia}
                               producto={product}
-                              setProdCantidad={(val) =>
-                                setProdCantidad(val, product)
-                              }
+                              setProdCantidad={(val) => {
+                                console.log(product, " Product ", val, " val ");
+                                setProdCantidad(val, product);
+                              }}
                               deleteProduct={deleteProductFromList}
                             />
                           </ListItem>
@@ -439,12 +468,15 @@ export default function Despachar({
               Enviar
             </StandardButton>
             <ConfirmationMessage
-              text={`Se despacharán ${activeProdcs?.length} productos de la bodega hacia la vitrina `}
+              text={"despacharán"}
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
               isLoading={loading}
               funcConfirmar={despacharProdcs}
+              products={activeProdcs?.length > 0 ? activeProdcs : null}
+              desde={"Bodega"}
+              hacia={vitrina}
             />
           </ModalFooter>
         </ModalContent>

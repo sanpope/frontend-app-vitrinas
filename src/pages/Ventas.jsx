@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Select, Text } from "@chakra-ui/react";
+import { Box, Select, Text, useDisclosure } from "@chakra-ui/react";
 import TablaVentas from "../component/TablaVentas";
 import DatePickerComponent from "../component/DatePickerComponent";
 import Container from "../component/Container";
@@ -14,6 +14,7 @@ import axios from "axios";
 import { parseData } from "../utils/xmlParse";
 import { formatearNumero, formattingDate } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
+import VerExistencias from "../component/VerExistencias";
 
 const ROWS_TO_SHOW = 30;
 
@@ -45,6 +46,10 @@ export default function Ventas() {
   const [fechaInicio, setFechaInicio] = useState(null);
   const [fechaFin, setFechaFin] = useState(null);
 
+  const [prods, setProds] = useState(null);
+  const [fechaAct, setFechaActual] = useState(null);
+  const [valorTotal, setValorTotal] = useState(null);
+
   useEffect(() => {
     getTotalIntervaloVentas();
   }, []);
@@ -60,12 +65,12 @@ export default function Ventas() {
   useEffect(() => {
     if (tablaVentas) {
       setDisplayedArticulos(
-        selectedOption === "Devoluciones" ? tablaDevoluciones : tablaVentas,
+        selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones,
       );
       setTotalResults(
-        selectedOption === "Devoluciones"
-          ? tablaDevoluciones.length
-          : tablaVentas.length,
+        selectedOption === "Ventas"
+          ? tablaVentas?.length
+          : tablaDevoluciones?.length,
       );
     }
   }, [selectedOption]);
@@ -176,8 +181,8 @@ export default function Ventas() {
       const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
       setTablaVentas(ventas);
       setTablaDevoluciones(devoluciones);
-      setTotalResults([...ventas, ...devoluciones]?.length);
-      setDisplayedArticulos([...ventas, ...devoluciones]);
+      setTotalResults([...ventas]?.length);
+      setDisplayedArticulos([...ventas]);
     } catch (error) {
       if (error.response) {
         console.error(
@@ -221,28 +226,18 @@ export default function Ventas() {
       setIngresoRecibido(
         xmlDoc?.getElementsByTagName("ingresoReal")[0]?.textContent,
       );
+      console.log(ventas);
       setTablaVentas(ventas);
       setTablaDevoluciones(devoluciones);
-      setTotalResults([...ventas, ...devoluciones]?.length);
-      setDisplayedArticulos([...ventas, ...devoluciones]);
+      setTotalResults([...ventas]?.length);
+      setDisplayedArticulos([...ventas]);
     } catch (error) {
-      if (error.response) {
-        // La solicitud fue enviada pero el servidor respondió con un código de error
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        // La solicitud fue enviada pero no se recibió respuesta
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        // Ocurrió un error en la configuración de la solicitud
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
     }
   };
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box
@@ -328,12 +323,16 @@ export default function Ventas() {
           tableTitle={
             selectedOption === "Ventas"
               ? "Productos Vendidos"
-              : selectedOption === "Devoluciones"
-                ? "Productos Devueltos"
-                : "Productos"
+              : "Productos Devueltos"
           }
           productosRestantes={listadoProductos?.length - 2}
           selectedOption={selectedOption}
+          setProds={setProds}
+          setFecha={setFechaActual}
+          setValorTotal={setValorTotal}
+          isOpen={isOpen}
+          onOpen={onOpen}
+          onClose={onClose}
         />
       </Box>
 
@@ -405,6 +404,14 @@ export default function Ventas() {
           }
         />
       </Box>
+      <VerExistencias
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        productos={prods}
+        fecha={fechaAct}
+        total={valorTotal}
+      />
     </Box>
   );
 }

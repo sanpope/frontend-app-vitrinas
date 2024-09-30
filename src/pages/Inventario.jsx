@@ -82,8 +82,8 @@ export default function Inventario() {
 
   const Busqueda = (textToSearch) => {
     if (!textToSearch.length) {
-      setDisplayedArticulos(tablaInventario)
-      return
+      setDisplayedArticulos(tablaInventario);
+      return;
     }
 
     let result = tablaInventario?.filter((element) => {
@@ -174,7 +174,7 @@ export default function Inventario() {
           proveedor,
         });
       }
-      console.log(totalProdsArr);
+      //console.log(totalProdsArr);
       return totalProdsArr;
     } else {
       return null;
@@ -251,6 +251,7 @@ export default function Inventario() {
               onClose={onFirstModalClose}
               vitrina={name}
               productsList={tablaInventario}
+              setProductsList={setTablaInventario}
             />
           )}
           <StandardButton
@@ -271,6 +272,7 @@ export default function Inventario() {
               onClose={onSecondModalClose}
               vitrina={name}
               productsList={tablaInventario}
+              setProductsList={setTablaInventario}
             />
           )}
         </Box>
@@ -300,7 +302,9 @@ export default function Inventario() {
       </Box>
       <Note
         text1={"Pendiente verificar actualizaciones realizadas en visitas del:"}
-        arr={verificacionesPendientes ? verificacionesPendientes : null}
+        arr={
+          verificacionesPendientes?.length > 0 ? verificacionesPendientes : null
+        }
         text2={"No se encontraron visitas pendientes"}
       />
       <EditarExistencia

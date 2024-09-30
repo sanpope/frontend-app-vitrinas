@@ -36,6 +36,7 @@ export default function Transferir({
   onOpen,
   onClose,
   productsList,
+  setProductsList,
 }) {
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
@@ -46,7 +47,7 @@ export default function Transferir({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (busqueda) {
+    if (busqueda !== null) {
       Busqueda(busqueda);
     } else {
     }
@@ -159,10 +160,14 @@ export default function Transferir({
     [activeProdcs],
   );
 
+  const productosAEnviar = useCallback(() => {
+    console.log("Prueba Callback");
+  }, []);
+
   const transferirProdcs = async () => {
     setLoading(true);
     const xmlData = generateProductsListXML(activeProdcs).toString();
-    console.log(xmlData.length);
+
     const haciaVitrina = hacia === vitrina ? true : false;
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}&haciaVitrina=${haciaVitrina}`;
     if (xmlData.length > 0) {
@@ -172,7 +177,41 @@ export default function Transferir({
         body: xmlData.toString(),
       })
         .then((response) => {
-          console.log(response);
+          if (response) {
+            if (haciaVitrina) {
+              setProductsList((prev) => {
+                const copy = [...prev];
+                for (let i = 0; i < activeProdcs?.length; i++) {
+                  const index = copy.findIndex(
+                    (prod) => prod.codigo === activeProdcs[i]?.codigo,
+                  );
+                  if (index !== -1) {
+                    let existencia = copy[index].existencia;
+                    let cantidad = activeProdcs[i].cantidad;
+                    copy[index].existencia =
+                      Number(existencia) + Number(cantidad);
+                  }
+                }
+                return copy;
+              });
+            } else {
+              setProductsList((prev) => {
+                const copy = [...prev];
+                for (let i = 0; i < activeProdcs?.length; i++) {
+                  const index = copy.findIndex(
+                    (prod) => prod.codigo === activeProdcs[i]?.codigo,
+                  );
+                  if (index !== -1) {
+                    let existencia = copy[index].existencia;
+                    let cantidad = activeProdcs[i].cantidad;
+                    copy[index].existencia =
+                      Number(existencia) - Number(cantidad);
+                  }
+                }
+                return copy;
+              });
+            }
+          }
           setLoading(false);
           onClose();
         })
@@ -231,6 +270,8 @@ export default function Transferir({
                   Se transferiran productos desde:
                 </Text>
                 <Select
+                  h={"40px"}
+                  minW={"200px"}
                   onChange={handleOnChange}
                   required
                   color={"grey.placeholder"}
@@ -267,16 +308,18 @@ export default function Transferir({
                 <Text
                   textStyle={"RobotoSubtitleRegular"}
                   color={"grey.placeholder"}
-                  p={1}
+                  p={2}
                 >
                   Hacia:
                 </Text>
                 <Text
+                  h={"40px"}
+                  minW={"200px"}
                   textStyle={"RobotoSubtitleRegular"}
-                  borderRadius={"10px"}
+                  borderRadius={"5px"}
                   borderWidth={1}
                   borderColor={"mainBg"}
-                  p={1}
+                  p={2}
                 >
                   {hacia}
                 </Text>
@@ -477,12 +520,15 @@ export default function Transferir({
             Enviar
           </StandardButton>
           <ConfirmationMessage
-            text={`Se transferirán ${activeProdcs?.length} productos desde ${desde} hacia ${hacia} `}
+            text={"transferirán"}
             isOpen={isConfirmationModalOpen}
             onOpen={onConfirmationModalOpen}
             onClose={onConfirmationModalClose}
             funcConfirmar={transferirProdcs}
             isLoading={loading}
+            products={activeProdcs?.length > 0 ? activeProdcs : null}
+            desde={desde}
+            hacia={hacia}
           />
         </ModalFooter>
       </ModalContent>

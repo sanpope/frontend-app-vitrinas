@@ -16,7 +16,7 @@ import StandardButton from "./ui/buttons/standard";
 
 export default function ConfirmationMessage({
   icon = <InfoIcon />,
-  text = "Se procederá con la selección anterior",
+  text,
   text2,
   colorText2,
   isOpen,
@@ -26,13 +26,15 @@ export default function ConfirmationMessage({
   funcConfirmar,
   focusRow,
   isLoading,
+  products,
+  desde,
+  hacia,
 }) {
   const handleClick = async () => {
-    console.log(focusRow);
     await funcConfirmar(focusRow);
     onClose();
   };
-
+  console.log(products);
   return (
     <Box>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -51,9 +53,27 @@ export default function ConfirmationMessage({
               gap={"10px"}
             >
               {icon}
-              <Text textStyle={"RobotoBodyBold"} textAlign={"justify"}>
-                {text}
-              </Text>
+              {products !== null ? (
+                <Box>
+                  <Text
+                    textStyle={"RobotoBodyBold"}
+                    textAlign={"justify"}
+                  ></Text>
+                  Se {text} los siguientes productos desde {desde} hacia {hacia}
+                  :
+                  {products?.map((prod) => {
+                    console.log(prod);
+                    return (
+                      <>
+                        <Text>Nombre: {prod.nombre}</Text>
+                        <Text>Cantidad {prod.cantidad}</Text>
+                      </>
+                    );
+                  })}
+                </Box>
+              ) : (
+                <Text>Selecciona los Productos a afectar.</Text>
+              )}
             </Box>
             <Box>
               <Text

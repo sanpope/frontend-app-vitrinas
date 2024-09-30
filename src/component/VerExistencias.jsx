@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  Button,
   Modal,
   ModalBody,
   ModalContent,
@@ -9,19 +8,21 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useDisclosure,
 } from "@chakra-ui/react";
 
 import StandardButton from "./ui/buttons/standard";
 import ClockIcon from "../assets/images/ClockIcon";
 import UsdCircleIcon from "../assets/images/UsdCircleIcon";
-import { capitalizeFirstLetter, formatearNumero, formatFecha } from "../utils/formatting";
+import {
+  capitalizeFirstLetter,
+  formatearNumero,
+  formatFecha,
+} from "../utils/formatting";
 
 export default function VerExistencias({
   fecha,
   total,
   productos,
-  totalProdcs, 
   isOpen,
   onOpen,
   onClose,
@@ -71,7 +72,9 @@ export default function VerExistencias({
                 gap={"5px"}
               >
                 <UsdCircleIcon width={"20px"} />
-                <Text textStyle={"RobotoRegularBold"}>${formatearNumero(total)}</Text>
+                <Text textStyle={"RobotoRegularBold"}>
+                  ${formatearNumero(total)}
+                </Text>
               </Box>
             </Box>
             <Box
