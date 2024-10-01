@@ -218,6 +218,7 @@ export default function TablaProductosBodega({
         onClose={onSixthModalClose}
         focusRow={focusRow}
         funcConfirmar={funcConfirmar}
+        products={null}
       />
 
       {/* Modal para Editar Producto */}

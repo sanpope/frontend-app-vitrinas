@@ -18,7 +18,7 @@ export default function Vitrina({ city, names, onClick }) {
         className="topSection"
         bg="white"
         color={colors.black}
-        p={"15px"}
+        p={2}
         borderTopRadius="20px"
         borderBottom="1px"
         borderBottomColor={"mainBg"}

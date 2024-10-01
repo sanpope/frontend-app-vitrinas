@@ -197,10 +197,12 @@ export default function EditarExistencia({
                   alignItems={"flex-start"}
                 >
                   <FormLabel>Nombre del producto</FormLabel>
-                  <TextInput
+                  <Input
                     onChange={(val) => setNombre(val)}
                     value={nombre}
                     isDisabled={disabled}
+                    color={disabled ? "grey.placeholder.60" : "black"}
+                    bg={"mainBg"}
                   />
                   <FormLabel display="flex" alignItems="center">
                     Código
@@ -209,7 +211,8 @@ export default function EditarExistencia({
                     value={codigo}
                     isDisabled={disabled}
                     _hover={{ cursor: "not-allowed" }}
-                    color={disabled ? "grey.placeholder" : "black"}
+                    color={disabled ? "grey.placeholder.60" : "black"}
+                    bg={"mainBg"}
                   />
                 </Box>
                 <Box w={"100%"} display={"flex"} gap={"10px"}>
@@ -226,36 +229,30 @@ export default function EditarExistencia({
                       Categoría
                     </FormLabel>
                     <Select
+                      disabled={disabled}
                       required
-                      onChange={(val) => setCategoria(val.target.value)}
-                      sx={{
-                        borderColor: "mainBg",
-                        borderWidth: "1px",
-                        _hover: {
-                          borderColor: "blue.50",
-                          borderWidth: "1px",
-                        },
-                        _focus: {
-                          borderColor: "blue.50",
-                          boxShadow: "0px 0px 5px 0px rgba(88, 178, 255, 1)",
-                          borderWidth: "1px",
-                        },
-                      }}
+                      // onChange={(val) => setCategoria(val.target.value)}
+                      _hover={{ cursor: "not-allowed" }}
+                      color={disabled ? "grey.placeholder.60" : "black"}
+                      bg={"mainBg"}
                     >
-                      <option>Tecnologia</option>
-                      <option>Ropa</option>
+                      <option>{categoria}</option>
+                      {/* <option>Ropa</option>
                       <option>Joyas</option>
                       <option>Artesanias</option>
                       <option>Belleza</option>
-                      <option>Otros</option>
+                      <option>Otros</option> */}
                     </Select>
                     <FormLabel display="flex" alignItems="center">
                       Precio
                     </FormLabel>
-                    <TextInput
+                    <Input
                       onChange={(val) => setPrecio(val)}
                       value={precio}
                       isDisabled={disabled}
+                      _hover={{ cursor: "not-allowed" }}
+                      color={disabled ? "grey.placeholder.60" : "black"}
+                      bg={"mainBg"}
                     />
                     <FormLabel display="flex" alignItems="center">
                       Existencia
@@ -284,26 +281,35 @@ export default function EditarExistencia({
                     <FormLabel display="flex" alignItems="center">
                       Nombre del proveedor
                     </FormLabel>
-                    <TextInput
+                    <Input
                       onChange={(val) => setProveedor(val)}
                       value={proveedor}
                       isDisabled={disabled}
+                      _hover={{ cursor: "not-allowed" }}
+                      color={disabled ? "grey.placeholder.60" : "black"}
+                      bg={"mainBg"}
                     />
                     <FormLabel display="flex" alignItems="center">
                       Costo
                     </FormLabel>
-                    <TextInput
+                    <Input
                       onChange={(val) => setCosto(val)}
                       value={costo}
                       isDisabled={disabled}
+                      _hover={{ cursor: "not-allowed" }}
+                      color={disabled ? "grey.placeholder.60" : "black"}
+                      bg={"mainBg"}
                     />
                     <FormLabel display="flex" alignItems="center">
                       Existencia verificada
                     </FormLabel>
-                    <TextInput
+                    <Input
                       onChange={(val) => setExisVerificada(val)}
                       value={exisVerificada}
                       isDisabled={disabled}
+                      _hover={{ cursor: "not-allowed" }}
+                      color={disabled ? "grey.placeholder.60" : "black"}
+                      bg={"mainBg"}
                     />
                     <FormLabel display="flex" alignItems="center">
                       Stock máximo
@@ -351,6 +357,7 @@ export default function EditarExistencia({
               onClose={onConfirmationModalClose}
               funcConfirmar={updateProducto}
               isLoading={loading}
+              products={null}
             />
           </ModalFooter>
         </ModalContent>

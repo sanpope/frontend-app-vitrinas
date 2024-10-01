@@ -169,6 +169,7 @@ export default function Mensajes() {
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
+              products={null}
             />
           </Box>
         </Box>
@@ -194,6 +195,7 @@ export default function Mensajes() {
               funcConfirmar={() => {
                 deleteMensaje(mensaje.id, mensaje);
               }}
+              products={null}
             />
           </>
         ))}

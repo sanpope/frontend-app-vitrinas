@@ -155,8 +155,8 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: VentasMesAnterior?.map((d) =>
-          d.mes === mesActual.toString() ? "#FF0000" : "#000000",
+        pointBackgroundColor: monthLabels?.map((d) =>
+          d === mesesAbreviados[mesActual] ? "#FF0000" : "#000000",
         ),
         pointRadius: 6,
         pointBorderWidth: 2,

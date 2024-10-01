@@ -17,7 +17,7 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import StandardButton from "./ui/buttons/standard";
 import RightArrowIcon from "../assets/images/RightArrowIcon";
 import FilterIcon from "../assets/images/FilterIcon";
@@ -29,20 +29,20 @@ import Product from "./Product";
 import ConfirmationMessage from "./ConfirmationMessage";
 import axios from "axios";
 import { generateProductsListXML, parseData } from "../utils/xmlParse";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
-export default function Despachar({
-  vitrina,
-  isOpen,
-  onOpen,
-  onClose,
-  productsList,
-  setProductsList,
-}) {
-  const [totalProducts, setTotalProducts] = useState(productsList);
-  const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
+//rest/bodega/productos
+export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
+  //const [totalProducts, setTotalProducts] = useState(productsList);
+  const [totalProdcsBodega, setTotalProdcsBodega] = useState();
+  const [displayedArticulos, setDisplayedArticulos] = useState();
   const [activeProdcs, setActiveProdcs] = useState([]);
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getBodegaInfo();
+  }, []);
 
   useEffect(() => {
     if (busqueda !== null) {
@@ -57,8 +57,71 @@ export default function Despachar({
     onClose: onConfirmationModalClose,
   } = useDisclosure();
 
+  const getBodegaInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      if (response) {
+        const xmlDoc = parseData(response.data);
+        setTotalProdcsBodega(() => {
+          const totalProds = getProductosBodega(xmlDoc);
+          const results = totalProds.filter(
+            (item) => item.cantidadEnBodega > 0,
+          );
+          return results;
+        });
+        setDisplayedArticulos(() => {
+          const totalProds = getProductosBodega(xmlDoc);
+          const results = totalProds.filter(
+            (item) => item.cantidadEnBodega > 0,
+          );
+          return results;
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
+
+  const getProductosBodega = (xml) => {
+    const productosDelNegocio = xml.querySelector("productosDelNegocio");
+    const arrProductosBodega = productosDelNegocio.querySelectorAll("producto");
+    const totalProdsBodegaArr = [];
+    for (let i = 0; i < arrProductosBodega.length; i++) {
+      const cantidadEnBodega =
+        arrProductosBodega[i]?.getElementsByTagName("cantidadEnBodega")[0]
+          .textContent;
+      const cantidadEnVitrinas =
+        arrProductosBodega[i]?.getElementsByTagName("cantidadEnVitrinas")[0]
+          .textContent;
+      const codigo =
+        arrProductosBodega[i]?.getElementsByTagName("codigo")[0].textContent;
+      const costo =
+        arrProductosBodega[i]?.getElementsByTagName("costo")[0].textContent;
+      const nombre =
+        arrProductosBodega[i]?.getElementsByTagName("nombre")[0].textContent;
+      const precio =
+        arrProductosBodega[i]?.getElementsByTagName("precio")[0].textContent;
+
+      totalProdsBodegaArr.push({
+        cantidadEnBodega,
+        cantidadEnVitrinas,
+        codigo,
+        costo,
+        nombre,
+        precio,
+      });
+    }
+
+    return totalProdsBodegaArr;
+  };
+
   const Busqueda = (textToSearch) => {
-    let result = totalProducts?.filter((element) => {
+    let result = totalProdcsBodega?.filter((element) => {
       if (
         element?.nombre
           ?.toString()
@@ -82,7 +145,7 @@ export default function Despachar({
     if (isChecked) {
       deleteProductFromList(producto);
     } else {
-      const nuevoProducto = { ...producto, cantidad: 0 };
+      const nuevoProducto = { ...producto, cantidad: 1 };
       setActiveProdcs((prev) => [...prev, nuevoProducto]);
     }
   };
@@ -130,7 +193,7 @@ export default function Despachar({
           <Checkbox
             checked={!!isActive}
             setChecked={() => handleCheck(product)}
-            text={product.nombre}
+            text={capitalizeFirstLetter(product.nombre)}
             colorScheme={"#1890FF"}
           />
         </ListItem>
@@ -151,20 +214,7 @@ export default function Despachar({
       .then((response) => {
         console.log(response);
         if (response) {
-          setProductsList((prev) => {
-            const copy = [...prev];
-            for (let i = 0; i < activeProdcs?.length; i++) {
-              const index = copy.findIndex(
-                (prod) => prod.codigo === activeProdcs[i]?.codigo,
-              );
-              if (index !== -1) {
-                let existencia = copy[index].existencia;
-                let cantidad = activeProdcs[i].cantidad;
-                copy[index].existencia = Number(existencia) + Number(cantidad);
-              }
-            }
-            return copy;
-          });
+          alert("Productos Despachados con exito!");
         }
         setLoading(false);
         onClose();
@@ -175,6 +225,12 @@ export default function Despachar({
         setLoading(false);
       });
   };
+
+  const CantidadTotal = useMemo(() => {
+    return activeProdcs.reduce((arr, item) => {
+      return arr + Number.parseInt(item.cantidad);
+    }, 0);
+  }, [activeProdcs]);
 
   return (
     <Box>
@@ -196,84 +252,81 @@ export default function Despachar({
               Despachar
             </Text>
           </ModalHeader>
-          <ModalBody display={"flex"} flexDirection={"column"}>
-            <Box
-              display={"flex"}
-              flexDir={"column"}
-              justifyContent={"center"}
-              alignItems={"flex-start"}
-              gap={1}
-              p={1}
-              pb={3}
-            >
+          <ModalBody display={"flex"} flexDirection={"column"} gap={2}>
+            <Box w={"100%"} display={"flex"} flexDir={"column"}>
+              <Box
+                w={"100%"}
+                display={"flex"}
+                alignContent={"center"}
+                gap={2}
+                justifyContent={"flex-start"}
+                pb={2}
+              >
+                <Text
+                  w={"100%"}
+                  maxW={"250px"}
+                  textStyle={"RobotoSubtitleRegular"}
+                  color={"grey.placeholder"}
+                >
+                  Se despacharán productos desde:
+                </Text>
+                <Text w={"50px"}></Text>
+                <Text
+                  w={"100%"}
+                  maxW={"250px"}
+                  textStyle={"RobotoSubtitleRegular"}
+                  color={"grey.placeholder"}
+                >
+                  Hacia:
+                </Text>
+              </Box>
               <Box
                 display={"flex"}
-                justifyContent={"space-around"}
-                gap={"1.25rem"}
+                alignContent={"center"}
+                gap={2}
+                justifyContent={"flex-start"}
               >
-                <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  justifyContent={"space-between"}
+                <Text
+                  minH={"40px"}
+                  w={"100%"}
+                  maxW={"250px"}
+                  textStyle={"RobotoSubtitleRegular"}
+                  borderRadius={"5px"}
+                  borderWidth={1}
+                  borderColor={"mainBg"}
+                  p={2}
                 >
-                  <Text
-                    textStyle={"RobotoSubtitleRegular"}
-                    color={"grey.placeholder"}
-                  >
-                    Se despacharán productos desde:
-                  </Text>
-                  <Text
-                    h={"40px"}
-                    w={"200px"}
-                    textStyle={"RobotoSubtitleRegular"}
-                    borderRadius={"5px"}
-                    borderWidth={1}
-                    borderColor={"mainBg"}
-                    p={2}
-                  >
-                    Bodega
-                  </Text>
-                </Box>
+                  Bodega
+                </Text>
                 <Box
+                  h={"100%"}
                   display={{ base: "none", lg: "flex" }}
                   justifyContent={"center"}
-                  alignItems={"flex-end"}
+                  alignItems={"center"}
+                  alignSelf={"center"}
                 >
-                  <RightArrowIcon />
+                  <RightArrowIcon height="100%" />
                 </Box>
-                <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  justifyContent={"space-between"}
+
+                <Text
+                  minH={"40px"}
+                  w={"100%"}
+                  maxW={"240px"}
+                  textStyle={"RobotoSubtitleRegular"}
+                  borderRadius={"5px"}
+                  borderWidth={1}
+                  borderColor={"mainBg"}
+                  p={2}
                 >
-                  <Text
-                    textStyle={"RobotoSubtitleRegular"}
-                    color={"grey.placeholder"}
-                    p={1}
-                  >
-                    Hacia:
-                  </Text>
-                  <Text
-                    h={"40px"}
-                    minW={"200px"}
-                    textStyle={"RobotoSubtitleRegular"}
-                    borderRadius={"5px"}
-                    borderWidth={1}
-                    borderColor={"mainBg"}
-                    p={2}
-                  >
-                    {vitrina}
-                  </Text>
-                </Box>
+                  {vitrina}
+                </Text>
               </Box>
             </Box>
             <Box
               w={"100%"}
               display={"flex"}
-              flexDir={{ base: "column", md: "row" }}
-              justifyContent={"center"}
-              alignItems={"center"}
               gap={"1.25rem"}
+              flexDirection={{ base: "column", md: "row" }}
             >
               <Box
                 w={{ base: "100%", md: "50%" }}
@@ -328,7 +381,6 @@ export default function Despachar({
                         },
                       }}
                     >
-                      {console.log(displayedArticulos)}
                       {displayedArticulos?.map((product, index) => {
                         return ProductListItem(product, index);
                       })}
@@ -344,15 +396,16 @@ export default function Despachar({
                 borderColor="gray.200"
                 p={"15px"}
               >
-                <FormControl
-                  w={"100%"}
-                  display={"flex"}
-                  flexDirection={"column"}
-                >
-                  <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
-                    Productos a despachar
-                  </Text>
-                  {activeProdcs?.length > 0 ? (
+                {activeProdcs?.length > 0 ? (
+                  <FormControl
+                    w={"100%"}
+                    display={"flex"}
+                    flexDirection={"column"}
+                  >
+                    <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                      Productos a despachar
+                    </Text>
+
                     <Box
                       alignSelf={"flex-end"}
                       mr={"12%"}
@@ -368,40 +421,14 @@ export default function Despachar({
                         Cantidad
                       </Text>
                     </Box>
-                  ) : (
-                    <Box>
-                      <Text>Porfavor seleccione los productos a Despachar</Text>
-                    </Box>
-                  )}
-                  <FormLabel
-                    display="flex"
-                    alignItems="center"
-                    flexDirection={"column"}
-                    height={"120px"}
-                    overflowY="scroll"
-                    overflowX="hidden"
-                    sx={{
-                      "::-webkit-scrollbar": {
-                        width: "8px",
-                        height: "4px",
-                      },
-                      "::-webkit-scrollbar-track": {
-                        background: "tranparent",
-                      },
-                      "::-webkit-scrollbar-thumb": {
-                        background: "gray.200",
-                        borderRadius: "10px",
-                      },
-                      "::-webkit-scrollbar-thumb:hover": {
-                        background: "gray.200",
-                      },
-                    }}
-                  >
-                    <UnorderedList
-                      styleType="none"
-                      w={"100%"}
+
+                    <FormLabel
+                      display={"flex"}
+                      alignItems="center"
+                      flexDirection={"column"}
                       height={"120px"}
                       overflowY="scroll"
+                      overflowX="hidden"
                       sx={{
                         "::-webkit-scrollbar": {
                           width: "8px",
@@ -419,25 +446,71 @@ export default function Despachar({
                         },
                       }}
                     >
-                      {activeProdcs?.map((product, index) => {
-                        return (
-                          <ListItem key={index}>
-                            <Product
-                              productName={product.nombre}
-                              existencias={product.existencia}
-                              producto={product}
-                              setProdCantidad={(val) => {
-                                console.log(product, " Product ", val, " val ");
-                                setProdCantidad(val, product);
-                              }}
-                              deleteProduct={deleteProductFromList}
-                            />
-                          </ListItem>
-                        );
-                      })}
-                    </UnorderedList>
-                  </FormLabel>
-                </FormControl>
+                      <UnorderedList
+                        styleType="none"
+                        w={"100%"}
+                        height={"120px"}
+                        overflowY="scroll"
+                        sx={{
+                          "::-webkit-scrollbar": {
+                            width: "8px",
+                            height: "4px",
+                          },
+                          "::-webkit-scrollbar-track": {
+                            background: "tranparent",
+                          },
+                          "::-webkit-scrollbar-thumb": {
+                            background: "gray.200",
+                            borderRadius: "10px",
+                          },
+                          "::-webkit-scrollbar-thumb:hover": {
+                            background: "gray.200",
+                          },
+                        }}
+                      >
+                        {activeProdcs?.map((product, index) => {
+                          return (
+                            <ListItem key={index}>
+                              <Product
+                                productName={capitalizeFirstLetter(
+                                  product.nombre,
+                                )}
+                                existencias={product.cantidadEnBodega}
+                                producto={product}
+                                setProdCantidad={(val) => {
+                                  setProdCantidad(val, product);
+                                }}
+                                deleteProduct={deleteProductFromList}
+                              />
+                            </ListItem>
+                          );
+                        })}
+                      </UnorderedList>
+                    </FormLabel>
+                  </FormControl>
+                ) : (
+                  <Box
+                    w={"100%"}
+                    h={"100%"}
+                    display={"flex"}
+                    flexDirection={"column"}
+                  >
+                    <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                      Productos a despachar
+                    </Text>
+                    <Box
+                      w={"100%"}
+                      h={"100%"}
+                      display={"flex"}
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                    >
+                      <Text color={"grey.placeholder"}>
+                        Porfavor seleccione los productos a despachar
+                      </Text>
+                    </Box>
+                  </Box>
+                )}
               </Box>
             </Box>
           </ModalBody>
@@ -468,13 +541,13 @@ export default function Despachar({
               Enviar
             </StandardButton>
             <ConfirmationMessage
-              text={"despacharán"}
+              text={`Se despacharán ${CantidadTotal} productos desde La Bodega hacia ${vitrina}. `}
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
               isLoading={loading}
               funcConfirmar={despacharProdcs}
-              products={activeProdcs?.length > 0 ? activeProdcs : null}
+              products={null}
               desde={"Bodega"}
               hacia={vitrina}
             />

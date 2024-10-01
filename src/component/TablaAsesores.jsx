@@ -159,6 +159,7 @@ export default function TablaProductosBodega({
         }
         colorText2={"red.100"}
         buttonText={"Continuar"}
+        products={null}
       />
     </Box>
   );

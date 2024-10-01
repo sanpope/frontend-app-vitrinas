@@ -29,6 +29,8 @@ import axios from "axios";
 
 import { parseData } from "../utils/xmlParse";
 import { generateProductsListXML } from "../utils/xmlParse";
+import { capitalizeFirstLetter } from "../utils/formatting";
+import { useMemo } from "react";
 
 export default function Transferir({
   vitrina,
@@ -40,11 +42,13 @@ export default function Transferir({
 }) {
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
-  const [totalProducts, setTotalProducts] = useState(productsList);
-  const [activeProdcs, setActiveProdcs] = useState([]);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
+  const [totalProdcsBodega, setTotalProdcsBodega] = useState();
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [productsToShow, setProductsToShow] = useState([]);
+
+  const [activeProdcs, setActiveProdcs] = useState([]);
 
   useEffect(() => {
     if (busqueda !== null) {
@@ -52,6 +56,19 @@ export default function Transferir({
     } else {
     }
   }, [busqueda]);
+
+  useEffect(() => {
+    getBodegaInfo();
+  }, []);
+
+  useEffect(() => {
+    if (totalProdcsBodega) {
+      setActiveProdcs([]);
+      setProductsToShow(
+        desde === "Bodega" ? totalProdcsBodega : displayedArticulos,
+      );
+    }
+  }, [desde]);
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -78,17 +95,18 @@ export default function Transferir({
   };
 
   const Busqueda = (textToSearch) => {
-    let result = totalProducts?.filter((element) => {
+    const tableToFilter =
+      desde === "Bodega" ? totalProdcsBodega : displayedArticulos;
+    console.log(textToSearch, " texto a buscar ", tableToFilter);
+    let result = tableToFilter?.filter((element) => {
       if (
-        element?.nombre
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase())
+        element?.nombre?.toLowerCase().includes(textToSearch?.toLowerCase())
       ) {
+        console.log(element);
         return element;
       }
     });
-    setDisplayedArticulos(result);
+    setProductsToShow(result);
   };
 
   const onBuscarChange = (e) => {
@@ -102,7 +120,7 @@ export default function Transferir({
     if (isChecked) {
       deleteProductFromList(producto);
     } else {
-      const nuevoProducto = { ...producto, cantidad: 0 };
+      const nuevoProducto = { ...producto, cantidad: 1 };
       setActiveProdcs((prev) => [...prev, nuevoProducto]);
     }
   };
@@ -151,7 +169,7 @@ export default function Transferir({
           <Checkbox
             checked={!!isActive}
             setChecked={() => handleCheck(product)}
-            text={product.nombre}
+            text={capitalizeFirstLetter(product.nombre)}
             colorScheme={"#1890FF"}
           />
         </ListItem>
@@ -160,13 +178,10 @@ export default function Transferir({
     [activeProdcs],
   );
 
-  const productosAEnviar = useCallback(() => {
-    console.log("Prueba Callback");
-  }, []);
-
   const transferirProdcs = async () => {
     setLoading(true);
     const xmlData = generateProductsListXML(activeProdcs).toString();
+    console.log(activeProdcs);
 
     const haciaVitrina = hacia === vitrina ? true : false;
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}&haciaVitrina=${haciaVitrina}`;
@@ -177,6 +192,7 @@ export default function Transferir({
         body: xmlData.toString(),
       })
         .then((response) => {
+          console.log(response);
           if (response) {
             if (haciaVitrina) {
               setProductsList((prev) => {
@@ -190,6 +206,8 @@ export default function Transferir({
                     let cantidad = activeProdcs[i].cantidad;
                     copy[index].existencia =
                       Number(existencia) + Number(cantidad);
+                  }else{
+                    //TODO AGREGAR PRODUCTO SI NO ESTA EN LA TABLA PREGUNTA POR LOS ITEMS DE LA TABLA  
                   }
                 }
                 return copy;
@@ -224,6 +242,76 @@ export default function Transferir({
     }
   };
 
+  const getBodegaInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      const xmlDoc = parseData(response.data);
+      if (response) {
+        const xmlDoc = parseData(response.data);
+        setTotalProdcsBodega(() => {
+          const totalProds = getProductosBodega(xmlDoc);
+          const results = totalProds.filter(
+            (item) => item.cantidadEnBodega > 0,
+          );
+          return results;
+        });
+        setProductsToShow(() => {
+          const totalProds = getProductosBodega(xmlDoc);
+          const results = totalProds.filter(
+            (item) => item.cantidadEnBodega > 0,
+          );
+          return results;
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
+
+  const getProductosBodega = (xml) => {
+    const productosDelNegocio = xml.querySelector("productosDelNegocio");
+    const arrProductosBodega = productosDelNegocio.querySelectorAll("producto");
+    const totalProdsBodegaArr = [];
+    for (let i = 0; i < arrProductosBodega.length; i++) {
+      const cantidadEnBodega =
+        arrProductosBodega[i]?.getElementsByTagName("cantidadEnBodega")[0]
+          .textContent;
+      const cantidadEnVitrinas =
+        arrProductosBodega[i]?.getElementsByTagName("cantidadEnVitrinas")[0]
+          .textContent;
+      const codigo =
+        arrProductosBodega[i]?.getElementsByTagName("codigo")[0].textContent;
+      const costo =
+        arrProductosBodega[i]?.getElementsByTagName("costo")[0].textContent;
+      const nombre =
+        arrProductosBodega[i]?.getElementsByTagName("nombre")[0].textContent;
+      const precio =
+        arrProductosBodega[i]?.getElementsByTagName("precio")[0].textContent;
+
+      totalProdsBodegaArr.push({
+        cantidadEnBodega,
+        cantidadEnVitrinas,
+        codigo,
+        costo,
+        nombre,
+        precio,
+      });
+    }
+
+    return totalProdsBodegaArr;
+  };
+
+  const CantidadTotal = useMemo(() => {
+    return activeProdcs.reduce((arr, item) => {
+      return arr + Number.parseInt(item.cantidad);
+    }, 0);
+  }, [activeProdcs]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -243,89 +331,88 @@ export default function Transferir({
             Transferir
           </Text>
         </ModalHeader>
-        <ModalBody display={"flex"} flexDirection={"column"}>
-          <Box
-            display={"flex"}
-            flexDir={"column"}
-            justifyContent={"center"}
-            alignItems={"flex-start"}
-            gap={1}
-            p={1}
-            pb={3}
-          >
+        <ModalBody display={"flex"} flexDirection={"column"} gap={2}>
+          <Box w={"100%"} display={"flex"} flexDir={"column"}>
+            <Box
+              w={"100%"}
+              display={"flex"}
+              alignContent={"center"}
+              gap={2}
+              justifyContent={"flex-start"}
+              pb={2}
+            >
+              <Text
+                w={"100%"}
+                maxW={"250px"}
+                textStyle={"RobotoSubtitleRegular"}
+                color={"grey.placeholder"}
+              >
+                Se transferiran productos desde:
+              </Text>
+              <Text w={"50px"}></Text>
+              <Text
+                w={"100%"}
+                maxW={"250px"}
+                textStyle={"RobotoSubtitleRegular"}
+                color={"grey.placeholder"}
+              >
+                Hacia:
+              </Text>
+            </Box>
             <Box
               display={"flex"}
-              justifyContent={"space-between"}
-              gap={"1.25rem"}
+              alignContent={"center"}
+              gap={2}
+              justifyContent={"flex-start"}
             >
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"space-between"}
-              >
-                <Text
-                  textStyle={"RobotoSubtitleRegular"}
-                  color={"grey.placeholder"}
-                >
-                  Se transferiran productos desde:
-                </Text>
-                <Select
-                  h={"40px"}
-                  minW={"200px"}
-                  onChange={handleOnChange}
-                  required
-                  color={"grey.placeholder"}
-                  sx={{
-                    borderColor: "mainBg",
+              <Select
+                minH={"40px"}
+                w={"100%"}
+                maxW={"250px"}
+                onChange={handleOnChange}
+                required
+                color={"grey.placeholder"}
+                sx={{
+                  borderColor: "mainBg",
+                  borderWidth: "1px",
+                  _hover: {
+                    borderColor: "blue.50",
                     borderWidth: "1px",
-                    _hover: {
-                      borderColor: "blue.50",
-                      borderWidth: "1px",
-                    },
-                    _focus: {
-                      borderColor: "blue.50",
-                      boxShadow: "0px 0px 5px 0px rgba(88, 178, 255, 1)",
-                      borderWidth: "1px",
-                    },
-                  }}
-                >
-                  <option>{"Bodega"}</option>
-                  <option>{vitrina}</option>
-                </Select>
-              </Box>
+                  },
+                  _focus: {
+                    borderColor: "blue.50",
+                    boxShadow: "0px 0px 5px 0px rgba(88, 178, 255, 1)",
+                    borderWidth: "1px",
+                  },
+                }}
+              >
+                <option>{"Bodega"}</option>
+                <option>{vitrina}</option>
+              </Select>
               <Box
                 display={{ base: "none", lg: "flex" }}
                 justifyContent={"center"}
-                alignItems={"flex-end"}
+                alignItems={"center"}
+                alignSelf={"center"}
               >
-                <RightArrowIcon />
+                <RightArrowIcon height="100%" />
               </Box>
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"space-between"}
+
+              <Text
+                minH={"40px"}
+                w={"100%"}
+                maxW={"240px"}
+                textStyle={"RobotoSubtitleRegular"}
+                borderRadius={"5px"}
+                borderWidth={1}
+                borderColor={"mainBg"}
+                p={2}
               >
-                <Text
-                  textStyle={"RobotoSubtitleRegular"}
-                  color={"grey.placeholder"}
-                  p={2}
-                >
-                  Hacia:
-                </Text>
-                <Text
-                  h={"40px"}
-                  minW={"200px"}
-                  textStyle={"RobotoSubtitleRegular"}
-                  borderRadius={"5px"}
-                  borderWidth={1}
-                  borderColor={"mainBg"}
-                  p={2}
-                >
-                  {hacia}
-                </Text>
-              </Box>
+                {hacia}
+              </Text>
             </Box>
           </Box>
+
           <Box
             w={"100%"}
             display={"flex"}
@@ -386,7 +473,7 @@ export default function Transferir({
                       },
                     }}
                   >
-                    {displayedArticulos?.map((product, index) => {
+                    {productsToShow?.map((product, index) => {
                       return ProductListItem(product, index);
                     })}
                   </UnorderedList>
@@ -399,12 +486,18 @@ export default function Transferir({
               borderRadius={"20px"}
               border="1px"
               borderColor="gray.200"
+              p={"15px"}
             >
-              <FormControl w={"100%"} display={"flex"} flexDirection={"column"}>
-                <Text textStyle={"RobotoSubtitleBold"} p={"10px"}>
-                  Productos a transferir
-                </Text>
-                {activeProdcs?.length > 0 ? (
+              {activeProdcs?.length > 0 ? (
+                <FormControl
+                  w={"100%"}
+                  display={"flex"}
+                  flexDirection={"column"}
+                >
+                  <Text textStyle={"RobotoSubtitleBold"} p={"10px"}>
+                    Productos a transferir
+                  </Text>
+
                   <Box
                     alignSelf={"flex-end"}
                     mr={"12%"}
@@ -420,40 +513,14 @@ export default function Transferir({
                       Cantidad
                     </Text>
                   </Box>
-                ) : (
-                  <Box p={2}>
-                    <Text>Porfavor seleccione los productos a Transferir</Text>
-                  </Box>
-                )}
-                <FormLabel
-                  display="flex"
-                  alignItems="center"
-                  flexDirection={"column"}
-                  height={"120px"}
-                  overflowY="scroll"
-                  overflowX="hidden"
-                  sx={{
-                    "::-webkit-scrollbar": {
-                      width: "8px",
-                      height: "4px",
-                    },
-                    "::-webkit-scrollbar-track": {
-                      background: "tranparent",
-                    },
-                    "::-webkit-scrollbar-thumb": {
-                      background: "gray.200",
-                      borderRadius: "10px",
-                    },
-                    "::-webkit-scrollbar-thumb:hover": {
-                      background: "gray.200",
-                    },
-                  }}
-                >
-                  <UnorderedList
-                    styleType="none"
-                    w={"100%"}
+
+                  <FormLabel
+                    display="flex"
+                    alignItems="center"
+                    flexDirection={"column"}
                     height={"120px"}
                     overflowY="scroll"
+                    overflowX="hidden"
                     sx={{
                       "::-webkit-scrollbar": {
                         width: "8px",
@@ -471,25 +538,72 @@ export default function Transferir({
                       },
                     }}
                   >
-                    {activeProdcs?.map((product, index) => {
-                      console.log(activeProdcs);
-                      return (
-                        <ListItem key={index}>
-                          <Product
-                            productName={product.nombre}
-                            existencias={product.existencia}
-                            producto={product}
-                            setProdCantidad={(val) =>
-                              setProdCantidad(val, product)
-                            }
-                            deleteProduct={deleteProductFromList}
-                          />
-                        </ListItem>
-                      );
-                    })}
-                  </UnorderedList>
-                </FormLabel>
-              </FormControl>
+                    <UnorderedList
+                      styleType="none"
+                      w={"100%"}
+                      height={"120px"}
+                      overflowY="scroll"
+                      sx={{
+                        "::-webkit-scrollbar": {
+                          width: "8px",
+                          height: "4px",
+                        },
+                        "::-webkit-scrollbar-track": {
+                          background: "tranparent",
+                        },
+                        "::-webkit-scrollbar-thumb": {
+                          background: "gray.200",
+                          borderRadius: "10px",
+                        },
+                        "::-webkit-scrollbar-thumb:hover": {
+                          background: "gray.200",
+                        },
+                      }}
+                    >
+                      {console.log(activeProdcs)}
+                      {activeProdcs?.map((product, index) => {
+                        return (
+                          <ListItem key={index}>
+                            <Product
+                              productName={product.nombre}
+                              existencias={
+                                product.existencia || product.cantidadEnBodega
+                              }
+                              producto={product}
+                              setProdCantidad={(val) =>
+                                setProdCantidad(val, product)
+                              }
+                              deleteProduct={deleteProductFromList}
+                            />
+                          </ListItem>
+                        );
+                      })}
+                    </UnorderedList>
+                  </FormLabel>
+                </FormControl>
+              ) : (
+                <Box
+                  w={"100%"}
+                  h={"100%"}
+                  display={"flex"}
+                  flexDirection={"column"}
+                >
+                  <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                    Productos a transferir
+                  </Text>
+                  <Box
+                    w={"100%"}
+                    h={"100%"}
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                  >
+                    <Text color={"grey.placeholder"}>
+                      Porfavor seleccione los productos a transferir
+                    </Text>
+                  </Box>
+                </Box>
+              )}
             </Box>
           </Box>
         </ModalBody>
@@ -520,13 +634,12 @@ export default function Transferir({
             Enviar
           </StandardButton>
           <ConfirmationMessage
-            text={"transferirán"}
+            text={`Se transferirán ${CantidadTotal} productos desde ${desde} hacia ${hacia}.`}
             isOpen={isConfirmationModalOpen}
             onOpen={onConfirmationModalOpen}
             onClose={onConfirmationModalClose}
             funcConfirmar={transferirProdcs}
             isLoading={loading}
-            products={activeProdcs?.length > 0 ? activeProdcs : null}
             desde={desde}
             hacia={hacia}
           />

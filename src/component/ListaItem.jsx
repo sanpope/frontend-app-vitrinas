@@ -50,6 +50,7 @@ export default function Product({ desc, elemento }) {
           }
           colorText2={"red.100"}
           buttonText={"Continuar"}
+          products={null}
         />
       </Box>
     </Box>

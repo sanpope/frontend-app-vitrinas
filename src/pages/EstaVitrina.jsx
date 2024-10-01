@@ -406,6 +406,7 @@ export default function EstaVitrina() {
                 console.log("Eliminar");
                 deleteVitrina(name);
               }}
+              products={null}
             />
           </Box>
         </Box>
@@ -441,6 +442,7 @@ export default function EstaVitrina() {
             buttonText={"Continuar"}
             funcConfirmar={deleteAsesor}
             focusRow={asesorNombre}
+            products={null}
           />
           <EditarAsesor
             isOpen={isFifthModalOpen}

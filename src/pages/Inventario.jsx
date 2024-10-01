@@ -23,7 +23,7 @@ export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
 
-  const [tablaInventario, setTablaInventario] = useState(null);
+  const [tablaInventario, setTablaInventario] = useState([]);
   const [displayedArticulos, setDisplayedArticulos] = useState(tablaInventario);
   const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
@@ -120,6 +120,7 @@ export default function Inventario() {
         },
       });
       const xmlDoc = parseData(response.data);
+      console.log(xmlDoc);
       setTablaInventario(getProductos(xmlDoc));
       setTotalResults(tablaInventario?.length);
       setVerificacionesPendientes(getPendienteXverificar(xmlDoc));

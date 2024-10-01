@@ -226,7 +226,7 @@ export default function ModalVitrinas({
           </Box>
           <ModalBody
             display={"flex"}
-            justifyContent={"flex-start"}
+            justifyContent={"center"}
             flexWrap={"wrap"}
             gap={{ base: "0px", md: "20px" }}
             flexDir={"row"}
@@ -280,7 +280,7 @@ export default function ModalVitrinas({
               variant={"RED_PRIMARY"}
               borderRadius="30px"
               size="14px"
-              py={"5px"}
+              py={1}
               onClick={onSecondModalOpen}
               children={
                 <Text textStyle={"RobotoSubtitleRegular"}>

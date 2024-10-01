@@ -13,6 +13,7 @@ import {
 import React, { useState, useEffect } from "react";
 import TextInput from "./ui/textInput";
 import CloseIcon from "../assets/images/CloseIcon";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function Product({
   productName,
@@ -22,12 +23,10 @@ export default function Product({
   producto,
 }) {
   const [message, setMessage] = useState("");
-  const [value, setValue] = useState(null);
 
   const handleOnChange = (e) => {
-    const cantidad = Number.parseInt(e);
-    if (cantidad > 0 && cantidad <= existencias) {
-      setValue(e);
+    const cantidad = e.length ? Number.parseInt(e) : 0;
+    if (cantidad <= existencias) {
       setMessage("");
       setProdCantidad(e);
     } else if (cantidad > existencias) {
@@ -50,7 +49,7 @@ export default function Product({
         p={"5px"}
       >
         <Text w={"150px"} textStyle={"RobotoBody"}>
-          {productName}
+          {capitalizeFirstLetter(productName)}
         </Text>
         <Center
           w={"60px"}
@@ -67,17 +66,16 @@ export default function Product({
         </Center>
 
         <NumberInput
-          defaultValue={0}
           min={1}
           max={existencias}
           step={1}
           size="sm"
           maxW={"60px"}
-          h={"30px"}
           required
           borderRadius={"5px"}
           mx={2}
           onChange={handleOnChange}
+          value={producto.cantidad}
         >
           <NumberInputField
             fontSize={"16px"}

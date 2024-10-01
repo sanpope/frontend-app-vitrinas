@@ -18,7 +18,12 @@ export default function TopCategoriaItem({
       flex={"1 1 auto"}
       maxH={"40px"}
     >
-      <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
+      <Box
+        display={"flex"}
+        justifyContent={"flex-start"}
+        alignItems={"center"}
+        h={"100%"}
+      >
         {icon}
         <Text textStyle={"RobotoBody"} px={2} w={"95px"}>
           {catName}

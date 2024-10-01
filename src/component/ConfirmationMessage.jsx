@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  ListItem,
   Modal,
   ModalBody,
   ModalContent,
@@ -8,11 +9,13 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
 import InfoIcon from "../assets/images/InfoIcon";
 import StandardButton from "./ui/buttons/standard";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function ConfirmationMessage({
   icon = <InfoIcon />,
@@ -26,15 +29,12 @@ export default function ConfirmationMessage({
   funcConfirmar,
   focusRow,
   isLoading,
-  products,
-  desde,
-  hacia,
+  products = null,
 }) {
   const handleClick = async () => {
     await funcConfirmar(focusRow);
     onClose();
   };
-  console.log(products);
   return (
     <Box>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -53,34 +53,13 @@ export default function ConfirmationMessage({
               gap={"10px"}
             >
               {icon}
-              {products !== null ? (
-                <Box>
-                  <Text
-                    textStyle={"RobotoBodyBold"}
-                    textAlign={"justify"}
-                  ></Text>
-                  Se {text} los siguientes productos desde {desde} hacia {hacia}
-                  :
-                  {products?.map((prod) => {
-                    console.log(prod);
-                    return (
-                      <>
-                        <Text>Nombre: {prod.nombre}</Text>
-                        <Text>Cantidad {prod.cantidad}</Text>
-                      </>
-                    );
-                  })}
-                </Box>
-              ) : (
-                <Text>Selecciona los Productos a afectar.</Text>
-              )}
+              <Text textStyle={"RobotoBodyBold"}>{text}</Text>
             </Box>
             <Box>
               <Text
                 textStyle={"RobotoBody"}
                 color={colorText2}
-                textAlign={"justify"}
-                pt={2}
+                textAlign={"center"}
               >
                 {text2}
               </Text>

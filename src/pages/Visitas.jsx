@@ -556,6 +556,7 @@ export default function Visitas() {
           onClose={onConfirmationModalClose}
           funcConfirmar={setReversionVisita}
           focusRow={visitaSelected ? visitaSelected.idVisita : null}
+          products={null}
         />
       </Box>
     </Box>

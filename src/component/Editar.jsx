@@ -73,7 +73,7 @@ export default function Agregar({
                 </span>
                 {desc2}
               </Box>
-             
+
               <TextInput
                 w={"100%"}
                 type="text"
@@ -114,19 +114,27 @@ export default function Agregar({
                   },
                 }}
               >
-                <option>Bogotá</option>
-                <option>Medellín</option>
-                <option>Cali</option>
-                <option>Barranquilla</option>
-                <option>Bucaramanga</option>
-                <option>Manizales</option>
-                <option>Pereira</option>
-                <option>Cúcuta</option>
-                <option>Pasto</option>
-                <option>Ibagué</option>
-                <option>Montería</option>
-                <option>Cartagena</option>
-                <option>Villavicencio</option>
+                {[
+                  "Bogotá",
+                  "Medellín",
+                  "Cali",
+                  "Barranquilla",
+                  "Bucaramanga",
+                  "Manizales",
+                  "Pereira",
+                  "Cúcuta",
+                  "Pasto",
+                  "Ibagué",
+                  "Montería",
+                  "Cartagena",
+                  "Villavicencio",
+                ]
+                  .filter((option) => option !== city)
+                  .map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
               </Select>
             </Box>
           </Box>

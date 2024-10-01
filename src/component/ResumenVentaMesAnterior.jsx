@@ -44,6 +44,7 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
   });
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth();
+  console.log(typeof mesActual, mesActual);
   const curretYear = fechaActual.getFullYear();
   let lastYear = false;
   const monthLabels = resumenVentaMesAnterior?.map((d) => {
@@ -68,9 +69,11 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: resumenVentaMesAnterior?.map((d) =>
-          d.mes === mesActual.toString() ? "#FF0000" : "#000000",
-        ),
+        pointBackgroundColor: monthLabels?.map((d) => {
+         // console.log(d);
+          console.log(mesesAbreviados[mesActual]);
+          return d === mesesAbreviados[mesActual] ? "#FF0000" : "#000000";
+        }),
         pointRadius: 7,
         pointBorderWidth: 3,
         pointBorderColor: "white",
