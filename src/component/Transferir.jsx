@@ -39,6 +39,7 @@ export default function Transferir({
   onClose,
   productsList,
   setProductsList,
+  getInventarioInfo,
 }) {
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
@@ -206,8 +207,9 @@ export default function Transferir({
                     let cantidad = activeProdcs[i].cantidad;
                     copy[index].existencia =
                       Number(existencia) + Number(cantidad);
-                  }else{
-                    //TODO AGREGAR PRODUCTO SI NO ESTA EN LA TABLA PREGUNTA POR LOS ITEMS DE LA TABLA  
+                  } else {
+                    //TODO AGREGAR PRODUCTO SI NO ESTA EN LA TABLA PREGUNTA POR LOS ITEMS DE LA TABLA
+                    getInventarioInfo(vitrina);
                   }
                 }
                 return copy;
@@ -627,7 +629,7 @@ export default function Transferir({
             w={"150px"}
             fontSize="14px"
             fontWeight="400"
-            onClick={onConfirmationModalOpen}
+            onClick={activeProdcs?.length > 0 ? onConfirmationModalOpen : null}
             disabled={activeProdcs?.length > 0 ? false : true}
             cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
           >

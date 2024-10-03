@@ -18,6 +18,7 @@ import {
   formatearNumero,
 } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
+import NoteInventario from "../component/NoteInventario";
 
 export default function Inventario() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -120,9 +121,9 @@ export default function Inventario() {
         },
       });
       const xmlDoc = parseData(response.data);
-      console.log(xmlDoc);
+
       setTablaInventario(getProductos(xmlDoc));
-      setTotalResults(tablaInventario?.length);
+      setTotalResults(getProductos(xmlDoc).length);
       setVerificacionesPendientes(getPendienteXverificar(xmlDoc));
     } catch (error) {
       console.error("Error fetching XML data:", error);
@@ -175,7 +176,6 @@ export default function Inventario() {
           proveedor,
         });
       }
-      //console.log(totalProdsArr);
       return totalProdsArr;
     } else {
       return null;
@@ -217,7 +217,7 @@ export default function Inventario() {
         justifyContent={{ base: "flex-start", lg: "space-between" }}
         alignItems={{ base: "flex-start", lg: "center" }}
         gap={2}
-        mb={2}
+        mb={4}
       >
         <TextInput
           w={{ base: "100%", md: "450px" }}
@@ -274,6 +274,7 @@ export default function Inventario() {
               vitrina={name}
               productsList={tablaInventario}
               setProductsList={setTablaInventario}
+              getInventarioInfo={getInventarioInfo}
             />
           )}
         </Box>
@@ -301,7 +302,7 @@ export default function Inventario() {
           />
         }
       </Box>
-      <Note
+      <NoteInventario
         text1={"Pendiente verificar actualizaciones realizadas en visitas del:"}
         arr={
           verificacionesPendientes?.length > 0 ? verificacionesPendientes : null

@@ -4,20 +4,22 @@ import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 import { Box, Text } from "@chakra-ui/react";
 Chart.register(ArcElement, Tooltip, Legend);
 
-const TopVitrinasdelMes = ({
-  labels,
-  data,
+const TopVitrinas = ({
+  topVitrinas,
   backgroundColor,
   hoverBackgroundColor,
 }) => {
+  const dataVentas = topVitrinas?.map((obj) =>
+    Number(obj.venta.replace(/\./g, "")),
+  );
 
-  const dataNumber = data?.map((dato) => dato.replace(/\./g, ""));
+  const labelsNames = topVitrinas?.map((obj) => obj.nombre);
 
   const chartData = {
-    labels: labels,
+    labels: labelsNames,
     datasets: [
       {
-        data: dataNumber,
+        data: dataVentas,
         backgroundColor: backgroundColor || ["#000000", "#555555", "#BBBBBB"],
         hoverBackgroundColor: hoverBackgroundColor || [
           "#000000",
@@ -44,7 +46,7 @@ const TopVitrinasdelMes = ({
   return (
     <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
       <Box h={"50%"} display={{ base: "none", sm: "inline-flex" }}>
-        {labels !== null && data !== null ? (
+        {topVitrinas !== null ? (
           <Doughnut data={chartData} options={options} />
         ) : (
           <Text color={"grey.placeholder"}>
@@ -56,4 +58,4 @@ const TopVitrinasdelMes = ({
   );
 };
 
-export default TopVitrinasdelMes;
+export default TopVitrinas;

@@ -131,7 +131,7 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
                   <Text
                     minW={"5rem"}
                     textStyle={"RobotoRegular"}
-                    textAlign={"left"}
+                    textAlign={"right"}
                     color={"grey.placeholder"}
                   >
                     {visita.fecha}
@@ -173,7 +173,9 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
           </Box>
         </Box>
       ) : (
-        <Text>No se encontró Inventario Pendiente por verificar</Text>
+        <Text color={"grey.placeholder"} mt={"50px"}>
+          No se encontró Inventario Pendiente por verificar
+        </Text>
       )}
     </>
   );

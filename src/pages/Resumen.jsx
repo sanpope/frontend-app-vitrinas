@@ -1,4 +1,4 @@
-import { Box, ListItem, OrderedList, Text } from "@chakra-ui/react";
+import { Box, HStack, ListItem, OrderedList, Text } from "@chakra-ui/react";
 import React, { useMemo, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Container from "../component/Container";
@@ -38,6 +38,7 @@ import {
   convertirFecha,
   capitalizeFirstLetter,
   formatearNumero,
+  getPorcentage,
 } from "../utils/formatting";
 import { parseData } from "../utils/xmlParse";
 
@@ -84,10 +85,18 @@ export default function Resumen() {
       const xmlDoc = parseData(response.data);
       setInactividad(getTiempoInactividad(xmlDoc));
       setProdsUltimasVentas(getUltimasVentas(xmlDoc));
-      setTotalVentasDia(getVentasDia(xmlDoc));
+
+      const { cantidad, porcentajeDeCrecimiento } = getVentasDia(xmlDoc);
+      setTotalVentasDia(getPorcentage(cantidad, porcentajeDeCrecimiento));
       setEtadoDelDispositivo(getEstadoDispositivo(xmlDoc));
       setTotalMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
-      setTotalVentasMes(getVentasMes(xmlDoc));
+      const valorYPorcentajeMes = getVentasMes(xmlDoc);
+      setTotalVentasMes(
+        getPorcentage(
+          valorYPorcentajeMes.valor,
+          valorYPorcentajeMes.porcentajeDeCrecimiento,
+        ),
+      );
       setActualizacionesInvNoRev(getActualizacionesInventario(xmlDoc));
       setIntervaloDelDia(getEvolucionDiariaVentas(xmlDoc));
       setTotalCategorias(getTopCategorias(xmlDoc));
@@ -107,28 +116,20 @@ export default function Resumen() {
 
   const getUltimasVentas = (xml) => {
     const actividadReciente = xml.querySelector("resumenDeActividadReciente");
-    let valor = formatearNumero(
-      actividadReciente?.getElementsByTagName("valor")[0].textContent,
-    );
-    let fecha = formatDate(
-      actividadReciente?.getElementsByTagName("fecha")[0].textContent,
-    );
+    let valor = actividadReciente?.getElementsByTagName("valor")[0].textContent;
+    let fecha = actividadReciente?.getElementsByTagName("fecha")[0].textContent;
     let masProductos =
       actividadReciente?.getElementsByTagName("masProductos")[0].textContent;
     let producto1 = actividadReciente?.querySelector("producto1");
     let producto2 = actividadReciente?.querySelector("producto2");
 
     let prod1 = {
-      nombre: formatString(
-        producto1?.getElementsByTagName("nombre")[0].textContent,
-      ),
+      nombre: producto1?.getElementsByTagName("nombre")[0].textContent,
       cantidad: producto1?.getElementsByTagName("cantidad")[0].textContent,
     };
 
     let prod2 = {
-      nombre: formatString(
-        producto2?.getElementsByTagName("nombre")[0].textContent,
-      ),
+      nombre: producto2?.getElementsByTagName("nombre")[0].textContent,
       cantidad: producto2?.getElementsByTagName("cantidad")[0].textContent,
     };
 
@@ -139,10 +140,9 @@ export default function Resumen() {
     const resumenActividad = xml.querySelector("resumenDeActividadReciente");
     let ventasDelDia = resumenActividad.querySelector("ventasDelDia");
     let cantidad = ventasDelDia.getElementsByTagName("cantidad")[0].textContent;
-    let porcentajeDeCrecimiento =
-      ventasDelDia.getElementsByTagName("porcentajeDeCrecimiento")[0]
-        .textContent / 100;
-
+    let porcentajeDeCrecimiento = ventasDelDia.getElementsByTagName(
+      "porcentajeDeCrecimiento",
+    )[0].textContent;
     return { cantidad, porcentajeDeCrecimiento };
   };
 
@@ -156,9 +156,9 @@ export default function Resumen() {
 
   const getVentasMes = (xml) => {
     const ventasDelMes = xml.querySelector("ventaDelMes");
-    let porcentajeDeCrecimiento =
-      ventasDelMes.getElementsByTagName("porcentajeDeCrecimiento")[0]
-        .textContent / 100;
+    let porcentajeDeCrecimiento = ventasDelMes.getElementsByTagName(
+      "porcentajeDeCrecimiento",
+    )[0].textContent;
     let valor = formatearNumero(
       ventasDelMes.getElementsByTagName("valor")[0].textContent,
     );
@@ -358,10 +358,10 @@ export default function Resumen() {
             <Box
               h={"100%"}
               display={"flex"}
-              justifyContent={"flex-start"}
+              justifyContent={"center"}
               alignItems={"center"}
             >
-              <Text textStyle={"RobotoeBannerBold"} color={"black"}>
+              <Text textStyle={"RobotoHeaderBold"} color={"black"}>
                 {inactividad != null ? Math.ceil(inactividad) : 0} Hrs.
               </Text>
             </Box>
@@ -376,12 +376,9 @@ export default function Resumen() {
           title={"Última venta"}
           children={
             <UltimaVenta
-              fecha={prodslUltimasVentas?.fecha}
-              valor={prodslUltimasVentas?.valor}
-              Prod1Cant={prodslUltimasVentas?.prod1?.cantidad}
-              Prod1Nomb={prodslUltimasVentas?.prod1?.nombre}
-              Prod2Cant={prodslUltimasVentas?.prod2?.cantidad}
-              Prod2Nomb={prodslUltimasVentas?.prod2?.nombre}
+              prodslUltimasVentas={
+                prodslUltimasVentas != null ? prodslUltimasVentas : null
+              }
             />
           }
         />
@@ -400,21 +397,15 @@ export default function Resumen() {
               alignItems={"flex-start"}
             >
               <Box display={"flex"} alignItems={"center"} flexGrow={1}>
-                <Text textStyle={"RobotoeBannerBold"} color={"black"}>
-                  {totalVentasDia?.cantidad}
+                <Text textStyle={"RobotoHeaderBold"} color={"black"}>
+                  ${totalVentasDia?.valor}
                 </Text>
               </Box>
 
-              <Text
-                textStyle={"RobotoSubSmall"}
-                color={
-                  totalVentasDia?.porcentajeDeCrecimiento > 0
-                    ? "#00BC4F"
-                    : "red"
-                }
-              >
-                {totalVentasDia?.porcentajeDeCrecimiento}% por encima del
-                promedio
+              <Text textStyle={"RobotoSubSmall"} color={totalVentasDia?.color}>
+                {totalVentasDia != null
+                  ? `${totalVentasDia?.porcentajeDeCrecimiento}% ${totalVentasDia?.text}`
+                  : "No se cuenta con información registrada."}
               </Text>
             </Box>
           }
@@ -433,16 +424,22 @@ export default function Resumen() {
         >
           <MobileIcon
             width={"40px"}
-            fill={estadoDelDispositivo === "Ok" ? "#00BC4F" : "red"}
+            fill={estadoDelDispositivo === "Ok" ? "#00BC4F" : "red.100"}
           />
+
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
+
           <Box display={"flex"} justifyContent={"flex-start"}>
             {estadoDelDispositivo === "Ok" ? (
               <ThumbUpIcon />
             ) : (
               <ThumbDownIcon />
             )}
-            <Text textStyle={"RobotoBodyBold"}>{estadoDelDispositivo}</Text>
+            <Text textStyle={"RobotoBodyBold"}>
+              {estadoDelDispositivo != ""
+                ? estadoDelDispositivo
+                : "Ninguno vinculado"}
+            </Text>
           </Box>
         </Box>
 
@@ -460,28 +457,15 @@ export default function Resumen() {
               alignItems={"flex-start"}
             >
               <Box display={"flex"} alignItems={"center"} flexGrow={1}>
-                <Text textStyle={"RobotoeBannerBold"} color={"black"}>
-                  ${totalVentasMes?.valor}
+                <Text textStyle={"RobotoHeaderBold"} color={"black"}>
+                  ${totalVentasMes != null ? totalVentasMes.valor : 0}
                 </Text>
               </Box>
 
-              <Text
-                textStyle={"RobotoSubSmall"}
-                color={
-                  totalVentasMes?.porcentajeDeCrecimiento > 0
-                    ? "success.30"
-                    : "red"
-                }
-                display={
-                  totalVentasMes?.porcentajeDeCrecimiento !== null
-                    ? "flex"
-                    : "none"
-                }
-              >
-                {" "}
-                {totalVentasMes?.porcentajeDeCrecimiento > 0 ? "+" : "-"}
-                {totalVentasMes?.porcentajeDeCrecimiento}% por encima del
-                promedio
+              <Text textStyle={"RobotoSubSmall"} color={totalVentasMes?.color}>
+                {totalVentasMes != null
+                  ? `${totalVentasMes?.porcentajeDeCrecimiento}% ${totalVentasDia?.text}`
+                  : "No se cuenta con información registrada."}
               </Text>
             </Box>
           }
@@ -511,8 +495,7 @@ export default function Resumen() {
           minHeight="215px"
           flex={"1 1 auto"}
           icon={<FileExclamationIcon />}
-          title={`Actualizaciones de 
-            inventario no revisadas`}
+          title={`Actualizaciones de inventario no revisadas`}
           withLineBreaks={true}
           alignItems={"flex-start"}
           children={
@@ -535,17 +518,12 @@ export default function Resumen() {
           title={"Evolución de venta diaria"}
           icon={<BadgeDollarIcon />}
           children={
-            <Box
-              w={"600px"}
-              overflowX={"scroll "}
-              h={"100%"}
-              className="scroll-hidden"
-            >
+            <Box w={"100%"} h={"100%"} className="scroll-hidden">
               <EvolucionVentaDiaria evolucionVentaDiaria={intervaloDelDia} />
             </Box>
           }
         />
-
+        {console.log(topTotalCategorias)}
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
@@ -554,21 +532,43 @@ export default function Resumen() {
           icon={<StartIcon />}
           title={"Top Categorías"}
           children={
-            <Box w={"100%"} display={"flex"} flexDirection={"column"} gap={1}>
-              {topTotalCategorias?.map((cat, index) => (
-                <TopCategoriaItem
-                  key={index}
-                  icon={cat.icon}
-                  catName={cat.nombre}
-                  justifyContent={"space-between"}
-                  flexDirA={"row"}
-                  flexDirB={"row"}
-                  catPercentage={cat.porcentaje}
-                />
-              ))}
-            </Box>
+            <>
+              {topTotalCategorias !== null && topTotalCategorias?.length > 0 ? (
+                <Box
+                  w={"100%"}
+                  display={"flex"}
+                  flexDirection={"column"}
+                  gap={1}
+                >
+                  {topTotalCategorias?.map((cat, index) => (
+                    <TopCategoriaItem
+                      key={index}
+                      icon={cat.icon}
+                      catName={cat.nombre}
+                      justifyContent={"space-between"}
+                      flexDirA={"row"}
+                      flexDirB={"row"}
+                      catPercentage={cat.porcentaje}
+                    />
+                  ))}
+                </Box>
+              ) : (
+                <Box
+                  w={"100%"}
+                  h={"100%"}
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                >
+                  <Text color={"grey.placeholder"}>
+                    No se encontró el ranking de Categorías{" "}
+                  </Text>
+                </Box>
+              )}
+            </>
           }
         />
+        {console.log(totalDistribucionVentaDiaria)}
         <Container
           display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
@@ -590,6 +590,7 @@ export default function Resumen() {
             </Box>
           }
         />
+        {console.log(totalProductosPocoStock)}
         <Container
           display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}

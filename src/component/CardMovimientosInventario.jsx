@@ -45,7 +45,9 @@ export default function CardMovimientosInventario({
       >
         <TimesCircleIcon width={"15px"} height={"15px"} />
         <Text textStyle={"RobotoRegularBold"}>Visita:</Text>
-        <Text textStyle={"RobotoRegular"}>{visita}</Text>
+        <Text textStyle={"RobotoRegular"}>
+          {visita === "true" ? "Sí" : "No"}
+        </Text>
       </Box>
       <Box display={"flex"} flexDirection={"column"}>
         <Box

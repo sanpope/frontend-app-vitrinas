@@ -5,6 +5,7 @@ export function capitalizeFirstLetter(str) {
 }
 
 // Funcion para formato de fecha 07/Ago, 1:20PM
+
 export function formatDate(dateString) {
   const date = new Date(dateString);
 
@@ -114,8 +115,35 @@ export const formattingDate = (date) => {
 export function formatStringToDate(dateString) {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); 
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
+}
+
+export function getPorcentage(valor, porcentaje) {
+  const number = porcentaje !== "" ? parseFloat(porcentaje) : 0.0;
+  const originalPorcentaje = porcentaje;
+  const porcentajeDeCrecimiento = Math.abs(number);
+  const isNegative = number < 0;
+  const isZero = number === 0;
+
+  let color;
+  let text;
+
+  if (isZero) {
+    color = "red.100";
+    text = "en promedio";
+  } else {
+    color = isNegative ? "red.100" : "success.10";
+    text = isNegative ? "por debajo del promedio" : "por encima del promedio";
+  }
+
+  return {
+    valor,
+    porcentaje: originalPorcentaje,
+    porcentajeDeCrecimiento,
+    color,
+    text,
+  };
 }

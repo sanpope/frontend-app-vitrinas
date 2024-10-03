@@ -534,7 +534,9 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
               w={"150px"}
               fontSize="14px"
               fontWeight="400"
-              onClick={onConfirmationModalOpen}
+              onClick={
+                activeProdcs?.length > 0 ? onConfirmationModalOpen : null
+              }
               disabled={activeProdcs?.length > 0 ? false : true}
               cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
             >

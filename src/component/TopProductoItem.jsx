@@ -20,7 +20,7 @@ export default function TopProductoItem({ prodName, prodPercentage }) {
         borderLeftColor={"mainBg"}
       >
         <Text
-          w={"30px"}
+          w={"50px"}
           textStyle={"RobotoBodyBold"}
           textAlign={"rigth"}
           ml={1}

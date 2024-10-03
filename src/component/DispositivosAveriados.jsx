@@ -127,7 +127,9 @@ export default function DispositivosAveriados({ listadoDispositivos }) {
           </Box>
         </Box>
       ) : (
-        <Text>No se encuentra información de los dispositivos Averiados</Text>
+        <Text color={"grey.placeholder"} mt={"50px"}>
+          No se encuentra información de los dispositivos Averiados
+        </Text>
       )}
     </>
   );

@@ -35,14 +35,11 @@ const labelTooltip = (tooltipItem) => {
   let formattedValue;
 
   if (value >= 1000000) {
-    // Si es 1 millón o más, dividir por 1,000,000 y añadir 'M'
-    formattedValue = new Intl.NumberFormat().format(value ) + " M";
+    formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
   } else if (value >= 1000) {
-    // Si es 1 mil o más, dividir por 1,000 y añadir 'k'
-    formattedValue = new Intl.NumberFormat().format(value ) + " K";
+    formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
   } else {
-    // Si es menor que 1000, mostrar el valor tal cual con separadores
-    formattedValue = new Intl.NumberFormat().format(value);
+    formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
   }
 
   return `${formattedValue}`;
@@ -106,8 +103,6 @@ const options = {
     },
   },
 };
-
-let arrVentasMesAnterior;
 const mesesAbreviados = [
   "Ene",
   "Feb",
@@ -124,13 +119,11 @@ const mesesAbreviados = [
 ];
 
 const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
-  arrVentasMesAnterior = VentasMesAnterior?.map((d) => {
-    return Number(d?.valor).toLocaleString("es-ES");
-  });
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth();
   const curretYear = fechaActual.getFullYear();
   let lastYear = false;
+
   const monthLabels = VentasMesAnterior?.map((d) => {
     let month = mesesAbreviados[Number(d.mes) - 1];
     if (d.mes === "12") {
@@ -141,23 +134,23 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
       month += `-${LastYear}`;
     }
     return month;
-  });
+  }).reverse();
 
- 
+  const arrVentasMesAnterior = VentasMesAnterior?.map((d) =>
+    Number(d?.valor).toLocaleString("es-ES"),
+  ).reverse();
 
   const chartData = {
     labels: monthLabels,
     datasets: [
       {
-        data: VentasMesAnterior?.map((d) => {
-          return d?.valor;
-        }),
+        data: VentasMesAnterior?.map((d) => d?.valor).reverse(),
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: monthLabels?.map((d) =>
-          d === mesesAbreviados[mesActual] ? "#FF0000" : "#000000",
-        ),
+        pointBackgroundColor: VentasMesAnterior?.map((d) => {
+          return Number(d.mes) === mesActual ? "#FF0000" : "#000000";
+        }).reverse(),
         pointRadius: 6,
         pointBorderWidth: 2,
         pointBorderColor: "white",
@@ -167,13 +160,24 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
   };
 
   return (
-    <Box position={"relative"} height={"95%"} mb={2}>
-      {VentasMesAnterior != null ? (
-        <Line data={chartData} options={options} />
+    <>
+      {VentasMesAnterior != null && VentasMesAnterior?.length > 0 ? (
+        <Box mt={2}>
+          <Line data={chartData} options={options} />
+        </Box>
       ) : (
-        <Text>No existen ventas registradas en los meses anteriores</Text>
+        <Box
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          mt={"50px"}
+        >
+          <Text color={"grey.placeholder"}>
+            No existen ventas registradas en los meses anteriores
+          </Text>
+        </Box>
       )}
-    </Box>
+    </>
   );
 };
 

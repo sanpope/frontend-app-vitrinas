@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -23,12 +23,14 @@ ChartJS.register(
 );
 
 const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
+  const dias = evolucionVentaDiaria
+    ?.map((d) => d.dia)
+    .sort(function (a, b) {
+      return a - b;
+    });
+
   const data = {
-    labels: evolucionVentaDiaria
-      ?.map((d) => d.dia)
-      .sort(function (a, b) {
-        return a - b;
-      }),
+    labels: dias,
     datasets: [
       {
         data: evolucionVentaDiaria?.map((d) => (d.valor < 0 ? 0 : d.valor)),
@@ -98,7 +100,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
 
   return (
     <Box
-      width="100%"
+      width={"100%"}
       overflowX="auto"
       css={{
         "&::-webkit-scrollbar": { display: "none" },
@@ -106,9 +108,15 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
         "scrollbar-width": "none",
       }}
     >
-      <Box minWidth="600px">
-        <Line data={data} options={options} />
-      </Box>
+      {dias?.length > 0 && dias !== null ? (
+        <Box minWidth={dias?.length > 5 ? "600px" : "100%"}>
+          <Line data={data} options={options} />
+        </Box>
+      ) : (
+        <Text>
+          No se encontró la información relacionada con las ventas diarias
+        </Text>
+      )}
     </Box>
   );
 };

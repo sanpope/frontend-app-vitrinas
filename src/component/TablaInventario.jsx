@@ -42,24 +42,29 @@ export default function TablaInventario({
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
       >
-        {displayedArticulos != null ? (
-          <Contenedor>
-            <thead className="">
-              <tr className="">
-                {HEADERS?.map((name, index) => (
-                  <th key={index} className="inventTh">
-                    {name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
+        <Contenedor>
+          <thead className="">
+            <tr className="">
+              {HEADERS?.map((name, index) => (
+                <th key={index} className="inventTh">
+                  {name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          {displayedArticulos != null ? (
             <tbody>
               {displayedArticulos?.map((articulo, index) => {
                 return (
                   <tr key={index} className="" style={{ cursor: "pointer" }}>
                     {Object.entries(articulo)
                       .filter((keyValArr) => {
+                        if (
+                          keyValArr[0] === "precio" ||
+                          keyValArr[0] === "costo"
+                        ) {
+                          keyValArr[1] = "$" + keyValArr[1];
+                        }
                         return keyValArr[0] != "proveedor";
                       })
                       .map((keyValArr, index) => {
@@ -80,17 +85,24 @@ export default function TablaInventario({
                 );
               })}
             </tbody>
-          </Contenedor>
-        ) : (
-          <Box
-            display="flex"
-            h="full"
-            justifyContent={"center"}
-            alignItems={"center"}
-          >
-            <Text>No se encontraron productos</Text>
-          </Box>
-        )}
+          ) : (
+            <tbody>
+              <tr style={{ height: "200px", borderBottom: "none" }}>
+                <td
+                  colSpan={HEADERS.length}
+                  style={{
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    padding: "20px",
+                    color: "grey",
+                  }}
+                >
+                  No se encontraron productos
+                </td>
+              </tr>
+            </tbody>
+          )}
+        </Contenedor>
       </Box>
       <BottomTable
         currentPage={currentPage}

@@ -109,7 +109,9 @@ export default function DespachosActuales({ listaDeDespachos }) {
           </Box>
         </Box>
       ) : (
-        <Text>No se encontró la Lista de Despachos</Text>
+        <Text color={"grey.placeholder"} mt={"50px"}>
+          No se encontró la Lista de Despachos
+        </Text>
       )}
     </>
   );

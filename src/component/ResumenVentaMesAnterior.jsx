@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
 ChartJS.register(
   CategoryScale,
@@ -39,25 +39,30 @@ const mesesAbreviados = [
 ];
 
 const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
-  arrResumenVentasMesAnterior = resumenVentaMesAnterior?.map((d) => {
-    return Number(d?.valor).toLocaleString("es-ES");
-  });
+  arrResumenVentasMesAnterior = resumenVentaMesAnterior
+    ?.map((d) => {
+      return Number(d?.valor).toLocaleString("es-ES");
+    })
+    .reverse();
+
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth();
-  console.log(typeof mesActual, mesActual);
   const curretYear = fechaActual.getFullYear();
   let lastYear = false;
-  const monthLabels = resumenVentaMesAnterior?.map((d) => {
-    let month = mesesAbreviados[Number(d.mes) - 1];
-    if (d.mes === "12") {
-      lastYear = true;
-    }
-    if (lastYear) {
-      let LastYear = (curretYear - 1).toString().slice(-2);
-      month += `-${LastYear}`;
-    }
-    return month;
-  });
+
+  const monthLabels = resumenVentaMesAnterior
+    ?.map((d) => {
+      let month = mesesAbreviados[Number(d.mes) - 1];
+      if (d.mes === "12") {
+        lastYear = true;
+      }
+      if (lastYear) {
+        let LastYear = (curretYear - 1).toString().slice(-2);
+        month += `-${LastYear}`;
+      }
+      return month;
+    })
+    .reverse();
 
   const chartData = {
     labels: monthLabels,
@@ -69,11 +74,11 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: monthLabels?.map((d) => {
-         // console.log(d);
-          console.log(mesesAbreviados[mesActual]);
-          return d === mesesAbreviados[mesActual] ? "#FF0000" : "#000000";
-        }),
+        pointBackgroundColor: resumenVentaMesAnterior
+          ?.map((d) => {
+            return Number(d.mes) === mesActual ? "#FF0000" : "#000000";
+          })
+          .reverse(),
         pointRadius: 7,
         pointBorderWidth: 3,
         pointBorderColor: "white",
@@ -94,14 +99,11 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
     let formattedValue;
 
     if (value >= 1000000) {
-      // Si es 1 millón o más, dividir por 1,000,000 y añadir 'M'
-      formattedValue = new Intl.NumberFormat().format(value) + " M";
+      formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
     } else if (value >= 1000) {
-      // Si es 1 mil o más, dividir por 1,000 y añadir 'k'
-      formattedValue = new Intl.NumberFormat().format(value) + " K";
+      formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
     } else {
-      // Si es menor que 1000, mostrar el valor tal cual con separadores
-      formattedValue = new Intl.NumberFormat().format(value);
+      formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
     }
 
     return `${formattedValue}`;
@@ -170,7 +172,12 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
 
   return (
     <Box>
-      <Line data={chartData} options={options} />
+      {resumenVentaMesAnterior != null ||
+      resumenVentaMesAnterior?.length > 0 ? (
+        <Line data={chartData} options={options} />
+      ) : (
+        <Text>No se encontraron Registros de ventas en el mes anterior!.</Text>
+      )}
     </Box>
   );
 };

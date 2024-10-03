@@ -16,111 +16,147 @@ export default function ActualizacionesInventario({
   const currentItem = actualizacionesInventarioNV[currentPage - 1];
 
   return (
-    <Box
-      display={"flex"}
-      flexDirection={"column"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-    >
-      <Box
-        w={"100%"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        borderBottomWidth={1}
-      >
-        <Text
-          px={1}
-          color="grey.placeholder"
-          textStyle={"RobotoBodyBold"}
-          textAlign={"center"}
+    <>
+      {actualizacionesInventarioNV !== null &&
+      actualizacionesInventarioNV?.length > 0 ? (
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
         >
-          Visita
-        </Text>
-
-        <Text
-          px={1}
-          color="grey.placeholder"
-          textStyle={"RobotoBody"}
-          borderRightWidth={"2px"}
-          borderRightColor={"grey.placeholder"}
-          borderLeftWidth={"2px"}
-          borderLeftColor={"grey.placeholder"}
-          textAlign={"center"}
-        >
-          {currentItem?.fecha}
-        </Text>
-
-        <Text
-          px={1}
-          color="grey.placeholder"
-          textStyle={"RobotoBody"}
-          textAlign={"center"}
-        >
-          {currentItem?.hora}
-        </Text>
-      </Box>
-      <Box
-        w={"100%"}
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
-        alignItems={"flex-start"}
-        p={1}
-        gap={1}
-      >
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box
-            bg="green"
-            w={3}
-            h={3}
-            borderRadius="full"
-            mr={1}
-            display={"inline-flex"}
-          ></Box>
-          <Text textStyle={"RobotoBody"}>Ingresos</Text>
-          <Text textStyle={"RobotoBodyBold"} px={2}>
-            + {currentItem?.cantidadProductosIngresados}
+            w={"100%"}
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            borderBottomWidth={1}
+          >
+            <Text
+              px={1}
+              color="grey.placeholder"
+              textStyle={"RobotoBodyBold"}
+              textAlign={"center"}
+            >
+              Visita
+            </Text>
+
+            <Text
+              px={1}
+              color="grey.placeholder"
+              textStyle={"RobotoBody"}
+              borderRightWidth={"2px"}
+              borderRightColor={"grey.placeholder"}
+              borderLeftWidth={"2px"}
+              borderLeftColor={"grey.placeholder"}
+              textAlign={"center"}
+            >
+              {currentItem?.fecha}
+            </Text>
+
+            <Text
+              px={1}
+              color="grey.placeholder"
+              textStyle={"RobotoBody"}
+              textAlign={"center"}
+            >
+              {currentItem?.hora}
+            </Text>
+          </Box>
+          <Box
+            w={"100%"}
+            display={"flex"}
+            flexDirection={"column"}
+            justifyContent={"center"}
+            alignItems={"flex-start"}
+            p={1}
+            gap={1}
+          >
+            <Box
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Box
+                bg="green"
+                w={3}
+                h={3}
+                borderRadius="full"
+                mr={1}
+                display={"inline-flex"}
+              ></Box>
+              <Text textStyle={"RobotoBody"}>Ingresos</Text>
+              <Text textStyle={"RobotoBodyBold"} px={2}>
+                + {currentItem?.cantidadProductosIngresados}
+              </Text>
+            </Box>
+            <Box
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Box
+                bg="red"
+                w={3}
+                h={3}
+                borderRadius="full"
+                mr={1}
+                display={"inline-flex"}
+              ></Box>
+              <Text textStyle={"RobotoBody"}>Retiros</Text>
+              <Text textStyle={"RobotoBodyBold"} px={2}>
+                - {currentItem?.cantidadProductosRetirados}
+              </Text>
+            </Box>
+            <Box
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Box
+                bg="#FFD80C"
+                w={3}
+                h={3}
+                borderRadius="full"
+                mr={1}
+                display={"inline-flex"}
+              ></Box>
+              <Text textStyle={"RobotoBody"}>Correcciones </Text>
+              <BiggerThanICon width={"17px"} height={"15px"} />
+              <Text textStyle={"RobotoBodyBold"}>
+                {currentItem?.cantidadDeCorrecciones}
+              </Text>
+            </Box>
+          </Box>
+
+          <Box
+            position={"absolute"}
+            bottom={1}
+            right={1}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            alignItems={"center"}
+          >
+            <SmallPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </Box>
+        </Box>
+      ) : (
+        <Box
+          w={"100%"}
+          height={"100%"}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Text color={"grey.placeholder"} alignSelf={"center"} mt={"50px"}>
+            No existen registros para mostrar.
           </Text>
         </Box>
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Box
-            bg="red"
-            w={3}
-            h={3}
-            borderRadius="full"
-            mr={1}
-            display={"inline-flex"}
-          ></Box>
-          <Text textStyle={"RobotoBody"}>Retiros</Text>
-          <Text textStyle={"RobotoBodyBold"} px={2}>
-            - {currentItem?.cantidadProductosRetirados}
-          </Text>
-        </Box>
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Box
-            bg="#FFD80C"
-            w={3}
-            h={3}
-            borderRadius="full"
-            mr={1}
-            display={"inline-flex"}
-          ></Box>
-          <Text textStyle={"RobotoBody"}>Correcciones </Text>
-          <BiggerThanICon width={"17px"} height={"15px"} />
-          <Text textStyle={"RobotoBodyBold"}>
-            {currentItem?.cantidadDeCorrecciones}
-          </Text>
-        </Box>
-      </Box>
-
-      <Box position={"absolute"} bottom={1} right={1} display={"flex"} justifyContent={"flex-end"} alignItems={"center"}>
-        <SmallPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </Box>
-    </Box>
+      )}
+    </>
   );
 }

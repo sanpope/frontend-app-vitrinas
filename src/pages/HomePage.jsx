@@ -36,8 +36,10 @@ import {
   capitalizeFirstLetter,
   formatDate,
   formatearNumero,
+  getPorcentage,
 } from "../utils/formatting";
 import { parseData } from "../utils/xmlParse";
+import TopVitrinas from "../component/TopVitrinas";
 
 const PADDING = 15;
 
@@ -48,7 +50,7 @@ export default function HomePage() {
     (state) => state.homePageReducer.ventaTotalMes,
   );
   const name = useSelector((state) => state.userReducer.userName);
-
+  const [ventaDelMes, setVentaDelMes] = useState(null);
   const [ventasMesesAnteriores, setVentaMesesAnteriores] = useState(null);
   const [VitrinasConMasVtasDelMes, setVitrinasConMasVtasDelMes] =
     useState(null);
@@ -75,11 +77,11 @@ export default function HomePage() {
         },
       })
       .then((response) => {
-        // Parseamos el XML
-
         const xmlDoc = parseData(response.data);
-
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
+        const { valor, porcentajeDeCrecimiento } = getVentaDelMes(xmlDoc);
+        setVentaDelMes(getPorcentage(valor, porcentajeDeCrecimiento));
+
         setVentaMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
         setVitrinasConMasVtasDelMes(getVitrinasVentasMes(xmlDoc));
         setTopTotalVitrinas(getTopVitrinas(xmlDoc));
@@ -358,7 +360,7 @@ export default function HomePage() {
                   }}
                   color={"black"}
                 >
-                  $ {ventaTotalMes != null ? `${ventaTotalMes.valor}` : "0"}
+                  $ {ventaDelMes != null ? `${ventaDelMes.valor}` : "0"}
                 </Text>
               </Box>
               <Box
@@ -366,12 +368,15 @@ export default function HomePage() {
                 alignItems={"center"}
                 columnGap={"5px"}
               >
-                <Text textStyle={"RobotoSubSmall"} color={"success.10"}>
-                  {ventaTotalMes != null
-                    ? `+${ventaTotalMes.porcentajeDeCrecimiento}% con respecto al promedio`
+                <Text
+                  textStyle={"RobotoSubSmall"}
+                  color={`${ventaDelMes?.color}`}
+                >
+                  {ventaDelMes != null
+                    ? `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
                     : "No se cuenta con información registrada."}
                 </Text>
-                {ventaTotalMes != null ? <GreenArrowICon /> : null}
+                {ventaDelMes != null ? <GreenArrowICon /> : null}
               </Box>
             </Box>
           }
@@ -384,7 +389,7 @@ export default function HomePage() {
           title={"Venta en meses anteriores"}
           icon={<ReceiptIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
-            <Box w={"100%"} h={"auto"}>
+            <Box w={"100%"} h={"100%"}>
               <VentasMesesAnteriores
                 VentasMesAnterior={
                   ventasMesesAnteriores != null ? ventasMesesAnteriores : null
@@ -409,13 +414,15 @@ export default function HomePage() {
             >
               <ItemsTopVitrinasdelMes
                 topVitrinas={
-                  VitrinasConMasVtasDelMes ? VitrinasConMasVtasDelMes : null
+                  VitrinasConMasVtasDelMes !== null
+                    ? VitrinasConMasVtasDelMes
+                    : null
                 }
               />
 
               <TopVitrinasdelMes
-                labels={labels ? labels : []}
-                data={dataChart ? dataChart : []}
+                labels={labels !== null ? labels : null}
+                data={dataChart !== null ? dataChart : null}
               />
             </Box>
           }
@@ -427,27 +434,28 @@ export default function HomePage() {
           icon={<TrophyIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
             topTotalVitrinas != null ? (
-              <OrderedList
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"center"}
-                pl={"2rem"}
-                gap={"0.300rem"}
-                width="100%"
-                marginLeft={"0"}
-              >
-                {topTotalVitrinas?.map((vitrina, index) => (
-                  <ListItem key={index}>
+              <Box w={"100%"} display={"flex"}>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  justifyContent={"space-around"}
+                  width="100%"
+                >
+                  {topTotalVitrinas?.map((vitrina, index) => (
                     <TopVitrinaItem
+                      index={index}
                       vitrinaName={vitrina.nombre}
                       vitrinaAmount={vitrina.venta}
                     />
-                  </ListItem>
-                ))}
-              </OrderedList>
+                  ))}
+                </Box>
+                <TopVitrinas
+                  topVitrinas={topTotalVitrinas ? topTotalVitrinas : null}
+                />
+              </Box>
             ) : (
-              <Text>
-                Información insuficiente para determinar el Top de Vitrinas{" "}
+              <Text color={"grey.placeholder"} mt={"50px"}>
+                Información insuficiente para determinar el Top de Vitrinas.
               </Text>
             )
           }
@@ -458,7 +466,7 @@ export default function HomePage() {
           minHeight="225px"
           title={"Top Categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
-          //heightChildren={"100%"}
+          heightChildren={"100%"}
           children={
             <>
               {topTotalCategorias != null ? (
@@ -477,7 +485,7 @@ export default function HomePage() {
                   ))}
                 </Box>
               ) : (
-                <Text>
+                <Text color={"grey.placeholder"} mt={"50px"}>
                   Información insuficiente para determinar el Top de Categorías
                 </Text>
               )}
@@ -510,7 +518,7 @@ export default function HomePage() {
                   ))}
                 </Box>
               ) : (
-                <Text>
+                <Text color={"grey.placeholder"} mt={"50px"}>
                   Información insuficiente para determinar el Top de Productos
                 </Text>
               )}

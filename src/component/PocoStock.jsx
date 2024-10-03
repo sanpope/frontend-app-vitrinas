@@ -136,7 +136,14 @@ export default function PocoStock({ productosConPocoStock }) {
           </Box>
         </>
       ) : (
-        <Text>No se encontraron productos con poco Stock</Text>
+        <Text
+          w={"100%"}
+          alignSelf={"center"}
+          mt={"50px"}
+          color={"grey.placeholder"}
+        >
+          No se encontraron productos con poco Stock
+        </Text>
       )}
     </Box>
   );
