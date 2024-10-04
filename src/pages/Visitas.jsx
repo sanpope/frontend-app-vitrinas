@@ -454,53 +454,101 @@ export default function Visitas() {
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
           maxW="320px"
-          children={totalVisitas?.map((visita, index) => (
-            <CardVisitas
-              key={index}
-              asesor={visita.asesor}
-              fecha={visita.fechaHora}
-              ingresos={visita.ingresos}
-              retiros={visita.retiros}
-              correcciones={visita.correccionesDeInventario}
-              verificada={visita.verificada}
-              setVisitaSelected={() => {
-                setVisitaSelected(visita);
-              }}
-              isSelected={visitaSelected?.idVisita === visita.idVisita}
-              verificarVisita={
-                visitaSelected
-                  ? () => {
-                      verificarVisita(visita.idVisita, visita);
-                    }
-                  : null
-              }
-            />
-          ))}
+          children={
+            totalVisitas !== null && totalVisitas?.length > 0 ? (
+              totalVisitas?.map((visita, index) => (
+                <CardVisitas
+                  key={index}
+                  asesor={visita.asesor}
+                  fecha={visita.fechaHora}
+                  ingresos={visita.ingresos}
+                  retiros={visita.retiros}
+                  correcciones={visita.correccionesDeInventario}
+                  verificada={visita.verificada}
+                  setVisitaSelected={() => {
+                    setVisitaSelected(visita);
+                  }}
+                  isSelected={visitaSelected?.idVisita === visita.idVisita}
+                  verificarVisita={
+                    visitaSelected
+                      ? () => {
+                          verificarVisita(visita.idVisita, visita);
+                        }
+                      : null
+                  }
+                />
+              ))
+            ) : (
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Text color={"grey.placeholder"}>
+                  No se encontraron visitas en el intervalo seleccionado
+                </Text>
+              </Box>
+            )
+          }
         />
         <VisitaContainer
           title="Movimientos de inventario"
           maxW="320px"
-          children={totalMovivmientos?.map((movimiento, index) => (
-            <CardMovimientosInventario
-              key={index}
-              fecha={movimiento.fechaHora}
-              visita={movimiento.hechoEnVisita}
-              ProdIngr={movimiento.totalProdsIngr}
-              ProdRet={movimiento.totalProdsRet}
-            />
-          ))}
+          children={
+            totalMovivmientos !== null && totalMovivmientos?.length > 0 ? (
+              totalMovivmientos?.map((movimiento, index) => (
+                <CardMovimientosInventario
+                  key={index}
+                  fecha={movimiento.fechaHora}
+                  visita={movimiento.hechoEnVisita}
+                  ProdIngr={movimiento.totalProdsIngr}
+                  ProdRet={movimiento.totalProdsRet}
+                />
+              ))
+            ) : (
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Text color={"grey.placeholder"}>
+                  No se encontraron movimientos en el intervalo seleccionado
+                </Text>
+              </Box>
+            )
+          }
         />
         <VisitaContainer
           title="Correcciones de inventario"
           maxW="320px"
-          children={totalCorrecciones?.map((corr, index) => (
-            <CardCorreccionesInventario
-              key={index}
-              fecha={corr?.fechaHora}
-              visita={corr?.visita}
-              ProdCorr={corr?.ProdsCorregidos}
-            />
-          ))}
+          children={
+            totalCorrecciones !== null && totalCorrecciones?.length > 0 ? (
+              totalCorrecciones?.map((corr, index) => (
+                <CardCorreccionesInventario
+                  key={index}
+                  fecha={corr?.fechaHora}
+                  visita={corr?.visita}
+                  ProdCorr={corr?.ProdsCorregidos}
+                />
+              ))
+            ) : (
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Text color={"grey.placeholder"}>
+                  No se encontraron correcciones en el intervalo seleccionado
+                </Text>
+              </Box>
+            )
+          }
         />
       </Box>
       <Box

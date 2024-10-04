@@ -39,7 +39,7 @@ export default function TopCategoriaItem({
           textStyle={"RobotoBodyBold"}
           textAlign={"left"}
           pl={2}
-          minW={"30px"}
+          minW={"40px"}
           borderLeftWidth={"2px"}
           borderLeftColor={"grey.placeholder"}
         >

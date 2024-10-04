@@ -13,7 +13,12 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
 import { parseData } from "../utils/xmlParse";
-import { capitalizeFirstLetter, formatStringToDate } from "../utils/formatting";
+import {
+  capitalizeFirstLetter,
+  formatStringToDate,
+  formatDate,
+} from "../utils/formatting";
+import NoteDispositivo from "../component/Note";
 
 export default function Dispositivo() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -82,6 +87,7 @@ export default function Dispositivo() {
       },
       bateria: xmlDoc.getElementsByTagName("bateria")[0].textContent,
     };
+    console.log(dispositivo);
     return dispositivo;
   };
 
@@ -98,11 +104,15 @@ export default function Dispositivo() {
       pt={"10px"}
       overflowY={"scroll"}
     >
+      {console.log(infoDispositivo)}
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
         <Text textStyle={" RobotoBody"}>
           {name} - {city}
         </Text>
         <Text textStyle={"RobotoTitleBold"}>Dispositivo</Text>
+      </Box>
+      <Box w={"100%"}>
+        <NoteDispositivo text2={infoDispositivo?.estado?.detalleDeEstado} />
       </Box>
       <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
@@ -113,11 +123,15 @@ export default function Dispositivo() {
               <SadFaceIcon />
             ) : null
           }
-          description={infoDispositivo?.estado?.detalleDeEstado}
-          date={
-            formatStringToDate(infoDispositivo?.perifericos?.impresora
-              ?.fechaDeLaUltimaConexion)
+          description={
+            infoDispositivo?.estado?.estado !== null &&
+            infoDispositivo?.estado?.estado.length > 0
+              ? infoDispositivo?.estado?.estado
+              : null
           }
+          date={""}
+          text2={""}
+          description2={""}
         />
 
         <DispositivoContainer
@@ -131,13 +145,25 @@ export default function Dispositivo() {
             )
           }
           description={
-            infoDispositivo?.conexionAInternet?.conectado === "false"
-              ? "No conectado"
-              : "Conectado"
+            infoDispositivo?.conexionAInternet?.conectado !== null &&
+            infoDispositivo?.conexionAInternet?.conectado !== ""
+              ? infoDispositivo?.conexionAInternet?.conectado === "false"
+                ? "No conectado"
+                : "Conectado"
+              : null
           }
-          date={formatStringToDate(
-            infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion,
-          )}
+          date={`Última conexión el  
+          ${
+            infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion !==
+              null &&
+            infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion !== ""
+              ? formatDate(
+                  infoDispositivo?.conexionAInternet?.fechaDeLaUltimaConexion,
+                )
+              : null
+          }`}
+          text2={""}
+          description2={""}
         />
 
         <DispositivoContainer
@@ -151,16 +177,37 @@ export default function Dispositivo() {
             )
           }
           description={
-            infoDispositivo?.perifericos?.impresora?.conectado
-              ? "Conectado"
-              : "No Conectado"
+            infoDispositivo?.perifericos?.impresora?.conectado !== null &&
+            infoDispositivo?.perifericos?.impresora?.conectado !== ""
+              ? infoDispositivo?.perifericos?.impresora?.conectado
+                ? "Conectado"
+                : "No Conectado"
+              : null
           }
           text2={"Estado del papel:"}
-          description2={infoDispositivo?.perifericos?.impresora?.estadoPapel}
-          date={formatStringToDate(
-            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion,
-          )}
+          description2={
+            infoDispositivo?.perifericos?.impresora?.estadoPapel !== null &&
+            infoDispositivo?.perifericos?.impresora?.estadoPapel !== ""
+              ? infoDispositivo?.perifericos?.impresora?.estadoPapel
+              : null
+          }
+          date={` Última conexión el  ${
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion !==
+              null &&
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion !==
+              ""
+              ? formatDate(
+                  infoDispositivo?.perifericos?.impresora
+                    ?.fechaDeLaUltimaConexion,
+                )
+              : null
+          }`}
         />
+        {console.log(
+          formatDate(
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion,
+          ),
+        )}
         <DispositivoContainer
           icon={<ConexionIcon />}
           title={"Conexión a escáner de códigos:"}
@@ -172,13 +219,18 @@ export default function Dispositivo() {
             )
           }
           description={
-            infoDispositivo?.perifericos?.escaner?.conectado === "true"
-              ? "Conectado"
-              : "No Conectado"
+            infoDispositivo?.perifericos?.escaner?.conectado !== null &&
+            infoDispositivo?.perifericos?.escaner?.conectado !== ""
+              ? infoDispositivo?.perifericos?.escaner?.conectado === "true"
+                ? "Conectado"
+                : "No Conectado"
+              : null
           }
-          date={formatStringToDate(
+          date={`Última conexión el  ${formatDate(
             infoDispositivo?.perifericos?.escaner?.fechaDeLaUltimaConexion,
-          )}
+          )}`}
+          text2={""}
+          description2={""}
         />
 
         <DispositivoContainer
@@ -192,15 +244,31 @@ export default function Dispositivo() {
             )
           }
           description={
-            infoDispositivo?.aplicacion?.enEjecucion === "false"
-              ? "No ejecutándose"
-              : "Ejecutándose"
+            infoDispositivo?.aplicacion?.enEjecucion !== null &&
+            infoDispositivo?.aplicacion?.enEjecucion !== ""
+              ? infoDispositivo?.aplicacion?.enEjecucion === "false"
+                ? "No ejecutándose"
+                : "Ejecutándose"
+              : null
           }
           text2={"Pantalla activa:"}
-          description2={infoDispositivo?.aplicacion?.pantallaActiva}
-          date={formatStringToDate(
-            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion,
-          )}
+          description2={
+            infoDispositivo?.aplicacion?.pantallaActiva !== null &&
+            infoDispositivo?.aplicacion?.pantallaActiva !== ""
+              ? infoDispositivo?.aplicacion?.pantallaActiva
+              : null
+          }
+          date={`Última conexión el  ${
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion !==
+              null &&
+            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion !==
+              ""
+              ? formatDate(
+                  infoDispositivo?.perifericos?.impresora
+                    ?.fechaDeLaUltimaConexion,
+                )
+              : null
+          }`}
         />
       </Box>
     </Box>

@@ -23,6 +23,9 @@ export default function CardCorreccionesInventario({
         bg: "red.40",
         transition: "all 0.2s ease-in-out",
       }}
+      borderWidth={1}
+      borderColor={"grey.placegholder"}
+      my={1}
     >
       <Box
         display={"flex"}
@@ -61,48 +64,54 @@ export default function CardCorreccionesInventario({
           ></Box>
           <Text textStyle={"RobotoRegularBold"}>Productos Corregidos:</Text>
         </Box>
-        {ProdCorr.map((producto, index) => (
-          <Box
-            key={index}
-            display={"flex"}
-            flexDirection={"column"}
-            borderWidth={1}
-            borderColor={"grey.placegholder"}
-            p={2}
-            w={"100%"}
-          >
-            <Box display={"flex"} flexDirection={"column"} p={2}>
-              <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
-                <Text textStyle={"RobotoRegularBold"}>Nombre:</Text>
-                <Text textStyle={"RobotoRegular"}>{producto.nombre}</Text>
-              </Box>
+        {ProdCorr != null && ProdCorr?.length > 0 ? (
+          ProdCorr?.map((producto, index) => (
+            <Box
+              key={index}
+              display={"flex"}
+              flexDirection={"column"}
+              borderWidth={1}
+              borderColor={"grey.placegholder"}
+              p={2}
+              w={"100%"}
+            >
+              <Box display={"flex"} flexDirection={"column"} p={2}>
+                <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
+                  <Text textStyle={"RobotoRegularBold"}>Nombre:</Text>
+                  <Text textStyle={"RobotoRegular"}>{producto.nombre}</Text>
+                </Box>
 
-              <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
-                <Text textStyle={"RobotoRegularBold"}>Unidades:</Text>
-                <Text textStyle={"RobotoRegular"}>{producto.cantidad}</Text>
-              </Box>
+                <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
+                  <Text textStyle={"RobotoRegularBold"}>Unidades:</Text>
+                  <Text textStyle={"RobotoRegular"}>{producto.cantidad}</Text>
+                </Box>
 
-              <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
-                <Text textStyle={"RobotoRegularBold"}>Motivo:</Text>
-                <Text textStyle={"RobotoRegular"}>
-                  {producto.motivoDeCorreccion}
-                </Text>
-              </Box>
+                <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
+                  <Text textStyle={"RobotoRegularBold"}>Motivo:</Text>
+                  <Text textStyle={"RobotoRegular"}>
+                    {producto.motivoDeCorreccion}
+                  </Text>
+                </Box>
 
-              <Box
-                display={"flex"}
-                justifyContent={"flex-start"}
-                gap={"5px"}
-                w={"100%"}
-              >
-                <Text textStyle={"RobotoRegularBold"}>Nota:</Text>
-                <Text textStyle={"RobotoRegular"} w={"100%"}>
-                  {producto.nota}
-                </Text>
+                <Box
+                  display={"flex"}
+                  justifyContent={"flex-start"}
+                  gap={"5px"}
+                  w={"100%"}
+                >
+                  <Text textStyle={"RobotoRegularBold"}>Nota:</Text>
+                  <Text textStyle={"RobotoRegular"} w={"100%"}>
+                    {producto.nota}
+                  </Text>
+                </Box>
               </Box>
             </Box>
-          </Box>
-        ))}
+          ))
+        ) : (
+          <Text textStyle={"RobotoRegularBold"} color={"grey.placeholder"}>
+            No se encontraron productos corregidos
+          </Text>
+        )}
       </Box>
     </Box>
   );

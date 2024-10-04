@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, ListItem, OrderedList, Text } from "@chakra-ui/react";
+import { Box, HStack, ListItem, OrderedList, Text } from "@chakra-ui/react";
 import axios from "axios";
 
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
@@ -368,15 +368,21 @@ export default function HomePage() {
                 alignItems={"center"}
                 columnGap={"5px"}
               >
-                <Text
-                  textStyle={"RobotoSubSmall"}
-                  color={`${ventaDelMes?.color}`}
-                >
-                  {ventaDelMes != null
-                    ? `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
-                    : "No se cuenta con información registrada."}
-                </Text>
-                {ventaDelMes != null ? <GreenArrowICon /> : null}
+                <HStack display={"flex"}>
+                  <Text
+                    textStyle={"RobotoSubSmall"}
+                    color={`${ventaDelMes?.color}`}
+                  >
+                    {ventaDelMes != null
+                      ? `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
+                      : "No se cuenta con información registrada."}
+                  </Text>
+                </HStack>
+                {ventaDelMes != null && ventaDelMes?.color != "red.100" ? (
+                  <Text>
+                    <GreenArrowICon />
+                  </Text>
+                ) : null}
               </Box>
             </Box>
           }

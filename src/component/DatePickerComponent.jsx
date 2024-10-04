@@ -31,6 +31,8 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
     onClose: onEndClose,
   } = useDisclosure();
   const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
+  const [focusedStart, setFocusedStart] = useState(startDate);
+  const [focusedEnd, setFocusedEnd] = useState(endDate);
   const today = new Date();
 
   return (
@@ -103,14 +105,14 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
       </FormControl>
       <Modal isOpen={isStartOpen} onClose={onStartClose} size={"xs"}>
         <ModalOverlay />
-        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
+        <ModalContent>
           <ModalBody>
             <Box display={"flex"} justifyContent={"center"}>
               <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                selected={focusedStart}
+                onChange={(date) => setFocusedStart(date)}
                 selectsStart
-                startDate={startDate}
+                startDate={focusedStart}
                 inline
               />
             </Box>
@@ -118,11 +120,13 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
           <ModalFooter>
             <StandardButton
               variant={"RED_PRIMARY"}
-              py={"17px"}
               w={"fit-content"}
               fontSize="14px"
               fontWeight="400"
-              onClick={onStartClose}
+              onClick={() => {
+                setStartDate(focusedStart);
+                onStartClose()
+              }}
             >
               Ok
             </StandardButton>
@@ -131,14 +135,14 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
       </Modal>
       <Modal isOpen={isEndOpen} onClose={onEndClose} size={"xs"}>
         <ModalOverlay />
-        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
+        <ModalContent>
           <ModalBody>
             <Box display={"flex"} justifyContent={"center"}>
               <DatePicker
-                selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                selected={focusedEnd}
+                onChange={(date) => setFocusedEnd(date)}
                 selectsEnd
-                endDate={endDate}
+                endDate={focusedEnd}
                 minDate={startDate}
                 maxDate={today}
                 inline
@@ -148,11 +152,13 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
           <ModalFooter>
             <StandardButton
               variant={"RED_PRIMARY"}
-              py={"17px"}
               w={"fit-content"}
               fontSize="14px"
               fontWeight="400"
-              onClick={onEndClose}
+              onClick={() => {
+                setEndDate(focusedEnd)
+                onEndClose();
+              }}
             >
               Ok
             </StandardButton>

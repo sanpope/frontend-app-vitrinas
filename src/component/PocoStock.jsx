@@ -2,6 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SmallPagination from "../component/SmallPagination";
 import BiggerThanICon from "../assets/images/BiggerThanIcon";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function PocoStock({ productosConPocoStock }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,17 +27,21 @@ export default function PocoStock({ productosConPocoStock }) {
       flexGrow={1}
       flexDirection={"column"}
       justifyContent={"space-between"}
+      gap={1}
     >
-      {productosConPocoStock != null ? (
+      {productosConPocoStock != null && productosConPocoStock?.length > 0 ? (
         <>
           <Box>
-            <Text textStyle={"RobotoSubtitleBold"}>{currentItem1?.nombre}</Text>
+            <Text textStyle={"RobotoBody"} py={1}>
+              {capitalizeFirstLetter(currentItem1?.nombre)}
+            </Text>
             <Box
               display={"flex"}
               flexGrow={1}
               width="100%"
-              justifyContent={"space-between"}
+              justifyContent={"space-center"}
               alignItems={"center"}
+              gap={1}
             >
               <Box
                 display={"flex"}
@@ -51,7 +56,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 >
                   Actual
                 </Text>
-                <Text textStyle={"RobotoBodyBold"} flexGrow={1}>
+                <Text textStyle={"RobotoBody"} flexGrow={1}>
                   {currentItem1?.existenciasActuales}
                 </Text>
               </Box>
@@ -61,7 +66,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 justifyContent={"space-around"}
               >
                 <Text
-                  textStyle={"RobotoSubtitle"}
+                  textStyle={"RobotoBody"}
                   flexGrow={1}
                   textAlign={"end"}
                   color={"grey.placeholder"}
@@ -69,7 +74,7 @@ export default function PocoStock({ productosConPocoStock }) {
                   Mínimo
                 </Text>
                 <Text
-                  textStyle={"RobotoSubtitleBold"}
+                  textStyle={"RobotoBody"}
                   textAlign={"end"}
                   flexGrow={1}
                 >
@@ -79,13 +84,16 @@ export default function PocoStock({ productosConPocoStock }) {
             </Box>
           </Box>
           <Box>
-            <Text textStyle={"RobotoSubtitleBold"}>{currentItem2?.nombre}</Text>
+            <Text textStyle={"RobotoBody"} py={1}>
+              {capitalizeFirstLetter(currentItem2?.nombre)}
+            </Text>
             <Box
               display={"flex"}
               flexGrow={1}
               justifyContent={"space-between"}
               alignItems={"center"}
               width="100%"
+              gap={1}
             >
               <Box
                 display={"flex"}
@@ -94,13 +102,13 @@ export default function PocoStock({ productosConPocoStock }) {
                 borderRightColor={"grey.placeholder"}
               >
                 <Text
-                  textStyle={"RobotoSubtitle"}
+                  textStyle={"RobotoBody"}
                   flexGrow={1}
                   color={"grey.placeholder"}
                 >
                   Actual
                 </Text>
-                <Text textStyle={"RobotoSubtitleBold"} flexGrow={1}>
+                <Text textStyle={"RobotoBody"} flexGrow={1}>
                   {currentItem2?.existenciasActuales}
                 </Text>
               </Box>
@@ -110,7 +118,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 flexGrow={1}
               >
                 <Text
-                  textStyle={"RobotoSubtitle"}
+                  textStyle={"RobotoBody"}
                   flexGrow={1}
                   textAlign={"end"}
                   color={"grey.placeholder"}
@@ -118,7 +126,7 @@ export default function PocoStock({ productosConPocoStock }) {
                   Mínimo
                 </Text>
                 <Text
-                  textStyle={"RobotoSubtitleBold"}
+                  textStyle={"RobotoBody"}
                   flexGrow={1}
                   textAlign={"end"}
                 >
@@ -127,7 +135,15 @@ export default function PocoStock({ productosConPocoStock }) {
               </Box>
             </Box>
           </Box>
-          <Box w={"100%"} display={"flex"} justifyContent={"flex-end"} m={2}>
+          <Box
+            position={"absolute"}
+            bottom={1}
+            right={1}
+            w={"100%"}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            m={1}
+          >
             <SmallPagination
               currentPage={currentPage}
               totalPages={totalPages}

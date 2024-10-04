@@ -101,7 +101,7 @@ export default function Resumen() {
       setIntervaloDelDia(getEvolucionDiariaVentas(xmlDoc));
       setTotalCategorias(getTopCategorias(xmlDoc));
       setTotalDistribucionVentaDiaria(getDistribucionDiaria(xmlDoc));
-      getProductosPocoStock(xmlDoc);
+      setTotalProductosPocoStock(getProductosPocoStock(xmlDoc));
     } catch (error) {
       console.error("Error fetching XML data:", error);
     }
@@ -148,7 +148,8 @@ export default function Resumen() {
 
   const getEstadoDispositivo = (xml) => {
     const estaVitrina = xml.querySelector("sobreEstaVitrina");
-    const estadoDispositivo = estaVitrina.getElementsByTagName(
+
+    const estadoDispositivo = xml.getElementsByTagName(
       "estadoDelDispositivo",
     )[0].textContent;
     return estadoDispositivo;
@@ -302,26 +303,24 @@ export default function Resumen() {
   };
 
   const getProductosPocoStock = (xml) => {
-    const totalProdsPocoStockArr = [];
     const prodsPocoStock = xml.querySelector("productosConPocoStock");
     const productos = prodsPocoStock.querySelectorAll("producto");
-    if (productos.length > 0) {
-      for (let i = 0; i < productos.length; i++) {
-        const nombre = productos?.[i].getElementsByTagName("")[0].textContent;
-        const existenciasActuales =
-          productos?.[i].getElementsByTagName("")[0].textContent;
-        const cantidadMinima =
-          productos?.[i].getElementsByTagName("")[0].textContent;
-        totalProdsPocoStockArr.push({
-          nombre,
-          existenciasActuales,
-          cantidadMinima,
-        });
-      }
-      return totalProdsPocoStockArr;
-    } else {
-      return null;
+    const totalProdsPocoStockArr = [];
+    for (let i = 0; i < productos.length; i++) {
+      const nombre =
+        productos?.[i].getElementsByTagName("nombre")[0].textContent;
+      const existenciasActuales = productos?.[i].getElementsByTagName(
+        "existenciasActuales",
+      )[0].textContent;
+      const cantidadMinima =
+        productos?.[i].getElementsByTagName("cantidadMinima")[0].textContent;
+      totalProdsPocoStockArr.push({
+        nombre,
+        existenciasActuales,
+        cantidadMinima,
+      });
     }
+    return totalProdsPocoStockArr;
   };
 
   return (
@@ -422,10 +421,12 @@ export default function Resumen() {
           flexDir={"column"}
           justifyContent={"space-between"}
         >
-          <MobileIcon
-            width={"40px"}
-            fill={estadoDelDispositivo === "Ok" ? "#00BC4F" : "red.100"}
-          />
+          <Box w={"100%"}>
+            <MobileIcon
+              width={"40px"}
+              fill={estadoDelDispositivo !== "Ok" ? "#E60F0F" : "#00BC4F"}
+            />
+          </Box>
 
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
 
@@ -499,7 +500,7 @@ export default function Resumen() {
           withLineBreaks={true}
           alignItems={"flex-start"}
           children={
-            <Box p={0}>
+            <Box>
               <ActualizacionesInventario
                 actualizacionesInventarioNV={
                   actualizacionesInvNoRev ? actualizacionesInvNoRev : []
@@ -523,7 +524,7 @@ export default function Resumen() {
             </Box>
           }
         />
-        {console.log(topTotalCategorias)}
+
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
@@ -568,7 +569,7 @@ export default function Resumen() {
             </>
           }
         />
-        {console.log(totalDistribucionVentaDiaria)}
+
         <Container
           display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
@@ -590,7 +591,7 @@ export default function Resumen() {
             </Box>
           }
         />
-        {console.log(totalProductosPocoStock)}
+
         <Container
           display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
@@ -608,11 +609,7 @@ export default function Resumen() {
               justifyContent={"center"}
               mb={3}
             >
-              <PocoStock
-                productosConPocoStock={
-                  totalProductosPocoStock ? totalProductosPocoStock : null
-                }
-              />
+              <PocoStock productosConPocoStock={totalProductosPocoStock} />
             </Box>
           }
         />

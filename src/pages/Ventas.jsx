@@ -28,14 +28,12 @@ export default function Ventas() {
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [selectedOption, setSelectedOption] = useState("Ventas");
 
-  const [tablaVentas, setTablaVentas] = useState(null);
+  const [tablaVentas, setTablaVentas] = useState([]);
   const [tablaDevoluciones, setTablaDevoluciones] = useState([]);
-  const [listadoProductos, setListadoProductos] = useState(null);
-
   const [displayedArticulos, setDisplayedArticulos] = useState(null);
   const [totalResults, setTotalResults] = useState(null);
-  const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, toggleLoading] = useState(false);
 
   const totalPages = Math.ceil(tablaVentas?.length / ROWS_TO_SHOW);
 
@@ -53,14 +51,6 @@ export default function Ventas() {
   useEffect(() => {
     getTotalIntervaloVentas();
   }, []);
-
-  useEffect(() => {
-    getMasArticulos(1);
-  }, []);
-
-  useEffect(() => {
-    getMasArticulos(1);
-  }, [tablaVentas]);
 
   useEffect(() => {
     if (tablaVentas) {
@@ -82,8 +72,9 @@ export default function Ventas() {
   const getMasArticulos = (pageNumber) => {
     toggleLoading(true);
     setCurrentPage(pageNumber);
+    const arr = selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones;
     setDisplayedArticulos(
-      tablaVentas?.slice(
+      arr?.slice(
         (pageNumber - 1) * ROWS_TO_SHOW,
         (pageNumber - 1) * ROWS_TO_SHOW + ROWS_TO_SHOW,
       ),
@@ -179,10 +170,16 @@ export default function Ventas() {
       const xmlDoc = parseData(response.data);
       console.log(xmlDoc);
       const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+      console.log("VENTAS", ventas)
+      console.log("DEVO", devoluciones)
       setTablaVentas(ventas);
       setTablaDevoluciones(devoluciones);
-      setTotalResults([...ventas]?.length);
-      setDisplayedArticulos([...ventas]);
+      setTotalResults(
+        (selectedOption === "Ventas" ? ventas : devoluciones).length,
+      );
+      setDisplayedArticulos(
+        selectedOption === "Ventas" ? ventas : devoluciones,
+      );
     } catch (error) {
       if (error.response) {
         console.error(
@@ -195,11 +192,11 @@ export default function Ventas() {
       } else {
         console.error("Error en la solicitud:", error.message);
       }
-    } finally {
-    }
+    } 
   };
 
   const getTotalIntervaloVentas = async () => {
+    console.log("total? being called")
     let fecha2 = new Date();
     let fecha1 = new Date(fecha2.getFullYear(), fecha2.getMonth(), 1);
     setFechaInicio(fecha1);
@@ -229,11 +226,10 @@ export default function Ventas() {
       console.log(ventas);
       setTablaVentas(ventas);
       setTablaDevoluciones(devoluciones);
-      setTotalResults([...ventas]?.length);
-      setDisplayedArticulos([...ventas]);
+      setTotalResults(ventas?.length);
+      setDisplayedArticulos(ventas);
     } catch (error) {
       console.log(error);
-    } finally {
     }
   };
 
@@ -325,7 +321,6 @@ export default function Ventas() {
               ? "Productos Vendidos"
               : "Productos Devueltos"
           }
-          productosRestantes={listadoProductos?.length - 2}
           selectedOption={selectedOption}
           setProds={setProds}
           setFecha={setFechaActual}
@@ -358,7 +353,7 @@ export default function Ventas() {
               alignItems={"flex-start"}
               p={"20px"}
             >
-              <Text textStyle={"RobotoHeader"} color={"success.30"}>
+              <Text textStyle={"RobotoSubheading"} color={"success.30"}>
                 ${formatearNumero(totalVendidoIntervalo)}
               </Text>
             </Box>
@@ -397,7 +392,6 @@ export default function Ventas() {
               p={"20px"}
             >
               <Text textStyle={"RobotoSubheading"}>
-                {" "}
                 ${formatearNumero(ingresoRecibidoIntervalo)}
               </Text>
             </Box>

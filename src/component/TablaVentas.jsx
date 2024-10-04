@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Box,
+  HStack,
   ListItem,
   Text,
   UnorderedList,
@@ -26,7 +27,6 @@ export default function TablaVentas({
   getMasArticulos,
   tableTitle,
   selectedOption,
-  productosRestantes,
   setProds,
   setFecha,
   setValorTotal,
@@ -67,7 +67,7 @@ export default function TablaVentas({
               ))}
             </tr>
           </thead>
-          {displayedArticulos !== null ? (
+          {displayedArticulos !== null && displayedArticulos?.length > 0 ? (
             <tbody>
               {displayedArticulos?.map((articulo, articuloIndex) => {
                 return (
@@ -98,7 +98,7 @@ export default function TablaVentas({
                           },
                         }}
                       >
-                        {articulo.productosAfectados
+                        {articulo?.productosAfectados
                           .slice(0, 2)
                           .map((articulo, index) => (
                             <ListItem key={index}>
@@ -158,7 +158,7 @@ export default function TablaVentas({
                     color: "grey",
                   }}
                 >
-                  {`No se encontraron ${selectedOption} para mostrar.`}
+                  {`No se encontraron ${selectedOption} para mostrar, en el rango seleccionado.`}
                 </td>
               </tr>
             </tbody>

@@ -47,7 +47,13 @@ export default function ProductosEnDespacho({
               Productos en despacho
             </Text>
           </ModalHeader>
-          <ModalBody display={"flex"} flexDirection={"column"} p={"20px"}>
+          <ModalBody
+            display={"flex"}
+            flexDirection={"column"}
+            p={"20px"}
+            minH={"150px"}
+            justifyContent={"center"}
+          >
             {products != null && products?.length > 0 ? (
               <>
                 <Box w={"100%"} display={"flex"} gap={"20px"} py={"10px"}>
@@ -130,9 +136,11 @@ export default function ProductosEnDespacho({
                 </Box>
               </>
             ) : (
-              <Text w={"100%"} h={"100%"}>
-                No se encontraron Productos pendiente para Despacho
-              </Text>
+              <Box w={"100%"} h={"100%"} display={"flex"}>
+                <Text color={"grey.placeholder"}>
+                  No se encontraron productos pendientes para Despacho
+                </Text>
+              </Box>
             )}
           </ModalBody>
 
@@ -165,7 +173,11 @@ export default function ProductosEnDespacho({
               w={"fit-content"}
               fontSize={"0.875rem"}
               fontWeight="400"
-              onClick={handleIngresarProductos}
+              onClick={
+                products != null && products?.length > 0
+                  ? handleIngresarProductos
+                  : null
+              }
               disabled={products != null && products?.length > 0 ? false : true}
               cursor={
                 products != null && products?.length > 0
