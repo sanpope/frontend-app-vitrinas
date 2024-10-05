@@ -3,12 +3,7 @@ import React from "react";
 import TimesCircleIcon from "../assets/images/TimesCircleIcon";
 import ClockICon from "../assets/images/ClockIcon";
 
-export default function CardMovimientosInventario({
-  fecha,
-  visita,
-  ProdIngr,
-  ProdRet,
-}) {
+export default function CardMovimientosInventario({ movimiento }) {
   return (
     <Box
       w={"100%"}
@@ -21,7 +16,7 @@ export default function CardMovimientosInventario({
       gap={2}
       borderBottomColor={"grey.placeholder"}
       borderBlockEndWidth={1}
-      bg="white"
+      bg={movimiento?.esVisita ? "red.40" : "white"}
       _hover={{
         bg: "red.40",
         transition: "all 0.2s ease-in-out",
@@ -35,7 +30,7 @@ export default function CardMovimientosInventario({
       >
         <ClockICon width={"15px"} height={"15px"} />
         <Text textStyle={"RobotoRegularBold"}>Fecha y hora:</Text>
-        <Text textStyle={"RobotoRegular"}>{fecha}</Text>
+        <Text textStyle={"RobotoRegular"}>{movimiento?.fechaHora}</Text>
       </Box>
       <Box
         display={"flex"}
@@ -46,7 +41,7 @@ export default function CardMovimientosInventario({
         <TimesCircleIcon width={"15px"} height={"15px"} />
         <Text textStyle={"RobotoRegularBold"}>Visita:</Text>
         <Text textStyle={"RobotoRegular"}>
-          {visita === "true" ? "Sí" : "No"}
+          {movimiento?.hechoEnVisita === "true" ? "Sí" : "No"}
         </Text>
       </Box>
       <Box display={"flex"} flexDirection={"column"}>
@@ -66,13 +61,20 @@ export default function CardMovimientosInventario({
           <Text textStyle={"RobotoRegularBold"}>Productos Ingresados:</Text>
         </Box>
         <UnorderedList p={1}>
-          {ProdIngr?.map((prod, index) => (
-            <ListItem key={index}>
-              <Text textStyle={"RobotoRegular"}>
-                {prod.nombre} x {prod.cantidad} unds.
-              </Text>
-            </ListItem>
-          ))}
+          {movimiento?.totalProdsIngr !== null &&
+          movimiento?.totalProdsIngr?.length > 0 ? (
+            movimiento?.totalProdsIngr?.map((prod, index) => (
+              <ListItem key={index}>
+                <Text textStyle={"RobotoRegular"}>
+                  {prod.nombre} x {prod.cantidad} unds.
+                </Text>
+              </ListItem>
+            ))
+          ) : (
+            <Text textStyle={"RobotoRegularBold"} color={"grey.placeholder"}>
+              No se encontraron productos ingresados.
+            </Text>
+          )}
         </UnorderedList>
       </Box>
       <Box display={"flex"} flexDirection={"column"}>
@@ -92,13 +94,20 @@ export default function CardMovimientosInventario({
           <Text textStyle={"RobotoRegularBold"}>Productos Retirados:</Text>
         </Box>
         <UnorderedList p={1}>
-          {ProdRet?.map((prod, index) => (
-            <ListItem key={index}>
-              <Text textStyle={"RobotoRegular"}>
-                {prod.nombre} x {prod.cantidad} unds.
-              </Text>
-            </ListItem>
-          ))}
+          {movimiento?.totalProdsRet !== null &&
+          movimiento?.totalProdsRet?.length > 0 ? (
+            movimiento?.totalProdsRet?.map((prod, index) => (
+              <ListItem key={index}>
+                <Text textStyle={"RobotoRegular"}>
+                  {prod.nombre} x {prod.cantidad} unds.
+                </Text>
+              </ListItem>
+            ))
+          ) : (
+            <Text textStyle={"RobotoRegularBold"} color={"grey.placeholder"}>
+              No se encontraron productos retirados.
+            </Text>
+          )}
         </UnorderedList>
       </Box>
     </Box>

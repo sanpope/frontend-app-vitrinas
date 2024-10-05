@@ -125,7 +125,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
               fontWeight="400"
               onClick={() => {
                 setStartDate(focusedStart);
-                onStartClose()
+                onStartClose();
               }}
             >
               Ok
@@ -143,7 +143,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
                 onChange={(date) => setFocusedEnd(date)}
                 selectsEnd
                 endDate={focusedEnd}
-                minDate={startDate}
+                // minDate={startDate}
                 maxDate={today}
                 inline
               />
@@ -156,7 +156,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
               fontSize="14px"
               fontWeight="400"
               onClick={() => {
-                setEndDate(focusedEnd)
+                setEndDate(focusedEnd);
                 onEndClose();
               }}
             >

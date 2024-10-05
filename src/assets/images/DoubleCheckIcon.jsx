@@ -1,7 +1,7 @@
 const DoubleCheckIcon = ({
-  width = "14px",
-  height = "12px",
-  fill = "black",
+  width = "15px",
+  height = "15px",
+  fill = "#E60F0F",
   onClick,
   disabled,
 }) => {

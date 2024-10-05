@@ -206,10 +206,12 @@ export default function Inventario() {
 
   return (
     <Box bg={"mainBg"} p={"1.25rem"} h={"calc(100% - " + HEADER_HEIGHT + "px)"}>
-      <Text textStyle={"RobotoBody"}>
-        {name} - {city}
-      </Text>
-      <Text textStyle={"RobotoTitleBold"}>Inventario</Text>
+      <Box>
+        <Text textStyle={"RobotoBody"}>
+          {name} - {city}
+        </Text>
+        <Text textStyle={"RobotoTitleBold"}>Inventario</Text>
+      </Box>
 
       <Box
         display={"flex"}
@@ -225,6 +227,7 @@ export default function Inventario() {
           leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
           onChange={(e) => onBuscarChange(e)}
           value={busqueda}
+          py={1}
         />
 
         <Box

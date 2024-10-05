@@ -8,7 +8,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-import VerExistencias from "../component/VerExistencias";
+
 import StandardButton from "../component/ui/buttons/standard";
 import ProductosEnDespacho from "../component/ProductosEnDespacho";
 import CardVisitas from "../component/CardVisitas";
@@ -32,8 +32,8 @@ export default function Visitas() {
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
 
   const [totalVisitas, setTotalVisitas] = useState(null);
-  const [totalMovivmientos, setTotalMovimientos] = useState(null);
-  const [totalCorrecciones, setTotalCorrecciones] = useState(null);
+  const [totalMovivmientos, setTotalMovimientos] = useState([]);
+  const [totalCorrecciones, setTotalCorrecciones] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
 
   const [fechaInicio, setFechaInicio] = useState(null);
@@ -71,21 +71,11 @@ export default function Visitas() {
 
       const xmlDoc = parseData(response.data);
       const visitas = getVisitasData(xmlDoc);
-      setTotalVisitas(visitas.visitas);
-      setTotalCorrecciones(visitas.correcciones);
-      setTotalMovimientos(visitas.movimientos);
+      setTotalVisitas(visitas?.visitas);
+      setTotalMovimientos(visitas?.movimientos);
+      setTotalCorrecciones(visitas?.correcciones);
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
     }
   };
@@ -96,7 +86,6 @@ export default function Visitas() {
     // Extraer visitas
     const visitasArray = [];
     for (let i = 0; i < totalVisitas?.length; i++) {
-      console.log();
       visitasArray.push({
         idVisita:
           totalVisitas[i]?.getElementsByTagName("idVisita")[0].textContent,
@@ -297,17 +286,7 @@ export default function Visitas() {
       const xmlDoc = parseData(response.data);
       console.log(response.data);
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
       setEnviarProdcsLoading(false);
       onFirstModalClose();
@@ -335,6 +314,8 @@ export default function Visitas() {
 
   const setReversionVisita = async (idVisita) => {
     const id = parseInt(idVisita);
+    console.log(idVisita);
+    console.log(visitaSelected);
 
     try {
       const response = await axios.put(
@@ -346,60 +327,117 @@ export default function Visitas() {
         },
       );
       console.log(response.data);
-    } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
+      if (response.data) {
+        setTotalVisitas((prev) => {
+          const copy = [...prev];
+          const index = copy.findIndex(
+            (visita) => visita.idVisita === idVisita,
+          );
+          if (index !== -1) {
+            copy[index].revertida = true;
+          }
+          return copy;
+        });
+        setTotalMovimientos((prev) => {
+          const copy = [...prev];
+          const movimientos = copy?.filter(
+            (movimiento) => movimiento.idVisita !== idVisita,
+          );
+          return movimientos;
+        });
+        setTotalCorrecciones((prev) => {
+          const copy = [...prev];
+          const correcciones = copy?.filter(
+            (correccion) => correccion.idVisita !== idVisita,
+          );
+          return correcciones;
+        });
       }
+    } catch (error) {
+      console.log(error);
     } finally {
     }
   };
 
   const verificarVisita = async (idVisita, visita) => {
     const id = parseInt(idVisita);
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/visitas/verificacion-de-visita?vitrina=${name}&idVisita=${id}`,
-        {
-          headers: {
-            "Content-Type": "application/xml",
+    if (visita.verificada === "false") {
+      try {
+        const response = await axios.put(
+          `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/visitas/verificacion-de-visita?vitrina=${name}&idVisita=${id}`,
+          {
+            headers: {
+              "Content-Type": "application/xml",
+            },
           },
-        },
-      );
-      console.log(response.data);
-      if (response.data) {
-        setTotalVisitas((prev) => {
-          const index = prev.findIndex(
-            (item) => item.idVisita === visita.idVisita,
-          );
-          if (index !== -1) {
-            const copy = [...prev];
-            copy[index]["verificada"] = "true";
-            return copy;
-          }
-        });
-      }
-    } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
         );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
+        console.log(response.data);
+        if (response.data) {
+          setTotalVisitas((prev) => {
+            const index = prev.findIndex(
+              (item) => item.idVisita === visita.idVisita,
+            );
+            if (index !== -1) {
+              const copy = [...prev];
+              copy[index]["verificada"] = "true";
+              return copy;
+            }
+          });
+          alert("Visita verificada Correctamente.");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
       }
-    } finally {
+    } else {
+      console.log("Visita verificada anteriormente!");
     }
+  };
+
+  const showInfoVisitaRelated = (visita) => {
+    setTotalMovimientos((prev) => {
+      const copy = [...prev];
+      const movimientosVisita = copy
+        ?.filter((movimiento) => movimiento.idVisita === visita?.idVisita)
+        .map((movimiento) => ({
+          ...movimiento,
+          esVisita: true,
+        }));
+
+      const movimientosNoVisita = copy
+        ?.filter((movimiento) => movimiento.idVisita !== visita?.idVisita)
+        .map((movimiento) => ({
+          ...movimiento,
+          esVisita: false,
+        }));
+
+      if (movimientosVisita?.length > 0) {
+        return [...movimientosVisita, ...movimientosNoVisita];
+      }
+      return prev;
+    });
+
+    setTotalCorrecciones((prev) => {
+      const copy = [...prev];
+      const correccionesVisita = copy
+        ?.filter((correccion) => correccion.idVisita === visita?.idVisita)
+        .map((correccion) => ({
+          ...correccion,
+          esVisita: true,
+        }));
+
+      const correccionesNoVisita = copy
+        ?.filter((correccion) => correccion.idVisita !== visita?.idVisita)
+        .map((correccion) => ({
+          ...correccion,
+          esVisita: false,
+        }));
+
+      if (correccionesVisita?.length > 0) {
+        return [...correccionesVisita, ...correccionesNoVisita];
+      }
+      return prev;
+    });
   };
 
   return (
@@ -409,7 +447,7 @@ export default function Visitas() {
       w={"100%"}
       h={"100%"}
       p={"10px"}
-      overflowY={"hidden"}
+      overflowY={"auto"}
     >
       <Box
         display={"flex"}
@@ -430,11 +468,7 @@ export default function Visitas() {
             borderColor={"grey.placeholder"}
             bg={"white"}
             borderRadius={"5px"}
-            color={
-              !selectedOption || selectedOption === "Selecciona el intervalo"
-                ? "grey.placeholder"
-                : "black"
-            }
+            color={"black"}
             value={selectedOption}
             onChange={(e) => handleSelectChange(e)}
           >
@@ -453,29 +487,20 @@ export default function Visitas() {
       >
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
-          maxW="320px"
+          maxW="310px"
           children={
             totalVisitas !== null && totalVisitas?.length > 0 ? (
               totalVisitas?.map((visita, index) => (
                 <CardVisitas
                   key={index}
-                  asesor={visita.asesor}
-                  fecha={visita.fechaHora}
-                  ingresos={visita.ingresos}
-                  retiros={visita.retiros}
-                  correcciones={visita.correccionesDeInventario}
-                  verificada={visita.verificada}
-                  setVisitaSelected={() => {
-                    setVisitaSelected(visita);
-                  }}
+                  visita={visita}
                   isSelected={visitaSelected?.idVisita === visita.idVisita}
-                  verificarVisita={
-                    visitaSelected
-                      ? () => {
-                          verificarVisita(visita.idVisita, visita);
-                        }
-                      : null
-                  }
+                  seleccionarYVerificar={() => {
+                    console.log(visita);
+                    setVisitaSelected(visita);
+                    verificarVisita(visita.idVisita, visita);
+                    showInfoVisitaRelated(visita);
+                  }}
                 />
               ))
             ) : (
@@ -495,16 +520,13 @@ export default function Visitas() {
         />
         <VisitaContainer
           title="Movimientos de inventario"
-          maxW="320px"
+          maxW="310px"
           children={
             totalMovivmientos !== null && totalMovivmientos?.length > 0 ? (
               totalMovivmientos?.map((movimiento, index) => (
                 <CardMovimientosInventario
                   key={index}
-                  fecha={movimiento.fechaHora}
-                  visita={movimiento.hechoEnVisita}
-                  ProdIngr={movimiento.totalProdsIngr}
-                  ProdRet={movimiento.totalProdsRet}
+                  movimiento={movimiento}
                 />
               ))
             ) : (
@@ -524,16 +546,11 @@ export default function Visitas() {
         />
         <VisitaContainer
           title="Correcciones de inventario"
-          maxW="320px"
+          maxW="310px"
           children={
             totalCorrecciones !== null && totalCorrecciones?.length > 0 ? (
               totalCorrecciones?.map((corr, index) => (
-                <CardCorreccionesInventario
-                  key={index}
-                  fecha={corr?.fechaHora}
-                  visita={corr?.visita}
-                  ProdCorr={corr?.ProdsCorregidos}
-                />
+                <CardCorreccionesInventario key={index} correccion={corr} />
               ))
             ) : (
               <Box
@@ -588,7 +605,7 @@ export default function Visitas() {
           w={"fit-content"}
           fontSize={{ base: "12px", lg: "14px" }}
           fontWeight="400"
-          onClick={onConfirmationModalOpen}
+          onClick={visitaSelected != null ? onConfirmationModalOpen : null}
           disabled={visitaSelected != null ? false : true}
           cursor={visitaSelected != null ? "cursor" : "not-allowed"}
         >
@@ -598,7 +615,7 @@ export default function Visitas() {
         </StandardButton>
         <ConfirmationMessage
           icon={<WarningIcon />}
-          text={`¿Estás seguro que deseas revertir los cambios y acciones realizadas en la vista seleccionada?`}
+          text={`¿Estás seguro que deseas revertir los cambios y acciones realizadas en la visita seleccionada?`}
           isOpen={isConfirmationModalOpen}
           onOpen={onConfirmationModalOpen}
           onClose={onConfirmationModalClose}

@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import colors from "../theme/colors";
 import TrashIcon from "../assets/images/TrashIcon";
@@ -12,7 +12,6 @@ export default function Message({
   fechaHora = "01/04/2024 a las 22:18:53",
   onClick,
 }) {
-  const [showIcon, setShowIcon] = useState(false);
   return (
     <Box
       bg={colors.white}
@@ -22,8 +21,6 @@ export default function Message({
       display={"flex"}
       flexDir={"column"}
       gap={"15px"}
-      onMouseEnter={() => setShowIcon(true)}
-      onMouseLeave={() => setShowIcon(false)}
     >
       <Box
         display={"flex"}
@@ -33,15 +30,18 @@ export default function Message({
         borderBottomWidth={1}
         borderBottomColor={"grey.placeholder"}
       >
-        <Text textStyle={"RobotoSubtitleBold"}>{name}</Text>
-        {showIcon ? (
-          <TrashIcon
-            width={"1.2rem"}
-            height={"1.2rem"}
-            fill={"red"}
-            onClick={onClick}
-          />
-        ) : null}
+        <HStack w={"100%"} display={"flex"} justifyContent={"space-between"}>
+          <Text textStyle={"RobotoSubtitleBold"}>{name}</Text>
+          <Box display={"flex"} gap={2}>
+            {visto === "true" ? <DoubleCheckIcon /> : null}
+            <TrashIcon
+              width={"1.2rem"}
+              height={"1.2rem"}
+              fill={"#E60F0F"}
+              onClick={onClick}
+            />
+          </Box>
+        </HStack>
       </Box>
 
       <Box display={"flex"} gap={"5px"}>
@@ -60,7 +60,6 @@ export default function Message({
         <Text textStyle={visto === "true" ? "RobotoTiny" : "RobotoTinyBold"}>
           {fechaHora}
         </Text>
-        {visto === "true" ? <DoubleCheckIcon /> : null}
       </Box>
     </Box>
   );

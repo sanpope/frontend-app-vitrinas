@@ -14,6 +14,7 @@ export default function Mensajes() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [totalMensajes, setTotalMensajes] = useState(null);
+  const [currentMsg, setCurrentMsg] = useState();
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -186,20 +187,20 @@ export default function Mensajes() {
               fechaHora={mensaje.fechaHora}
               onClick={onEliminarMensajeOpen}
             />
-            <ConfirmationMessage
-              icon={<WarningIcon />}
-              text={`¿Estás seguro que deseas eliminar este mensaje?`}
-              isOpen={isEliminarMensajeOpen}
-              onOpen={onEliminarMensajeOpen}
-              onClose={onEliminarMensajeClose}
-              funcConfirmar={() => {
-                deleteMensaje(mensaje.id, mensaje);
-              }}
-              products={null}
-            />
           </>
         ))}
       </Box>
+      <ConfirmationMessage
+        icon={<WarningIcon />}
+        text={`¿Estás seguro que deseas eliminar este mensaje?`}
+        isOpen={isEliminarMensajeOpen}
+        onOpen={onEliminarMensajeOpen}
+        onClose={onEliminarMensajeClose}
+        funcConfirmar={() => {
+          // deleteMensaje(mensaje.id, mensaje);
+        }}
+        products={null}
+      />
     </Box>
   );
 }

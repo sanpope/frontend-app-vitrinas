@@ -53,7 +53,9 @@ export default function ConfirmationMessage({
               gap={"10px"}
             >
               {icon}
-              <Text textStyle={"RobotoBodyBold"}>{text}</Text>
+              <Text textStyle={"RobotoBodyBold"} textAlign={"justify"}>
+                {text}
+              </Text>
             </Box>
             <Box>
               <Text

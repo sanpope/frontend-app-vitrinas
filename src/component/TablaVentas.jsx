@@ -43,12 +43,6 @@ export default function TablaVentas({
     "Acciones",
   ];
 
-  const handleOnOpen = (productos, date, vTotal) => {
-    console.log(productos);
-    console.log(date);
-    console.log(vTotal);
-  };
-
   return (
     <Box h="100%">
       <Box
@@ -82,6 +76,7 @@ export default function TablaVentas({
                     <td className="ventasTd">
                       <UnorderedList
                         sx={{
+                          listStyleType: "disc",
                           "::-webkit-scrollbar": {
                             width: "8px",
                             height: "4px",
@@ -101,7 +96,12 @@ export default function TablaVentas({
                         {articulo?.productosAfectados
                           .slice(0, 2)
                           .map((articulo, index) => (
-                            <ListItem key={index}>
+                            <ListItem
+                              key={index}
+                              display={"block"}
+                              w={"100%"}
+                              textAlignLast={"right"}
+                            >
                               {capitalizeFirstLetter(articulo.nombre)} x
                               {articulo.cantidad} unds
                             </ListItem>
@@ -133,7 +133,6 @@ export default function TablaVentas({
                         width="20px"
                         height="20px"
                         onClick={() => {
-                          console.log(articulo);
                           onOpen();
                           setProds(articulo.productosAfectados);
                           setFecha(articulo.fechaHora);

@@ -5,7 +5,7 @@ export default function NoteInventario({ width = "100%", text1, text2, arr }) {
   return (
     <HStack
       spacing="10px"
-      height="70px"
+      height="60px"
       w={width}
       borderWidth={1}
       borderColor={"#FFE58F"}

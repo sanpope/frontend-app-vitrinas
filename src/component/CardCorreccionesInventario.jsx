@@ -3,11 +3,7 @@ import React from "react";
 import TimesCircleIcon from "../assets/images/TimesCircleIcon";
 import ClockICon from "../assets/images/ClockIcon";
 
-export default function CardCorreccionesInventario({
-  fecha,
-  visita,
-  ProdCorr,
-}) {
+export default function CardCorreccionesInventario({ correccion }) {
   return (
     <Box
       w={"100%"}
@@ -18,14 +14,15 @@ export default function CardCorreccionesInventario({
       p={2}
       py={3}
       gap={2}
-      bg="white"
+      bg={correccion?.esVisita ? "red.40" : "white"}
       _hover={{
         bg: "red.40",
         transition: "all 0.2s ease-in-out",
       }}
-      borderWidth={1}
-      borderColor={"grey.placegholder"}
+      borderBottomColor={"grey.placeholder"}
+      borderBlockEndWidth={1}
       my={1}
+      role="group"
     >
       <Box
         display={"flex"}
@@ -35,7 +32,7 @@ export default function CardCorreccionesInventario({
       >
         <ClockICon width={"15px"} height={"15px"} />
         <Text textStyle={"RobotoRegularBold"}>Fecha y hora:</Text>
-        <Text textStyle={"RobotoRegular"}>{fecha}</Text>
+        <Text textStyle={"RobotoRegular"}>{correccion?.fechaHora}</Text>
       </Box>
       <Box
         display={"flex"}
@@ -45,7 +42,7 @@ export default function CardCorreccionesInventario({
       >
         <TimesCircleIcon width={"15px"} height={"15px"} />
         <Text textStyle={"RobotoRegularBold"}>Visita:</Text>
-        <Text textStyle={"RobotoRegular"}>{visita}</Text>
+        <Text textStyle={"RobotoRegular"}>{correccion?.visita}</Text>
       </Box>
       <Box w={"100%"} display={"flex"} flexDirection={"column"} gap={2}>
         <Box
@@ -64,16 +61,20 @@ export default function CardCorreccionesInventario({
           ></Box>
           <Text textStyle={"RobotoRegularBold"}>Productos Corregidos:</Text>
         </Box>
-        {ProdCorr != null && ProdCorr?.length > 0 ? (
-          ProdCorr?.map((producto, index) => (
+        {correccion?.ProdsCorregidos != null &&
+        correccion?.ProdsCorregidos?.length > 0 ? (
+          correccion?.ProdsCorregidos?.map((producto, index) => (
             <Box
               key={index}
-              display={"flex"}
-              flexDirection={"column"}
+              display="flex"
+              flexDirection="column"
               borderWidth={1}
-              borderColor={"grey.placegholder"}
+              borderColor={correccion?.esVisita ? "white" : "grey.placeholder"}
               p={2}
-              w={"100%"}
+              w="100%"
+              _groupHover={{
+                borderColor: "white",
+              }}
             >
               <Box display={"flex"} flexDirection={"column"} p={2}>
                 <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>

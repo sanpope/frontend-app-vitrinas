@@ -23,6 +23,9 @@ const BOTTOM_SECTION_HEIGHT = 141.5;
 const BOTTOM_SECTION_HEIGHT_MOBILE = 289.5;
 const MARGINS = 16;
 
+const FINAL_DATE = new Date();
+const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
+
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
@@ -41,15 +44,15 @@ export default function Ventas() {
   const [totalDevueltoIntervalo, setTotalDevueltoIntervalo] = useState();
   const [ingresoRecibidoIntervalo, setIngresoRecibido] = useState();
 
-  const [fechaInicio, setFechaInicio] = useState(null);
-  const [fechaFin, setFechaFin] = useState(null);
+  const [fechaInicio, setFechaInicio] = useState(START_DATE);
+  const [fechaFin, setFechaFin] = useState(FINAL_DATE);
 
   const [prods, setProds] = useState(null);
   const [fechaAct, setFechaActual] = useState(null);
   const [valorTotal, setValorTotal] = useState(null);
 
   useEffect(() => {
-    getTotalIntervaloVentas();
+    getTotalIntervaloVentas(fechaInicio, fechaFin);
   }, []);
 
   useEffect(() => {
@@ -85,7 +88,6 @@ export default function Ventas() {
     const ventasYDevoluciones = xml.querySelector("ventasYDevoluciones");
     const devoluciones = ventasYDevoluciones.querySelectorAll("devolucion");
     const ventas = ventasYDevoluciones.querySelectorAll("venta");
-
     // Array para almacenar la información extraída
     const result = {
       devoluciones: [],
@@ -168,10 +170,8 @@ export default function Ventas() {
         },
       });
       const xmlDoc = parseData(response.data);
-      console.log(xmlDoc);
       const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
-      console.log("VENTAS", ventas)
-      console.log("DEVO", devoluciones)
+
       setTablaVentas(ventas);
       setTablaDevoluciones(devoluciones);
       setTotalResults(
@@ -181,28 +181,13 @@ export default function Ventas() {
         selectedOption === "Ventas" ? ventas : devoluciones,
       );
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
-    } 
+      console.log(error);
+    }
   };
 
-  const getTotalIntervaloVentas = async () => {
-    console.log("total? being called")
-    let fecha2 = new Date();
-    let fecha1 = new Date(fecha2.getFullYear(), fecha2.getMonth(), 1);
-    setFechaInicio(fecha1);
-    setFechaFin(fecha2);
-    fecha2 = formattingDate(fecha2);
-    fecha1 = formattingDate(fecha1);
+  const getTotalIntervaloVentas = async (date1, date2) => {
+    let fecha1 = formattingDate(date1);
+    let fecha2 = formattingDate(date2);
 
     const url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fecha1}&fechaFin=${fecha2}&numeroDeElementos=${ROWS_TO_SHOW}`;
 
@@ -223,7 +208,6 @@ export default function Ventas() {
       setIngresoRecibido(
         xmlDoc?.getElementsByTagName("ingresoReal")[0]?.textContent,
       );
-      console.log(ventas);
       setTablaVentas(ventas);
       setTablaDevoluciones(devoluciones);
       setTotalResults(ventas?.length);
@@ -277,11 +261,13 @@ export default function Ventas() {
             startDate={fechaInicio}
             setStartDate={(date) => {
               getIntervaloVentas(date, fechaFin);
+              getTotalIntervaloVentas(date, fechaFin);
               setFechaInicio(date);
             }}
             endDate={fechaFin}
             setEndDate={(date) => {
               getIntervaloVentas(fechaInicio, date);
+              getTotalIntervaloVentas(fechaInicio, date);
               setFechaFin(date);
             }}
           />
@@ -290,9 +276,11 @@ export default function Ventas() {
             bg={"white"}
             borderRadius={"5px"}
             minW={"7.5rem"}
+            height={"42px"}
             flex={"0 1 250px"}
             value={selectedOption}
             onChange={handleSelectChange}
+            fontSize={"16px"}
           >
             <option>Ventas</option>
             <option>Devoluciones</option>
@@ -354,7 +342,10 @@ export default function Ventas() {
               p={"20px"}
             >
               <Text textStyle={"RobotoSubheading"} color={"success.30"}>
-                ${formatearNumero(totalVendidoIntervalo)}
+                $
+                {totalVendidoIntervalo !== null && totalVendidoIntervalo != ""
+                  ? formatearNumero(totalVendidoIntervalo)
+                  : "0"}
               </Text>
             </Box>
           }
@@ -373,7 +364,11 @@ export default function Ventas() {
               p={"20px"}
             >
               <Text textStyle={"RobotoSubheading"}>
-                ${formatearNumero(totalDevueltoIntervalo)}
+                $
+                {totalDevueltoIntervalo !== null &&
+                totalDevueltoIntervalo !== ""
+                  ? formatearNumero(totalDevueltoIntervalo)
+                  : "0"}
               </Text>
             </Box>
           }
@@ -392,7 +387,11 @@ export default function Ventas() {
               p={"20px"}
             >
               <Text textStyle={"RobotoSubheading"}>
-                ${formatearNumero(ingresoRecibidoIntervalo)}
+                $
+                {ingresoRecibidoIntervalo !== null &&
+                ingresoRecibidoIntervalo !== ""
+                  ? formatearNumero(ingresoRecibidoIntervalo)
+                  : "0"}
               </Text>
             </Box>
           }

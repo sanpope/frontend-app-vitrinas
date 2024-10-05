@@ -1,11 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-export default function VisitaContainer({
-  title = "Porfavor agregue un título",
-  maxW,
-  children,
-}) {
+export default function VisitaContainer({ title, maxW, children }) {
   return (
     <Box
       flexGrow={1}

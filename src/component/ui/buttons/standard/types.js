@@ -351,6 +351,28 @@ const BUTTON_VARIANTS = {
       color: "black",
     },
   },
+  REVERT: {
+    normal: {
+      bg: "#FFFBE6",
+      borderColor: "#FEB220",
+      color: "#FEB220",
+    },
+    hover: {
+      bg: "#FFFBE6",
+      borderColor: "#FEB220",
+      color: "#FEB220",
+    },
+    disabled: {
+      bg: "#FFFBE6",
+      borderColor: "#FEB220",
+      color: "#FEB220",
+    },
+    active: {
+      bg: "#FFFBE6",
+      borderColor: "#FEB220",
+      color: "#FEB220",
+    },
+  },
 };
 
 export default BUTTON_VARIANTS;
