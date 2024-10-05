@@ -87,7 +87,6 @@ export default function Dispositivo() {
       },
       bateria: xmlDoc.getElementsByTagName("bateria")[0].textContent,
     };
-    console.log(dispositivo);
     return dispositivo;
   };
 
@@ -104,7 +103,6 @@ export default function Dispositivo() {
       pt={"10px"}
       overflowY={"scroll"}
     >
-      {console.log(infoDispositivo)}
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
         <Text textStyle={" RobotoBody"}>
           {name} - {city}
@@ -112,7 +110,11 @@ export default function Dispositivo() {
         <Text textStyle={"RobotoTitleBold"}>Dispositivo</Text>
       </Box>
       <Box w={"100%"}>
-        <NoteDispositivo text2={infoDispositivo?.estado?.detalleDeEstado} />
+        {infoDispositivo?.estado?.detalleDeEstado?.length > 0 ? (
+          <NoteDispositivo text2={infoDispositivo?.estado?.detalleDeEstado} />
+        ) : (
+          <></>
+        )}
       </Box>
       <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
@@ -203,11 +205,7 @@ export default function Dispositivo() {
               : null
           }`}
         />
-        {console.log(
-          formatDate(
-            infoDispositivo?.perifericos?.impresora?.fechaDeLaUltimaConexion,
-          ),
-        )}
+
         <DispositivoContainer
           icon={<ConexionIcon />}
           title={"Conexión a escáner de códigos:"}

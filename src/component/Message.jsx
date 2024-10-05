@@ -3,15 +3,9 @@ import React, { useState } from "react";
 import colors from "../theme/colors";
 import TrashIcon from "../assets/images/TrashIcon";
 import DoubleCheckIcon from "../assets/images/DoubleCheckIcon";
+import { formatFecha } from "../utils/formatting";
 
-export default function Message({
-  name = "Brian Cox",
-  subject = "Lorem ipsum",
-  message = "Lorem ipsum dolor sit amet consectetur. Urna eu mattis diam et amet id. Platea habitant tempus tortor id. Eu feugiat amet malesuada nisl ornare quisque pretium pharetra. Enim turpis posuere condimentum proin ut convallis. ",
-  visto = "true",
-  fechaHora = "01/04/2024 a las 22:18:53",
-  onClick,
-}) {
+export default function Message({ mensaje, onClick }) {
   return (
     <Box
       bg={colors.white}
@@ -31,9 +25,9 @@ export default function Message({
         borderBottomColor={"grey.placeholder"}
       >
         <HStack w={"100%"} display={"flex"} justifyContent={"space-between"}>
-          <Text textStyle={"RobotoSubtitleBold"}>{name}</Text>
+          <Text textStyle={"RobotoSubtitleBold"}>{mensaje?.remitente}</Text>
           <Box display={"flex"} gap={2}>
-            {visto === "true" ? <DoubleCheckIcon /> : null}
+            {mensaje?.visto === "true" ? <DoubleCheckIcon /> : null}
             <TrashIcon
               width={"1.2rem"}
               height={"1.2rem"}
@@ -46,10 +40,10 @@ export default function Message({
 
       <Box display={"flex"} gap={"5px"}>
         <Text textStyle={"RobotoRegularBold"}>Asunto:</Text>
-        <Text textStyle={"RobotoRegular"}>{subject}</Text>
+        <Text textStyle={"RobotoRegular"}>{mensaje?.asunto}</Text>
       </Box>
 
-      <Text textStyle={"RobotoRegular"}> {message}</Text>
+      <Text textStyle={"RobotoRegular"}> {mensaje?.contenido}</Text>
       <Box
         display={"flex"}
         w={"100%"}
@@ -57,8 +51,14 @@ export default function Message({
         justifyContent={"flex-end"}
         gap={"5px"}
       >
-        <Text textStyle={visto === "true" ? "RobotoTiny" : "RobotoTinyBold"}>
-          {fechaHora}
+        <Text
+          textStyle={
+            mensaje?.visto === "true" ? "RobotoTiny" : "RobotoTinyBold"
+          }
+        >
+          {mensaje?.fechaHora !== null && mensaje?.fechaHora !== ""
+            ? formatFecha(mensaje?.fechaHora)
+            : ""}
         </Text>
       </Box>
     </Box>

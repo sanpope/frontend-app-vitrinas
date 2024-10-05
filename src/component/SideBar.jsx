@@ -95,6 +95,11 @@ export const SMALL_WIDTH = "80px";
 export default function SideBar({ setLoggedIn }) {
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
+
+  const mensajesNoLeidos = useSelector(
+    (state) => state.vitrinaReducer.mensajesNoLeidos,
+  );
+
   const router = useLocation();
 
   const isDeskMenuOpen = useSelector(
@@ -234,6 +239,19 @@ export default function SideBar({ setLoggedIn }) {
                               textAlign={"left"}
                             >
                               {route.label}
+                              {route.label === "Mensajes" &&
+                              mensajesNoLeidos !== null ? (
+                                <span
+                                  style={{
+                                    paddingInline: "5px",
+                                    color: "#E60F0F",
+                                  }}
+                                >
+                                  ({mensajesNoLeidos})
+                                </span>
+                              ) : (
+                                <></>
+                              )}
                             </Text>
                           </StandardButton>
                         </Link>

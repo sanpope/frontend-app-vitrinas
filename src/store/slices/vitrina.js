@@ -3,9 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 export const vitrinaSlice = createSlice({
   name: "homePage",
   initialState: {
-    name: null,
+    name: "Selecciona una Vitrina",
     city: null,
     ciudadesVitrinas: {},
+    mensajesVitrina: [],
+    mensajesNoLeidos: null,
   },
   reducers: {
     setCiudadesVitrinas: (state, action) => {
@@ -20,11 +22,23 @@ export const vitrinaSlice = createSlice({
     setDispositivo: (state, action) => {
       state.dispositivo = action.payload;
     },
+    setMensajesVitrina: (state, action) => {
+      state.mensajesVitrina = action.payload;
+    },
+    setMensajesNoLeidos: (state, action) => {
+      state.mensajesNoLeidos = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setCiudadesVitrinas, setCity, setName, setDispositivo } =
-  vitrinaSlice.actions;
+export const {
+  setCiudadesVitrinas,
+  setCity,
+  setName,
+  setDispositivo,
+  setMensajesVitrina,
+  setMensajesNoLeidos,
+} = vitrinaSlice.actions;
 
 export default vitrinaSlice.reducer;

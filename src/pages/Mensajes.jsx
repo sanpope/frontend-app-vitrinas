@@ -6,15 +6,22 @@ import ConfirmationMessage from "../component/ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
 import axios from "axios";
 import Message from "../component/Message";
+import MensajeInfo from "../component/MensajeInfo";
+import { setMensajesVitrina } from "../store/slices/vitrina";
 
 import { parseData } from "../utils/xmlParse";
 import { formatFecha } from "../utils/formatting";
 
 export default function Mensajes() {
+  const dispatch = useDispatch();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
-  const [totalMensajes, setTotalMensajes] = useState(null);
-  const [currentMsg, setCurrentMsg] = useState();
+  const totalMensajes = useSelector(
+    (state) => state.vitrinaReducer.mensajesVitrina,
+  );
+  console.log(totalMensajes);
+  // const [totalMensajes, setTotalMensajes] = useState(null);
+  const [currentMsg, setCurrentMsg] = useState(null);
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -28,9 +35,9 @@ export default function Mensajes() {
     onClose: onEliminarMensajeClose,
   } = useDisclosure();
 
-  useEffect(() => {
-    getMensajesVitrina();
-  }, []);
+  // useEffect(() => {
+  //   // getMensajesVitrina();
+  // }, []);
 
   const getMensajesVitrina = async () => {
     try {
@@ -43,7 +50,7 @@ export default function Mensajes() {
         },
       );
       const xmlDoc = parseData(response.data);
-      setTotalMensajes(getMensajes(xmlDoc));
+      dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
     } catch (error) {
       if (error.response) {
         console.error(
@@ -81,10 +88,8 @@ export default function Mensajes() {
     return mensajesArr;
   };
 
-  const deleteMensaje = async (idMensaje, mensaje) => {
-    const id = parseInt(idMensaje);
-    console.log(idMensaje);
-    console.log(mensaje);
+  const deleteMensaje = async (mensaje) => {
+    const id = Number.parseInt(mensaje?.id);
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}&idMensaje=${id}`,
@@ -94,29 +99,18 @@ export default function Mensajes() {
           },
         },
       );
-      console.log(response.data);
+
       if (response.data) {
-        setTotalMensajes((prev) => {
-          const index = prev.findIndex((item) => item.id === mensaje.id);
-          if (index !== -1) {
-            const copy = [...prev];
-            copy.splice(index, 1);
-            return copy;
-          }
-        });
+        const copy = [...totalMensajes];
+        const index = copy.findIndex((item) => item.id === mensaje.id);
+        if (index !== -1) {
+          copy.splice(index, 1);
+        }
+        dispatch(setMensajesVitrina(copy));
+        alert("Mensaje Eliminado con Éxito");
       }
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
       onEliminarMensajeClose();
     }
@@ -167,29 +161,34 @@ export default function Mensajes() {
             <ConfirmationMessage
               icon={<WarningIcon />}
               text={`¿Estás seguro que desea eliminar Todos los mensajes?`}
-              isOpen={isConfirmationModalOpen}
-              onOpen={onConfirmationModalOpen}
-              onClose={onConfirmationModalClose}
-              products={null}
+              // isOpen={isConfirmationModalOpen}
+              // onOpen={onConfirmationModalOpen}
+              // onClose={onConfirmationModalClose}
+              // products={null}
             />
           </Box>
         </Box>
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={"20px"} py={"10px"}>
-        {totalMensajes?.map((mensaje, index) => (
-          <>
+        {totalMensajes !== null && totalMensajes?.length > 0 ? (
+          totalMensajes?.map((mensaje, index) => (
             <Message
               key={index}
-              name={mensaje.remitente}
-              subject={mensaje.asunto}
-              message={mensaje.contenido}
-              visto={mensaje.visto}
-              fechaHora={mensaje.fechaHora}
-              onClick={onEliminarMensajeOpen}
+              mensaje={mensaje}
+              onClick={() => {
+                console.log(mensaje);
+                onEliminarMensajeOpen();
+                setCurrentMsg(mensaje);
+              }}
             />
-          </>
-        ))}
+          ))
+        ) : (
+          <MensajeInfo
+            mensaje={"No tienes mensajes en tu bandeja de entrada."}
+          />
+        )}
       </Box>
+
       <ConfirmationMessage
         icon={<WarningIcon />}
         text={`¿Estás seguro que deseas eliminar este mensaje?`}
@@ -197,7 +196,7 @@ export default function Mensajes() {
         onOpen={onEliminarMensajeOpen}
         onClose={onEliminarMensajeClose}
         funcConfirmar={() => {
-          // deleteMensaje(mensaje.id, mensaje);
+          deleteMensaje(currentMsg);
         }}
         products={null}
       />
