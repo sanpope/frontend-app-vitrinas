@@ -86,7 +86,7 @@ export default function TablaInventario({
               })}
             </tbody>
           ) : (
-            <tbody>
+            <tbody style={{ height: "100%" }}>
               <tr style={{ height: "350px", borderBottom: "none" }}>
                 <td
                   colSpan={HEADERS.length}

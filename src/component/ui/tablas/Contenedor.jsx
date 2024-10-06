@@ -7,7 +7,7 @@ export default function Contenedor({ children }) {
       display="flex"
       flexDir="column"
       flex={1}
-      maxHeight={"100%"}
+      height={"100%"}
       overflow="auto"
       borderTopLeftRadius={{ base: "0px", md: "20px" }}
       borderTopRightRadius={{ base: "0px", md: "20px" }}

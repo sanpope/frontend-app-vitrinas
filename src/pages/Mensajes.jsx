@@ -7,7 +7,10 @@ import WarningIcon from "../assets/images/WarningIcon";
 import axios from "axios";
 import Message from "../component/Message";
 import MensajeInfo from "../component/MensajeInfo";
-import { setMensajesVitrina } from "../store/slices/vitrina";
+import {
+  setMensajesVitrina,
+  setMensajesNoLeidos,
+} from "../store/slices/vitrina";
 
 import { parseData } from "../utils/xmlParse";
 import { formatFecha } from "../utils/formatting";
@@ -19,8 +22,6 @@ export default function Mensajes() {
   const totalMensajes = useSelector(
     (state) => state.vitrinaReducer.mensajesVitrina,
   );
-  console.log(totalMensajes);
-  // const [totalMensajes, setTotalMensajes] = useState(null);
   const [currentMsg, setCurrentMsg] = useState(null);
 
   const {
@@ -35,10 +36,6 @@ export default function Mensajes() {
     onClose: onEliminarMensajeClose,
   } = useDisclosure();
 
-  // useEffect(() => {
-  //   // getMensajesVitrina();
-  // }, []);
-
   const getMensajesVitrina = async () => {
     try {
       const response = await axios.get(
@@ -52,17 +49,7 @@ export default function Mensajes() {
       const xmlDoc = parseData(response.data);
       dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
     }
   };
@@ -106,8 +93,10 @@ export default function Mensajes() {
         if (index !== -1) {
           copy.splice(index, 1);
         }
+        const mensajesNoLeidos = copy.filter((msj) => msj.visto === "false");
         dispatch(setMensajesVitrina(copy));
         alert("Mensaje Eliminado con Éxito");
+        dispatch(setMensajesNoLeidos(mensajesNoLeidos?.length));
       }
     } catch (error) {
       console.log(error);
@@ -115,6 +104,42 @@ export default function Mensajes() {
       onEliminarMensajeClose();
     }
   };
+
+  const deleteTotalMensajes = async (mensajes) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}&idMensaje=${""}`,
+        {
+          headers: {
+            "Content-Type": "application/xml",
+          },
+        },
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      onConfirmationModalClose();
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      try {
+        const response = axios.get(
+          //ToDo Actualizar el EndPoint para marcas los mensajes como leidos, esta funcion se ejecutara cuando el usuario abandona la pag de mensajes
+          `${process.env.REACT_APP_SERVER_URL}/app/rest/`,
+          {
+            headers: {
+              "Content-Type": "application/xml",
+            },
+          },
+        );
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  }, []);
 
   return (
     <Box

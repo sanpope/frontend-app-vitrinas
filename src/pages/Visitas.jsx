@@ -444,10 +444,10 @@ export default function Visitas() {
     <Box
       display={"flex"}
       flexDirection={"column"}
+      alignItems={"space-between"}
       w={"100%"}
       h={"100%"}
       p={"10px"}
-      overflowY={"auto"}
     >
       <Box
         display={"flex"}
@@ -482,8 +482,10 @@ export default function Visitas() {
         order={{ base: "2", xl: "1" }}
         h={"80%"}
         display="flex"
-        flexWrap="wrap"
+        flexWrap="noWrap"
         gap={"1.25rem"}
+        height={"100%"}
+        overflowY={"scroll"}
       >
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
@@ -546,6 +548,7 @@ export default function Visitas() {
         />
         <VisitaContainer
           title="Correcciones de inventario"
+          w="100%"
           maxW="310px"
           children={
             totalCorrecciones !== null && totalCorrecciones?.length > 0 ? (
@@ -575,8 +578,7 @@ export default function Visitas() {
         justifyContent={{ base: "flex.start", sm: "flex-end" }}
         alignItems={"center"}
         margin={{ base: "0px", md: "20px" }}
-        order={{ base: "1", xl: "2" }}
-        py={"10px"}
+        order={{ base: "1", lg: "2" }}
       >
         <StandardButton
           variant={"WHITE_RED"}

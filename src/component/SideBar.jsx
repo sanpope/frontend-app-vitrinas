@@ -244,7 +244,8 @@ export default function SideBar({ setLoggedIn }) {
                                 <span
                                   style={{
                                     paddingInline: "5px",
-                                    color: "#E60F0F",
+                                    color: "#7B7B7B",
+                                    fontWeight: "600",
                                   }}
                                 >
                                   ({mensajesNoLeidos})

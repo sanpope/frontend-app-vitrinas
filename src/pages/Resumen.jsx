@@ -341,16 +341,14 @@ export default function Resumen() {
         <Text textStyle={"RobotoTitleBold"}>Resumen</Text>
       </Box>
       <Box
-        display="flex"
-        flexWrap={"wrap"}
+        display="grid"
+        gridTemplateColumns={"repeat(4, 1fr)"}
+        gridTemplateRows={"repeat(3, 1fr)"}
         gridGap={"1rem"}
-        justifyContent={"flex-start"}
       >
         <Container
-          flex={"1 1 auto"}
           height={ContainerHeight + "px"}
           minHeight="215px"
-          minW={"250px"}
           icon={<AlarmClockIcon />}
           title={"Tiempo de Inactividad"}
           children={
@@ -367,10 +365,8 @@ export default function Resumen() {
           }
         />
         <Container
-          flex={"1 1 auto"}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          minW={"250px"}
           icon={<BagsShoppingIcon />}
           title={"Última venta"}
           children={
@@ -384,8 +380,6 @@ export default function Resumen() {
         <Container
           height={ContainerHeight + "px"}
           minHeight="215px"
-          minW={"250px"}
-          flex={"1 1 auto"}
           icon={<ShoppingCartIcon />}
           title={"Ventas del día"}
           children={
@@ -412,8 +406,6 @@ export default function Resumen() {
         <Box
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          minW={"250px"}
-          flex={"1 1 auto"}
           bg={"white"}
           borderRadius={"20px"}
           p={3}
@@ -447,7 +439,6 @@ export default function Resumen() {
         <Container
           height={ContainerHeight + "px"}
           minHeight="215px"
-          flex={"1 1 auto"}
           icon={<CalendarAltIcon />}
           title={"Ventas del mes"}
           children={
@@ -472,12 +463,10 @@ export default function Resumen() {
           }
         />
         <Container
-          display={{ base: "none", xl: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
-          flex={"1 1 auto"}
-          width={"560px"}
           title={"Ventas meses anteriores"}
+          gridColumn={"span 2"}
           icon={<CashRegisterIcon />}
           children={
             <Box w={"100%"} h={"100%"}>
@@ -491,10 +480,8 @@ export default function Resumen() {
         />
 
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
-          flex={"1 1 auto"}
           icon={<FileExclamationIcon />}
           title={`Actualizaciones de inventario no revisadas`}
           withLineBreaks={true}
@@ -510,12 +497,8 @@ export default function Resumen() {
           }
         />
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          minW={"262px"}
-          maxW={"220px"}
-          flex={"1 1 auto"}
           title={"Evolución de venta diaria"}
           icon={<BadgeDollarIcon />}
           children={
@@ -528,8 +511,6 @@ export default function Resumen() {
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          maxW={"262px"}
-          flex={"1 1 auto"}
           icon={<StartIcon />}
           title={"Top Categorías"}
           children={
@@ -571,12 +552,8 @@ export default function Resumen() {
         />
 
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          minW={"262px"}
-          flex={"1 1 auto"}
-          maxW={"fit-content"}
           title={"Distribución diaria de ventas"}
           icon={<ShippingTimed />}
           children={
@@ -593,12 +570,8 @@ export default function Resumen() {
         />
 
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          minW={"262px"}
-          maxW={"270px"}
-          flex={"1 1 auto"}
           icon={<BoxesIcon />}
           title={"Productos con poco stock"}
           children={

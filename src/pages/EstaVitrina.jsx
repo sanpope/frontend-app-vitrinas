@@ -145,27 +145,37 @@ export default function EstaVitrina() {
         console.log(response);
         setUpdatedName(nombre);
         setUpdatedCity(ciudad);
-        const copy = { ...ciudadesVitrinas };
-        console.log(name);
-        console.log(nombre);
 
-        const index = copy[city].findIndex((item) => item === name);
+        const copy = { ...ciudadesVitrinas };
+        const updatedCityArray = [...copy[city]];
+        const index = updatedCityArray.findIndex((item) => item === name);
         console.log(index);
         if (index !== -1) {
-          copy[city] = [...copy[city].splice(index, 1, nombre)];
-        } else {
-          copy[city] = [...copy[city], nombre];
-        }
-        console.log(copy);
+          if (city === ciudad) {
+            const updatedCopy = { ...copy };
+            const updatedCityArray = [...updatedCopy[city]];
+            updatedCityArray.splice(index, 1, nombre);
+            updatedCopy[city] = updatedCityArray;
+            dispatch(setCiudadesVitrinas(updatedCopy));
+            dispatch(setName(nombre));
+          } else {
+            const updatedCopy = { ...copy };
+            updatedCopy[city] = updatedCopy[city].filter(
+              (item) => item !== name,
+            );
+            updatedCopy[ciudad] = [...updatedCopy[ciudad], nombre];
 
-        dispatch(setCiudadesVitrinas(copy));
-        dispatch(setCity(ciudad));
-        dispatch(setName(nombre));
-        alert("La vitrina se ha actualizado correctamente");
+            dispatch(setCiudadesVitrinas(updatedCopy));
+            dispatch(setName(nombre));
+            dispatch(setCity(ciudad));
+          }
+        } else {
+        }
       }
     } catch (error) {
       console.log(error);
     } finally {
+      alert("La vitrina se ha actualizado correctamente");
       onFirstModalClose();
     }
   };
@@ -271,9 +281,7 @@ export default function EstaVitrina() {
     }
   };
 
-  const editAsesor = ()=>{
-
-  }
+  const editAsesor = () => {};
 
   const deleteAsesor = async (nombreAsesor) => {
     console.log(nombreAsesor);
@@ -339,9 +347,7 @@ export default function EstaVitrina() {
               gap={"10px"}
             >
               <Text textStyle={"RobotoBodyBold"}>Ciudad:</Text>
-              <Text textStyle={"RobotoBody"}>
-                {infoTotalVitrina?.ciudadDeVitrina}
-              </Text>
+              <Text textStyle={"RobotoBody"}>{city}</Text>
               <Text textStyle={"RobotoBodyBold"}>Fecha de creación:</Text>
               <Text textStyle={"RobotoBody"}>
                 {infoTotalVitrina?.fechaDeCreacion}

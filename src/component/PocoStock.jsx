@@ -136,13 +136,12 @@ export default function PocoStock({ productosConPocoStock }) {
             </Box>
           </Box>
           <Box
-            position={"absolute"}
             bottom={1}
             right={1}
             w={"100%"}
             display={"flex"}
             justifyContent={"flex-end"}
-            m={1}
+            my={1}
           >
             <SmallPagination
               currentPage={currentPage}

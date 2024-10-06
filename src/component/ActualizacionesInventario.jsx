@@ -130,7 +130,6 @@ export default function ActualizacionesInventario({
           </Box>
 
           <Box
-            position={"absolute"}
             bottom={1}
             right={1}
             display={"flex"}
@@ -152,7 +151,7 @@ export default function ActualizacionesInventario({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Text color={"grey.placeholder"} alignSelf={"center"} mt={"50px"}>
+          <Text color={"grey.placeholder"} alignSelf={"center"}>
             No existen registros para mostrar.
           </Text>
         </Box>

@@ -109,7 +109,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
       }}
     >
       {dias?.length > 0 && dias !== null ? (
-        <Box minWidth={dias?.length > 5 ? "600px" : "100%"}>
+        <Box minWidth={"100%"}>
           <Line data={data} options={options} />
         </Box>
       ) : (
