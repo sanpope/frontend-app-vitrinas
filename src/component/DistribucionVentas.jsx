@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -147,9 +147,24 @@ const DistribucionVentas = ({ distribucionVentas }) => {
   };
 
   return (
-    <Box>
-      <Bar data={chartData} options={options} />
-    </Box>
+    <>
+      {distribucionVentas !== null && distribucionVentas.length > 0 ? (
+        <Box>
+          <Bar data={chartData} options={options} />
+        </Box>
+      ) : (
+        <Box
+          width={"100%"}
+          height={"100%"}
+          display={"flex"}
+          justifyContent={"center"}
+        >
+          <Text color={"grey.placeholder"} alignSelf={"center"}>
+            No existe registro de distribución.
+          </Text>
+        </Box>
+      )}
+    </>
   );
 };
 

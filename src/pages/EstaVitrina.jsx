@@ -34,8 +34,8 @@ export default function EstaVitrina() {
   const [updatedCity, setUpdatedCity] = useState(city);
 
   const [infoTotalVitrina, setInfoTotalVitrina] = useState(null);
-  const [asesor, setAsesor] = useState("");
-  const [asesorNombre, setAsesorNombre] = useState("");
+  const [asesor, setAsesor] = useState();
+  const [currentAsesor, setCurrentAsesor] = useState("");
 
   useEffect(() => {
     getInfoVitrina();
@@ -57,18 +57,6 @@ export default function EstaVitrina() {
     isOpen: isThirdModalOpen,
     onOpen: onThirdModalOpen,
     onClose: onThirdModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isFourthModalOpen,
-    onOpen: onFourthModalOpen,
-    onClose: onFourthModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isFifthModalOpen,
-    onOpen: onFifthModalOpen,
-    onClose: onFifthModalClose,
   } = useDisclosure();
 
   const getInfoVitrina = async () => {
@@ -194,28 +182,21 @@ export default function EstaVitrina() {
       if (response) {
         //Eliminar vitrina de la lista de vitrinas
         const copy = { ...ciudadesVitrinas };
-        const index = copy[city].findIndex((item) => item === name);
+        const updatedCityArray = [...copy[city]];
+        const index = updatedCityArray.findIndex((item) => item === name);
         console.log(index);
         if (index !== -1) {
           copy[city] = copy[city].filter((item) => item !== name);
+          const updatedCopy = { ...copy };
+          updatedCopy[city] = updatedCopy[city].filter((item) => item !== name);
+          dispatch(setCiudadesVitrinas(updatedCopy));
         }
-        console.log(copy);
 
-        dispatch(setCiudadesVitrinas(copy));
         alert("Vitrina Eliminada, Serás redirigido a la pantalla de Inicio");
       }
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
+      alert(error);
     } finally {
       onSecondModalClose();
       navigate("/");
@@ -264,24 +245,61 @@ export default function EstaVitrina() {
           });
         }
       }
+      alert("Asesor modificado con éxito");
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
-      }
+      console.log(error);
     } finally {
-      onThirdModalClose();
     }
   };
 
-  const editAsesor = () => {};
+  const editAsesor = async (asesorActualizado, handleOnClose) => {
+    console.log(asesorActualizado);
+    console.log(infoTotalVitrina);
+    const updatedAsesor = new URLSearchParams();
+    updatedAsesor.append("nuevoNombre", `${asesorActualizado.nombre}`);
+    updatedAsesor.append("nuevoUsuarioApp", `${asesorActualizado.usuarioApp}`);
+    updatedAsesor.append("nuevaClaveApp", `${asesorActualizado.claveApp}`);
+    asesorActualizado?.vitrinas?.map((vitrina) => {
+      return updatedAsesor.append("nuevasVitrinas", `${vitrina}`);
+    });
+    updatedAsesor.append("habilitado", `${asesorActualizado.habilitado}`);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${currentAsesor?.nombre}`,
+        updatedAsesor,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      console.log(response.data);
+      if (response) {
+        const index = infoTotalVitrina?.asesores?.findIndex(
+          (item) => item.nombre === asesorActualizado.nombre,
+        );
+
+        if (index !== -1) {
+          setInfoTotalVitrina((prev) => ({
+            ...prev,
+            asesores: prev.asesores.map((asesor, i) =>
+              i === index
+                ? {
+                    nombre: asesorActualizado.nombre,
+                    usuario: asesorActualizado.usuarioApp,
+                    contraseña: asesorActualizado.claveApp,
+                  }
+                : asesor,
+            ),
+          }));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      handleOnClose();
+    }
+  };
 
   const deleteAsesor = async (nombreAsesor) => {
     console.log(nombreAsesor);
@@ -297,26 +315,18 @@ export default function EstaVitrina() {
       console.log(response);
       if (response) {
         setInfoTotalVitrina((prev) => {
-          const copy = { ...prev };
-          const index = copy?.asesores?.findIndex(
-            (item) => item.nombre === nombreAsesor,
-          );
-          console.log(index);
-          if (index !== -1) {
-            const result = copy?.asesores?.filter(
-              (item) => item.nombre !== nombreAsesor,
-            );
-            copy.asesores = result;
-          }
-          return copy;
+          const copy = [...prev];
+          return {
+            asesores: copy.asesores.filter(
+              (asesor) => asesor.nombre !== nombreAsesor,
+            ),
+          };
         });
         alert("Asesor Eliminado correctamente");
       }
     } catch (error) {
       console.log(error);
     } finally {
-      alert("esto es finally");
-      onFourthModalClose();
     }
   };
 
@@ -421,40 +431,20 @@ export default function EstaVitrina() {
         <Text textStyle={"RobotoBodyBold"}>Asesores:</Text>
 
         <Box display={"flex"} flexWrap={"wrap"} gap={"20px"}>
-          {infoTotalVitrina != null ? (
+          {infoTotalVitrina != null && infoTotalVitrina?.asesores.length > 0 ? (
             infoTotalVitrina?.asesores?.map((asesor, index) => (
               <AsesorContainer
                 key={index}
-                asesor={asesor.nombre}
-                email={asesor.usuario}
-                password={asesor.contraseña}
-                openModal={onFourthModalOpen}
-                setAsesor={setAsesorNombre}
+                vitrinaName={name}
+                asesor={asesor}
+                setCurrentAsesor={setCurrentAsesor}
+                Editar={editAsesor}
+                Eliminar={deleteAsesor}
               />
             ))
           ) : (
             <Text>No se encontraron Asesores asignados a esta vitrina.</Text>
           )}
-          <ConfirmationMessage
-            isOpen={isFourthModalOpen}
-            onOpen={onFourthModalOpen}
-            onClose={onFourthModalClose}
-            icon={<WarningIcon />}
-            text={`¿Estás seguro que desea eliminar el asesor ${asesorNombre} ?`}
-            text2={
-              "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-            }
-            colorText2={"red.100"}
-            buttonText={"Continuar"}
-            funcConfirmar={deleteAsesor}
-            focusRow={asesorNombre}
-            products={null}
-          />
-          <EditarAsesor
-            isOpen={isFifthModalOpen}
-            onOpen={onFifthModalOpen}
-            onClose={onFifthModalClose}
-          />
         </Box>
 
         <StandardButton
@@ -470,11 +460,12 @@ export default function EstaVitrina() {
           Agregar Asesor
         </StandardButton>
         <AgregarAsesor
+          vitrinaName={name}
           isOpen={isThirdModalOpen}
           onOpen={onThirdModalOpen}
           onClose={onThirdModalClose}
           asesor={asesor}
-          setDeleteAsesor={setAsesor}
+          setAsesor={setAsesor}
           addAsesor={createAsesor}
         />
       </Box>

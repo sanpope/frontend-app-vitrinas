@@ -73,11 +73,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 >
                   Mínimo
                 </Text>
-                <Text
-                  textStyle={"RobotoBody"}
-                  textAlign={"end"}
-                  flexGrow={1}
-                >
+                <Text textStyle={"RobotoBody"} textAlign={"end"} flexGrow={1}>
                   {currentItem1?.cantidadMinima}
                 </Text>
               </Box>
@@ -125,11 +121,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 >
                   Mínimo
                 </Text>
-                <Text
-                  textStyle={"RobotoBody"}
-                  flexGrow={1}
-                  textAlign={"end"}
-                >
+                <Text textStyle={"RobotoBody"} flexGrow={1} textAlign={"end"}>
                   {currentItem2?.cantidadMinima}
                 </Text>
               </Box>
@@ -157,7 +149,7 @@ export default function PocoStock({ productosConPocoStock }) {
           mt={"50px"}
           color={"grey.placeholder"}
         >
-          No se encontraron productos con poco Stock
+          No se encontraron productos con poco stock
         </Text>
       )}
     </Box>

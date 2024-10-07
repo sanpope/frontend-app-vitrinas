@@ -391,11 +391,14 @@ export default function Resumen() {
             >
               <Box display={"flex"} alignItems={"center"} flexGrow={1}>
                 <Text textStyle={"RobotoHeaderBold"} color={"black"}>
-                  ${totalVentasDia?.valor}
+                  ${totalVentasDia?.valor || "0"}
                 </Text>
               </Box>
 
-              <Text textStyle={"RobotoSubSmall"} color={totalVentasDia?.color}>
+              <Text
+                textStyle={"RobotoSubSmall"}
+                color={totalVentasDia?.color || "grey.placeholder"}
+              >
                 {totalVentasDia != null
                   ? `${totalVentasDia?.porcentajeDeCrecimiento}% ${totalVentasDia?.text}`
                   : "No se cuenta con información registrada."}
@@ -428,11 +431,12 @@ export default function Resumen() {
             ) : (
               <ThumbDownIcon />
             )}
-            <Text textStyle={"RobotoBodyBold"}>
-              {estadoDelDispositivo != ""
-                ? estadoDelDispositivo
-                : "Ninguno vinculado"}
-            </Text>
+
+            {estadoDelDispositivo !== "" && estadoDelDispositivo !== null ? (
+              <Text textStyle={"RobotoBodyBold"}> {estadoDelDispositivo} </Text>
+            ) : (
+              <Text color={"grey.placeholder"}> Ninguno vinculado </Text>
+            )}
           </Box>
         </Box>
 
@@ -454,7 +458,10 @@ export default function Resumen() {
                 </Text>
               </Box>
 
-              <Text textStyle={"RobotoSubSmall"} color={totalVentasMes?.color}>
+              <Text
+                textStyle={"RobotoSubSmall"}
+                color={totalVentasMes?.color || "grey.placeholder"}
+              >
                 {totalVentasMes != null
                   ? `${totalVentasMes?.porcentajeDeCrecimiento}% ${totalVentasDia?.text}`
                   : "No se cuenta con información registrada."}
@@ -543,7 +550,7 @@ export default function Resumen() {
                   alignItems={"center"}
                 >
                   <Text color={"grey.placeholder"}>
-                    No se encontró el ranking de Categorías{" "}
+                    No existe información sobre el ranking de Categorías
                   </Text>
                 </Box>
               )}

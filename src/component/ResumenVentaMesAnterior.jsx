@@ -39,6 +39,7 @@ const mesesAbreviados = [
 ];
 
 const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
+  
   arrResumenVentasMesAnterior = resumenVentaMesAnterior
     ?.map((d) => {
       return Number(d?.valor).toLocaleString("es-ES");
@@ -171,12 +172,16 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
   };
 
   return (
-    <Box>
-      {resumenVentaMesAnterior != null ||
+    <Box width={"100%"} height={"100%"} display={"flex"} alignItems={"center"}>
+      {resumenVentaMesAnterior != null &&
       resumenVentaMesAnterior?.length > 0 ? (
         <Line data={chartData} options={options} />
       ) : (
-        <Text>No se encontraron Registros de ventas en el mes anterior!.</Text>
+        <Box>
+          <Text color={"grey.placeholder"}>
+            No se encontraron Registros de ventas en los meses anteriores.
+          </Text>
+        </Box>
       )}
     </Box>
   );

@@ -1,24 +1,38 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useDisclosure, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 import TrashIcon from "../assets/images/TrashIcon";
 import EditIcon from "../assets/images/EditIcon";
+import EditarAsesor from "./EditarAsesor";
+import ConfirmationMessage from "./ConfirmationMessage";
+import WarningIcon from "../assets/images/WarningIcon";
 
 export default function AsesorContainer({
+  vitrinaName,
   asesor,
-  email,
-  password,
+  setCurrentAsesor,
   Editar,
-  openModal,
-  setDeleteAsesor,
+  Eliminar,
 }) {
+  const {
+    isOpen: isEditarModalOpen,
+    onOpen: onEditarModalOpen,
+    onClose: onEditarModalClose,
+  } = useDisclosure();
 
-  const handleEditButton = (asesorName)=>{
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
 
-  }
+  const handleOPenModal = () => {
+    onEditarModalOpen();
+    setCurrentAsesor(asesor);
+  };
 
-  const handleDeleteButton = (asesorName) => {
-    openModal();
-    setDeleteAsesor(asesorName);
+  const handleDeleteOpenModal = () => {
+    onDeleteModalOpen();
+    setCurrentAsesor(asesor);
   };
 
   return (
@@ -42,7 +56,7 @@ export default function AsesorContainer({
         px={"25px"}
         py={"15px"}
       >
-        <Text textStyle={"RobotoBodyBold"}>{asesor}</Text>
+        <Text textStyle={"RobotoBodyBold"}>{asesor?.nombre}</Text>
       </Box>
       <Box
         h={"60%"}
@@ -60,7 +74,7 @@ export default function AsesorContainer({
             textStyle={"RobotoBody"}
             style={{ color: "#AEAEB2", paddingLeft: "5px" }}
           >
-            {email}
+            {asesor?.usuario}
           </span>
         </Text>
         <Text textStyle={"RobotoBody"}>
@@ -69,7 +83,7 @@ export default function AsesorContainer({
             textStyle={"RobotoBody"}
             style={{ color: "#AEAEB2", paddingLeft: "5px" }}
           >
-            {password}
+            {asesor?.contraseña}
           </span>
         </Text>
       </Box>
@@ -92,7 +106,7 @@ export default function AsesorContainer({
           <TrashIcon
             height={"20px"}
             width={"20px"}
-            onClick={() => handleDeleteButton(asesor)}
+            onClick={onDeleteModalOpen}
           />
         </Box>
         <Box
@@ -101,9 +115,37 @@ export default function AsesorContainer({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <EditIcon height={"20px"} width={"20px"} onClick={Editar} />
+          <EditIcon height={"20px"} width={"20px"} onClick={handleOPenModal} />
         </Box>
       </Box>
+
+      <EditarAsesor
+        vitrinaName={vitrinaName}
+        asesor={asesor}
+        setCurrentAsesor={setCurrentAsesor}
+        isOpen={isEditarModalOpen}
+        onOpen={onEditarModalOpen}
+        onClose={onEditarModalClose}
+        Editar={Editar}
+      />
+
+      {/* Eliminar --> */}
+
+      <ConfirmationMessage
+        isOpen={isDeleteModalOpen}
+        onOpen={handleDeleteOpenModal}
+        onClose={onDeleteModalClose}
+        icon={<WarningIcon />}
+        text={`¿Estás seguro que desea eliminar el asesor ${""} ?`}
+        text2={
+          "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
+        }
+        colorText2={"red.100"}
+        buttonText={"Continuar"}
+        funcConfirmar={Eliminar}
+        focusRow={asesor?.nombre}
+        products={null}
+      />
     </Box>
   );
 }

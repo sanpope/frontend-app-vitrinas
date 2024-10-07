@@ -10,6 +10,7 @@ import {
   Modal,
   FormLabel,
   Select as ChakraSelect,
+  Input,
 } from "@chakra-ui/react";
 import { Select as ReactSelect } from "chakra-react-select";
 
@@ -18,6 +19,7 @@ import StandardButton from "../component/ui/buttons/standard";
 import { useSelector, useDispatch } from "react-redux";
 
 export default function AgregarAsesor({
+  vitrinaName,
   isOpen,
   onOpen,
   onClose,
@@ -29,17 +31,19 @@ export default function AgregarAsesor({
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [habilitado, setHabilitado] = useState("");
-  const [selectedVitrinas, setSelectedVitrinas] = useState([]);
+  const [selectedVitrinas, setSelectedVitrinas] = useState([vitrinaName]);
   const ciudadesVitrinas = useSelector(
     (state) => state.vitrinaReducer.ciudadesVitrinas,
   );
 
   const totalVitrinas = Object.values(ciudadesVitrinas).flat();
 
-  const options = totalVitrinas.map((city) => ({
-    label: city,
-    value: city,
-  }));
+  const options = totalVitrinas
+    .sort((a, b) => a.localeCompare(b))
+    .map((city) => ({
+      label: city,
+      value: city,
+    }));
 
   const saveName = (e) => {
     setName(e);
@@ -81,6 +85,17 @@ export default function AgregarAsesor({
       vitrinas: selectedVitrinas,
       habilitado: habilitado,
     });
+
+    handleModalClose();
+  };
+
+  const handleModalClose = () => {
+    onClose();
+    setName("");
+    setUser("");
+    setPassword("");
+    setHabilitado("true");
+    // saveVitrinas([]);
   };
 
   const checkFlieds = () => {
@@ -154,13 +169,21 @@ export default function AgregarAsesor({
                 </span>
                 Vitrina
               </FormLabel>
-              <ReactSelect
+              {/* <ReactSelect
                 options={options}
                 isMulti
                 closeMenuOnSelect={false}
                 placeholder="Selecciona las vitrinas"
                 onChange={saveVitrinas}
-              ></ReactSelect>
+              ></ReactSelect> */}
+
+              <Input
+                type="text"
+                placeholder={vitrinaName}
+                required
+                value={vitrinaName}
+                disabled={true}
+              />
 
               <FormLabel display="flex" alignItems="center">
                 <span
@@ -216,8 +239,8 @@ export default function AgregarAsesor({
                 value={habilitado}
                 onChange={(e) => saveHabilitado(e.target.value)}
               >
-                <option value="true">True</option>
                 <option value="false">False</option>
+                <option value="true">True</option>
               </ChakraSelect>
             </Box>
           </Box>
@@ -231,7 +254,7 @@ export default function AgregarAsesor({
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            onClick={onClose}
+            onClick={handleModalClose}
           >
             Cancelar
           </StandardButton>

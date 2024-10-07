@@ -99,25 +99,34 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
   };
 
   return (
-    <Box
-      width={"100%"}
-      overflowX="auto"
-      css={{
-        "&::-webkit-scrollbar": { display: "none" },
-        "-ms-overflow-style": "none",
-        "scrollbar-width": "none",
-      }}
-    >
+    <>
       {dias?.length > 0 && dias !== null ? (
-        <Box minWidth={"100%"}>
-          <Line data={data} options={options} />
+        <Box
+          width={"100%"}
+          overflowX="auto"
+          css={{
+            "&::-webkit-scrollbar": { display: "none" },
+            "-ms-overflow-style": "none",
+            "scrollbar-width": "none",
+          }}
+        >
+          <Box minWidth={"100%"}>
+            <Line data={data} options={options} />
+          </Box>
         </Box>
       ) : (
-        <Text>
-          No se encontró la información relacionada con las ventas diarias
-        </Text>
+        <Box
+          width={"100%"}
+          height={"100%"}
+          display={"flex"}
+          justifyContent={"center"}
+        >
+          <Text color={"grey.placeholder"} alignSelf={"center"}>
+            No existe registro de ventas diarias.
+          </Text>
+        </Box>
       )}
-    </Box>
+    </>
   );
 };
 

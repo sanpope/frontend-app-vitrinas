@@ -18,11 +18,20 @@ import { useSelector, useDispatch } from "react-redux";
 import TextInput from "../component/ui/textInput";
 import StandardButton from "../component/ui/buttons/standard";
 
-export default function EditarAsesor({ isOpen, onOpen, onClose }) {
-  const [newName, setNewName] = useState("");
-  const [newUser, setNewUser] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [selectedVitrinas, setSelectedVitrinas] = useState([]);
+export default function EditarAsesor({
+  vitrinaName,
+  asesor,
+  isOpen,
+  onOpen,
+  onClose,
+  Editar,
+}) {
+  console.log(asesor);
+  const [newName, setNewName] = useState(asesor?.nombre);
+  const [newUser, setNewUser] = useState(asesor?.usuario);
+  const [newPassword, setNewPassword] = useState(asesor?.contraseña);
+  const [habilitado, setHabilitado] = useState("false");
+  const [selectedVitrinas, setSelectedVitrinas] = useState([vitrinaName]);
   const ciudadesVitrinas = useSelector(
     (state) => state.vitrinaReducer.ciudadesVitrinas,
   );
@@ -34,22 +43,29 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
     value: city,
   }));
 
-  const saveName = (e) => {
-    setNewName(e);
+  const saveName = (val) => {
+    setNewName(val);
   };
-  const saveUser = (e) => {
-    setNewUser(e.target.value);
+  const saveUser = (val) => {
+    setNewUser(val);
   };
-  const savePassword = (e) => {
-    setNewPassword(e.target.value);
+  const savePassword = (val) => {
+    setNewPassword(val);
+  };
+  const saveHabilitado = (val) => {
+    setHabilitado(val);
   };
 
-  const EditarAsesor = (e) => {
-    e.preventDefault();
+  const handleOnClose = () => {
+    onClose();
+    setNewName(asesor?.nombre);
+    setNewUser(asesor?.usuario);
+    setNewPassword(asesor?.contraseña);
+    setHabilitado("false");
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleOnClose}>
       <ModalOverlay bg={"rgba(0, 0, 0, 0.2)"} />
       <ModalContent borderRadius={"20px"}>
         <ModalHeader
@@ -75,7 +91,7 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
             alignItems={"center"}
           >
             <Box w={"100%"}>
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" mt={2}>
                 <span
                   style={{
                     color: "red",
@@ -89,13 +105,12 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
                 required
-                onChange={(e) => saveName(e)}
+                onChange={(val) => saveName(val)}
                 value={newName}
               />
 
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" mt={2}>
                 <span
                   style={{
                     color: "red",
@@ -109,12 +124,11 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
                 required
-                onChange={(e) => saveUser(e)}
+                onChange={(val) => saveUser(val)}
                 value={newUser}
               />
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" mt={2}>
                 <span
                   style={{
                     color: "red",
@@ -128,11 +142,29 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
                 required
-                onChange={(e) => savePassword(e)}
+                onChange={(val) => savePassword(val)}
                 value={newPassword}
               />
+              <FormLabel display="flex" alignItems="center" mt={2}>
+                <span
+                  style={{
+                    color: "red",
+                    marginRight: "0.25rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  *
+                </span>
+                Habilitado
+              </FormLabel>
+              <ChakraSelect
+                value={habilitado}
+                onChange={(e) => saveHabilitado(e.target.value)}
+              >
+                <option value="false">False</option>
+                <option value="true">True</option>
+              </ChakraSelect>
             </Box>
           </Box>
         </ModalBody>
@@ -145,7 +177,7 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            onClick={onClose}
+            onClick={handleOnClose}
           >
             Cancelar
           </StandardButton>
@@ -156,7 +188,18 @@ export default function EditarAsesor({ isOpen, onOpen, onClose }) {
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            type={"submit"}
+            onClick={() => {
+              Editar(
+                {
+                  nombre: newName,
+                  usuarioApp: newUser,
+                  claveApp: newPassword,
+                  vitrinas: selectedVitrinas,
+                  habilitado: habilitado,
+                },
+                handleOnClose,
+              );
+            }}
           >
             Guardar Cambios
           </StandardButton>

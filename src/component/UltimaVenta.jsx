@@ -90,7 +90,7 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
           </Box>
         </Box>
       ) : (
-        <Text color={"grey.placeholder"}>Última venta No registrada!.</Text>
+        <Text color={"grey.placeholder"} alignSelf={"center"}>Última venta No registrada!.</Text>
       )}
     </>
   );
