@@ -62,7 +62,11 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
           flexDirection={"column"}
           justifyContent={"space-between"}
         >
-          <Text color={"grey.placeholder"} textAlign={"left"}>
+          <Text
+            color={"grey.placeholder"}
+            textAlign={"left"}
+            textStyle={"RobotoRegular"}
+          >
             {fecha}
           </Text>
 
@@ -71,11 +75,15 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
           </Text>
 
           <Box display={"flex"} gap={"10px"}>
-            <Text color={"black"}>{Prod1Cant}</Text>
-            <Text color={"grey.placeholder"}>{Prod1Nomb}</Text>
+            <Text color={"black"} textStyle={"RobotoRegular"}>
+              {Prod1Cant}
+            </Text>
+            <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
+              {Prod1Nomb}
+            </Text>
           </Box>
           <Box display={"flex"}>
-            <Text color={"grey.placeholder"}>
+            <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
               <span style={{ color: "black" }}>{Prod2Cant}</span> {Prod2Nomb}
               {masProductos !== "false" ? (
                 <span style={{ color: "red" }}> y otros más...</span>
