@@ -18,6 +18,8 @@ export default function PocoStock({ productosConPocoStock }) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItem1 = productosConPocoStock?.[startIndex];
   const currentItem2 = productosConPocoStock?.[startIndex + 1];
+  console.log(currentItem1);
+  console.log(currentItem2);
 
   return (
     <Box
@@ -42,112 +44,127 @@ export default function PocoStock({ productosConPocoStock }) {
             height={"80%"}
             display={"flex"}
             flexDirection={"column"}
-            justifyContent={"center"}
+            justifyContent={"space-around"}
             gap={2}
           >
-            <Box gap={1}>
-              <Text textStyle={"RobotoRegular"}>
-                {capitalizeFirstLetter(currentItem1?.nombre)}
-              </Text>
-              <Box
-                display={"flex"}
-                flexGrow={1}
-                width="100%"
-                justifyContent={"center"}
-                alignItems={"center"}
-              >
+            {productosConPocoStock != null &&
+            Object.keys(currentItem1 || {}) !== null &&
+            Object.keys(currentItem1 || {}) !== "undefined" &&
+            Object.keys(currentItem1 || {}).length > 0 ? (
+              <Box gap={1}>
+                <Text textStyle={"RobotoRegular"}>
+                  {capitalizeFirstLetter(currentItem1?.nombre)}
+                </Text>
                 <Box
                   display={"flex"}
                   flexGrow={1}
-                  borderRightWidth={2}
-                  borderRightColor={"grey.placeholder"}
+                  width="100%"
+                  justifyContent={"center"}
+                  alignItems={"center"}
                 >
-                  <Text
-                    textStyle={"RobotoRegular"}
+                  <Box
+                    display={"flex"}
                     flexGrow={1}
-                    color={"grey.placeholder"}
+                    borderRightWidth={2}
+                    borderRightColor={"grey.placeholder"}
                   >
-                    Actual
-                  </Text>
-                  <Text textStyle={"RobotoRegular"} flexGrow={1}>
-                    {currentItem1?.existenciasActuales}
-                  </Text>
+                    <Text
+                      textStyle={"RobotoRegular"}
+                      flexGrow={1}
+                      color={"grey.placeholder"}
+                    >
+                      Actual
+                    </Text>
+                    <Text textStyle={"RobotoRegular"} flexGrow={1}>
+                      {currentItem1?.existenciasActuales}
+                    </Text>
+                  </Box>
+                  <Box
+                    display={"flex"}
+                    flexGrow={1}
+                    justifyContent={"space-around"}
+                  >
+                    <Text
+                      textStyle={"RobotoRegular"}
+                      flexGrow={1}
+                      textAlign={"end"}
+                      color={"grey.placeholder"}
+                    >
+                      Mínimo
+                    </Text>
+                    <Text
+                      textStyle={"RobotoRegular"}
+                      textAlign={"end"}
+                      flexGrow={1}
+                    >
+                      {currentItem1?.cantidadMinima}
+                    </Text>
+                  </Box>
                 </Box>
+              </Box>
+            ) : (
+              <></>
+            )}
+
+            {productosConPocoStock != null &&
+            Object.keys(currentItem2 || {}) !== null &&
+            Object.keys(currentItem2 || {}) !== "undefined" &&
+            Object.keys(currentItem2 || {}).length > 0 ? (
+              <Box gap={1}>
+                <Text textStyle={"RobotoRegular"}>
+                  {capitalizeFirstLetter(currentItem2?.nombre)}
+                </Text>
                 <Box
                   display={"flex"}
                   flexGrow={1}
                   justifyContent={"space-around"}
+                  alignItems={"center"}
+                  width="100%"
+                  gap={1}
                 >
-                  <Text
-                    textStyle={"RobotoRegular"}
+                  <Box
+                    display={"flex"}
                     flexGrow={1}
-                    textAlign={"end"}
-                    color={"grey.placeholder"}
+                    borderRightWidth={2}
+                    borderRightColor={"grey.placeholder"}
                   >
-                    Mínimo
-                  </Text>
-                  <Text
-                    textStyle={"RobotoRegular"}
-                    textAlign={"end"}
+                    <Text
+                      textStyle={"RobotoRegular"}
+                      flexGrow={1}
+                      color={"grey.placeholder"}
+                    >
+                      Actual
+                    </Text>
+                    <Text textStyle={"RobotoRegular"} flexGrow={1}>
+                      {currentItem2?.existenciasActuales}
+                    </Text>
+                  </Box>
+                  <Box
+                    display={"flex"}
+                    justifyContent={"space-around"}
                     flexGrow={1}
                   >
-                    {currentItem1?.cantidadMinima}
-                  </Text>
+                    <Text
+                      textStyle={"RobotoRegular"}
+                      flexGrow={1}
+                      textAlign={"end"}
+                      color={"grey.placeholder"}
+                    >
+                      Mínimo
+                    </Text>
+                    <Text
+                      textStyle={"RobotoRegular"}
+                      flexGrow={1}
+                      textAlign={"end"}
+                    >
+                      {currentItem2?.cantidadMinima}
+                    </Text>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-            <Box gap={1}>
-              <Text textStyle={"RobotoRegular"}>
-                {capitalizeFirstLetter(currentItem2?.nombre)}
-              </Text>
-              <Box
-                display={"flex"}
-                flexGrow={1}
-                justifyContent={"space-around"}
-                alignItems={"center"}
-                width="100%"
-                gap={1}
-              >
-                <Box
-                  display={"flex"}
-                  flexGrow={1}
-                  borderRightWidth={2}
-                  borderRightColor={"grey.placeholder"}
-                >
-                  <Text
-                    textStyle={"RobotoRegular"}
-                    flexGrow={1}
-                    color={"grey.placeholder"}
-                  >
-                    Actual
-                  </Text>
-                  <Text textStyle={"RobotoRegular"} flexGrow={1}>
-                    {currentItem2?.existenciasActuales}
-                  </Text>
-                </Box>
-                <Box
-                  display={"flex"}
-                  justifyContent={"space-around"}
-                  flexGrow={1}
-                >
-                  <Text
-                    textStyle={"RobotoRegular"}
-                    flexGrow={1}
-                    textAlign={"end"}
-                    color={"grey.placeholder"}
-                  >
-                    Mínimo
-                  </Text>
-                  <Text
-                    textStyle={"RobotoRegular"}
-                    flexGrow={1}
-                    textAlign={"end"}
-                  >
-                    {currentItem2?.cantidadMinima}
-                  </Text>
-                </Box>
-              </Box>
-            </Box>
+            ) : (
+              <></>
+            )}
           </Box>
           <Box
             w={"100%"}

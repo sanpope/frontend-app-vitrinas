@@ -20,6 +20,7 @@ export default function ActualizacionesInventario({
       {actualizacionesInventarioNV !== null &&
       actualizacionesInventarioNV?.length > 0 ? (
         <Box
+          w={"100%"}
           display={"flex"}
           flexDirection={"column"}
           justifyContent={"space-between"}
@@ -85,8 +86,8 @@ export default function ActualizacionesInventario({
                 mr={1}
                 display={"inline-flex"}
               ></Box>
-              <Text textStyle={"RobotoBody"}>Ingresos</Text>
-              <Text textStyle={"RobotoBody"} px={2}>
+              <Text textStyle={"RobotoRegular"}>Ingresos</Text>
+              <Text textStyle={"RobotoRegular"} px={2}>
                 + {currentItem?.cantidadProductosIngresados}
               </Text>
             </Box>
@@ -103,8 +104,8 @@ export default function ActualizacionesInventario({
                 mr={1}
                 display={"inline-flex"}
               ></Box>
-              <Text textStyle={"RobotoBody"}>Retiros</Text>
-              <Text textStyle={"RobotoBody"} px={2}>
+              <Text textStyle={"RobotoRegular"}>Retiros</Text>
+              <Text textStyle={"RobotoRegular"} px={2}>
                 - {currentItem?.cantidadProductosRetirados}
               </Text>
             </Box>
@@ -121,20 +122,21 @@ export default function ActualizacionesInventario({
                 mr={1}
                 display={"inline-flex"}
               ></Box>
-              <Text textStyle={"RobotoBody"}>Correcciones </Text>
-              <BiggerThanICon width={"17px"} height={"15px"} />
-              <Text textStyle={"RobotoBody"}>
+              <Text textStyle={"RobotoRegular"} pr={1}>
+                Correcciones{" "}
+              </Text>
+              <BiggerThanICon width={"14px"} height={"14px"} />
+              <Text textStyle={"RobotoRegular"} pl={1}>
                 {currentItem?.cantidadDeCorrecciones}
               </Text>
             </Box>
           </Box>
 
           <Box
-            bottom={1}
-            right={1}
+            w={"100%"}
+            h={"15%"}
             display={"flex"}
             justifyContent={"flex-end"}
-            alignItems={"center"}
           >
             <SmallPagination
               currentPage={currentPage}

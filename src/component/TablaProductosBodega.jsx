@@ -256,7 +256,9 @@ export default function TablaProductosBodega({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={getMasArticulos}
-        totalResults={totalResults}
+        totalResults={
+          displayedArticulos !== null ? displayedArticulos.length : 0
+        }
       />
     </Box>
   );

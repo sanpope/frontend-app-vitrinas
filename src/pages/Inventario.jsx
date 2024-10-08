@@ -124,7 +124,7 @@ export default function Inventario() {
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         setTablaInventario(getProductos(xmlDoc));
-        setTotalResults(getProductos(xmlDoc).length);
+       // setTotalResults(getProductos(xmlDoc).length);
         setVerificacionesPendientes(getPendienteXverificar(xmlDoc));
       }
     } catch (error) {
@@ -303,7 +303,7 @@ export default function Inventario() {
         {
           <TablaInventario
             displayedArticulos={displayedArticulos}
-            totalResults={totalResults || "0"}
+            //totalResults={totalResults || "0"}
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}

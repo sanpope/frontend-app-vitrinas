@@ -501,7 +501,12 @@ export default function Resumen() {
           withLineBreaks={true}
           alignItems={"flex-start"}
           children={
-            <Box>
+            <Box
+              w={"100%"}
+              h={"100%"}
+              display={"flex"}
+              justifyContent={"center"}
+            >
               <ActualizacionesInventario
                 actualizacionesInventarioNV={
                   actualizacionesInvNoRev ? actualizacionesInvNoRev : []
@@ -597,7 +602,6 @@ export default function Resumen() {
               h={"100%"}
               display={"flex"}
               justifyContent={"center"}
-              
             >
               <PocoStock productosConPocoStock={totalProductosPocoStock} />
             </Box>
