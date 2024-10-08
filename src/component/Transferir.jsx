@@ -46,7 +46,7 @@ export default function Transferir({
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
-  const [totalProdcsBodega, setTotalProdcsBodega] = useState();
+  const [totalProdcsBodega, setTotalProdcsBodega] = useState([]);
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
   const [productsToShow, setProductsToShow] = useState([]);
@@ -198,7 +198,8 @@ export default function Transferir({
           if (response.status == 200) {
             if (haciaVitrina) {
               setProductsList((prev) => {
-                const copy = [...prev];
+                console.log(prev);
+                const copy = prev ? [...prev] : [];
                 for (let i = 0; i < activeProdcs?.length; i++) {
                   const index = copy.findIndex(
                     (prod) => prod.codigo === activeProdcs[i]?.codigo,
@@ -216,7 +217,7 @@ export default function Transferir({
               });
             } else {
               setProductsList((prev) => {
-                const copy = [...prev];
+                const copy = prev ? [...prev] : [];
                 for (let i = 0; i < activeProdcs?.length; i++) {
                   const index = copy.findIndex(
                     (prod) => prod.codigo === activeProdcs[i]?.codigo,
@@ -224,8 +225,11 @@ export default function Transferir({
                   if (index !== -1) {
                     let existencia = copy[index].existencia;
                     let cantidad = activeProdcs[i].cantidad;
-                    copy[index].existencia =
-                      Number(existencia) - Number(cantidad);
+                    if (existencia - cantidad >= 0) {
+                      copy[index].existencia =
+                        Number(existencia) - Number(cantidad);
+                    }
+                    copy[index].existencia = 0;
                   }
                 }
                 return copy;
@@ -651,6 +655,7 @@ export default function Transferir({
             onClick={activeProdcs?.length > 0 ? onConfirmationModalOpen : null}
             disabled={activeProdcs?.length > 0 ? false : true}
             cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
+            isLoading={loading}
           >
             Enviar
           </StandardButton>

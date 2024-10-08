@@ -26,7 +26,7 @@ export default function Inventario() {
   const name = useSelector((state) => state.vitrinaReducer.name);
 
   const [tablaInventario, setTablaInventario] = useState([]);
-  const [displayedArticulos, setDisplayedArticulos] = useState(tablaInventario);
+  const [displayedArticulos, setDisplayedArticulos] = useState([]);
   const [totalResults, setTotalResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,6 +38,7 @@ export default function Inventario() {
   const [selectedArticulo, setSelectedArticulo] = useState(null);
 
   const totalPages = Math.ceil(tablaInventario?.length / rowsToShow);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getInventarioInfo(name);
@@ -124,7 +125,8 @@ export default function Inventario() {
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         setTablaInventario(getProductos(xmlDoc));
-       // setTotalResults(getProductos(xmlDoc).length);
+        setDisplayedArticulos(getProductos(xmlDoc));
+        // setTotalResults(getProductos(xmlDoc).length);
         setVerificacionesPendientes(getPendienteXverificar(xmlDoc));
       }
     } catch (error) {

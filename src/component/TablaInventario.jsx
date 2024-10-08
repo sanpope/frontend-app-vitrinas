@@ -75,9 +75,16 @@ export default function TablaInventario({
                         );
                       })}
                     <td className="iconContainer">
+                      <span
+                        style={{
+                          display: "inline-block",
+                          height: "100%",
+                          verticalAlign: "middle",
+                        }}
+                      ></span>
                       <EditIcon
-                        width="18px"
-                        height="18px"
+                        width="16px"
+                        height="16px"
                         onClick={() => setArticulo(articulo)}
                       />
                     </td>
@@ -109,7 +116,7 @@ export default function TablaInventario({
         totalPages={totalPages}
         onPageChange={getMasArticulos}
         totalResults={
-          displayedArticulos !== null ? displayedArticulos.length : 0
+          displayedArticulos !== null ? displayedArticulos?.length : "0"
         }
       />
       <Editar />

@@ -169,7 +169,7 @@ export default function TablaVentas({
         totalPages={totalPages}
         onPageChange={getMasArticulos}
         totalResults={
-          displayedArticulos !== null ? displayedArticulos.length : 0
+          displayedArticulos !== null ? displayedArticulos?.length : 0
         }
       />
     </Box>

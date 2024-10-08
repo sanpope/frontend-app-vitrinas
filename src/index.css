@@ -150,6 +150,11 @@ body {
   font-size: 14px;
 }
 
+td {
+  text-align: center;
+  vertical-align: middle;
+}
+
 .content-table tbody tr {
   border-bottom: 1px solid #e5e5e5;
 }
@@ -163,6 +168,7 @@ body {
 
 .AsesorTh:nth-child(1),
 .inventTh:nth-child(1),
+.inventTh:nth-child(10),
 .ventastTh:nth-child(1),
 .ventastTh:nth-child(3),
 .ventastTh:nth-child(4),
@@ -177,6 +183,7 @@ body {
 .inventTd:nth-child(7),
 .inventTd:nth-child(8),
 .inventTd:nth-child(9),
+.inventTd:nth-child(10),
 .ventasTd:nth-child(3),
 .ventasTd:nth-child(6),
 .ProdTd:nth-child(2),
@@ -213,14 +220,13 @@ body {
   padding-left: 20px;
 }
 
-.AsesorTh:nth-child(1){
+.AsesorTh:nth-child(1) {
   padding-left: 6%;
 }
 
-.AsesorTd:nth-child(1){
+.AsesorTd:nth-child(1) {
   padding-left: 4%;
 }
-
 
 .ProdTh:nth-child(1),
 .ProdTd:nth-child(1),
@@ -232,9 +238,12 @@ body {
 }
 
 .iconContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  text-align: center;
+  vertical-align: middle;
   height: 100%;
+}
+
+.iconContainer svg {
+  display: inline-block;
+  vertical-align: middle;
 }

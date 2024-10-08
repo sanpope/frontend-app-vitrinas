@@ -34,8 +34,8 @@ import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
   const toast = useToast();
-  const [totalProdcsBodega, setTotalProdcsBodega] = useState();
-  const [displayedArticulos, setDisplayedArticulos] = useState();
+  const [totalProdcsBodega, setTotalProdcsBodega] = useState([]);
+  const [displayedArticulos, setDisplayedArticulos] = useState([]);
   const [activeProdcs, setActiveProdcs] = useState([]);
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -551,6 +551,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
               }
               disabled={activeProdcs?.length > 0 ? false : true}
               cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
+              isLoading={loading}
             >
               Enviar
             </StandardButton>

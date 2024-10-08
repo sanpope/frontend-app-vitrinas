@@ -317,6 +317,9 @@ export default function ModalVitrinas({
                 <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
                   {Object.entries(ciudadesVitrinas)
                     .filter(([_, vitrinas]) => vitrinas.length > 0) // Filtrar ciudades con vitrinas
+                    .sort(([ciudadA], [ciudadB]) =>
+                      ciudadA.localeCompare(ciudadB),
+                    ) // Ordenar ciudades ascendentemente
                     .map(([ciudad, vitrinas], index) => (
                       <UnorderedList
                         key={index}
@@ -347,6 +350,9 @@ export default function ModalVitrinas({
                 Object.keys(ciudadesVitrinas).length > 0 ? (
                 Object.entries(ciudadesVitrinas)
                   .filter(([_, vitrinas]) => vitrinas.length > 0) // Filtrar ciudades con vitrinas
+                  .sort(([ciudadA], [ciudadB]) =>
+                    ciudadA.localeCompare(ciudadB),
+                  ) // Ordenar ciudades ascendentemente
                   .map(([ciudad, vitrinas]) => (
                     <Vitrina
                       key={ciudad}
@@ -364,12 +370,13 @@ export default function ModalVitrinas({
                   alignItems={"center"}
                 >
                   <Text color={"grey.placeholder"}>
-                    No se encontraron vitrinas disponibles, porfavor crea una
+                    No se encontraron vitrinas disponibles, por favor crea una
                     vitrina.
                   </Text>
                 </Box>
               )}
             </ModalBody>
+
             <ModalFooter m={"0px"} display={{ base: "none", md: "flex" }} p={3}>
               <StandardButton
                 variant={"RED_PRIMARY"}
