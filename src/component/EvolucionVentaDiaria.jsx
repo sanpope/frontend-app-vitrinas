@@ -25,7 +25,6 @@ ChartJS.register(
 );
 
 const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
-  console.log(evolucionVentaDiaria);
   const chartRef = useRef(null);
   const dias = evolucionVentaDiaria
     ?.map((d) => d.dia)
@@ -122,7 +121,15 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
             "scrollbar-width": "none",
           }}
         >
-          <Box minWidth={dias.length > 0 && dias.length < 7 ? "100%" : dias.length > 7  && dias.length < 20  ? "200%" :  "300%"}>
+          <Box
+            minWidth={
+              dias.length > 0 && dias.length < 7
+                ? "100%"
+                : dias.length > 7 && dias.length < 20
+                  ? "200%"
+                  : "300%"
+            }
+          >
             <Line data={data} options={options} />
           </Box>
         </Box>

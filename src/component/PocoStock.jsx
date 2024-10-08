@@ -18,8 +18,6 @@ export default function PocoStock({ productosConPocoStock }) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItem1 = productosConPocoStock?.[startIndex];
   const currentItem2 = productosConPocoStock?.[startIndex + 1];
-  console.log(currentItem1);
-  console.log(currentItem2);
 
   return (
     <Box

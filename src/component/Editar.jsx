@@ -25,14 +25,12 @@ export default function Agregar({
   setName,
   city,
   setCity,
-  isLoading
+  isLoading,
 }) {
   const saveName = (val) => {
-    console.log(val);
     setName(val);
   };
   const saveCity = (val) => {
-    console.log(val);
     setCity(val);
   };
   return (

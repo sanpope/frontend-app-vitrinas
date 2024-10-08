@@ -336,8 +336,7 @@ export default function Visitas() {
 
   const setReversionVisita = async (idVisita) => {
     const id = parseInt(idVisita);
-    console.log(idVisita);
-    console.log(visitaSelected);
+
     setIsLoading(true);
 
     try {
@@ -349,7 +348,7 @@ export default function Visitas() {
           },
         },
       );
-      console.log(response.data);
+
       if (response.status == 200 && response.data) {
         setTotalVisitas((prev) => {
           const copy = [...prev];
@@ -409,8 +408,8 @@ export default function Visitas() {
             },
           },
         );
-        console.log(response.data);
-        if (response.data) {
+
+        if (response.status == 200 && response.data) {
           setTotalVisitas((prev) => {
             const index = prev.findIndex(
               (item) => item.idVisita === visita.idVisita,
@@ -421,10 +420,23 @@ export default function Visitas() {
               return copy;
             }
           });
-          alert("Visita verificada Correctamente.");
+
+          toast({
+            status: "success",
+            description: "Visita verificada Correctamente!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
         }
       } catch (error) {
-        console.log(error);
+        toast({
+          status: "error",
+          description: "Error Verificando la visita.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       } finally {
       }
     } else {
@@ -536,7 +548,6 @@ export default function Visitas() {
                   visita={visita}
                   isSelected={visitaSelected?.idVisita === visita.idVisita}
                   seleccionarYVerificar={() => {
-                    console.log(visita);
                     setVisitaSelected(visita);
                     verificarVisita(visita.idVisita, visita);
                     showInfoVisitaRelated(visita);

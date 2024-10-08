@@ -433,8 +433,7 @@ export default function Resumen() {
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
 
           <Box display={"flex"} justifyContent={"flex-start"}>
-            {console.log(estadoDelDispositivo)}
-            {console.log(typeof estadoDelDispositivo)}
+            
             {estadoDelDispositivo === "Ok" ? (
               <ThumbUpIcon />
             ) : estadoDelDispositivo !== "" && estadoDelDispositivo !== undefined ? (

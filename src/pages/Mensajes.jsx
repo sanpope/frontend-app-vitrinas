@@ -141,7 +141,6 @@ export default function Mensajes() {
         },
       );
     } catch (error) {
-      console.log(error);
     } finally {
       onConfirmationModalClose();
     }
@@ -159,9 +158,9 @@ export default function Mensajes() {
   //           },
   //         },
   //       );
-  //       console.log(response);
+  //
   //     } catch (error) {
-  //       console.log(error);
+  //
   //     }
   //   };
   // }, []);
@@ -226,7 +225,6 @@ export default function Mensajes() {
               key={index}
               mensaje={mensaje}
               onClick={() => {
-                console.log(mensaje);
                 onEliminarMensajeOpen();
                 setCurrentMsg(mensaje);
               }}

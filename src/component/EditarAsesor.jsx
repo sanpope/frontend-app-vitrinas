@@ -27,7 +27,6 @@ export default function EditarAsesor({
   Editar,
   isLoading,
 }) {
-  console.log(asesor);
   const [newName, setNewName] = useState(asesor?.nombre);
   const [newUser, setNewUser] = useState(asesor?.usuario);
   const [newPassword, setNewPassword] = useState(asesor?.contraseña);

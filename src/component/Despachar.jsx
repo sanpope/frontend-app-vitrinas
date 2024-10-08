@@ -212,7 +212,6 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
       body: xmlData,
     })
       .then((response) => {
-        console.log(response);
         if (response.status == 200) {
           toast({
             status: "success",
@@ -225,7 +224,6 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
         setLoading(false);
         onClose();
       })
-      .then((data) => console.log(data))
       .catch((error) => {
         toast({
           status: "error",

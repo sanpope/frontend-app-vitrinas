@@ -30,12 +30,10 @@ export default function Agregar({
   const [city, setCity] = useState("Barranquilla");
 
   const saveCity = (e) => {
-    console.log(e.target.value);
     setCity(e.target.value);
   };
 
   const saveName = (e) => {
-    console.log(e);
     setName(e);
   };
 

@@ -100,12 +100,10 @@ export default function Transferir({
   const Busqueda = (textToSearch) => {
     const tableToFilter =
       desde === "Bodega" ? totalProdcsBodega : displayedArticulos;
-    console.log(textToSearch, " texto a buscar ", tableToFilter);
     let result = tableToFilter?.filter((element) => {
       if (
         element?.nombre?.toLowerCase().includes(textToSearch?.toLowerCase())
       ) {
-        console.log(element);
         return element;
       }
     });
@@ -184,7 +182,6 @@ export default function Transferir({
   const transferirProdcs = async () => {
     setLoading(true);
     const xmlData = generateProductsListXML(activeProdcs).toString();
-    console.log(activeProdcs);
 
     const haciaVitrina = hacia === vitrina ? true : false;
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}&haciaVitrina=${haciaVitrina}`;
@@ -198,7 +195,6 @@ export default function Transferir({
           if (response.status == 200) {
             if (haciaVitrina) {
               setProductsList((prev) => {
-                console.log(prev);
                 const copy = prev ? [...prev] : [];
                 for (let i = 0; i < activeProdcs?.length; i++) {
                   const index = copy.findIndex(
@@ -225,11 +221,14 @@ export default function Transferir({
                   if (index !== -1) {
                     let existencia = copy[index].existencia;
                     let cantidad = activeProdcs[i].cantidad;
-                    if (existencia - cantidad >= 0) {
+                    if (Number(existencia) - Number(cantidad) > 0) {
+                      console.log(Number(existencia) - Number(cantidad));
                       copy[index].existencia =
                         Number(existencia) - Number(cantidad);
+                    } else {
+                      copy[index].existencia = 0;
+                      console.log(copy[index].existencia);
                     }
-                    copy[index].existencia = 0;
                   }
                 }
                 return copy;
@@ -246,9 +245,7 @@ export default function Transferir({
           setLoading(false);
           onClose();
         })
-        .then((data) => console.log(data))
         .catch((error) => {
-          console.error("Error: ", error);
           toast({
             status: "error",
             description: "Error transfiriendo los productos",
@@ -295,7 +292,13 @@ export default function Transferir({
         });
       }
     } catch (error) {
-      console.error("Error fetching XML data:", error);
+      toast({
+        status: "error",
+        description: "Error obteniendo información",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     }
   };
 

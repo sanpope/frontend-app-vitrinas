@@ -120,8 +120,6 @@ export default function EstaVitrina() {
   };
 
   const updateVitrina = async (nombre, ciudad) => {
-    console.log(ciudadesVitrinas);
-
     const vitrinaUpdated = new URLSearchParams();
     vitrinaUpdated.append("nuevoNombre", `${nombre}`);
     vitrinaUpdated.append("nuevaCiudad", `${ciudad}`);
@@ -143,7 +141,7 @@ export default function EstaVitrina() {
         const copy = { ...ciudadesVitrinas };
         const updatedCityArray = [...copy[city]];
         const index = updatedCityArray.findIndex((item) => item === name);
-        console.log(index);
+
         if (index !== -1) {
           if (city === ciudad) {
             const updatedCopy = { ...copy };
@@ -204,7 +202,7 @@ export default function EstaVitrina() {
         const copy = { ...ciudadesVitrinas };
         const updatedCityArray = [...copy[city]];
         const index = updatedCityArray.findIndex((item) => item === name);
-        console.log(index);
+
         if (index !== -1) {
           copy[city] = copy[city].filter((item) => item !== name);
           const updatedCopy = { ...copy };
@@ -243,8 +241,6 @@ export default function EstaVitrina() {
       return nuevoAsesor.append("vitrinas", `${vitrina}`);
     });
     nuevoAsesor.append("habilitado", `${newAsesor.habilitado}`);
-    console.log(newAsesor);
-    console.log(nuevoAsesor);
 
     try {
       setIsLoading(true);
@@ -257,7 +253,7 @@ export default function EstaVitrina() {
           },
         },
       );
-      console.log(response.data);
+
       if (response.status == 200) {
         const index = infoTotalVitrina?.asesores?.findIndex(
           (item) => item.nombre === newAsesor.nombre,
@@ -299,8 +295,6 @@ export default function EstaVitrina() {
   };
 
   const editAsesor = async (asesorActualizado, handleOnClose) => {
-    console.log(asesorActualizado);
-    console.log(infoTotalVitrina);
     const updatedAsesor = new URLSearchParams();
     updatedAsesor.append("nuevoNombre", `${asesorActualizado.nombre}`);
     updatedAsesor.append("nuevoUsuarioApp", `${asesorActualizado.usuarioApp}`);
@@ -325,8 +319,7 @@ export default function EstaVitrina() {
         const index = infoTotalVitrina?.asesores?.findIndex(
           (item) => item.nombre === currentAsesor.nombre,
         );
-        console.log(index);
-        console.log(infoTotalVitrina.asesores[index]);
+
         if (index !== -1) {
           setInfoTotalVitrina((prev) => ({
             ...prev,
@@ -364,7 +357,6 @@ export default function EstaVitrina() {
   };
 
   const deleteAsesor = async (nombreAsesor) => {
-    console.log(nombreAsesor);
     try {
       setIsLoading(true);
       const response = await axios.delete(
@@ -375,7 +367,7 @@ export default function EstaVitrina() {
           },
         },
       );
-      console.log(response);
+
       if (response.status == 200) {
         setInfoTotalVitrina((prev) => {
           const copy = { ...prev };
@@ -496,7 +488,6 @@ export default function EstaVitrina() {
               colorText2={"red.100"}
               buttonText={"Continuar"}
               funcConfirmar={() => {
-                console.log("Eliminar");
                 deleteVitrina(name);
               }}
               products={null}

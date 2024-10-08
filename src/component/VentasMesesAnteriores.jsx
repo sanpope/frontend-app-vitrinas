@@ -119,7 +119,6 @@ const mesesAbreviados = [
 ];
 
 const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
-  console.log(VentasMesAnterior);
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
   const curretYear = fechaActual.getFullYear();
