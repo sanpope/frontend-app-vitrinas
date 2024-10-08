@@ -315,8 +315,9 @@ export default function ModalVitrinas({
               ciudadesVitrinas != null &&
               Object.keys(ciudadesVitrinas).length > 0 ? (
                 <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
-                  {Object.entries(ciudadesVitrinas).map(
-                    ([ciudad, vitrinas], index) => (
+                  {Object.entries(ciudadesVitrinas)
+                    .filter(([_, vitrinas]) => vitrinas.length > 0) // Filtrar ciudades con vitrinas
+                    .map(([ciudad, vitrinas], index) => (
                       <UnorderedList
                         key={index}
                         cursor={"pointer"}
@@ -324,6 +325,7 @@ export default function ModalVitrinas({
                         boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
                         p={3}
                         maxH={"200px"}
+                        overflowY={"auto"}
                       >
                         <Text textStyle={"RobotoBodyBold"}>{ciudad}</Text>
                         {vitrinas.map((name, index) => (
@@ -339,21 +341,20 @@ export default function ModalVitrinas({
                           </ListItem>
                         ))}
                       </UnorderedList>
-                    ),
-                  )}
+                    ))}
                 </Box>
               ) : ciudadesVitrinas != null &&
                 Object.keys(ciudadesVitrinas).length > 0 ? (
-                Object.entries(ciudadesVitrinas).map(([ciudad, vitrinas]) => {
-                  return (
+                Object.entries(ciudadesVitrinas)
+                  .filter(([_, vitrinas]) => vitrinas.length > 0) // Filtrar ciudades con vitrinas
+                  .map(([ciudad, vitrinas]) => (
                     <Vitrina
                       key={ciudad}
                       city={ciudad}
                       names={vitrinas}
                       onClick={handleVitrinaClick}
                     />
-                  );
-                })
+                  ))
               ) : (
                 <Box
                   display={"flex"}
@@ -362,7 +363,7 @@ export default function ModalVitrinas({
                   justifyContent={"center"}
                   alignItems={"center"}
                 >
-                  <Text>
+                  <Text color={"grey.placeholder"}>
                     No se encontraron vitrinas disponibles, porfavor crea una
                     vitrina.
                   </Text>

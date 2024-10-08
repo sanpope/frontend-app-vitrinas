@@ -39,7 +39,6 @@ const mesesAbreviados = [
 ];
 
 const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
-  
   arrResumenVentasMesAnterior = resumenVentaMesAnterior
     ?.map((d) => {
       return Number(d?.valor).toLocaleString("es-ES");
@@ -47,7 +46,7 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
     .reverse();
 
   const fechaActual = new Date();
-  const mesActual = fechaActual.getMonth();
+  const mesActual = fechaActual.getMonth() + 1; // Cambiado para que vaya de 1 a 12
   const curretYear = fechaActual.getFullYear();
   let lastYear = false;
 

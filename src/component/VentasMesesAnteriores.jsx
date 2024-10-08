@@ -119,8 +119,9 @@ const mesesAbreviados = [
 ];
 
 const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
+  console.log(VentasMesAnterior);
   const fechaActual = new Date();
-  const mesActual = fechaActual.getMonth();
+  const mesActual = fechaActual.getMonth() + 1;
   const curretYear = fechaActual.getFullYear();
   let lastYear = false;
 
@@ -162,7 +163,7 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
   return (
     <>
       {VentasMesAnterior != null && VentasMesAnterior?.length > 0 ? (
-        <Box mt={{base : 1, xl: 4}}>
+        <Box mt={{ base: 1, xl: 4 }}>
           <Line data={chartData} options={options} />
         </Box>
       ) : (

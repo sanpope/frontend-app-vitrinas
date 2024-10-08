@@ -371,7 +371,7 @@ export default function HomePage() {
                 <HStack display={"flex"}>
                   <Text
                     textStyle={"RobotoSubSmall"}
-                    color={`${ventaDelMes?.color}`}
+                    color={`${ventaDelMes?.color}` || "grey.placeholder"}
                   >
                     {ventaDelMes != null
                       ? `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`

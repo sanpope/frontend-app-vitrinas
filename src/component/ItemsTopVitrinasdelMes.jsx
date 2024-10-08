@@ -2,8 +2,10 @@ import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
 const COLORS = ["#000000", "#555555", "#BBBBBB"];
+const GRAY_COLOR = "#BBBBBB";
 
 export default function TopCategoriaItem({ topVitrinas }) {
+  console.log(topVitrinas);
   return (
     <>
       {topVitrinas != null ? (

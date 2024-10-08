@@ -1,4 +1,4 @@
-const TrophytIcon = ({ width = "20px", height = "20px", fill = "#E60F0F" }) => {
+const TrophytIcon = ({ width = "25px", height = "25px", fill = "#E60F0F" }) => {
   return (
     <svg
       width={width}

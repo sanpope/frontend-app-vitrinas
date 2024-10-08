@@ -371,8 +371,10 @@ export default function Resumen() {
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
+          minWidth={{ base: "210px", md: "310px" }}
           icon={<BagsShoppingIcon />}
           title={"Última venta"}
+          gridColumnEnd="span 1.8"
           children={
             <UltimaVenta
               prodslUltimasVentas={
@@ -431,16 +433,20 @@ export default function Resumen() {
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
 
           <Box display={"flex"} justifyContent={"flex-start"}>
+            {console.log(estadoDelDispositivo)}
+            {console.log(typeof estadoDelDispositivo)}
             {estadoDelDispositivo === "Ok" ? (
               <ThumbUpIcon />
-            ) : (
+            ) : estadoDelDispositivo !== "" && estadoDelDispositivo !== undefined ? (
               <ThumbDownIcon />
+            ) : (
+              <></>
             )}
 
             {estadoDelDispositivo !== "" && estadoDelDispositivo !== null ? (
               <Text textStyle={"RobotoBodyBold"}> {estadoDelDispositivo} </Text>
             ) : (
-              <Text color={"grey.placeholder"}> Ninguno vinculado </Text>
+              <Text color={"grey.placeholder"}> Ninguno vinculado</Text>
             )}
           </Box>
         </Box>

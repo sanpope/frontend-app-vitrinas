@@ -60,7 +60,8 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
           h={"100%"}
           display={"flex"}
           flexDirection={"column"}
-          justifyContent={"space-between"}
+          justifyContent={"space-around"}
+         
         >
           <Text
             color={"grey.placeholder"}
@@ -69,28 +70,31 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
           >
             {fecha}
           </Text>
-
-          <Text textStyle={"RobotoHeaderBold"} color={"black"}>
-            ${valor}
-          </Text>
-
-          <Box display={"flex"} gap={"10px"}>
-            <Text color={"black"} textStyle={"RobotoRegular"}>
-              {Prod1Cant}
-            </Text>
-            <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
-              {Prod1Nomb}
+          <Box display={"flex"} flexDirection={"column"}>
+            <Text textStyle={"RobotoHeaderBold"} color={"black"}>
+              ${valor}
             </Text>
           </Box>
-          <Box display={"flex"}>
-            <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
-              <span style={{ color: "black" }}>{Prod2Cant}</span> {Prod2Nomb}
-              {masProductos !== "false" ? (
-                <span style={{ color: "red" }}> y otros más...</span>
-              ) : (
-                ""
-              )}
-            </Text>
+
+          <Box>
+            <Box display={"flex"} gap={"5px"}>
+              <Text color={"black"} textStyle={"RobotoRegular"}>
+                {Prod1Cant}
+              </Text>
+              <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
+                {Prod1Nomb}
+              </Text>
+            </Box>
+            <Box display={"flex"}>
+              <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
+                <span style={{ color: "black" }}>{Prod2Cant}</span> {Prod2Nomb}
+                {masProductos !== "false" ? (
+                  <span style={{ color: "red" }}> y otros más...</span>
+                ) : (
+                  ""
+                )}
+              </Text>
+            </Box>
           </Box>
         </Box>
       ) : (
