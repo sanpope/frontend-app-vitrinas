@@ -11,6 +11,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useRef } from "react";
+import { useEffect } from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -23,6 +25,8 @@ ChartJS.register(
 );
 
 const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
+  console.log(evolucionVentaDiaria);
+  const chartRef = useRef(null);
   const dias = evolucionVentaDiaria
     ?.map((d) => d.dia)
     .sort(function (a, b) {
@@ -98,11 +102,19 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
     },
   };
 
+  useEffect(() => {
+    if (chartRef.current && dias.length > 7) {
+      const chart = chartRef.current;
+      const scrollWidth = (dias.length - 7) * (chart.width / 7);
+      chart.canvas.parentNode.style.width = `${chart.width + scrollWidth}px`;
+    }
+  }, [dias]);
+
   return (
     <>
       {dias?.length > 0 && dias !== null ? (
         <Box
-          width={"100%"}
+          maxW={"300px"}
           overflowX="auto"
           css={{
             "&::-webkit-scrollbar": { display: "none" },
@@ -110,7 +122,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
             "scrollbar-width": "none",
           }}
         >
-          <Box minWidth={"100%"}>
+          <Box minWidth={dias.length > 0 && dias.length < 7 ? "100%" : dias.length > 7  && dias.length < 20  ? "200%" :  "300%"}>
             <Line data={data} options={options} />
           </Box>
         </Box>

@@ -100,39 +100,57 @@ export default function TablaProductosBodega({
               ))}
             </tr>
           </thead>
-          <tbody className="" style={{ height: "100%" }}>
-            {displayedArticulos?.map((articulo, index) => {
-              return (
-                <tr key={index} className="">
-                  {Object.values(articulo).map((value, index) => {
-                    return (
-                      <td key={index} className="AsesorTd">
-                        {value === `` ? (
-                          <Box
-                            display={"flex"}
-                            justifyContent={"center"}
-                            alignItems={"center"}
-                          >
-                            <SwitchElement />
-                          </Box>
-                        ) : (
-                          value
-                        )}
-                      </td>
-                    );
-                  })}
-                  <Box
-                    display={"flex"}
-                    columnGap={"20px"}
-                    className="iconContainer"
-                  >
-                    <EditIcon onClick={onSecondModalOpen} />
-                    <TrashIcon onClick={onThirdModalOpen} />
-                  </Box>
-                </tr>
-              );
-            })}
-          </tbody>
+          {displayedArticulos != null && displayedArticulos.length > 0 ? (
+            <tbody className="" style={{ height: "100%" }}>
+              {displayedArticulos?.map((articulo, index) => {
+                return (
+                  <tr key={index} className="">
+                    {Object.values(articulo).map((value, index) => {
+                      return (
+                        <td key={index} className="AsesorTd">
+                          {value === `` ? (
+                            <Box
+                              display={"flex"}
+                              justifyContent={"center"}
+                              alignItems={"center"}
+                            >
+                              <SwitchElement />
+                            </Box>
+                          ) : (
+                            value
+                          )}
+                        </td>
+                      );
+                    })}
+                    <Box
+                      display={"flex"}
+                      columnGap={"20px"}
+                      className="iconContainer"
+                    >
+                      <EditIcon onClick={onSecondModalOpen} />
+                      <TrashIcon onClick={onThirdModalOpen} />
+                    </Box>
+                  </tr>
+                );
+              })}
+            </tbody>
+          ) : (
+            <tbody style={{ height: "100%" }}>
+              <tr style={{ height: "350px", borderBottom: "none" }}>
+                <td
+                  colSpan={HEADERS.length}
+                  style={{
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    padding: "20px",
+                    color: "grey",
+                  }}
+                >
+                  No se encontró el asesor
+                </td>
+              </tr>
+            </tbody>
+          )}
         </Contenedor>
       </Box>
       <BottomTable

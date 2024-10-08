@@ -132,38 +132,56 @@ export default function TablaProductosBodega({
               ))}
             </tr>
           </thead>
-          <tbody className="" style={{ height: "100%" }}>
-            {displayedArticulos.map((articulo, index) => {
-              return (
-                <tr key={index} className="">
-                  {Object.values(articulo).map((value, index) => {
-                    return (
-                      <td key={index} className="ProdTd">
-                        {value}
-                      </td>
-                    );
-                  })}
-                  <Box
-                    display={"flex"}
-                    columnGap={"20px"}
-                    px={"15px"}
-                    className="iconContainer"
-                  >
-                    <EditIcon
-                      onClick={onSecondModalOpen}
-                      width="19px"
-                      height="19px"
-                    />
-                    <TrashIcon
-                      onClick={() => handleDeleteButton(articulo)}
-                      width="19px"
-                      height="19px"
-                    />
-                  </Box>
-                </tr>
-              );
-            })}
-          </tbody>
+          {displayedArticulos != null && displayedArticulos.length > 0 ? (
+            <tbody className="" style={{ height: "100%" }}>
+              {displayedArticulos.map((articulo, index) => {
+                return (
+                  <tr key={index} className="">
+                    {Object.values(articulo).map((value, index) => {
+                      return (
+                        <td key={index} className="ProdTd">
+                          {value}
+                        </td>
+                      );
+                    })}
+                    <Box
+                      display={"flex"}
+                      columnGap={"20px"}
+                      px={"15px"}
+                      className="iconContainer"
+                    >
+                      <EditIcon
+                        onClick={onSecondModalOpen}
+                        width="19px"
+                        height="19px"
+                      />
+                      <TrashIcon
+                        onClick={() => handleDeleteButton(articulo)}
+                        width="19px"
+                        height="19px"
+                      />
+                    </Box>
+                  </tr>
+                );
+              })}
+            </tbody>
+          ) : (
+            <tbody style={{ height: "100%" }}>
+              <tr style={{ height: "350px", borderBottom: "none" }}>
+                <td
+                  colSpan={HEADERS.length}
+                  style={{
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    padding: "20px",
+                    color: "grey",
+                  }}
+                >
+                  No se encontraron productos
+                </td>
+              </tr>
+            </tbody>
+          )}
         </Contenedor>
       </Box>
 

@@ -52,7 +52,7 @@ export default function TablaInventario({
               ))}
             </tr>
           </thead>
-          {displayedArticulos != null ? (
+          {displayedArticulos != null && displayedArticulos.length > 0 ? (
             <tbody>
               {displayedArticulos?.map((articulo, index) => {
                 return (
