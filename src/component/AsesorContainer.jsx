@@ -9,9 +9,11 @@ import WarningIcon from "../assets/images/WarningIcon";
 export default function AsesorContainer({
   vitrinaName,
   asesor,
+  currentAsesor,
   setCurrentAsesor,
   Editar,
   Eliminar,
+  isLoading,
 }) {
   const {
     isOpen: isEditarModalOpen,
@@ -127,6 +129,7 @@ export default function AsesorContainer({
         onOpen={onEditarModalOpen}
         onClose={onEditarModalClose}
         Editar={Editar}
+        isLoading={isLoading}
       />
 
       {/* Eliminar --> */}
@@ -145,6 +148,7 @@ export default function AsesorContainer({
         funcConfirmar={Eliminar}
         focusRow={asesor?.nombre}
         products={null}
+        isLoading={isLoading}
       />
     </Box>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
@@ -16,6 +16,7 @@ import { parseData } from "../utils/xmlParse";
 import { formatFecha } from "../utils/formatting";
 
 export default function Mensajes() {
+  const toast = useToast();
   const dispatch = useDispatch();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
@@ -23,6 +24,7 @@ export default function Mensajes() {
     (state) => state.vitrinaReducer.mensajesVitrina,
   );
   const [currentMsg, setCurrentMsg] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -46,10 +48,18 @@ export default function Mensajes() {
           },
         },
       );
-      const xmlDoc = parseData(response.data);
-      dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
+      }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error obteniendo los mensajes.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
     }
   };
@@ -77,6 +87,7 @@ export default function Mensajes() {
 
   const deleteMensaje = async (mensaje) => {
     const id = Number.parseInt(mensaje?.id);
+    setIsLoading(true);
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}&idMensaje=${id}`,
@@ -87,7 +98,7 @@ export default function Mensajes() {
         },
       );
 
-      if (response.data) {
+      if (response.status == 200 && response.data) {
         const copy = [...totalMensajes];
         const index = copy.findIndex((item) => item.id === mensaje.id);
         if (index !== -1) {
@@ -95,13 +106,27 @@ export default function Mensajes() {
         }
         const mensajesNoLeidos = copy.filter((msj) => msj.visto === "false");
         dispatch(setMensajesVitrina(copy));
-        alert("Mensaje Eliminado con Éxito");
+
         dispatch(setMensajesNoLeidos(mensajesNoLeidos?.length));
+        toast({
+          status: "success",
+          description: "Mensaje eliminado con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error eliminando el mensaje.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       onEliminarMensajeClose();
+      setIsLoading(false);
     }
   };
 
@@ -122,24 +147,24 @@ export default function Mensajes() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      try {
-        const response = axios.get(
-          //ToDo Actualizar el EndPoint para marcas los mensajes como leidos, esta funcion se ejecutara cuando el usuario abandona la pag de mensajes
-          `${process.env.REACT_APP_SERVER_URL}/app/rest/`,
-          {
-            headers: {
-              "Content-Type": "application/xml",
-            },
-          },
-        );
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     try {
+  //       const response = axios.get(
+  //         //ToDo Actualizar el EndPoint para marcas los mensajes como leidos, esta funcion se ejecutara cuando el usuario abandona la pag de mensajes
+  //         `${process.env.REACT_APP_SERVER_URL}/app/rest/`,
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/xml",
+  //           },
+  //         },
+  //       );
+  //       console.log(response);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  // }, []);
 
   return (
     <Box
@@ -224,6 +249,7 @@ export default function Mensajes() {
           deleteMensaje(currentMsg);
         }}
         products={null}
+        isLoading={isLoading}
       />
     </Box>
   );

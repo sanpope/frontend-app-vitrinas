@@ -586,7 +586,7 @@ export default function Resumen() {
         />
 
         <Container
-          display={{ base: "none", xl: "flex" }}
+          display={{ base: "none", lg: "flex" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
           icon={<BoxesIcon />}
@@ -597,7 +597,7 @@ export default function Resumen() {
               h={"100%"}
               display={"flex"}
               justifyContent={"center"}
-              mb={3}
+              
             >
               <PocoStock productosConPocoStock={totalProductosPocoStock} />
             </Box>

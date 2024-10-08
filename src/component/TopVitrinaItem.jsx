@@ -6,12 +6,17 @@ export default function TopVitrinaItem({ index, vitrinaName, vitrinaAmount }) {
   return (
     <Box
       display={"flex"}
-      flexDirection={{ base: "column", sm: "row" }}
-      justifyContent={{ base: "flex-start", md: "space-between" }}
+      flexDirection={"row"}
+      justifyContent={"space-between"}
       alignItems={{ base: "flex-start", md: "center" }}
       pt={"0.500rem"}
     >
-      <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        pr={1}
+      >
         <Box
           display={"flex"}
           justifyContent={"flex-start"}
@@ -29,7 +34,7 @@ export default function TopVitrinaItem({ index, vitrinaName, vitrinaAmount }) {
         </Box>
       </Box>
       <Box
-        display={{ base: "none", md: "flex" }}
+        display={"flex"}
         justifyContent={"flex-end"}
         borderLeftWidth={"2px"}
         borderLeftColor={"mainBg"}

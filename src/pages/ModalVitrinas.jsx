@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   UnorderedList,
   ListItem,
+  useToast,
 } from "@chakra-ui/react";
 import LeftTriangleIcon from "../assets/images/LeftTriangleIcon";
 import StandardButton from "../component/ui/buttons/standard";
@@ -39,6 +40,7 @@ export default function ModalVitrinas({
   onFirstModalClose,
   showOptions,
 }) {
+  const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isDeskMenuOpen = useSelector(
@@ -52,6 +54,7 @@ export default function ModalVitrinas({
 
   const [mensaje, setMensaje] = useState("");
   const [isLoading, setIsLoading] = useState(null);
+  const [createVitrinaLoading, setCreateVitrinaLoading] = useState(false);
 
   const mensajesNoLeidos = useSelector(
     (state) => state.vitrinaReducer.mensajesNoLeidos,
@@ -107,17 +110,24 @@ export default function ModalVitrinas({
         setMensaje("La vitrina ya existe en la ciudad seleccionada!");
       } else {
         try {
+          setCreateVitrinaLoading(true);
           const response = await axios.post(url, formData, {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
             },
           });
-          console.log(response.data);
-          if (response.data) {
+          if (response.status == 200 && response.data) {
             const copy = { ...ciudadesVitrinas };
             copy[city] = [...copy[city], name];
             dispatch(setCiudadesVitrinas(copy));
-            alert("Vitrina Agregada con Éxito");
+            toast({
+              status: "success",
+              description: "Vitrina Agregada con Éxito!.",
+              duration: 3000,
+              position: "top-right",
+              isClosable: true,
+            });
+            setCreateVitrinaLoading(false);
           }
         } catch (error) {
           console.log(error);
@@ -127,34 +137,34 @@ export default function ModalVitrinas({
         }
       }
     } else {
-      console.log("Ciudad no encontrada");
       try {
+        setCreateVitrinaLoading(true);
         const response = await axios.post(url, formData, {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
         });
-        if (response.data) {
+        if (response.status == 200 && response.data) {
           const copy = { ...ciudadesVitrinas };
           copy[city] = [name];
           dispatch(setCiudadesVitrinas(copy));
-          alert("Vitrina Agregada con Éxito");
+          toast({
+            status: "success",
+            description: "Vitrina Agregada con Éxito!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+          setCreateVitrinaLoading(false);
         }
       } catch (error) {
-        if (error.response) {
-          console.error(
-            "Error en la respuesta del servidor:",
-            error.response.status,
-          );
-          setMensaje(error.response.data);
-          console.error("Detalles:", error.response.data);
-        } else if (error.request) {
-          console.error("No se recibió respuesta del servidor:", error.request);
-          setMensaje(error.request);
-        } else {
-          console.error("Error en la solicitud:", error.message);
-          setMensaje(error.message);
-        }
+        toast({
+          status: "error",
+          description: "Error creando la vitrina.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       } finally {
         setMensaje("");
         onSecondModalClose();
@@ -218,21 +228,19 @@ export default function ModalVitrinas({
           },
         },
       );
-      const xmlDoc = parseData(response.data);
-      dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
-      dispatch(setMensajesNoLeidos(getMensajesNoLeidos(getMensajes(xmlDoc))));
-    } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        console.error("Error en la solicitud:", error.message);
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
+        dispatch(setMensajesNoLeidos(getMensajesNoLeidos(getMensajes(xmlDoc))));
       }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error obteniendo los mensajes.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
     }
   };
@@ -361,12 +369,12 @@ export default function ModalVitrinas({
                 </Box>
               )}
             </ModalBody>
-            <ModalFooter m={"0px"} display={{ base: "none", md: "flex" }}>
+            <ModalFooter m={"0px"} display={{ base: "none", md: "flex" }} p={3}>
               <StandardButton
                 variant={"RED_PRIMARY"}
                 borderRadius="30px"
                 size="14px"
-                py={1}
+                p={2}
                 onClick={onSecondModalOpen}
                 children={
                   <Text textStyle={"RobotoSubtitleRegular"}>
@@ -383,6 +391,7 @@ export default function ModalVitrinas({
                 desc2={"Nombre de la vitrina"}
                 funcAgregar={createNewVitrina}
                 mensajeError={mensaje}
+                isLoading={createVitrinaLoading}
               />
             </ModalFooter>
           </ModalContent>

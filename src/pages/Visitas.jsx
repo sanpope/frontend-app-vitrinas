@@ -7,6 +7,7 @@ import {
   Text,
   useDisclosure,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 
 import StandardButton from "../component/ui/buttons/standard";
@@ -27,6 +28,7 @@ import {
 import { parseData } from "../utils/xmlParse";
 
 export default function Visitas() {
+  const toast = useToast();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
@@ -41,6 +43,7 @@ export default function Visitas() {
 
   const [productosDespachados, setProductosDespachados] = useState(null);
   const [enviarProdcsLoading, setEnviarProdcsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [visitaSelected, setVisitaSelected] = useState(null);
 
@@ -68,14 +71,21 @@ export default function Visitas() {
           "Content-Type": "application/xml",
         },
       });
-
-      const xmlDoc = parseData(response.data);
-      const visitas = getVisitasData(xmlDoc);
-      setTotalVisitas(visitas?.visitas);
-      setTotalMovimientos(visitas?.movimientos);
-      setTotalCorrecciones(visitas?.correcciones);
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        const visitas = getVisitasData(xmlDoc);
+        setTotalVisitas(visitas?.visitas);
+        setTotalMovimientos(visitas?.movimientos);
+        setTotalCorrecciones(visitas?.correcciones);
+      }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error obteniendo la información",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
     }
   };
@@ -282,11 +292,23 @@ export default function Visitas() {
           },
         },
       );
-
-      const xmlDoc = parseData(response.data);
-      console.log(response.data);
+      if (response.status == 200 && response.data) {
+        toast({
+          status: "success",
+          description: "Productos Ingresados con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error ingresando los productos.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       setEnviarProdcsLoading(false);
       onFirstModalClose();
@@ -316,6 +338,7 @@ export default function Visitas() {
     const id = parseInt(idVisita);
     console.log(idVisita);
     console.log(visitaSelected);
+    setIsLoading(true);
 
     try {
       const response = await axios.put(
@@ -327,7 +350,7 @@ export default function Visitas() {
         },
       );
       console.log(response.data);
-      if (response.data) {
+      if (response.status == 200 && response.data) {
         setTotalVisitas((prev) => {
           const copy = [...prev];
           const index = copy.findIndex(
@@ -352,10 +375,25 @@ export default function Visitas() {
           );
           return correcciones;
         });
+        toast({
+          status: "success",
+          description: "Reversión realizada con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error, No fue posible realizar la reversión",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
+      setIsLoading(false);
+      onConfirmationModalClose();
     }
   };
 
@@ -624,6 +662,7 @@ export default function Visitas() {
           funcConfirmar={setReversionVisita}
           focusRow={visitaSelected ? visitaSelected.idVisita : null}
           products={null}
+          isLoading={isLoading}
         />
       </Box>
     </Box>

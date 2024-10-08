@@ -10,7 +10,7 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
 
   return (
     <Box display="flex" alignItems="center">
-      <Box pr={2}>
+      <Box pr={1}>
         <LeftArrowICon
           width={"16px"}
           height={"14px"}
@@ -18,14 +18,9 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
           onClick={() => onPageChange(currentPage - 1)}
         />
       </Box>
-      <StandardButton
-        variant={"RED_SECUNDARY"}
-        borderRadius="md"
-        px={"5px"}
-        fontSize={"13px"}
-      >
+      <Text textStyle={"RobotoRegular"} p={1} px={2} borderWidth={1} borderColor={"red.100"} borderRadius={5}>
         {currentPage}
-      </StandardButton>
+      </Text>
       <Text px={2} textStyle={"RobotoRegular"}>
         de
       </Text>

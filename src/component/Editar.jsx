@@ -25,6 +25,7 @@ export default function Agregar({
   setName,
   city,
   setCity,
+  isLoading
 }) {
   const saveName = (val) => {
     console.log(val);
@@ -165,6 +166,7 @@ export default function Agregar({
             onClick={() => {
               Editar(name, city);
             }}
+            isLoading={isLoading}
           >
             Guardar Cambios
           </StandardButton>

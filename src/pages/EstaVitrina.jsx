@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import Editar from "../component/Editar";
 import ConfirmationMessage from "../component/ConfirmationMessage";
@@ -23,6 +23,7 @@ import EditarAsesor from "../component/EditarAsesor";
 export default function EstaVitrina() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const name = useSelector((state) => state.vitrinaReducer.name);
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -36,6 +37,7 @@ export default function EstaVitrina() {
   const [infoTotalVitrina, setInfoTotalVitrina] = useState();
   const [asesor, setAsesor] = useState();
   const [currentAsesor, setCurrentAsesor] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getInfoVitrina();
@@ -69,14 +71,20 @@ export default function EstaVitrina() {
           },
         },
       );
-
-      const xmlDoc = parseData(response.data);
-      const infoVitrina = getInfoEstaVitrina(xmlDoc);
-      setInfoTotalVitrina(infoVitrina);
-      console.log(getInfoEstaVitrina(xmlDoc));
-      setUpdatedCity(infoVitrina.ciudadDeVitrina);
+      if (response.status == 200) {
+        const xmlDoc = parseData(response.data);
+        const infoVitrina = getInfoEstaVitrina(xmlDoc);
+        setInfoTotalVitrina(infoVitrina);
+        setUpdatedCity(infoVitrina.ciudadDeVitrina);
+      }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error obteniendo la información de la vitrina.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       onSecondModalClose();
     }
@@ -119,6 +127,7 @@ export default function EstaVitrina() {
     vitrinaUpdated.append("nuevaCiudad", `${ciudad}`);
 
     try {
+      setIsLoading(true);
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina?nombre=${name}`,
         vitrinaUpdated,
@@ -128,12 +137,9 @@ export default function EstaVitrina() {
           },
         },
       );
-      console.log(response);
-      if (response) {
-        console.log(response);
+      if (response.status == 200 && response.data) {
         setUpdatedName(nombre);
         setUpdatedCity(ciudad);
-
         const copy = { ...ciudadesVitrinas };
         const updatedCityArray = [...copy[city]];
         const index = updatedCityArray.findIndex((item) => item === name);
@@ -157,18 +163,32 @@ export default function EstaVitrina() {
             dispatch(setName(nombre));
             dispatch(setCity(ciudad));
           }
+          toast({
+            status: "succes",
+            description: "Vitrina actualizada con éxito!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
         } else {
         }
       }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error actualizando la vitrina.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
-      alert("La vitrina se ha actualizado correctamente");
       onFirstModalClose();
+      setIsLoading(false);
     }
   };
 
   const deleteVitrina = async (nombre) => {
+    setIsLoading(true);
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina?nombre=${nombre}`,
@@ -178,8 +198,8 @@ export default function EstaVitrina() {
           },
         },
       );
-      console.log(response);
-      if (response) {
+
+      if (response.status == 200) {
         //Eliminar vitrina de la lista de vitrinas
         const copy = { ...ciudadesVitrinas };
         const updatedCityArray = [...copy[city]];
@@ -191,15 +211,26 @@ export default function EstaVitrina() {
           updatedCopy[city] = updatedCopy[city].filter((item) => item !== name);
           dispatch(setCiudadesVitrinas(updatedCopy));
         }
-
-        alert("Vitrina Eliminada, Serás redirigido a la pantalla de Inicio");
+        toast({
+          status: "success",
+          description: "Vitrina Eliminada con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.log(error);
-      alert(error);
+      toast({
+        status: "error",
+        description: "Error eliminando la vitrina.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       onSecondModalClose();
       navigate("/");
+      setIsLoading(false);
     }
   };
 
@@ -216,6 +247,7 @@ export default function EstaVitrina() {
     console.log(nuevoAsesor);
 
     try {
+      setIsLoading(true);
       const response = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores`,
         nuevoAsesor,
@@ -226,7 +258,7 @@ export default function EstaVitrina() {
         },
       );
       console.log(response.data);
-      if (response) {
+      if (response.status == 200) {
         const index = infoTotalVitrina?.asesores?.findIndex(
           (item) => item.nombre === newAsesor.nombre,
         );
@@ -245,10 +277,24 @@ export default function EstaVitrina() {
           });
         }
       }
-      alert("Asesor agregado con éxito");
+      toast({
+        status: "success",
+        description: "Asesor creado con éxito!.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error creando el asesor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
+      setIsLoading(false);
+      onThirdModalClose();
     }
   };
 
@@ -264,6 +310,7 @@ export default function EstaVitrina() {
     });
     updatedAsesor.append("habilitado", `${asesorActualizado.habilitado}`);
     try {
+      setIsLoading(true);
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${currentAsesor?.nombre}`,
         updatedAsesor,
@@ -273,8 +320,8 @@ export default function EstaVitrina() {
           },
         },
       );
-      console.log(response.data);
-      if (response.data) {
+
+      if (response.status == 200 && response.data) {
         const index = infoTotalVitrina?.asesores?.findIndex(
           (item) => item.nombre === currentAsesor.nombre,
         );
@@ -294,17 +341,32 @@ export default function EstaVitrina() {
             ),
           }));
         }
+        toast({
+          status: "success",
+          description: "Asesor editado con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error editando el asesor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       handleOnClose();
+      setIsLoading(false);
     }
   };
 
   const deleteAsesor = async (nombreAsesor) => {
     console.log(nombreAsesor);
     try {
+      setIsLoading(true);
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${nombreAsesor}`,
         {
@@ -314,7 +376,7 @@ export default function EstaVitrina() {
         },
       );
       console.log(response);
-      if (response) {
+      if (response.status == 200) {
         setInfoTotalVitrina((prev) => {
           const copy = { ...prev };
           return {
@@ -323,11 +385,24 @@ export default function EstaVitrina() {
             ),
           };
         });
-        alert("Asesor Eliminado correctamente");
+        toast({
+          status: "success",
+          description: "Asesor eliminado con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.log(error);
+      toast({
+        status: "error",
+        description: "Error eliminando el asesor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -396,6 +471,7 @@ export default function EstaVitrina() {
               city={updatedCity}
               setCity={setUpdatedCity}
               Editar={updateVitrina}
+              isLoading={isLoading}
             />
             <StandardButton
               variant={"WHITE_RED"}
@@ -424,6 +500,7 @@ export default function EstaVitrina() {
                 deleteVitrina(name);
               }}
               products={null}
+              isLoading={isLoading}
             />
           </Box>
         </Box>
@@ -438,9 +515,11 @@ export default function EstaVitrina() {
                 key={index}
                 vitrinaName={name}
                 asesor={asesor}
+                currentAsesor={currentAsesor}
                 setCurrentAsesor={setCurrentAsesor}
                 Editar={editAsesor}
                 Eliminar={deleteAsesor}
+                isLoading={isLoading}
               />
             ))
           ) : (
@@ -468,6 +547,7 @@ export default function EstaVitrina() {
           asesor={asesor}
           setAsesor={setAsesor}
           addAsesor={createAsesor}
+          isLoading={isLoading}
         />
       </Box>
 

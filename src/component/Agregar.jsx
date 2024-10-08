@@ -24,6 +24,7 @@ export default function Agregar({
   onClose,
   funcAgregar,
   mensajeError,
+  isLoading,
 }) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("Barranquilla");
@@ -154,6 +155,7 @@ export default function Agregar({
             fontWeight="400"
             type={"submit"}
             onClick={() => funcAgregar(city, name)}
+            isLoading={isLoading}
           >
             Guardar
           </StandardButton>

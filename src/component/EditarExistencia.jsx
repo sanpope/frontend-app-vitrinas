@@ -13,6 +13,7 @@ import {
   Text,
   useDisclosure,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import TextInput from "./ui/textInput";
@@ -51,6 +52,7 @@ export default function EditarExistencia({
     onClose: onConfirmationModalClose,
   } = useDisclosure();
 
+  const toast = useToast();
   const vitrinaName = useSelector((state) => state.vitrinaReducer.name);
   const [loading, setLoading] = useState(false);
 
@@ -109,47 +111,48 @@ export default function EditarExistencia({
           },
         },
       );
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        const updatedData = parseTextFields(xmlDoc, FIELD_NAMES);
+        setTablaInventario((prevState) => {
+          let copy = [...prevState];
+          var index = copy
+            .map((producto) => producto.codigo)
+            .indexOf(updatedData.codigo);
+          copy[index]["existencia"] = updatedData.existencias;
+          copy[index]["stockMin"] = updatedData.stockMinimo;
+          copy[index]["stockMax"] = updatedData.stockMaximo;
+          return copy;
+        });
 
-      const xmlDoc = parseData(response.data);
-      const updatedData = parseTextFields(xmlDoc, FIELD_NAMES);
-      setTablaInventario((prevState) => {
-        let copy = [...prevState];
-        var index = copy
-          .map((producto) => producto.codigo)
-          .indexOf(updatedData.codigo);
-        copy[index]["existencia"] = updatedData.existencias;
-        copy[index]["stockMin"] = updatedData.stockMinimo;
-        copy[index]["stockMax"] = updatedData.stockMaximo;
-        return copy;
-      });
-
-      setDisplayedArticulos((prevState) => {
-        let copy = [...prevState];
-        var index = copy
-          .map((producto) => producto.codigo)
-          .indexOf(updatedData.codigo);
-        copy[index]["existencia"] = updatedData.existencias;
-        copy[index]["stockMin"] = updatedData.stockMinimo;
-        copy[index]["stockMax"] = updatedData.stockMaximo;
-        return copy;
-      });
+        setDisplayedArticulos((prevState) => {
+          let copy = [...prevState];
+          var index = copy
+            .map((producto) => producto.codigo)
+            .indexOf(updatedData.codigo);
+          copy[index]["existencia"] = updatedData.existencias;
+          copy[index]["stockMin"] = updatedData.stockMinimo;
+          copy[index]["stockMax"] = updatedData.stockMaximo;
+          return copy;
+        });
+        toast({
+          status: "success",
+          description: "Producto editado con éxito.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
 
       onClose();
     } catch (error) {
-      if (error.response) {
-        // La solicitud fue enviada pero el servidor respondió con un código de error
-        console.error(
-          "Error en la respuesta del servidor:",
-          error.response.status,
-        );
-        console.error("Detalles:", error.response.data);
-      } else if (error.request) {
-        // La solicitud fue enviada pero no se recibió respuesta
-        console.error("No se recibió respuesta del servidor:", error.request);
-      } else {
-        // Ocurrió un error en la configuración de la solicitud
-        console.error("Error en la solicitud:", error.message);
-      }
+      toast({
+        status: "error",
+        description: "Error actualizando el producto",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }

@@ -162,7 +162,7 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
   return (
     <>
       {VentasMesAnterior != null && VentasMesAnterior?.length > 0 ? (
-        <Box mt={2}>
+        <Box mt={{base : 1, xl: 4}}>
           <Line data={chartData} options={options} />
         </Box>
       ) : (

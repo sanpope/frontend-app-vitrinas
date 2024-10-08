@@ -26,6 +26,7 @@ export default function AgregarAsesor({
   asesor,
   setAsesor,
   addAsesor,
+  isLoading
 }) {
   const [name, setName] = useState("");
   const [user, setUser] = useState("");
@@ -269,6 +270,7 @@ export default function AgregarAsesor({
             onClick={checkFlieds() ? handleOnClik : null}
             disabled={checkFlieds() ? false : true}
             cursor={checkFlieds() ? "pointer" : "not-allowed"}
+            isLoading={isLoading}
           >
             Agregar
           </StandardButton>

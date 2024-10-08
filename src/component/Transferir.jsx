@@ -14,6 +14,7 @@ import {
   Text,
   UnorderedList,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState, useEffect, useCallback } from "react";
 import StandardButton from "./ui/buttons/standard";
@@ -41,6 +42,7 @@ export default function Transferir({
   setProductsList,
   getInventarioInfo,
 }) {
+  const toast = useToast();
   const [desde, setDesde] = useState("Bodega");
   const [hacia, setHacia] = useState(vitrina);
   const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
@@ -193,8 +195,7 @@ export default function Transferir({
         body: xmlData.toString(),
       })
         .then((response) => {
-          console.log(response);
-          if (response) {
+          if (response.status == 200) {
             if (haciaVitrina) {
               setProductsList((prev) => {
                 const copy = [...prev];
@@ -208,7 +209,6 @@ export default function Transferir({
                     copy[index].existencia =
                       Number(existencia) + Number(cantidad);
                   } else {
-                    //TODO AGREGAR PRODUCTO SI NO ESTA EN LA TABLA PREGUNTA POR LOS ITEMS DE LA TABLA
                     getInventarioInfo(vitrina);
                   }
                 }
@@ -231,6 +231,13 @@ export default function Transferir({
                 return copy;
               });
             }
+            toast({
+              status: "success",
+              description: "Transferencia realizada con éxito!.",
+              duration: 3000,
+              position: "top-right",
+              isClosable: true,
+            });
           }
           setLoading(false);
           onClose();
@@ -238,9 +245,22 @@ export default function Transferir({
         .then((data) => console.log(data))
         .catch((error) => {
           console.error("Error: ", error);
+          toast({
+            status: "error",
+            description: "Error transfiriendo los productos",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
         });
     } else {
-      alert("Agrega los productos a transferir");
+      toast({
+        status: "info",
+        description: "Agrega los productos a transferir",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     }
   };
 
@@ -562,7 +582,6 @@ export default function Transferir({
                         },
                       }}
                     >
-                      {console.log(activeProdcs)}
                       {activeProdcs?.map((product, index) => {
                         return (
                           <ListItem key={index}>

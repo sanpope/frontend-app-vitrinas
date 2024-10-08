@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, list, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, list, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import Despachar from "../component/Despachar";
 import Transferir from "../component/Transferir";
@@ -21,6 +21,7 @@ import { HEADER_HEIGHT } from "../component/Header";
 import NoteInventario from "../component/NoteInventario";
 
 export default function Inventario() {
+  const toast = useToast();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
 
@@ -120,13 +121,21 @@ export default function Inventario() {
           Accept: "application/xml",
         },
       });
-      const xmlDoc = parseData(response.data);
-
-      setTablaInventario(getProductos(xmlDoc));
-      setTotalResults(getProductos(xmlDoc).length);
-      setVerificacionesPendientes(getPendienteXverificar(xmlDoc));
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        setTablaInventario(getProductos(xmlDoc));
+        setTotalResults(getProductos(xmlDoc).length);
+        setVerificacionesPendientes(getPendienteXverificar(xmlDoc));
+      }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+      // toast({
+      //   status: "error",
+      //   description: "Error en la conexión con el servidor",
+      //   duration: 3000,
+      //   position: "top-right",
+      //   isClosable: true,
+      // });
     }
   };
 
@@ -201,8 +210,6 @@ export default function Inventario() {
     }
     return totalVerifPendientes;
   };
-
-  const handleProdClick = async (index, articulo) => {};
 
   return (
     <Box bg={"mainBg"} p={"1.25rem"} h={"calc(100% - " + HEADER_HEIGHT + "px)"}>
@@ -296,12 +303,11 @@ export default function Inventario() {
         {
           <TablaInventario
             displayedArticulos={displayedArticulos}
-            totalResults={totalResults}
+            totalResults={totalResults || "0"}
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
             setArticulo={setSelectedArticulo}
-            handleArtClick={handleProdClick}
           />
         }
       </Box>

@@ -16,6 +16,7 @@ import {
   Text,
   UnorderedList,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import StandardButton from "./ui/buttons/standard";
@@ -31,9 +32,8 @@ import axios from "axios";
 import { generateProductsListXML, parseData } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
-//rest/bodega/productos
 export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
-  //const [totalProducts, setTotalProducts] = useState(productsList);
+  const toast = useToast();
   const [totalProdcsBodega, setTotalProdcsBodega] = useState();
   const [displayedArticulos, setDisplayedArticulos] = useState();
   const [activeProdcs, setActiveProdcs] = useState([]);
@@ -65,7 +65,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
           Accept: "application/xml",
         },
       });
-      if (response) {
+      if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         setTotalProdcsBodega(() => {
           const totalProds = getProductosBodega(xmlDoc);
@@ -209,19 +209,31 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
     fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/xml" },
-      body: xmlData.toString(),
+      body: xmlData,
     })
       .then((response) => {
         console.log(response);
-        if (response) {
-          alert("Productos Despachados con exito!");
+        if (response.status == 200) {
+          toast({
+            status: "success",
+            description: "Despacho realizado con éxito!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
         }
         setLoading(false);
         onClose();
       })
       .then((data) => console.log(data))
       .catch((error) => {
-        console.error("Error: ", error);
+        toast({
+          status: "error",
+          description: "Error despachando los productos",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
         setLoading(false);
       });
   };

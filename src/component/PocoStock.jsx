@@ -30,17 +30,23 @@ export default function PocoStock({ productosConPocoStock }) {
       gap={1}
     >
       {productosConPocoStock != null && productosConPocoStock?.length > 0 ? (
-        <>
+        <Box
+          w={"100%"}
+          h={"100%"}
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"space-between"}
+        >
           <Box
             w={"100%"}
-            h={"100%"}
+            height={"80%"}
             display={"flex"}
-            flexGrow={1}
             flexDirection={"column"}
             justifyContent={"center"}
+            gap={2}
           >
-            <Box>
-              <Text textStyle={"RobotoBody"} py={1}>
+            <Box gap={1}>
+              <Text textStyle={"RobotoRegular"}>
                 {capitalizeFirstLetter(currentItem1?.nombre)}
               </Text>
               <Box
@@ -57,13 +63,13 @@ export default function PocoStock({ productosConPocoStock }) {
                   borderRightColor={"grey.placeholder"}
                 >
                   <Text
-                    textStyle={"RobotoBody"}
+                    textStyle={"RobotoRegular"}
                     flexGrow={1}
                     color={"grey.placeholder"}
                   >
                     Actual
                   </Text>
-                  <Text textStyle={"RobotoBody"} flexGrow={1}>
+                  <Text textStyle={"RobotoRegular"} flexGrow={1}>
                     {currentItem1?.existenciasActuales}
                   </Text>
                 </Box>
@@ -73,21 +79,25 @@ export default function PocoStock({ productosConPocoStock }) {
                   justifyContent={"space-around"}
                 >
                   <Text
-                    textStyle={"RobotoBody"}
+                    textStyle={"RobotoRegular"}
                     flexGrow={1}
                     textAlign={"end"}
                     color={"grey.placeholder"}
                   >
                     Mínimo
                   </Text>
-                  <Text textStyle={"RobotoBody"} textAlign={"end"} flexGrow={1}>
+                  <Text
+                    textStyle={"RobotoRegular"}
+                    textAlign={"end"}
+                    flexGrow={1}
+                  >
                     {currentItem1?.cantidadMinima}
                   </Text>
                 </Box>
               </Box>
             </Box>
-            <Box>
-              <Text textStyle={"RobotoBody"} py={1}>
+            <Box gap={1}>
+              <Text textStyle={"RobotoRegular"}>
                 {capitalizeFirstLetter(currentItem2?.nombre)}
               </Text>
               <Box
@@ -105,13 +115,13 @@ export default function PocoStock({ productosConPocoStock }) {
                   borderRightColor={"grey.placeholder"}
                 >
                   <Text
-                    textStyle={"RobotoBody"}
+                    textStyle={"RobotoRegular"}
                     flexGrow={1}
                     color={"grey.placeholder"}
                   >
                     Actual
                   </Text>
-                  <Text textStyle={"RobotoBody"} flexGrow={1}>
+                  <Text textStyle={"RobotoRegular"} flexGrow={1}>
                     {currentItem2?.existenciasActuales}
                   </Text>
                 </Box>
@@ -121,28 +131,37 @@ export default function PocoStock({ productosConPocoStock }) {
                   flexGrow={1}
                 >
                   <Text
-                    textStyle={"RobotoBody"}
+                    textStyle={"RobotoRegular"}
                     flexGrow={1}
                     textAlign={"end"}
                     color={"grey.placeholder"}
                   >
                     Mínimo
                   </Text>
-                  <Text textStyle={"RobotoBody"} flexGrow={1} textAlign={"end"}>
+                  <Text
+                    textStyle={"RobotoRegular"}
+                    flexGrow={1}
+                    textAlign={"end"}
+                  >
                     {currentItem2?.cantidadMinima}
                   </Text>
                 </Box>
               </Box>
             </Box>
           </Box>
-          <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
+          <Box
+            w={"100%"}
+            h={"15%"}
+            display={"flex"}
+            justifyContent={"flex-end"}
+          >
             <SmallPagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
             />
           </Box>
-        </>
+        </Box>
       ) : (
         <Text
           w={"100%"}

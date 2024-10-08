@@ -25,6 +25,7 @@ export default function EditarAsesor({
   onOpen,
   onClose,
   Editar,
+  isLoading,
 }) {
   console.log(asesor);
   const [newName, setNewName] = useState(asesor?.nombre);
@@ -200,6 +201,7 @@ export default function EditarAsesor({
                 handleOnClose,
               );
             }}
+            isLoading={isLoading}
           >
             Guardar Cambios
           </StandardButton>
