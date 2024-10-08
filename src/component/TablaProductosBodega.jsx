@@ -77,19 +77,11 @@ export default function TablaProductosBodega({
         <Contenedor>
           <thead className="">
             <tr className="">
-              <th className="checkBox">
-                <Checkbox />
-              </th>
               {HEADERS.map((name, index) => (
                 <th key={index} className="ProdTh">
-                  <Box
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    gap={"5px"}
-                    w={"100%"}
-                    height={"100%"}
-                  >
+                  {name === "Código" ||
+                  name === "Precio" ||
+                  name === "Costo" ? (
                     <Text
                       color="white"
                       textStyle={"RobotoRegularBold"}
@@ -97,28 +89,45 @@ export default function TablaProductosBodega({
                     >
                       {name}
                     </Text>
-                    {name === "Productos" ||
-                    name === "Bodega" ||
-                    name === "Vitrinas" ? (
-                      <UnionIcon
-                        width={"10px"}
-                        height={"10px"}
-                        fill={"white"}
-                        onClick={() => handleSortingClick("productos")}
-                      />
-                    ) : name === "Proveedor" || name === "Categorías" ? (
-                      <EditIcon
-                        width={"18px"}
-                        height={"18px"}
-                        fill={"white"}
-                        onClick={
-                          name === "Proveedor"
-                            ? onThirdModalOpen
-                            : onFourthModalOpen
-                        }
-                      />
-                    ) : null}
-                  </Box>
+                  ) : (
+                    <Box
+                      display={"flex"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      gap={"5px"}
+                      w={"100%"}
+                      height={"100%"}
+                    >
+                      <Text
+                        color="white"
+                        textStyle={"RobotoRegularBold"}
+                        textTransform={"capitalize"}
+                      >
+                        {name}
+                      </Text>
+                      {name === "Productos" ||
+                      name === "Bodega" ||
+                      name === "Vitrinas" ? (
+                        <UnionIcon
+                          width={"10px"}
+                          height={"10px"}
+                          fill={"white"}
+                          onClick={() => handleSortingClick("productos")}
+                        />
+                      ) : name === "Proveedor" || name === "Categorías" ? (
+                        <EditIcon
+                          width={"18px"}
+                          height={"18px"}
+                          fill={"white"}
+                          onClick={
+                            name === "Proveedor"
+                              ? onThirdModalOpen
+                              : onFourthModalOpen
+                          }
+                        />
+                      ) : null}
+                    </Box>
+                  )}
                 </th>
               ))}
             </tr>
@@ -127,9 +136,6 @@ export default function TablaProductosBodega({
             {displayedArticulos.map((articulo, index) => {
               return (
                 <tr key={index} className="">
-                  <td className="checkBox">
-                    <Checkbox />
-                  </td>
                   {Object.values(articulo).map((value, index) => {
                     return (
                       <td key={index} className="ProdTd">

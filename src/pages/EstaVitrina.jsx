@@ -33,7 +33,7 @@ export default function EstaVitrina() {
   const [updatedName, setUpdatedName] = useState(name);
   const [updatedCity, setUpdatedCity] = useState(city);
 
-  const [infoTotalVitrina, setInfoTotalVitrina] = useState(null);
+  const [infoTotalVitrina, setInfoTotalVitrina] = useState();
   const [asesor, setAsesor] = useState();
   const [currentAsesor, setCurrentAsesor] = useState("");
 
@@ -245,7 +245,7 @@ export default function EstaVitrina() {
           });
         }
       }
-      alert("Asesor modificado con éxito");
+      alert("Asesor agregado con éxito");
     } catch (error) {
       console.log(error);
     } finally {
@@ -274,11 +274,12 @@ export default function EstaVitrina() {
         },
       );
       console.log(response.data);
-      if (response) {
+      if (response.data) {
         const index = infoTotalVitrina?.asesores?.findIndex(
-          (item) => item.nombre === asesorActualizado.nombre,
+          (item) => item.nombre === currentAsesor.nombre,
         );
-
+        console.log(index);
+        console.log(infoTotalVitrina.asesores[index]);
         if (index !== -1) {
           setInfoTotalVitrina((prev) => ({
             ...prev,
@@ -315,7 +316,7 @@ export default function EstaVitrina() {
       console.log(response);
       if (response) {
         setInfoTotalVitrina((prev) => {
-          const copy = [...prev];
+          const copy = { ...prev };
           return {
             asesores: copy.asesores.filter(
               (asesor) => asesor.nombre !== nombreAsesor,

@@ -142,7 +142,7 @@ export default function ProductosyBodega() {
   };
 
   useEffect(() => {
-    if (busqueda) {
+    if (busqueda !== null) {
       Busqueda(busqueda);
     } else {
     }

@@ -6,10 +6,7 @@ import {
   formatearNumero,
 } from "../utils/formatting";
 
-
 const UltimaVenta = ({ prodslUltimasVentas }) => {
-  
-
   const fecha =
     prodslUltimasVentas?.fecha !== null &&
     prodslUltimasVentas?.fecha !== undefined &&
@@ -77,20 +74,21 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
             <Text color={"black"}>{Prod1Cant}</Text>
             <Text color={"grey.placeholder"}>{Prod1Nomb}</Text>
           </Box>
-          <Box display={"flex"} gap={"5px"}>
-            <Text color={"black"}>{Prod2Cant}</Text>
-            <HStack display={"flex"}>
-              <Text color={"grey.placeholder"}>{Prod2Nomb}</Text>
+          <Box display={"flex"}>
+            <Text color={"grey.placeholder"}>
+              <span style={{ color: "black" }}>{Prod2Cant}</span> {Prod2Nomb}
               {masProductos !== "false" ? (
-                <Text color={"red.100"}>{"y otros más..."}</Text>
+                <span style={{ color: "red" }}> y otros más...</span>
               ) : (
-                <></>
+                ""
               )}
-            </HStack>
+            </Text>
           </Box>
         </Box>
       ) : (
-        <Text color={"grey.placeholder"} alignSelf={"center"}>Última venta No registrada!.</Text>
+        <Text color={"grey.placeholder"} alignSelf={"center"}>
+          Última venta No registrada!.
+        </Text>
       )}
     </>
   );

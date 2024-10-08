@@ -342,7 +342,11 @@ export default function Resumen() {
       </Box>
       <Box
         display="grid"
-        gridTemplateColumns={"repeat(4, 1fr)"}
+        gridTemplateColumns={{
+          sm: "repeat(2, 1fr)",
+          lg: "repeat(3, 1fr)",
+          xl: "repeat(4, 1fr)",
+        }}
         gridTemplateRows={"repeat(3, 1fr)"}
         gridGap={"1rem"}
       >
@@ -378,6 +382,7 @@ export default function Resumen() {
           }
         />
         <Container
+          display={{ base: "none", xl: "flex" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           icon={<ShoppingCartIcon />}
@@ -407,12 +412,12 @@ export default function Resumen() {
           }
         />
         <Box
+          display={{ base: "none", xl: "flex" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
           bg={"white"}
           borderRadius={"20px"}
           p={3}
-          display="flex"
           flexDir={"column"}
           justifyContent={"space-between"}
         >
@@ -441,6 +446,7 @@ export default function Resumen() {
         </Box>
 
         <Container
+          display={{ base: "none", lg: "flex" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           icon={<CalendarAltIcon />}
@@ -470,6 +476,7 @@ export default function Resumen() {
           }
         />
         <Container
+          display={{ base: "none", xl: "flex" }}
           height={ContainerHeight + "px"}
           minHeight="215px"
           title={"Ventas meses anteriores"}
@@ -504,6 +511,7 @@ export default function Resumen() {
           }
         />
         <Container
+          display={{ base: "none", xl: "flex" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
           title={"Evolución de venta diaria"}
@@ -559,6 +567,7 @@ export default function Resumen() {
         />
 
         <Container
+          display={{ base: "none", xl: "flex" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
           title={"Distribución diaria de ventas"}
@@ -577,6 +586,7 @@ export default function Resumen() {
         />
 
         <Container
+          display={{ base: "none", xl: "flex" }}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
           icon={<BoxesIcon />}

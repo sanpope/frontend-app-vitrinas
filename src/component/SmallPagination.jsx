@@ -10,23 +10,19 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
 
   return (
     <Box display="flex" alignItems="center">
-      <StandardButton
-        variant={"BORDERLESS"}
-        isDisabled={isDisabledLeft}
-        _disabled={{ color: "gray.300" }}
-        onClick={() => onPageChange(currentPage - 1)}
-      >
+      <Box pr={2}>
         <LeftArrowICon
-          width={"18px"}
-          height={"16px"}
+          width={"16px"}
+          height={"14px"}
           fill={isDisabledLeft ? "grey" : "black"}
+          onClick={() => onPageChange(currentPage - 1)}
         />
-      </StandardButton>
+      </Box>
       <StandardButton
         variant={"RED_SECUNDARY"}
         borderRadius="md"
         px={"5px"}
-        fontSize={"12px"}
+        fontSize={"13px"}
       >
         {currentPage}
       </StandardButton>
@@ -34,18 +30,14 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
         de
       </Text>
       <Text textStyle={"RobotoRegular"}>{totalPages}</Text>
-      <StandardButton
-        variant={"BORDERLESS"}
-        isDisabled={isDisabledRight}
-        _disabled={{ color: "gray.300" }}
-        onClick={() => onPageChange(currentPage + 1)}
-      >
+      <Box pl={2}>
         <BiggerThanIcon
-          width={"18px"}
-          height={"16px"}
+          width={"16px"}
+          height={"14px"}
           fill={isDisabledRight ? "grey" : "black"}
+          onClick={() => onPageChange(currentPage + 1)}
         />
-      </StandardButton>
+      </Box>
     </Box>
   );
 }

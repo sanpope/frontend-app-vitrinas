@@ -81,7 +81,7 @@ export default function Asesores() {
   };
 
   useEffect(() => {
-    if (busqueda) {
+    if (busqueda !== null) {
       Busqueda(busqueda);
     } else {
     }
