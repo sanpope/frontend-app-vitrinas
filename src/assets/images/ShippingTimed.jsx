@@ -1,6 +1,6 @@
 const ShippingTimed = ({
-  width = "20px",
-  height = "20px",
+  width = "25px",
+  height = "25px",
   fill = "#E60F0F",
 }) => {
   return (

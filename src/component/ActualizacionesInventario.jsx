@@ -150,7 +150,7 @@ export default function ActualizacionesInventario({
           w={"100%"}
           height={"100%"}
           display={"flex"}
-          justifyContent={"center"}
+          justifyContent={"flex-start"}
           alignItems={"center"}
         >
           <Text color={"grey.placeholder"} alignSelf={"center"}>

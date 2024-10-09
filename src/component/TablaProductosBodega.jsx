@@ -144,23 +144,25 @@ export default function TablaProductosBodega({
                         </td>
                       );
                     })}
-                    <Box
-                      display={"flex"}
-                      columnGap={"20px"}
-                      px={"15px"}
-                      className="iconContainer"
-                    >
-                      <EditIcon
-                        onClick={onSecondModalOpen}
-                        width="19px"
-                        height="19px"
-                      />
-                      <TrashIcon
-                        onClick={() => handleDeleteButton(articulo)}
-                        width="19px"
-                        height="19px"
-                      />
-                    </Box>
+                    <td>
+                      <Box
+                        display={"flex"}
+                        columnGap={"20px"}
+                        px={"15px"}
+                        className="iconContainer"
+                      >
+                        <EditIcon
+                          onClick={onSecondModalOpen}
+                          width="19px"
+                          height="19px"
+                        />
+                        <TrashIcon
+                          onClick={() => handleDeleteButton(articulo)}
+                          width="19px"
+                          height="19px"
+                        />
+                      </Box>
+                    </td>
                   </tr>
                 );
               })}

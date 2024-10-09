@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Box,
+  Flex,
   FormControl,
   FormLabel,
   Input,
@@ -12,8 +13,6 @@ import {
 } from "@chakra-ui/react";
 import colors from "./types.json";
 import ErrorMessage from "../errorMessage";
-// import { FIELD_SIZE } from "#/types/consts";
-
 import EyeIcon from "../../../assets/images/EyeIcon";
 import EyeOffIcon from "../../../assets/images/EyeOffIcon";
 import useColorFormatConverter from "../../../theme/useColorFormatConverter";
@@ -30,6 +29,7 @@ export default function TextInput(props) {
     size,
     leftIcon,
     rightIcon,
+    required,
     isPassword,
     maxLength = 150,
     baseColor = "white",
@@ -55,15 +55,14 @@ export default function TextInput(props) {
   return (
     <FormControl {...rest}>
       {label && (
-        <FormLabel fontSize={14} lineHeight={"100%"} htmlFor={name}>
-          {label}&nbsp;
+        <FormLabel lineHeight={"100%"} htmlFor={name}>
+          <Flex>
+            {required && <Text as="span" color="red">*&nbsp;</Text>}
+            {label}&nbsp;
+          </Flex>
         </FormLabel>
       )}
-      <InputGroup
-        borderWidth="1px"
-        borderRadius="5px"
-        h={`40px`}
-      >
+      <InputGroup borderWidth="1px" borderRadius="5px" h={`40px`}>
         {leftIcon && (
           <InputLeftAddon
             pointerEvents="none"

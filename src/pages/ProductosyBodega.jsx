@@ -15,6 +15,7 @@ import {
   proveedoresProductos,
 } from "../services/productosYBodegaData";
 import { HEADER_HEIGHT } from "../component/Header";
+import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 
 const TOP_HEIGHT = 72;
 
@@ -322,7 +323,12 @@ export default function ProductosyBodega() {
           ></StandardButton>
         </Box>
       </Box>
-      <Box h={"calc(100% - " + TOP_HEIGHT + "px)"} p={"1.25rem"} w={"100%"}>
+      <Box
+        h={"calc(100% - " + TOP_HEIGHT + "px)"}
+        p={"1.25rem"}
+        w={"100%"}
+        minH={MIN_TABLE_HEIGHT + "px"}
+      >
         {
           <TablaProductosBodega
             isFirstModalOpen={isFourthModalOpen}

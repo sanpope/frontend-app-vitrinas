@@ -222,12 +222,10 @@ export default function Transferir({
                     let existencia = copy[index].existencia;
                     let cantidad = activeProdcs[i].cantidad;
                     if (Number(existencia) - Number(cantidad) > 0) {
-                      console.log(Number(existencia) - Number(cantidad));
                       copy[index].existencia =
                         Number(existencia) - Number(cantidad);
                     } else {
                       copy[index].existencia = 0;
-                      console.log(copy[index].existencia);
                     }
                   }
                 }

@@ -16,6 +16,7 @@ import AgregarAsesor from "../component/AgregarAsesor";
 import { HEADER_HEIGHT } from "../component/Header";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import asesoresData from "../services/asesoresData";
+import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 
 const TOP_HEIGHT = 72;
 
@@ -198,7 +199,12 @@ export default function Asesores() {
           Agregar asesor
         </StandardButton>
       </Box>
-      <Box p={"1.25rem"} w={"100%"} h={"calc(100% - " + TOP_HEIGHT + "px)"}>
+      <Box
+        p={"1.25rem"}
+        minH={MIN_TABLE_HEIGHT + "px"}
+        w={"100%"}
+        h={"calc(100% - " + TOP_HEIGHT + "px)"}
+      >
         {
           <TablaAsesores
             isSecondModalOpen={isSecondModalOpen}

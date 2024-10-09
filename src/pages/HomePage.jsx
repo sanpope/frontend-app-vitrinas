@@ -343,7 +343,7 @@ export default function HomePage() {
           height={{ base: "150px", md: ContainerHeight + "px" }}
           minHeight={{ base: "170px", md: "225px" }}
           title={"Venta del mes"}
-          icon={<ReceiptIcon width={"24px"} height={"24px"} />}
+          icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
             <Box
               display={"flex"}
@@ -393,7 +393,7 @@ export default function HomePage() {
           minHeight={"225px"}
           maxW={"450px"}
           title={"Venta en meses anteriores"}
-          icon={<ReceiptIcon width={"1.5rem"} height={"1.5rem"} />}
+          icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
             <Box w={"100%"} h={"100%"}>
               <VentasMesesAnteriores
@@ -408,7 +408,7 @@ export default function HomePage() {
           height={ContainerHeight + "px"}
           minHeight={{ base: "170px", md: "225px" }}
           title={"Top Vitrinas del Mes"}
-          icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
+          icon={<StarIcon />}
           children={
             <Box
               display={"flex"}
@@ -536,7 +536,7 @@ export default function HomePage() {
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Dispositivos averiados"}
-          icon={<PhoneLaptopIcon width={"1.5rem"} height={"1.5rem"} />}
+          icon={<PhoneLaptopIcon width={"25px"} height={"25px"} />}
           children={
             <DispositivosAveriados
               listadoDispositivos={totalDispAver ? totalDispAver : null}
@@ -548,7 +548,7 @@ export default function HomePage() {
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Despachos actuales"}
-          icon={<TruckIcon width={"1.5rem"} height={"1.5rem"} />}
+          icon={<TruckIcon width={"25px"} height={"25px"} />}
           children={
             <DespachosActuales
               listaDeDespachos={totalDespachos ? totalDespachos : null}
@@ -560,7 +560,7 @@ export default function HomePage() {
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Inventario pendiente de verificar"}
-          icon={<FileCheckIcon width={"1.5rem"} height={"1.5rem"} />}
+          icon={<FileCheckIcon  />}
           children={
             <Box w={"100%"}>
               <InventarioXverificar

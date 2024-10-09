@@ -23,8 +23,8 @@ const BOTTOM_SECTION_HEIGHT = 141.5;
 const BOTTOM_SECTION_HEIGHT_MOBILE = 289.5;
 const MARGINS = 16;
 
-const FINAL_DATE = new Date();
-const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
+// const FINAL_DATE = new Date();
+// const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
 
 export default function Ventas() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -44,8 +44,8 @@ export default function Ventas() {
   const [totalDevueltoIntervalo, setTotalDevueltoIntervalo] = useState();
   const [ingresoRecibidoIntervalo, setIngresoRecibido] = useState();
 
-  const [fechaInicio, setFechaInicio] = useState(START_DATE);
-  const [fechaFin, setFechaFin] = useState(FINAL_DATE);
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
 
   const [prods, setProds] = useState(null);
   const [fechaAct, setFechaActual] = useState(null);
@@ -343,7 +343,9 @@ export default function Ventas() {
             >
               <Text textStyle={"RobotoSubheading"} color={"success.30"}>
                 $
-                {totalVendidoIntervalo !== null && totalVendidoIntervalo != ""
+                {totalVendidoIntervalo !== null &&
+                totalVendidoIntervalo !== "" &&
+                totalVendidoIntervalo !== undefined
                   ? formatearNumero(totalVendidoIntervalo)
                   : "0"}
               </Text>
@@ -366,6 +368,7 @@ export default function Ventas() {
               <Text textStyle={"RobotoSubheading"}>
                 $
                 {totalDevueltoIntervalo !== null &&
+                totalDevueltoIntervalo !== undefined &&
                 totalDevueltoIntervalo !== ""
                   ? formatearNumero(totalDevueltoIntervalo)
                   : "0"}
@@ -389,7 +392,8 @@ export default function Ventas() {
               <Text textStyle={"RobotoSubheading"}>
                 $
                 {ingresoRecibidoIntervalo !== null &&
-                ingresoRecibidoIntervalo !== ""
+                ingresoRecibidoIntervalo !== "" &&
+                ingresoRecibidoIntervalo !== undefined
                   ? formatearNumero(ingresoRecibidoIntervalo)
                   : "0"}
               </Text>

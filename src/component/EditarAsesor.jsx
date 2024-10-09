@@ -91,70 +91,38 @@ export default function EditarAsesor({
             alignItems={"center"}
           >
             <Box w={"100%"}>
-              <FormLabel display="flex" alignItems="center" mt={2}>
-                <span
-                  style={{
-                    color: "red",
-                    marginRight: "0.25rem",
-                    marginTop: "0.25rem",
-                  }}
-                >
-                  *
-                </span>
-                Nombre
-              </FormLabel>
               <TextInput
                 type="text"
                 required
                 onChange={(val) => saveName(val)}
                 value={newName}
+                label="Nombre"
+                mb="1rem"
+                mt="1rem"
               />
-
-              <FormLabel display="flex" alignItems="center" mt={2}>
-                <span
-                  style={{
-                    color: "red",
-                    marginRight: "0.25rem",
-                    marginTop: "0.25rem",
-                  }}
-                >
-                  *
-                </span>
-                Usuario
-              </FormLabel>
               <TextInput
                 type="text"
                 required
                 onChange={(val) => saveUser(val)}
                 value={newUser}
+                label="Usuario"
+                mb="1rem"
               />
-              <FormLabel display="flex" alignItems="center" mt={2}>
-                <span
-                  style={{
-                    color: "red",
-                    marginRight: "0.25rem",
-                    marginTop: "0.25rem",
-                  }}
-                >
-                  *
-                </span>
-                Contraseña
-              </FormLabel>
               <TextInput
                 type="text"
                 required
                 onChange={(val) => savePassword(val)}
                 value={newPassword}
+                label="Contraseña"
+                mb="1rem"
               />
-              <FormLabel display="flex" alignItems="center" mt={2}>
+              <FormLabel display="flex" mb={2}>
                 <span
                   style={{
                     color: "red",
-                    marginRight: "0.25rem",
-                    marginTop: "0.25rem",
                   }}
                 >
-                  *
+                  *&nbsp;
                 </span>
                 Habilitado
               </FormLabel>

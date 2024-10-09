@@ -433,10 +433,10 @@ export default function Resumen() {
           <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
 
           <Box display={"flex"} justifyContent={"flex-start"}>
-            
             {estadoDelDispositivo === "Ok" ? (
               <ThumbUpIcon />
-            ) : estadoDelDispositivo !== "" && estadoDelDispositivo !== undefined ? (
+            ) : estadoDelDispositivo !== "" &&
+              estadoDelDispositivo !== undefined ? (
               <ThumbDownIcon />
             ) : (
               <></>
@@ -564,11 +564,11 @@ export default function Resumen() {
                   w={"100%"}
                   h={"100%"}
                   display={"flex"}
-                  justifyContent={"center"}
+                  justifyContent={"flex-start"}
                   alignItems={"center"}
                 >
                   <Text color={"grey.placeholder"}>
-                    No existe información sobre el ranking de Categorías
+                    No existe información sobre el ranking
                   </Text>
                 </Box>
               )}
@@ -607,6 +607,7 @@ export default function Resumen() {
               h={"100%"}
               display={"flex"}
               justifyContent={"center"}
+              alignItems={"flex-start"}
             >
               <PocoStock productosConPocoStock={totalProductosPocoStock} />
             </Box>

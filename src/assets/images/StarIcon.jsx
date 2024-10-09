@@ -1,4 +1,4 @@
-const StartIcon = ({ width = "20px", height = "20px", fill = "#E60F0F" }) => {
+const StartIcon = ({ width = "23px", height = "23px", fill = "#E60F0F" }) => {
   return (
     <svg
       width={width}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   HStack,
@@ -43,6 +43,22 @@ export default function TablaVentas({
     "Acciones",
   ];
 
+  const [parentHeight, setParentHeight] = useState(0);
+  const parentRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (parentRef.current) {
+        setParentHeight(parentRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
   return (
     <Box h="100%">
       <Box
@@ -50,6 +66,7 @@ export default function TablaVentas({
         bgColor={"white"}
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
+        ref={parentRef}
       >
         <Contenedor>
           <thead className="">
@@ -64,6 +81,10 @@ export default function TablaVentas({
           {displayedArticulos !== null && displayedArticulos?.length > 0 ? (
             <tbody>
               {displayedArticulos?.map((articulo, articuloIndex) => {
+                const productosVisibles =
+                  articulo?.productosAfectados?.slice(0, 2) || [];
+                const productosRestantes =
+                  (articulo?.productosAfectados?.length || 0) - 2;
                 return (
                   <tr key={articuloIndex} className="">
                     <td className="ventasTd">{articulo.codigo}</td>
@@ -74,47 +95,27 @@ export default function TablaVentas({
                       ${formatearNumero(articulo.valor)}
                     </td>
                     <td className="ventasTd">
-                      <UnorderedList
-                        sx={{
-                          listStyleType: "disc",
-                          "::-webkit-scrollbar": {
-                            width: "8px",
-                            height: "4px",
-                          },
-                          "::-webkit-scrollbar-track": {
-                            background: "tranparent",
-                          },
-                          "::-webkit-scrollbar-thumb": {
-                            background: "gray.200",
-                            borderRadius: "10px",
-                          },
-                          "::-webkit-scrollbar-thumb:hover": {
-                            background: "gray.200",
-                          },
-                        }}
+                      <ul
+                        style={{ listStyleType: "disc", paddingLeft: "20px" }}
                       >
-                        {articulo?.productosAfectados
-                          .slice(0, 2)
-                          .map((articulo, index) => (
-                            <ListItem
-                              key={index}
-                              display={"block"}
-                              w={"100%"}
-                              textAlignLast={"right"}
-                            >
-                              {capitalizeFirstLetter(articulo.nombre)} x
-                              {articulo.cantidad} unds
-                            </ListItem>
-                          ))}
-                        <span style={{ fontWeight: "bolder" }}>
-                          {articulo.productosAfectados.length - 2 > 0
-                            ? "y "
-                            : ""}
-                          {articulo.productosAfectados.length - 2 > 0
-                            ? articulo.productosAfectados.length - 2 + " más..."
-                            : ""}
-                        </span>
-                      </UnorderedList>
+                        {productosVisibles.map((producto, index) => (
+                          <li key={index} style={{ marginBottom: "5px" }}>
+                            {capitalizeFirstLetter(producto?.nombre)} x{" "}
+                            {producto?.cantidad} unds
+                            {index === productosVisibles.length - 1 &&
+                              productosRestantes > 0 && (
+                                <span
+                                  style={{
+                                    fontWeight: "bold",
+                                    marginLeft: "5px",
+                                  }}
+                                >
+                                  y {productosRestantes} más...
+                                </span>
+                              )}
+                          </li>
+                        ))}
+                      </ul>
                     </td>
                     <td className="ventasTd">
                       {articulo?.generadaEnCorreccion === "true" ? (
@@ -147,17 +148,31 @@ export default function TablaVentas({
             </tbody>
           ) : (
             <tbody>
-              <tr style={{ height: "200px", borderBottom: "none" }}>
+              <tr
+                style={{
+                  borderBottom: "none",
+                }}
+              >
                 <td
                   colSpan={HEADERS.length}
                   style={{
+                    height: `${parentHeight - 80}px`,
                     textAlign: "center",
                     verticalAlign: "middle",
-                    padding: "20px",
                     color: "grey",
                   }}
                 >
-                  {`No se encontraron ${selectedOption} para mostrar, en el rango seleccionado.`}
+                  <Text
+                    display={"flex"}
+                    height={"100%"}
+                    width={{ base: "50%", lg: "100%" }}
+                    color={"grey.placeholder"}
+                    textStyle={"RobotoBody"}
+                    justifyContent={{ base: "flex-start", lg: "center" }}
+                    alignItems={"center"}
+                  >
+                    {`No se encontraron ${selectedOption} para mostrar.`}
+                  </Text>
                 </td>
               </tr>
             </tbody>

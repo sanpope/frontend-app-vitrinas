@@ -19,6 +19,7 @@ import {
 } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
 import NoteInventario from "../component/NoteInventario";
+import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 
 export default function Inventario() {
   const toast = useToast();
@@ -300,6 +301,7 @@ export default function Inventario() {
           base: "calc(100% - 50px - 175px)",
           lg: "calc(100% - 50px - 130px)",
         }}
+        minH={MIN_TABLE_HEIGHT + "px"}
         mb="8px"
       >
         {

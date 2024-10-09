@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import axios from "axios";
 import Checkbox from "./ui/checkbox";
@@ -34,6 +34,22 @@ export default function TablaInventario({
   getMasArticulos,
   setArticulo,
 }) {
+  const [parentHeight, setParentHeight] = useState(0);
+  const parentRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (parentRef.current) {
+        setParentHeight(parentRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
   return (
     <Box h="100%">
       <Box
@@ -41,6 +57,7 @@ export default function TablaInventario({
         bgColor={"white"}
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
+        ref={parentRef}
       >
         <Contenedor>
           <thead className="">
@@ -93,18 +110,32 @@ export default function TablaInventario({
               })}
             </tbody>
           ) : (
-            <tbody style={{ height: "100%" }}>
-              <tr style={{ height: "350px", borderBottom: "none" }}>
+            <tbody>
+              <tr
+                style={{
+                  borderBottom: "none",
+                }}
+              >
                 <td
                   colSpan={HEADERS.length}
                   style={{
+                    height: `${parentHeight - 80}px`,
                     textAlign: "center",
                     verticalAlign: "middle",
-                    padding: "20px",
                     color: "grey",
                   }}
                 >
-                  No se encontraron productos
+                  <Text
+                    display={"flex"}
+                    height={"100%"}
+                    width={{ base: "50%", lg: "100%" }}
+                    color={"grey.placeholder"}
+                    textStyle={"RobotoBody"}
+                    justifyContent={{ base: "flex-start", lg: "center" }}
+                    alignItems={"center"}
+                  >
+                    No se encontraron productos.
+                  </Text>
                 </td>
               </tr>
             </tbody>
@@ -115,9 +146,7 @@ export default function TablaInventario({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={getMasArticulos}
-        totalResults={
-          displayedArticulos !== null ? displayedArticulos?.length : "0"
-        }
+        totalResults={displayedArticulos ? displayedArticulos?.length : "0"}
       />
       <Editar />
     </Box>

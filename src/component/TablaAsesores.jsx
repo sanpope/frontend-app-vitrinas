@@ -122,14 +122,19 @@ export default function TablaProductosBodega({
                         </td>
                       );
                     })}
-                    <Box
-                      display={"flex"}
-                      columnGap={"20px"}
-                      className="iconContainer"
-                    >
-                      <EditIcon onClick={onSecondModalOpen} />
-                      <TrashIcon onClick={onThirdModalOpen} />
-                    </Box>
+                    <td>
+                      <Box
+                        display={"flex"}
+                        columnGap={"20px"}
+                        className="iconContainer"
+                        h="full"
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                      >
+                        <EditIcon onClick={onSecondModalOpen} />
+                        <TrashIcon onClick={onThirdModalOpen} />
+                      </Box>
+                    </td>
                   </tr>
                 );
               })}

@@ -19,7 +19,7 @@ export default function Container({
       position={"relative"}
       bg={bg}
       borderRadius={"20px"}
-      p={3}
+      p={2}
       display="flex"
       flexDir={"column"}
       width={width}

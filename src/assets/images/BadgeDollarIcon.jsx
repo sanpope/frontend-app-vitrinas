@@ -1,6 +1,6 @@
 const BadgeDollarIcon = ({
-  width = "20px",
-  height = "20px",
+  width = "23px",
+  height = "23px",
   fill = "#E60F0F",
 }) => {
   return (

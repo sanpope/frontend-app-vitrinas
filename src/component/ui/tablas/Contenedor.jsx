@@ -1,6 +1,8 @@
 import { Box } from "@chakra-ui/react";
 
-export default function Contenedor({ children }) {
+export const MIN_TABLE_HEIGHT = 400;
+
+export default function Contenedor({ children,}) {
   return (
     <Box
       position="relative"
@@ -11,10 +13,9 @@ export default function Contenedor({ children }) {
       overflow="auto"
       borderTopLeftRadius={{ base: "0px", md: "20px" }}
       borderTopRightRadius={{ base: "0px", md: "20px" }}
+    
     >
-      <table className="content-table">
-        {children}
-      </table>
+      <table className="content-table">{children}</table>
     </Box>
   );
 }

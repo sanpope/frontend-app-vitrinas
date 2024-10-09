@@ -98,14 +98,14 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
             color={"black"}
             cursor={"pointer"}
           />
-          <InputRightElement width="3.5rem">
+          <InputRightElement width="4.5rem">
             {!isSmallScreen ? <CalendarIcon /> : <></>}
           </InputRightElement>
         </InputGroup>
       </FormControl>
       <Modal isOpen={isStartOpen} onClose={onStartClose} size={"xs"}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
           <ModalBody>
             <Box display={"flex"} justifyContent={"center"}>
               <DatePicker
@@ -114,6 +114,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
                 selectsStart
                 startDate={focusedStart}
                 inline
+                maxDate={today}
               />
             </Box>
           </ModalBody>
@@ -135,15 +136,15 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
       </Modal>
       <Modal isOpen={isEndOpen} onClose={onEndClose} size={"xs"}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
           <ModalBody>
             <Box display={"flex"} justifyContent={"center"}>
               <DatePicker
                 selected={focusedEnd}
                 onChange={(date) => setFocusedEnd(date)}
                 selectsEnd
-                endDate={focusedEnd}
-                // minDate={startDate}
+                endDate={endDate}
+                //minDate={startDate}
                 maxDate={today}
                 inline
               />
