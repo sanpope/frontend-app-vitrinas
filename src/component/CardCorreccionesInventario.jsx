@@ -6,6 +6,7 @@ import ClockICon from "../assets/images/ClockIcon";
 export default function CardCorreccionesInventario({ correccion }) {
   return (
     <Box
+      id={"correccion-" + correccion?.idVisita}
       w={"100%"}
       display={"flex"}
       flexDirection={"column"}

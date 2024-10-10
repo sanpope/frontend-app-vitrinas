@@ -79,7 +79,7 @@ body {
   padding-right: 17px;
 }
 
-.scroll-wrapper::-webkit-scrollbar {
+/* .scroll-wrapper::-webkit-scrollbar {
   width: 4px;
 }
 
@@ -98,7 +98,7 @@ body {
 .scroll-wrapper {
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
-}
+} */
 
 .scroll-hidden {
   height: 100%;
@@ -168,7 +168,7 @@ td {
 }
 
 .inventTd:nth-child(2) {
-  text-align: left;
+  text-align: justify;
 }
 
 .ventastTh {
@@ -176,7 +176,7 @@ td {
   text-align: center;
 }
 .ventastTh:nth-child(4) {
-  width: 30%;
+  width: 25%;
 }
 
 .ventastTd {

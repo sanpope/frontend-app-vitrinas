@@ -51,7 +51,6 @@ export default function ProductosEnDespacho({
             display={"flex"}
             flexDirection={"column"}
             p={"20px"}
-            minH={"150px"}
             justifyContent={"center"}
           >
             {products != null && products?.length > 0 ? (
@@ -63,10 +62,10 @@ export default function ProductosEnDespacho({
                 </Box>
                 <Box
                   w={"100%"}
+                  minH={"200px"}
                   display={"flex"}
                   flexDir={"column"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
+                  justifyContent={"flex-start"}
                 >
                   <Box
                     w={"100%"}
@@ -118,7 +117,7 @@ export default function ProductosEnDespacho({
                         w={"100%"}
                         display={"flex"}
                         borderBottom="1px"
-                        borderColor="gray.200"
+                        borderColor={"gray.200"}
                         alignItems={"center"}
                         justifyContent={"space-between"}
                         py={"10px"}
@@ -136,7 +135,14 @@ export default function ProductosEnDespacho({
                 </Box>
               </>
             ) : (
-              <Box w={"100%"} h={"100%"} display={"flex"}>
+              <Box
+                w={"100%"}
+                h={"100%"}
+                display={"flex"}
+                minH={"200px"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
                 <Text color={"grey.placeholder"}>
                   No se encontraron productos pendientes para Despacho
                 </Text>

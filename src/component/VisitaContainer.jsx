@@ -1,9 +1,10 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-export default function VisitaContainer({ title, maxW, children }) {
+export default function VisitaContainer({ id, title, maxW, children }) {
   return (
     <Box
+      position={"relative"}
       flexGrow={1}
       flexShrink={1}
       flexBasis={{ base: "100%", md: maxW }}
@@ -32,7 +33,9 @@ export default function VisitaContainer({ title, maxW, children }) {
         className="container"
         borderBottomRadius={"20px"}
       >
-        <Box className="scroll-wrapper"> {children}</Box>
+        <Box className="scroll-wrapper" id={id}>
+          {children}
+        </Box>
       </Box>
     </Box>
   );

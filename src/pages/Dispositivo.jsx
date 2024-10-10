@@ -109,13 +109,13 @@ export default function Dispositivo() {
         </Text>
         <Text textStyle={"RobotoTitleBold"}>Dispositivo</Text>
       </Box>
-      <Box w={"100%"}>
-        {infoDispositivo?.estado?.detalleDeEstado?.length > 0 ? (
+
+      {infoDispositivo?.estado?.detalleDeEstado?.length > 0 ? (
+        <Box w={"100%"}>
           <NoteDispositivo text2={infoDispositivo?.estado?.detalleDeEstado} />
-        ) : (
-          <></>
-        )}
-      </Box>
+        </Box>
+      ) : null}
+
       <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
         <DispositivoContainer
           icon={<MobileIcon />}

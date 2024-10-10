@@ -42,7 +42,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
       borderColor={"grey.placeholder"}
       bg={"white"}
       borderRadius={"5px"}
-      p={0}
+      px={0}
       flex={"0 1 auto"}
     >
       <FormControl display={"flex"} alignContent={"center"}>
@@ -90,7 +90,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
             readOnly
             onClick={onEndOpen}
             fontSize={"1rem"}
-            w={"9.375rem"}
+            w={"11rem"}
             borderTopWidth={"0px"}
             borderBottomWidth={"0px"}
             borderRightWidth={"0px"}

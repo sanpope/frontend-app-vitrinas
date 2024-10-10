@@ -10,7 +10,7 @@ import CheckVerifiedIcon from "../assets/images/CheckVerifiedIcon";
 import CloseNoVerifiedIcon from "../assets/images/CloseNoVerifiedIcon";
 import ExclamationCircleIcon from "../assets/images/ExclamationCircleIcon";
 
-export default function ActualizacionesInventario({
+export default function CardVisitas({
   visita,
   visitaSelected,
   seleccionarYVerificar,
@@ -18,6 +18,7 @@ export default function ActualizacionesInventario({
 }) {
   return (
     <Box
+      id={visita?.idVisita}
       w={"100%"}
       display={"flex"}
       flexDirection={"column"}
@@ -101,10 +102,10 @@ export default function ActualizacionesInventario({
           borderRadius="full"
           display={"inline-flex"}
         ></Box>
-        <Text textStyle={"RobotoRegularBold"} mr={1}>
-          Correcciones:
+        <Text textStyle={"RobotoRegularBold"}>Correcciones:</Text>
+        <Text textStyle={"RobotoRegular"}>
+          {visita?.correccionesDeInventario}
         </Text>
-        <Text textStyle={"RobotoRegular"}>{visita?.correcciones}</Text>
       </Box>
       <HStack spacing="15px">
         <StandardButton
@@ -125,7 +126,7 @@ export default function ActualizacionesInventario({
         >
           {visita?.verificada === "true" ? "Verificada" : "No verificada"}
         </StandardButton>
-        {visita.revertida === true ? (
+        {visita?.revertida === true || visita?.revertida === "true" ? (
           <StandardButton
             w={"110px"}
             height={"20px"}

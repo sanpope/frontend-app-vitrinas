@@ -6,6 +6,7 @@ import ClockICon from "../assets/images/ClockIcon";
 export default function CardMovimientosInventario({ movimiento }) {
   return (
     <Box
+      id={"movimiento-" + movimiento?.idVisita}
       w={"100%"}
       display={"flex"}
       flexDirection={"column"}
@@ -39,9 +40,12 @@ export default function CardMovimientosInventario({ movimiento }) {
         gap={"10px"}
       >
         <TimesCircleIcon width={"15px"} height={"15px"} />
-        <Text textStyle={"RobotoRegularBold"}>Visita:</Text>
+        <Text textStyle={"RobotoRegularBold"}>Hecho en visita:</Text>
         <Text textStyle={"RobotoRegular"}>
-          {movimiento?.hechoEnVisita === "true" ? "Sí" : "No"}
+          {movimiento?.hechoEnVisita === "true" ||
+          movimiento?.hechoEnVisita === true
+            ? "Sí"
+            : "No"}
         </Text>
       </Box>
       <Box display={"flex"} flexDirection={"column"}>

@@ -1,10 +1,10 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
 const newDate = new Date();
 
 export default function DispositivoContainer({
-  minH = "200px",
+  minH = "220px",
   maxW = "340px",
   icon,
   title = "Título",
@@ -16,7 +16,6 @@ export default function DispositivoContainer({
 }) {
   return (
     <>
-      {" "}
       {description !== null &&
       date !== null &&
       text2 !== null &&
@@ -24,58 +23,48 @@ export default function DispositivoContainer({
         <Box
           flex={`0 1 ${maxW}`}
           minH={minH}
-          bg={"white"}
+          bg="white"
           display="flex"
-          flexDirection={"column"}
-          borderRadius={"30px"}
+          flexDirection="column"
+          alignItems="center"
+          borderRadius="30px"
           p={3}
         >
-          <Box w={"100%"} mb={2}>
+          <Box w="100%" mb={2}>
             {icon}
           </Box>
-
-          <Box
-            w={"100%"}
-            h={"100%"}
-            display={"flex"}
-            flexDirection={"column"}
-            alignItems={"flex-start"}
-            justifyContent={"space-between"}
-            gap={2}
-            py={1}
-          >
-            <Text textStyle={"RobotoBodyBold"} color={"black"}>
+          <Box w="100%" flex="1">
+            <Text textStyle="RobotoBodyBold" color="black">
               {title}
             </Text>
-
-            <Box
-              display={"flex"}
-              gap={"5px"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Text textStyle={"RobotoBodyBold"} color={"grey"}>
-                {emoji}
-              </Text>
+          </Box>
+          <Box w="100%" flex="1">
+            <HStack spacing="5px" alignItems="center">
+              {emoji}
               <Text
-                textStyle={"RobotoBodyBold"}
-                color={"grey"}
-                textAlign={"justify"}
+                textStyle="RobotoBodyBold"
+                color="grey.placeholder"
+                textAlign="justify"
               >
                 {description}
               </Text>
-            </Box>
-
-            <Text textStyle={"RobotoBodyBold"} display={"flex"} gap={"5px"}>
-              {text2}
-              <span style={{ fontSize: "16px", color: "grey" }}>
+            </HStack>
+          </Box>
+          <Box w="100%" flex="1" display="flex" alignItems="center">
+            <HStack spacing="5px">
+              <Text textStyle="RobotoBodyBold" display="flex">
+                {text2}
+              </Text>
+              <Text textStyle="RobotoBodyBold" color="grey.placeholder">
                 {description2}
-              </span>
+              </Text>
+            </HStack>
+          </Box>
+          <Box w="100%" flex="1" display="flex" alignItems="flex-end">
+            <Text py={1} textStyle="RobotoRegularBold">
+              {date}
             </Text>
           </Box>
-          <Text py={1} textStyle={"RobotoRegularBold"}>
-            {date}
-          </Text>
         </Box>
       ) : (
         <Box
@@ -96,16 +85,27 @@ export default function DispositivoContainer({
             display={"flex"}
             flexDirection={"column"}
             alignItems={"flex-start"}
-            justifyContent={"space-between"}
             gap={2}
             py={1}
           >
             <Text textStyle={"RobotoBodyBold"} color={"black"}>
               {title}
             </Text>
-            <Text textStyle={"RobotoBody"} color={"grey.placeholder"}>
-              No hay datos para mostrar.
-            </Text>
+            <Box
+              w={"100%"}
+              h={"100%"}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Text
+                textStyle={"RobotoBody"}
+                color={"grey.placeholder"}
+                textAlign={"center"}
+              >
+                No hay datos para mostrar.
+              </Text>
+            </Box>
           </Box>
         </Box>
       )}

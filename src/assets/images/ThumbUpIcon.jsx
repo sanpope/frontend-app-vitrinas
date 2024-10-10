@@ -1,4 +1,4 @@
-const ThumbUpIcon = ({ width = "30px", height = "30px", fill = "#00BC4F" }) => {
+const ThumbUpIcon = ({ width = "26px", height = "26px", fill = "#00BC4F" }) => {
   return (
     <svg
       width={width}

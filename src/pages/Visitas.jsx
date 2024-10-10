@@ -336,6 +336,9 @@ export default function Visitas() {
 
   const setReversionVisita = async (idVisita) => {
     const id = parseInt(idVisita);
+    console.log(totalVisitas);
+    console.log(totalMovivmientos);
+    console.log(totalCorrecciones);
 
     setIsLoading(true);
 
@@ -357,22 +360,35 @@ export default function Visitas() {
           );
           if (index !== -1) {
             copy[index].revertida = true;
+            copy[index].ingresos = 0;
+            copy[index].retiros = 0;
+            copy[index].correccionesDeInventario = 0;
           }
           return copy;
         });
+
         setTotalMovimientos((prev) => {
           const copy = [...prev];
-          const movimientos = copy?.filter(
-            (movimiento) => movimiento.idVisita !== idVisita,
+          const index = copy.findIndex(
+            (movimiento) => movimiento.idVisita === idVisita,
           );
-          return movimientos;
+          if (index !== -1) {
+            copy[index].hechoEnVisita = false;
+            copy[index].totalProdsIngr = [];
+            copy[index].totalProdsRet = [];
+          }
+          return copy;
         });
+
         setTotalCorrecciones((prev) => {
           const copy = [...prev];
-          const correcciones = copy?.filter(
-            (correccion) => correccion.idVisita !== idVisita,
+          const index = copy.findIndex(
+            (correccion) => correccion.idVisita === idVisita,
           );
-          return correcciones;
+          if (index !== -1) {
+            copy[index].ProdsCorregidos = [];
+          }
+          return copy;
         });
         toast({
           status: "success",
@@ -439,55 +455,34 @@ export default function Visitas() {
         });
       } finally {
       }
-    } else {
-      console.log("Visita verificada anteriormente!");
     }
   };
 
   const showInfoVisitaRelated = (visita) => {
     setTotalMovimientos((prev) => {
       const copy = [...prev];
-      const movimientosVisita = copy
-        ?.filter((movimiento) => movimiento.idVisita === visita?.idVisita)
-        .map((movimiento) => ({
-          ...movimiento,
-          esVisita: true,
-        }));
-
-      const movimientosNoVisita = copy
-        ?.filter((movimiento) => movimiento.idVisita !== visita?.idVisita)
-        .map((movimiento) => ({
-          ...movimiento,
-          esVisita: false,
-        }));
-
-      if (movimientosVisita?.length > 0) {
-        return [...movimientosVisita, ...movimientosNoVisita];
-      }
-      return prev;
+      return copy.map((movimiento) => ({
+        ...movimiento,
+        esVisita: movimiento.idVisita === visita?.idVisita,
+      }));
     });
 
     setTotalCorrecciones((prev) => {
       const copy = [...prev];
-      const correccionesVisita = copy
-        ?.filter((correccion) => correccion.idVisita === visita?.idVisita)
-        .map((correccion) => ({
-          ...correccion,
-          esVisita: true,
-        }));
-
-      const correccionesNoVisita = copy
-        ?.filter((correccion) => correccion.idVisita !== visita?.idVisita)
-        .map((correccion) => ({
-          ...correccion,
-          esVisita: false,
-        }));
-
-      if (correccionesVisita?.length > 0) {
-        return [...correccionesVisita, ...correccionesNoVisita];
-      }
-      return prev;
+      return copy.map((correccion) => ({
+        ...correccion,
+        esVisita: correccion.idVisita === visita?.idVisita,
+      }));
     });
+  };
+
+  const scrollToId = (id) => {
+    var movimiento = document.getElementById(`movimiento-${id}`);
+    var correccion = document.getElementById(`correccion-${id}`);
+    var topPosMov = movimiento.offsetTop;
+    var topPosCorr = correccion.offsetTop;
+    document.getElementById("movContainer").scrollTop = topPosMov - 20;
+    document.getElementById("corrContainer").scrollTop = topPosCorr - 20;
   };
 
   return (
@@ -549,8 +544,9 @@ export default function Visitas() {
                   isSelected={visitaSelected?.idVisita === visita.idVisita}
                   seleccionarYVerificar={() => {
                     setVisitaSelected(visita);
-                    verificarVisita(visita.idVisita, visita);
+                    verificarVisita(visita?.idVisita, visita);
                     showInfoVisitaRelated(visita);
+                    scrollToId(visita?.idVisita);
                   }}
                 />
               ))
@@ -562,14 +558,17 @@ export default function Visitas() {
                 justifyContent={"center"}
                 alignItems={"center"}
               >
-                <Text color={"grey.placeholder"}>
+                <Text color={"grey.placeholder"} textAlign={"center"}>
                   No se encontraron visitas en el intervalo seleccionado
                 </Text>
               </Box>
             )
           }
         />
+        {console.log(totalVisitas)}
+
         <VisitaContainer
+          id={"movContainer"}
           title="Movimientos de inventario"
           maxW="310px"
           children={
@@ -588,14 +587,16 @@ export default function Visitas() {
                 justifyContent={"center"}
                 alignItems={"center"}
               >
-                <Text color={"grey.placeholder"}>
+                <Text color={"grey.placeholder"} textAlign={"center"}>
                   No se encontraron movimientos en el intervalo seleccionado
                 </Text>
               </Box>
             )
           }
         />
+
         <VisitaContainer
+          id={"corrContainer"}
           title="Correcciones de inventario"
           w="100%"
           maxW="310px"
@@ -612,7 +613,7 @@ export default function Visitas() {
                 justifyContent={"center"}
                 alignItems={"center"}
               >
-                <Text color={"grey.placeholder"}>
+                <Text color={"grey.placeholder"} textAlign={"center"}>
                   No se encontraron correcciones en el intervalo seleccionado
                 </Text>
               </Box>
@@ -670,8 +671,8 @@ export default function Visitas() {
           isOpen={isConfirmationModalOpen}
           onOpen={onConfirmationModalOpen}
           onClose={onConfirmationModalClose}
-          funcConfirmar={setReversionVisita}
-          focusRow={visitaSelected ? visitaSelected.idVisita : null}
+          funcConfirmar={visitaSelected ? setReversionVisita : null}
+          focusRow={visitaSelected ? visitaSelected?.idVisita : null}
           products={null}
           isLoading={isLoading}
         />

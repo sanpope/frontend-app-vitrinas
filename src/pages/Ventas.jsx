@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Select, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Select, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import TablaVentas from "../component/TablaVentas";
 import DatePickerComponent from "../component/DatePickerComponent";
 import Container from "../component/Container";
@@ -27,6 +27,7 @@ const MARGINS = 16;
 // const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
 
 export default function Ventas() {
+  const toast = useToast();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
   const [selectedOption, setSelectedOption] = useState("Ventas");
@@ -169,17 +170,19 @@ export default function Ventas() {
           "Content-Type": "application/xml",
         },
       });
-      const xmlDoc = parseData(response.data);
-      const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
 
-      setTablaVentas(ventas);
-      setTablaDevoluciones(devoluciones);
-      setTotalResults(
-        (selectedOption === "Ventas" ? ventas : devoluciones).length,
-      );
-      setDisplayedArticulos(
-        selectedOption === "Ventas" ? ventas : devoluciones,
-      );
+        setTablaVentas(ventas);
+        setTablaDevoluciones(devoluciones);
+        setTotalResults(
+          (selectedOption === "Ventas" ? ventas : devoluciones).length,
+        );
+        setDisplayedArticulos(
+          selectedOption === "Ventas" ? ventas : devoluciones,
+        );
+      }
     } catch (error) {
       console.log(error);
     }
@@ -197,23 +200,32 @@ export default function Ventas() {
           "Content-Type": "application/xml",
         },
       });
-      const xmlDoc = parseData(response.data);
-      const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
-      setTotalVendidoIntervalo(
-        xmlDoc?.getElementsByTagName("ventaTotal")[0]?.textContent,
-      );
-      setTotalDevueltoIntervalo(
-        xmlDoc?.getElementsByTagName("devolucionTotal")[0]?.textContent,
-      );
-      setIngresoRecibido(
-        xmlDoc?.getElementsByTagName("ingresoReal")[0]?.textContent,
-      );
-      setTablaVentas(ventas);
-      setTablaDevoluciones(devoluciones);
-      setTotalResults(ventas?.length);
-      setDisplayedArticulos(ventas);
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+        setTotalVendidoIntervalo(
+          xmlDoc?.getElementsByTagName("ventaTotal")[0]?.textContent,
+        );
+        setTotalDevueltoIntervalo(
+          xmlDoc?.getElementsByTagName("devolucionTotal")[0]?.textContent,
+        );
+        setIngresoRecibido(
+          xmlDoc?.getElementsByTagName("ingresoReal")[0]?.textContent,
+        );
+        setTablaVentas(ventas);
+        setTablaDevoluciones(devoluciones);
+        setTotalResults(ventas?.length);
+        setDisplayedArticulos(ventas);
+      }
     } catch (error) {
       console.log(error);
+      // toast({
+      //   status: "error",
+      //   description: "Error en la conexión con el servidor",
+      //   duration: 3000,
+      //   position: "top-right",
+      //   isClosable: true,
+      // });
     }
   };
 

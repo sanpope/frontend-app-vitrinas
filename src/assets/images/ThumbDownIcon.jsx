@@ -1,6 +1,6 @@
 const ThumbDownIcon = ({
-  width = "30px",
-  height = "30px",
+  width = "26px",
+  height = "26px",
   fill = "#E60F0F",
 }) => {
   return (
