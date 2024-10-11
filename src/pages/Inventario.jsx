@@ -132,13 +132,6 @@ export default function Inventario() {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
-      // toast({
-      //   status: "error",
-      //   description: "Error en la conexión con el servidor",
-      //   duration: 3000,
-      //   position: "top-right",
-      //   isClosable: true,
-      // });
     }
   };
 

@@ -123,9 +123,8 @@ export default function EstaVitrina() {
     const vitrinaUpdated = new URLSearchParams();
     vitrinaUpdated.append("nuevoNombre", `${nombre}`);
     vitrinaUpdated.append("nuevaCiudad", `${ciudad}`);
-
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina?nombre=${name}`,
         vitrinaUpdated,
@@ -135,9 +134,8 @@ export default function EstaVitrina() {
           },
         },
       );
+      console.log(response);
       if (response.status == 200 && response.data) {
-        setUpdatedName(nombre);
-        setUpdatedCity(ciudad);
         const copy = { ...ciudadesVitrinas };
         const updatedCityArray = [...copy[city]];
         const index = updatedCityArray.findIndex((item) => item === name);
@@ -162,13 +160,12 @@ export default function EstaVitrina() {
             dispatch(setCity(ciudad));
           }
           toast({
-            status: "succes",
+            status: "success",
             description: "Vitrina actualizada con éxito!.",
             duration: 3000,
             position: "top-right",
             isClosable: true,
           });
-        } else {
         }
       }
     } catch (error) {
@@ -242,8 +239,8 @@ export default function EstaVitrina() {
     });
     nuevoAsesor.append("habilitado", `${newAsesor.habilitado}`);
 
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores`,
         nuevoAsesor,
@@ -303,8 +300,8 @@ export default function EstaVitrina() {
       return updatedAsesor.append("nuevasVitrinas", `${vitrina}`);
     });
     updatedAsesor.append("habilitado", `${asesorActualizado.habilitado}`);
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${currentAsesor?.nombre}`,
         updatedAsesor,
@@ -357,8 +354,8 @@ export default function EstaVitrina() {
   };
 
   const deleteAsesor = async (nombreAsesor) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${nombreAsesor}`,
         {
@@ -481,7 +478,7 @@ export default function EstaVitrina() {
               onOpen={onSecondModalOpen}
               onClose={onSecondModalClose}
               icon={<WarningIcon />}
-              text={"¿Estás seguro que desea eliminar a esta vitrina?"}
+              text={"¿Estás seguro que desea eliminar  esta vitrina?"}
               text2={
                 "Esta acción eliminará permanentemente los registros de esta vitrina de tu sistema"
               }

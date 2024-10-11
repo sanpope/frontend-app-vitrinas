@@ -1,4 +1,4 @@
-const WareHouseIcon = ({ width = "20px", height = "20px", fill = "white" }) => {
+const WareHouseIcon = ({ width = "24px", height = "24px", fill = "white" }) => {
   return (
     <svg
       width={width}

@@ -51,9 +51,10 @@ export default function ConfirmationMessage({
               justifyContent={"flex-start"}
               alignItems={"flex-start"}
               gap={"10px"}
+              pb={3}
             >
               {icon}
-              <Text textStyle={"RobotoBodyBold"} textAlign={"justify"}>
+              <Text textStyle={"RobotoBodyBold"} textAlign={"justify"} mb={3}>
                 {text}
               </Text>
             </Box>

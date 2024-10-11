@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { Box, Text } from "@chakra-ui/react";
-import axios from "axios";
-import Checkbox from "./ui/checkbox";
-import LeftArrowIcon from "../assets/images/LeftArrowIcon";
-import BiggerThanIcon from "../assets/images/BiggerThanIcon";
+
 import EditIcon from "../assets/images/EditIcon";
-import EditarExistencia from "./EditarExistencia";
+
 import ConfirmationMessage from "./ConfirmationMessage";
 import UnionIcon from "../assets/images/UnionIcon";
 import TrashIcon from "../assets/images/TrashIcon";

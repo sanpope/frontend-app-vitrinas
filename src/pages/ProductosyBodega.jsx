@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, list, Text, useDisclosure } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
 import SearchIcon from "../assets/images/SearchIcon";
@@ -7,23 +7,20 @@ import IngresarProducto from "../component/Ingresar_Editar_Producto";
 import Despachar from "../component/Despachar";
 import Transferir from "../component/Transferir";
 import TablaProductosBodega from "../component/TablaProductosBodega";
+import axios from "axios";
 
-import xmlToJSON from "../services/XmlToJsonConverter";
-import {
-  bodegaProductos,
-  categoriasProductos,
-  proveedoresProductos,
-} from "../services/productosYBodegaData";
 import { HEADER_HEIGHT } from "../component/Header";
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
+import { parseData } from "../utils/xmlParse";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
 const TOP_HEIGHT = 72;
 
 export default function ProductosyBodega() {
   const [busqueda, setBusqueda] = useState(null);
-  const [tablaProductos, setTablaProductos] = useState(null);
-  const [displayedArticulos, setDisplayedArticulos] = useState(null);
-  const [totalResults, setTotalResults] = useState(null);
+  const [tablaProductos, setTablaProductos] = useState([]);
+  const [displayedArticulos, setDisplayedArticulos] = useState([]);
+  const [totalResults, setTotalResults] = useState([]);
   const [loading, toggleLoading] = useState(false);
   const [isAscendent, setIsAscendent] = useState(false);
   const [sortingBy, setSortingBy] = useState(null);
@@ -34,54 +31,127 @@ export default function ProductosyBodega() {
   const [totalCategorias, setTotalCategorias] = useState(null);
 
   useEffect(() => {
-    parseData();
+    getInventarioInfo();
+    getProveedoresInfo();
+    getCategoriasInfo();
   }, []);
 
   useEffect(() => {
     getMasArticulos(1);
   }, [tablaProductos]);
 
-  const parseData = () => {
-    const ProductosBodega = xmlToJSON(bodegaProductos);
-    const TotalProductos = ProductosBodega?.productosDelNegocio?.producto;
-    const arrayProdsBodega = TotalProductos?.map((prod) => {
-      const nombre = prod?.nombre["#text"];
-      const codigo = prod?.codigo["#text"];
-      const precio = prod?.precio["#text"];
-      const costo = prod?.costo["#text"];
-      const bodega = prod?.bodega["#text"];
-      const vitrinas = prod?.vitrinas["#text"];
-      const proveedor = prod?.proveedor["#text"];
-      const categoria = prod?.categoria["#text"];
+  const getInventarioInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        setTablaProductos(getProductos(xmlDoc));
+        setDisplayedArticulos(getProductos(xmlDoc));
+      }
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
 
-      return {
-        nombre,
-        codigo,
-        precio,
-        costo,
-        bodega,
-        vitrinas,
-        proveedor,
-        categoria,
-      };
-    });
-    setTablaProductos(arrayProdsBodega);
-    setTotalResults(arrayProdsBodega.length);
-    setDisplayedArticulos(arrayProdsBodega);
+  const getProveedoresInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        setTotalProveedores(getProveedores(xmlDoc));
+      }
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
 
-    const Proveedores = xmlToJSON(proveedoresProductos);
-    const TotalProveedores = Proveedores?.proveedoresDelNegocio?.proveedor;
-    const arrayProveedores = TotalProveedores?.map((prove) => {
-      return { nombre: prove?.["#text"] };
-    });
-    setTotalProveedores(arrayProveedores);
+  const getCategoriasInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        setTotalCategorias(getCategorias(xmlDoc));
+      }
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
 
-    const Categorias = xmlToJSON(categoriasProductos);
-    const TotalCategorias = Categorias?.categoriasDelNegocio?.categoria;
-    const arrCategorias = TotalCategorias?.map((cat) => {
-      return { nombre: cat?.["#text"] };
-    });
-    setTotalCategorias(arrCategorias);
+  const getProductos = (xml) => {
+    const totalProdsArr = [];
+    const productosNegocio = xml?.querySelector("productosDelNegocio");
+
+    const listadoProds = productosNegocio?.querySelectorAll("producto") ?? [];
+
+    if (listadoProds.length > 0) {
+      for (let i = 0; i < listadoProds.length; i++) {
+        const producto = listadoProds[i];
+
+        const getElementTextContent = (elementName) => {
+          const element = producto?.getElementsByTagName(elementName);
+          return element && element[0] ? element[0].textContent ?? "" : "";
+        };
+
+        const nombre = capitalizeFirstLetter(getElementTextContent("nombre"));
+        const codigo = getElementTextContent("codigo");
+        const precio = getElementTextContent("precio");
+        const costo = getElementTextContent("costo");
+        const cantidadEnBodega = getElementTextContent("cantidadEnBodega");
+        const cantidadEnVitrinas = getElementTextContent("cantidadEnVitrinas");
+        const proveedor = getElementTextContent("proveedor");
+        const categoria = getElementTextContent("categoria");
+
+        totalProdsArr.push({
+          nombre,
+          codigo,
+          precio,
+          costo,
+          cantidadEnBodega,
+          cantidadEnVitrinas,
+          proveedor,
+          categoria,
+        });
+      }
+
+      return totalProdsArr;
+    }
+
+    return []; // Retorna un array vacío si no hay productos
+  };
+
+  const getProveedores = (xml) => {
+    const proveedorElements = xml.getElementsByTagName("proveedor");
+    return Array.from(proveedorElements)
+      .map((el) => {
+        const content = el.textContent.trim();
+        return content === "" ? null : content;
+      })
+      .filter((proveedor) => proveedor !== null);
+  };
+
+  const getCategorias = (xml) => {
+    const categoriaElements = xml.getElementsByTagName("categoria");
+    return Array.from(categoriaElements)
+      .map((el) => {
+        const content = el.textContent.trim();
+        return content === "" ? null : content;
+      })
+      .filter((category) => category !== null);
   };
 
   const {
@@ -352,7 +422,9 @@ export default function ProductosyBodega() {
             handleSortingClick={handleSortingClick}
             totalResults={totalResults}
             currentPage={currentPage}
-            totalPages={totalPages}
+            totalPages={
+              displayedArticulos ? displayedArticulos.length / rowsToShow : 0
+            }
             getMasArticulos={getMasArticulos}
             funcConfirmar={handleConfirmarDelete}
             lista1={totalProveedores ? totalProveedores : []}

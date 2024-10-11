@@ -12,6 +12,7 @@ import {
 import ListaItem from "../component/ListaItem";
 
 import StandardButton from "../component/ui/buttons/standard";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function Agregar({
   desc,
@@ -28,7 +29,7 @@ export default function Agregar({
   return (
     <Modal isOpen={isFirstModalOpen} onClose={onFirstModalClose}>
       <ModalOverlay />
-      <ModalContent borderRadius={"20px"} w={"100%"} maxW={"340px"}>
+      <ModalContent borderRadius={"20px"} w={"100%"} maxW={"380px"}>
         <ModalHeader
           bg={"black"}
           display={"flex"}
@@ -46,28 +47,38 @@ export default function Agregar({
           alignItems={"center"}
           p={4}
         >
-          <Box
-            w={"100%"}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Text textStyle={"RobotoRegularBold"} color={"black"}>
+          <Box w={"100%"} display={"flex"} alignItems={"center"} px={1}>
+            <Text
+              textStyle={"RobotoBodyBold"}
+              color={"black"}
+              flex={1}
+              textAlign={"left"}
+            >
               Nombre
             </Text>
-            <Text textStyle={"RobotoRegularBold"} color={"black"}>
+            <Text
+              textStyle={"RobotoBodyBold"}
+              color={"black"}
+              flex={1}
+              textAlign={"right"}
+            >
               Acciones
             </Text>
           </Box>
           <Box
+            className="scroll-wrapper"
             display={"flex"}
             flexDirection={"column"}
-            overflowY={"scroll"}
+            overflowY={"auto"}
             h={"250px"}
             w={"100%"}
           >
             {lista.map((item, index) => (
-              <ListaItem key={index} desc={item.nombre} elemento={desc2} />
+              <ListaItem
+                key={index}
+                desc={capitalizeFirstLetter(item)}
+                elemento={desc2}
+              />
             ))}
           </Box>
         </ModalBody>

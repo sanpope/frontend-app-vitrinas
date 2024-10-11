@@ -1,11 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { Box, Text } from "@chakra-ui/react";
-import axios from "axios";
-import Checkbox from "./ui/checkbox";
-import LeftArrowIcon from "../assets/images/LeftArrowIcon";
-import BiggerThanIcon from "../assets/images/BiggerThanIcon";
+
 import EditIcon from "../assets/images/EditIcon";
-import EditarExistencia from "./EditarExistencia";
 import ConfirmationMessage from "./ConfirmationMessage";
 import UnionIcon from "../assets/images/UnionIcon";
 import TrashIcon from "../assets/images/TrashIcon";
@@ -139,29 +135,34 @@ export default function TablaProductosBodega({
                   <tr key={index} className="">
                     {Object.values(articulo).map((value, index) => {
                       return (
-                        <td key={index} className="ProdTd">
+                        <td
+                          key={index}
+                          className="ProdTd"
+                          style={{ paddingLeft: "20px" }}
+                        >
                           {value}
                         </td>
                       );
                     })}
-                    <td>
-                      <Box
-                        display={"flex"}
-                        columnGap={"20px"}
-                        px={"15px"}
-                        className="iconContainer"
-                      >
-                        <EditIcon
-                          onClick={onSecondModalOpen}
-                          width="19px"
-                          height="19px"
-                        />
-                        <TrashIcon
-                          onClick={() => handleDeleteButton(articulo)}
-                          width="19px"
-                          height="19px"
-                        />
-                      </Box>
+                    <td className="iconContainer">
+                      <span
+                        style={{
+                          display: "inline-block",
+                          height: "100%",
+                          verticalAlign: "middle",
+                          marginLeft: "15px",
+                        }}
+                      ></span>
+                      <EditIcon
+                        onClick={onSecondModalOpen}
+                        width="17px"
+                        height="17px"
+                      />
+                      <TrashIcon
+                        onClick={() => handleDeleteButton(articulo)}
+                        width="17px"
+                        height="17px"
+                      />
                     </td>
                   </tr>
                 );
@@ -205,7 +206,7 @@ export default function TablaProductosBodega({
             onOpen={onFifthModalOpen}
             onClose={onFifthModalClose}
             desc={"Proveedor"}
-            desc2={"example"}
+            desc2={"Nombre del Proveedor"}
           />
         }
       />

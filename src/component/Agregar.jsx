@@ -76,6 +76,25 @@ export default function Agregar({
                 >
                   *
                 </span>
+                {desc2}
+              </FormLabel>
+              <TextInput
+                type="text"
+                placeholder="Alejandro SantaMaria"
+                required
+                onChange={(e) => saveName(e)}
+                value={name}
+              />
+              <FormLabel display="flex" alignItems="center" mt={3}>
+                <span
+                  style={{
+                    color: "red",
+                    marginRight: "0.25rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  *
+                </span>
                 Ciudad
               </FormLabel>
               <Select
@@ -109,25 +128,6 @@ export default function Agregar({
                 <option>Pereira</option>
                 <option>Villavicencio</option>
               </Select>
-              <FormLabel display="flex" alignItems="center" pt={"10px"}>
-                <span
-                  style={{
-                    color: "red",
-                    marginRight: "0.25rem",
-                    marginTop: "0.25rem",
-                  }}
-                >
-                  *
-                </span>
-                {desc2}
-              </FormLabel>
-              <TextInput
-                type="text"
-                placeholder="Hotel Sonesta"
-                required
-                onChange={(e) => saveName(e)}
-                value={name}
-              />
             </FormControl>
           </Box>
         </ModalBody>

@@ -160,7 +160,8 @@ td {
   border-bottom: 1px solid #e5e5e5;
 }
 
-.inventTh {
+.inventTh,
+.ProdTh {
   text-align: center;
 }
 .inventTh:nth-child(2) {
@@ -190,13 +191,29 @@ td {
   list-style-type: circle;
 }
 
+.ProdTh:nth-child(1) {
+  width: 18%;
+}
+
+.ProdTh:nth-child(7),
+.ProdTh:nth-child(8) {
+  width: 13%;
+}
+
+.ProdTd:nth-child(1) {
+  text-align: left;
+}
+
+
 .iconContainer {
   text-align: center;
   vertical-align: middle;
   height: 100%;
+ 
 }
 
 .iconContainer svg {
   display: inline-block;
   vertical-align: middle;
+  margin-inline: 5px;
 }

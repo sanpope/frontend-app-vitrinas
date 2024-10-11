@@ -25,11 +25,12 @@ export default function Product({ desc, elemento }) {
       display={"flex"}
       alignItems={"center"}
       justifyContent={"space-between"}
-      py={"10px"}
+      py={3}
+      
     >
-      <Text textStyle={"RobotoRegular"} color={"black"}>{desc}</Text>
-      <Box display={"flex"} justifyContent={"center"} alignItems={"center"} gap={"10px"}>
-        <EditIcon onClick={onFirstModalOpen} />
+      <Text textStyle={"RobotoBody"} color={"black"}>{desc}</Text>
+      <Box display={"flex"} justifyContent={"center"} alignItems={"center"} gap={"5px"}>
+        <EditIcon width={"20px"} height={"17px"} onClick={onFirstModalOpen} />
         <Editar
           isOpen={isFirstModalOpen}
           onOpen={onFirstModalOpen}
@@ -38,7 +39,7 @@ export default function Product({ desc, elemento }) {
           desc={"información del Proveedor"}
           desc2={"Nombre del proveedor"}
         />
-        <TrashIcon onClick={onSecondModalOpen} />
+        <TrashIcon width={"20px"} height={"17px"} onClick={onSecondModalOpen} />
         <ConfirmationMessage
           isOpen={isSecondModalOpen}
           onOpen={onSecondModalOpen}
