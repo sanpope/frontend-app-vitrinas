@@ -479,11 +479,7 @@ export default function TablaProductosBodega({
                   <tr key={index} className="">
                     {Object.values(articulo).map((value, index) => {
                       return (
-                        <td
-                          key={index}
-                          className="ProdTd"
-                          style={{ paddingLeft: "20px" }}
-                        >
+                        <td key={index} className="ProdTd">
                           {value}
                         </td>
                       );

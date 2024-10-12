@@ -57,12 +57,11 @@ export default function TablaProductosBodega({
                 <th key={index} className="AsesorTh">
                   <Box
                     display={"flex"}
+                    justifyContent={"center"}
                     alignItems={"center"}
                     gap={"5px"}
                     w={"100%"}
-                    justifyContent={
-                      name === "Acciones" ? "center" : "flex-start"
-                    }
+                    height={"100%"}
                   >
                     <Text
                       color="white"
@@ -119,18 +118,17 @@ export default function TablaProductosBodega({
                         </td>
                       );
                     })}
-                    <td>
-                      <Box
-                        display={"flex"}
-                        columnGap={"20px"}
-                        className="iconContainer"
-                        h="full"
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <EditIcon onClick={onSecondModalOpen} />
-                        <TrashIcon onClick={onThirdModalOpen} />
-                      </Box>
+                    <td className="iconContainer">
+                      <span
+                        style={{
+                          display: "inline-block",
+                          height: "100%",
+                          verticalAlign: "middle",
+                          marginLeft: "15px",
+                        }}
+                      ></span>
+                      <EditIcon width="17px" onClick={onSecondModalOpen} />
+                      <TrashIcon height="17px" onClick={onThirdModalOpen} />
                     </td>
                   </tr>
                 );

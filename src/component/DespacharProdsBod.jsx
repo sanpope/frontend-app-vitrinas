@@ -31,19 +31,37 @@ import ConfirmationMessage from "./ConfirmationMessage";
 import axios from "axios";
 import { generateProductsListXML, parseData } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
+import { useSelector, useDispatch } from "react-redux";
 
-export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
+export default function DespacharProdsBod({
+  isOpen,
+  onOpen,
+  onClose,
+  totalProdcsBodega,
+  setTotalProdcsBodega,
+  displayedArticulos,
+  setDisplayedArticulos,
+}) {
   const toast = useToast();
-  const [totalProdcsBodega, setTotalProdcsBodega] = useState([]);
-  const [displayedArticulos, setDisplayedArticulos] = useState([]);
+  const [totalProdcsBodegaCopy, setTotalProdcsBodegaCopy] = useState([
+    ...totalProdcsBodega,
+  ]);
+  const [displayedArticulosCopy, setDisplayedArticulosCopy] = useState([
+    ...totalProdcsBodega,
+  ]);
   const [activeProdcs, setActiveProdcs] = useState([]);
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    getBodegaInfo();
-  }, []);
-
+  const [vitrinaSelected, setVitrinaSelected] = useState("");
+  const ciudadesVitrinas = useSelector(
+    (state) => state.vitrinaReducer.ciudadesVitrinas,
+  );
+  const totalVitrinas = Object.values(ciudadesVitrinas).flat();
+  const options = totalVitrinas
+    .sort((a, b) => a.localeCompare(b))
+    .map((city) => ({
+      value: city,
+    }));
   useEffect(() => {
     if (busqueda !== null) {
       Busqueda(busqueda);
@@ -57,71 +75,8 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
     onClose: onConfirmationModalClose,
   } = useDisclosure();
 
-  const getBodegaInfo = async () => {
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          Accept: "application/xml",
-        },
-      });
-      if (response.status == 200 && response.data) {
-        const xmlDoc = parseData(response.data);
-        setTotalProdcsBodega(() => {
-          const totalProds = getProductosBodega(xmlDoc);
-          const results = totalProds.filter(
-            (item) => item.cantidadEnBodega > 0,
-          );
-          return results;
-        });
-        setDisplayedArticulos(() => {
-          const totalProds = getProductosBodega(xmlDoc);
-          const results = totalProds.filter(
-            (item) => item.cantidadEnBodega > 0,
-          );
-          return results;
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching XML data:", error);
-    }
-  };
-
-  const getProductosBodega = (xml) => {
-    const productosDelNegocio = xml.querySelector("productosDelNegocio");
-    const arrProductosBodega = productosDelNegocio.querySelectorAll("producto");
-    const totalProdsBodegaArr = [];
-    for (let i = 0; i < arrProductosBodega.length; i++) {
-      const cantidadEnBodega =
-        arrProductosBodega[i]?.getElementsByTagName("cantidadEnBodega")[0]
-          .textContent;
-      const cantidadEnVitrinas =
-        arrProductosBodega[i]?.getElementsByTagName("cantidadEnVitrinas")[0]
-          .textContent;
-      const codigo =
-        arrProductosBodega[i]?.getElementsByTagName("codigo")[0].textContent;
-      const costo =
-        arrProductosBodega[i]?.getElementsByTagName("costo")[0].textContent;
-      const nombre =
-        arrProductosBodega[i]?.getElementsByTagName("nombre")[0].textContent;
-      const precio =
-        arrProductosBodega[i]?.getElementsByTagName("precio")[0].textContent;
-
-      totalProdsBodegaArr.push({
-        cantidadEnBodega,
-        cantidadEnVitrinas,
-        codigo,
-        costo,
-        nombre,
-        precio,
-      });
-    }
-
-    return totalProdsBodegaArr;
-  };
-
   const Busqueda = (textToSearch) => {
-    let result = totalProdcsBodega?.filter((element) => {
+    let result = totalProdcsBodegaCopy?.filter((element) => {
       if (
         element?.nombre
           ?.toString()
@@ -131,7 +86,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
         return element;
       }
     });
-    setDisplayedArticulos(result);
+    setDisplayedArticulosCopy(result);
   };
 
   const onBuscarChange = (e) => {
@@ -205,7 +160,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
   const despacharProdcs = async () => {
     const xmlData = generateProductsListXML(activeProdcs).toString();
     setLoading(true);
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/despacho?vitrina=${vitrina}`;
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos/despacho?vitrina=${vitrinaSelected}`;
     fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/xml" },
@@ -213,6 +168,95 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
     })
       .then((response) => {
         if (response.status == 200) {
+          setTotalProdcsBodegaCopy((prev) => {
+            let copy = prev ? [...prev] : [];
+            const resultado = copy.map((item1) => {
+              const matchingItems = activeProdcs.filter(
+                (item) => item.codigo === item1.codigo,
+              );
+              if (matchingItems.length > 0) {
+                const totalToSubtract = matchingItems.reduce(
+                  (sum, item) => sum + Number(item.cantidad),
+                  0,
+                );
+                const newCantidad =
+                  Number(item1.cantidadEnBodega) - totalToSubtract;
+                return {
+                  ...item1,
+                  cantidadEnBodega: newCantidad,
+                };
+              }
+              return item1;
+            });
+            return resultado;
+          });
+          setDisplayedArticulos((prev) => {
+            let copy = prev ? [...prev] : [];
+            const resultado = copy.map((item1) => {
+              const matchingItems = activeProdcs.filter(
+                (item) => item.codigo === item1.codigo,
+              );
+              if (matchingItems.length > 0) {
+                const totalToSubtract = matchingItems.reduce(
+                  (sum, item) => sum + Number(item.cantidad),
+                  0,
+                );
+                const newCantidad =
+                  Number(item1.cantidadEnBodega) - totalToSubtract;
+                return {
+                  ...item1,
+                  cantidadEnBodega: newCantidad,
+                };
+              }
+              return item1;
+            });
+            return resultado;
+          });
+          setDisplayedArticulosCopy((prev) => {
+            let copy = prev ? [...prev] : [];
+            const resultado = copy.map((item1) => {
+              const matchingItems = activeProdcs.filter(
+                (item) => item.codigo === item1.codigo,
+              );
+              if (matchingItems.length > 0) {
+                const totalToSubtract = matchingItems.reduce(
+                  (sum, item) => sum + Number(item.cantidad),
+                  0,
+                );
+                const newCantidad =
+                  Number(item1.cantidadEnBodega) - totalToSubtract;
+                return {
+                  ...item1,
+                  cantidadEnBodega: newCantidad,
+                };
+              }
+              return item1;
+            });
+            return resultado;
+          });
+          setTotalProdcsBodega((prev) => {
+            let copy = prev ? [...prev] : [];
+            const resultado = copy.map((item1) => {
+              const matchingItems = activeProdcs.filter(
+                (item) => item.codigo === item1.codigo,
+              );
+              if (matchingItems.length > 0) {
+                const totalToSubtract = matchingItems.reduce(
+                  (sum, item) => sum + Number(item.cantidad),
+                  0,
+                );
+                const newCantidad =
+                  Number(item1.cantidadEnBodega) - totalToSubtract;
+                return {
+                  ...item1,
+                  cantidadEnBodega: newCantidad,
+                };
+              }
+              return item1;
+            });
+            return resultado;
+          });
+
           toast({
             status: "success",
             description: "Despacho realizado con éxito!.",
@@ -222,9 +266,10 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
           });
         }
         setLoading(false);
-        onClose();
+        hanldeOnCloseDespahar();
       })
       .catch((error) => {
+        console.log(error);
         toast({
           status: "error",
           description: "Error despachando los productos",
@@ -242,9 +287,15 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
     }, 0);
   }, [activeProdcs]);
 
+  const hanldeOnCloseDespahar = () => {
+    onClose();
+    setActiveProdcs([]);
+    setVitrinaSelected("");
+  };
+
   return (
     <Box>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={hanldeOnCloseDespahar}>
         <ModalOverlay />
         <ModalContent
           borderRadius={"20px"}
@@ -297,7 +348,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                 justifyContent={"flex-start"}
               >
                 <Text
-                  minH={"40px"}
+                  height={"40px"}
                   w={"100%"}
                   maxW={"250px"}
                   textStyle={"RobotoSubtitleRegular"}
@@ -318,18 +369,21 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                   <RightArrowIcon height="100%" />
                 </Box>
 
-                <Text
-                  minH={"40px"}
-                  w={"100%"}
-                  maxW={"240px"}
-                  textStyle={"RobotoSubtitleRegular"}
-                  borderRadius={"5px"}
+                <Select
+                  height="40px"
+                  w="100%"
+                  maxW="240px"
+                  textStyle="RobotoSubtitleRegular"
+                  borderRadius="5px"
                   borderWidth={1}
-                  borderColor={"mainBg"}
-                  p={2}
+                  borderColor="mainBg"
+                  onChange={(e) => setVitrinaSelected(e.target.value)}
+                  required
                 >
-                  {vitrina}
-                </Text>
+                  {options !== null && options.length > 0
+                    ? options.map((opt) => <option>{opt.value}</option>)
+                    : "No hay vitrinas para mostrar"}
+                </Select>
               </Box>
             </Box>
             <Box
@@ -391,7 +445,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                         },
                       }}
                     >
-                      {displayedArticulos?.map((product, index) => {
+                      {displayedArticulosCopy?.map((product, index) => {
                         return ProductListItem(product, index);
                       })}
                     </UnorderedList>
@@ -533,12 +587,16 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
               w={"150px"}
               fontSize="14px"
               fontWeight="400"
-              onClick={onClose}
+              onClick={hanldeOnCloseDespahar}
             >
               Cancelar
             </StandardButton>
             <StandardButton
-              variant={activeProdcs?.length > 0 ? "RED_PRIMARY" : "DISABLED"}
+              variant={
+                activeProdcs?.length > 0 && vitrinaSelected !== ""
+                  ? "RED_PRIMARY"
+                  : "DISABLED"
+              }
               borderRadius="20px"
               py={"17px"}
               w={"150px"}
@@ -547,14 +605,22 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
               onClick={
                 activeProdcs?.length > 0 ? onConfirmationModalOpen : null
               }
-              disabled={activeProdcs?.length > 0 ? false : true}
-              cursor={activeProdcs?.length > 0 ? "pointer" : "not-allowed"}
+              disabled={
+                activeProdcs?.length > 0 && vitrinaSelected !== ""
+                  ? false
+                  : true
+              }
+              cursor={
+                activeProdcs?.length > 0 && vitrinaSelected !== ""
+                  ? "pointer"
+                  : "not-allowed"
+              }
               isLoading={loading}
             >
               Enviar
             </StandardButton>
             <ConfirmationMessage
-              text={`Se despacharán ${CantidadTotal} productos desde La Bodega hacia ${vitrina}. `}
+              text={`Se despacharán ${CantidadTotal} productos desde La Bodega hacia ${vitrinaSelected}. `}
               isOpen={isConfirmationModalOpen}
               onOpen={onConfirmationModalOpen}
               onClose={onConfirmationModalClose}
@@ -562,7 +628,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
               funcConfirmar={despacharProdcs}
               products={null}
               desde={"Bodega"}
-              hacia={vitrina}
+              hacia={vitrinaSelected}
             />
           </ModalFooter>
         </ModalContent>

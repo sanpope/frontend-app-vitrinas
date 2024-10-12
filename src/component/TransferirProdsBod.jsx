@@ -27,31 +27,45 @@ import colors from "../theme/colors";
 import Product from "./Product";
 import ConfirmationMessage from "./ConfirmationMessage";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
 
 import { parseData } from "../utils/xmlParse";
 import { generateProductsListXML } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
 import { useMemo } from "react";
 
-export default function Transferir({
-  vitrina,
+export default function TransferirProdsBod({
   isOpen,
   onOpen,
   onClose,
-  productsList,
-  setProductsList,
-  getInventarioInfo,
+  totalProdcsBodega,
+  setTotalProdcsBodega,
+  displayedArticulos,
+  setDisplayedArticulos,
 }) {
   const toast = useToast();
   const [desde, setDesde] = useState("Bodega");
-  const [hacia, setHacia] = useState(vitrina);
-  const [displayedArticulos, setDisplayedArticulos] = useState(productsList);
-  const [totalProdcsBodega, setTotalProdcsBodega] = useState([]);
+  const [hacia, setHacia] = useState("");
+  const [vitrinaSelected, setVitrinaSelected] = useState("");
+  const [totalProdcsBodegaCopy, setTotalProdcsBodegaCopy] = useState([
+    ...totalProdcsBodega,
+  ]);
+  const [displayedArticulosCopy, setDisplayedArticulosCopy] = useState([
+    ...totalProdcsBodega,
+  ]);
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
   const [productsToShow, setProductsToShow] = useState([]);
-
   const [activeProdcs, setActiveProdcs] = useState([]);
+  const ciudadesVitrinas = useSelector(
+    (state) => state.vitrinaReducer.ciudadesVitrinas,
+  );
+  const totalVitrinas = Object.values(ciudadesVitrinas).flat();
+  const options = totalVitrinas
+    .sort((a, b) => a.localeCompare(b))
+    .map((city) => ({
+      value: city,
+    }));
 
   useEffect(() => {
     if (busqueda !== null) {
@@ -61,14 +75,10 @@ export default function Transferir({
   }, [busqueda]);
 
   useEffect(() => {
-    getBodegaInfo();
-  }, []);
-
-  useEffect(() => {
-    if (totalProdcsBodega) {
+    if (totalProdcsBodegaCopy) {
       setActiveProdcs([]);
       setProductsToShow(
-        desde === "Bodega" ? totalProdcsBodega : displayedArticulos,
+        desde === "Bodega" ? totalProdcsBodegaCopy : displayedArticulosCopy,
       );
     }
   }, [desde]);
@@ -84,22 +94,22 @@ export default function Transferir({
     switch (desdeSelected) {
       case "Bodega":
         setDesde("Bodega");
-        setHacia(vitrina);
+        setHacia(vitrinaSelected);
         break;
-      case vitrina:
-        setDesde(vitrina);
+      case vitrinaSelected:
+        setDesde(vitrinaSelected);
         setHacia("Bodega");
         break;
       default:
         setDesde("Bodega");
-        setHacia(vitrina);
+        setHacia(vitrinaSelected);
         break;
     }
   };
 
   const Busqueda = (textToSearch) => {
     const tableToFilter =
-      desde === "Bodega" ? totalProdcsBodega : displayedArticulos;
+      desde === "Bodega" ? totalProdcsBodegaCopy : displayedArticulosCopy;
     let result = tableToFilter?.filter((element) => {
       if (
         element?.nombre?.toLowerCase().includes(textToSearch?.toLowerCase())
@@ -183,8 +193,9 @@ export default function Transferir({
     setLoading(true);
     const xmlData = generateProductsListXML(activeProdcs).toString();
 
-    const haciaVitrina = hacia === vitrina ? true : false;
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario/productos/transferencia?vitrina=${vitrina}&haciaVitrina=${haciaVitrina}`;
+    const haciaVitrina = hacia === vitrinaSelected ? true : false;
+
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos/transferencia?vitrina=${vitrinaSelected}&haciaVitrina=${haciaVitrina}`;
     if (xmlData.length > 0) {
       fetch(url, {
         method: "PUT",
@@ -194,43 +205,43 @@ export default function Transferir({
         .then((response) => {
           if (response.status == 200) {
             if (haciaVitrina) {
-              setProductsList((prev) => {
-                const copy = prev ? [...prev] : [];
-                for (let i = 0; i < activeProdcs?.length; i++) {
-                  const index = copy.findIndex(
-                    (prod) => prod.codigo === activeProdcs[i]?.codigo,
-                  );
-                  if (index !== -1) {
-                    let existencia = copy[index].existencia;
-                    let cantidad = activeProdcs[i].cantidad;
-                    copy[index].existencia =
-                      Number(existencia) + Number(cantidad);
-                  } else {
-                    getInventarioInfo(vitrina);
-                  }
-                }
-                return copy;
-              });
+              // setProductsList((prev) => {
+              //   const copy = prev ? [...prev] : [];
+              //   for (let i = 0; i < activeProdcs?.length; i++) {
+              //     const index = copy.findIndex(
+              //       (prod) => prod.codigo === activeProdcs[i]?.codigo,
+              //     );
+              //     if (index !== -1) {
+              //       let existencia = copy[index].existencia;
+              //       let cantidad = activeProdcs[i].cantidad;
+              //       copy[index].existencia =
+              //         Number(existencia) + Number(cantidad);
+              //     } else {
+              //       getInventarioInfo(vitrina);
+              //     }
+              //   }
+              //   return copy;
+              // });
             } else {
-              setProductsList((prev) => {
-                const copy = prev ? [...prev] : [];
-                for (let i = 0; i < activeProdcs?.length; i++) {
-                  const index = copy.findIndex(
-                    (prod) => prod.codigo === activeProdcs[i]?.codigo,
-                  );
-                  if (index !== -1) {
-                    let existencia = copy[index].existencia;
-                    let cantidad = activeProdcs[i].cantidad;
-                    if (Number(existencia) - Number(cantidad) > 0) {
-                      copy[index].existencia =
-                        Number(existencia) - Number(cantidad);
-                    } else {
-                      copy[index].existencia = 0;
-                    }
-                  }
-                }
-                return copy;
-              });
+              // setProductsList((prev) => {
+              //   const copy = prev ? [...prev] : [];
+              //   for (let i = 0; i < activeProdcs?.length; i++) {
+              //     const index = copy.findIndex(
+              //       (prod) => prod.codigo === activeProdcs[i]?.codigo,
+              //     );
+              //     if (index !== -1) {
+              //       let existencia = copy[index].existencia;
+              //       let cantidad = activeProdcs[i].cantidad;
+              //       if (Number(existencia) - Number(cantidad) > 0) {
+              //         copy[index].existencia =
+              //           Number(existencia) - Number(cantidad);
+              //       } else {
+              //         copy[index].existencia = 0;
+              //       }
+              //     }
+              //   }
+              //   return copy;
+              // });
             }
             toast({
               status: "success",
@@ -263,75 +274,75 @@ export default function Transferir({
     }
   };
 
-  const getBodegaInfo = async () => {
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
-    try {
-      const response = await axios.get(url, {
-        headers: {
-          Accept: "application/xml",
-        },
-      });
-      const xmlDoc = parseData(response.data);
-      if (response) {
-        const xmlDoc = parseData(response.data);
-        setTotalProdcsBodega(() => {
-          const totalProds = getProductosBodega(xmlDoc);
-          const results = totalProds.filter(
-            (item) => item.cantidadEnBodega > 0,
-          );
-          return results;
-        });
-        setProductsToShow(() => {
-          const totalProds = getProductosBodega(xmlDoc);
-          const results = totalProds.filter(
-            (item) => item.cantidadEnBodega > 0,
-          );
-          return results;
-        });
-      }
-    } catch (error) {
-      toast({
-        status: "error",
-        description: "Error obteniendo información",
-        duration: 3000,
-        position: "top-right",
-        isClosable: true,
-      });
-    }
-  };
+  // const getBodegaInfo = async () => {
+  //   const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
+  //   try {
+  //     const response = await axios.get(url, {
+  //       headers: {
+  //         Accept: "application/xml",
+  //       },
+  //     });
+  //     const xmlDoc = parseData(response.data);
+  //     if (response) {
+  //       const xmlDoc = parseData(response.data);
+  //       setTotalProdcsBodega(() => {
+  //         const totalProds = getProductosBodega(xmlDoc);
+  //         const results = totalProds.filter(
+  //           (item) => item.cantidadEnBodega > 0,
+  //         );
+  //         return results;
+  //       });
+  //       setProductsToShow(() => {
+  //         const totalProds = getProductosBodega(xmlDoc);
+  //         const results = totalProds.filter(
+  //           (item) => item.cantidadEnBodega > 0,
+  //         );
+  //         return results;
+  //       });
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       status: "error",
+  //       description: "Error obteniendo información",
+  //       duration: 3000,
+  //       position: "top-right",
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
 
-  const getProductosBodega = (xml) => {
-    const productosDelNegocio = xml.querySelector("productosDelNegocio");
-    const arrProductosBodega = productosDelNegocio.querySelectorAll("producto");
-    const totalProdsBodegaArr = [];
-    for (let i = 0; i < arrProductosBodega.length; i++) {
-      const cantidadEnBodega =
-        arrProductosBodega[i]?.getElementsByTagName("cantidadEnBodega")[0]
-          .textContent;
-      const cantidadEnVitrinas =
-        arrProductosBodega[i]?.getElementsByTagName("cantidadEnVitrinas")[0]
-          .textContent;
-      const codigo =
-        arrProductosBodega[i]?.getElementsByTagName("codigo")[0].textContent;
-      const costo =
-        arrProductosBodega[i]?.getElementsByTagName("costo")[0].textContent;
-      const nombre =
-        arrProductosBodega[i]?.getElementsByTagName("nombre")[0].textContent;
-      const precio =
-        arrProductosBodega[i]?.getElementsByTagName("precio")[0].textContent;
+  // const getProductosBodega = (xml) => {
+  //   const productosDelNegocio = xml.querySelector("productosDelNegocio");
+  //   const arrProductosBodega = productosDelNegocio.querySelectorAll("producto");
+  //   const totalProdsBodegaArr = [];
+  //   for (let i = 0; i < arrProductosBodega.length; i++) {
+  //     const cantidadEnBodega =
+  //       arrProductosBodega[i]?.getElementsByTagName("cantidadEnBodega")[0]
+  //         .textContent;
+  //     const cantidadEnVitrinas =
+  //       arrProductosBodega[i]?.getElementsByTagName("cantidadEnVitrinas")[0]
+  //         .textContent;
+  //     const codigo =
+  //       arrProductosBodega[i]?.getElementsByTagName("codigo")[0].textContent;
+  //     const costo =
+  //       arrProductosBodega[i]?.getElementsByTagName("costo")[0].textContent;
+  //     const nombre =
+  //       arrProductosBodega[i]?.getElementsByTagName("nombre")[0].textContent;
+  //     const precio =
+  //       arrProductosBodega[i]?.getElementsByTagName("precio")[0].textContent;
 
-      totalProdsBodegaArr.push({
-        cantidadEnBodega,
-        cantidadEnVitrinas,
-        codigo,
-        costo,
-        nombre,
-        precio,
-      });
-    }
+  //     totalProdsBodegaArr.push({
+  //       cantidadEnBodega,
+  //       cantidadEnVitrinas,
+  //       codigo,
+  //       costo,
+  //       nombre,
+  //       precio,
+  //     });
+  //   }
 
-    return totalProdsBodegaArr;
-  };
+  //   return totalProdsBodegaArr;
+  // };
 
   const CantidadTotal = useMemo(() => {
     return activeProdcs.reduce((arr, item) => {
@@ -414,7 +425,7 @@ export default function Transferir({
                 }}
               >
                 <option>{"Bodega"}</option>
-                <option>{vitrina}</option>
+                <option>{vitrinaSelected}</option>
               </Select>
               <Box
                 display={{ base: "none", lg: "flex" }}

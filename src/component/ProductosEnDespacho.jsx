@@ -91,7 +91,6 @@ export default function ProductosEnDespacho({
                   </Box>
                   <Box
                     w={"100%"}
-                    height={"100px"}
                     overflowY="scroll"
                     overflowX="hidden"
                     sx={{

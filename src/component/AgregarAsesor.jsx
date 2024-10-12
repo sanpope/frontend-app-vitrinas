@@ -172,7 +172,7 @@ export default function AgregarAsesor({
               </FormLabel>
               {/* <ReactSelect
                 options={options}
-                isMulti
+                
                 closeMenuOnSelect={false}
                 placeholder="Selecciona las vitrinas"
                 onChange={saveVitrinas}

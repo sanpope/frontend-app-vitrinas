@@ -79,7 +79,7 @@ body {
   padding-right: 17px;
 }
 
-/* .scroll-wrapper::-webkit-scrollbar {
+.scroll-wrapper::-webkit-scrollbar {
   width: 4px;
 }
 
@@ -98,7 +98,7 @@ body {
 .scroll-wrapper {
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
-} */
+}
 
 .scroll-hidden {
   height: 100%;
@@ -160,7 +160,10 @@ td {
   border-bottom: 1px solid #e5e5e5;
 }
 
-.inventTh,
+.inventTh {
+  text-align: center;
+}
+
 .ProdTh {
   text-align: center;
 }
@@ -192,7 +195,7 @@ td {
 }
 
 .ProdTh:nth-child(1) {
-  width: 18%;
+  width: 20%;
 }
 
 .ProdTh:nth-child(7),
@@ -200,16 +203,30 @@ td {
   width: 13%;
 }
 
-.ProdTd:nth-child(1) {
-  text-align: left;
+.ProdTd {
+  text-align: center;
 }
 
+.ProdTd:nth-child(1) {
+  text-align: left;
+  padding-left: 3%;
+}
+
+.AsesorTh {
+  text-align: center;
+}
+.AsesorTd:nth-child(1) {
+  text-align: left;
+  padding-left: 3%;
+}
+.AsesorTd:nth-child(2) {
+  align-items: justify;
+}
 
 .iconContainer {
   text-align: center;
   vertical-align: middle;
   height: 100%;
- 
 }
 
 .iconContainer svg {

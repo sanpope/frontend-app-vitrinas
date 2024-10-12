@@ -4,8 +4,7 @@ import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
 import SearchIcon from "../assets/images/SearchIcon";
 import IngresarProducto from "../component/IngresarProducto";
-import DespacharVitrinas from "../component/Despachar";
-import TransferirVitrinas from "../component/Transferir";
+
 import TablaProductosBodega from "../component/TablaProductosBodega";
 import axios from "axios";
 
@@ -13,6 +12,8 @@ import { HEADER_HEIGHT } from "../component/Header";
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 import { parseData } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
+import DespacharProdsBod from "../component/DespacharProdsBod";
+import TransferirProdsBod from "../component/TransferirProdsBod";
 
 const TOP_HEIGHT = 72;
 
@@ -208,7 +209,6 @@ export default function ProductosyBodega() {
             isClosable: true,
           });
         } else {
-          
           toast({
             status: "info",
             description: "El producto ya existe en la base de datos.",
@@ -233,7 +233,6 @@ export default function ProductosyBodega() {
   };
 
   const EditarProducto = async (productoAtualizado, handleOnClose) => {
-    
     const updadtedProduct = new URLSearchParams();
     updadtedProduct.append("nuevoNombre", `${productoAtualizado.nombre}`);
     updadtedProduct.append("nuevoCodigo", `${productoAtualizado.codigo}`);
@@ -317,7 +316,6 @@ export default function ProductosyBodega() {
   };
 
   const DeleteProducto = async (codigo) => {
-    
     const code = Number.parseInt(codigo);
     setIsLoading(true);
     try {
@@ -527,9 +525,10 @@ export default function ProductosyBodega() {
         bg={"white"}
         p={"1rem"}
       >
-        <Box>
+        <Box flex={1}>
           <TextInput
-            maxWidth="300px"
+            w={"100%"}
+            maxWidth="350px"
             placeholder={"Buscar"}
             leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
             onChange={(e) => onBuscarChange(e)}
@@ -659,16 +658,28 @@ export default function ProductosyBodega() {
         isLoading={isLoading}
         addProducto={createProducto}
       />
-      <DespacharVitrinas
-        isOpen={isSecondModalOpen}
-        onOpen={onSecondModalOpen}
-        onClose={onSecondModalClose}
-      />
-      <TransferirVitrinas
-        isOpen={isThirdModalOpen}
-        onOpen={onThirdModalOpen}
-        onClose={onThirdModalClose}
-      />
+      {isSecondModalOpen && (
+        <DespacharProdsBod
+          isOpen={isSecondModalOpen}
+          onOpen={onSecondModalOpen}
+          onClose={onSecondModalClose}
+          totalProdcsBodega={tablaProductos}
+          setTotalProdcsBodega={setTablaProductos}
+          displayedArticulos={displayedArticulos}
+          setDisplayedArticulos={setDisplayedArticulos}
+        />
+      )}
+      {isThirdModalOpen && (
+        <TransferirProdsBod
+          isOpen={isThirdModalOpen}
+          onOpen={onThirdModalOpen}
+          onClose={onThirdModalClose}
+          totalProdcsBodega={tablaProductos}
+          setTotalProdcsBodega={setTablaProductos}
+          displayedArticulos={displayedArticulos}
+          setDisplayedArticulos={setDisplayedArticulos}
+        />
+      )}
     </Box>
   );
 }
