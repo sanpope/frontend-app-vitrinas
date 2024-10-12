@@ -22,23 +22,33 @@ export default function Agregar({
   isOpen,
   onOpen,
   onClose,
-  funcAgregar,
+  Agregar,
   mensajeError,
   isLoading,
 }) {
   const [name, setName] = useState("");
-  const [city, setCity] = useState("Barranquilla");
-
-  const saveCity = (e) => {
-    setCity(e.target.value);
-  };
+  const [city, setCity] = useState("");
 
   const saveName = (e) => {
     setName(e);
   };
 
+  const saveCity = (e) => {
+    setCity(e.target.value);
+  };
+
+  const handleOnClose = () => {
+    setName("");
+    onClose();
+  };
+
+  const handleGuardar = () => {
+    Agregar(name);
+    handleOnClose();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleOnClose}>
       <ModalOverlay />
       <ModalContent borderRadius={"20px"}>
         <ModalHeader
@@ -85,7 +95,7 @@ export default function Agregar({
                 onChange={(e) => saveName(e)}
                 value={name}
               />
-              <FormLabel display="flex" alignItems="center" mt={3}>
+              {/* <FormLabel display="flex" alignItems="center" mt={3}>
                 <span
                   style={{
                     color: "red",
@@ -127,7 +137,7 @@ export default function Agregar({
                 <option>Pasto</option>
                 <option>Pereira</option>
                 <option>Villavicencio</option>
-              </Select>
+              </Select> */}
             </FormControl>
           </Box>
         </ModalBody>
@@ -140,20 +150,21 @@ export default function Agregar({
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            onClick={onClose}
+            onClick={handleOnClose}
           >
             Cancelar
           </StandardButton>
           <StandardButton
-            variant={"BLACK_PRIMARY"}
+            variant={name !== "" ? "BLACK_PRIMARY" : "DISABLED"}
             borderRadius="20px"
             py={"17px"}
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
             type={"submit"}
-            onClick={() => funcAgregar(city, name)}
-            isLoading={isLoading}
+            onClick={name !== "" ? handleGuardar : null}
+            disabled={name !== "" ? false : true}
+            cursor={name !== "" ? "pointer" : "not-allowed"}
           >
             Guardar
           </StandardButton>

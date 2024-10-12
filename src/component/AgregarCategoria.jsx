@@ -15,14 +15,30 @@ import {
 import TextInput from "../component/ui/textInput";
 import StandardButton from "../component/ui/buttons/standard";
 
-export default function AgregarCategoria({ isOpen, onOpen, onClose, Agregar }) {
+export default function AgregarCategoria({
+  isOpen,
+  onOpen,
+  onClose,
+  Agregar,
+  isLoading,
+}) {
   const [name, setName] = useState("");
 
   const saveName = (e) => {
     setName(e);
   };
+
+  const handleOnClose = () => {
+    setName("");
+    onClose();
+  };
+
+  const handleGuardar = () => {
+    Agregar(name);
+    handleOnClose();
+  };
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleOnClose}>
       <ModalOverlay />
       <ModalContent borderRadius={"20px"}>
         <ModalHeader
@@ -47,7 +63,7 @@ export default function AgregarCategoria({ isOpen, onOpen, onClose, Agregar }) {
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl onSubmit={Agregar}>
+            <Box width={"100%"}>
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -62,12 +78,12 @@ export default function AgregarCategoria({ isOpen, onOpen, onClose, Agregar }) {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Tecnología"
                 required
                 onChange={(e) => saveName(e)}
                 value={name}
               />
-            </FormControl>
+            </Box>
           </Box>
         </ModalBody>
 
@@ -79,18 +95,20 @@ export default function AgregarCategoria({ isOpen, onOpen, onClose, Agregar }) {
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            onClick={onClose}
+            onClick={handleOnClose}
           >
             Cancelar
           </StandardButton>
           <StandardButton
-            variant={"BLACK_PRIMARY"}
+            variant={name !== "" ? "BLACK_PRIMARY" : "DISABLED"}
             borderRadius="20px"
             py={"17px"}
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            type={"submit"}
+            onClick={name !== "" ? handleGuardar : null}
+            disabled={name !== "" ? false : true}
+            cursor={name !== "" ? "pointer" : "not-allowed"}
           >
             Guardar
           </StandardButton>

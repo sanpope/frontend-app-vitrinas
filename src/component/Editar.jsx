@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -20,21 +20,30 @@ export default function Agregar({
   isOpen,
   onOpen,
   onClose,
+  currentItem,
   Editar,
-  name,
-  setName,
-  city,
-  setCity,
   isLoading,
 }) {
+  const [name, setName] = useState("");
+  const [city, setCity] = useState();
+
+  useEffect(() => {
+    setName(currentItem);
+  }, [currentItem]);
+
   const saveName = (val) => {
     setName(val);
   };
   const saveCity = (val) => {
     setCity(val);
   };
+  const handleOnClick = () => {
+    setName(currentItem);
+    onClose();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleOnClick}>
       <ModalOverlay bg={"rgba(0, 0, 0, 0.2)"} />
       <ModalContent borderRadius={"20px"}>
         <ModalHeader
@@ -79,10 +88,9 @@ export default function Agregar({
                 required
                 onChange={(val) => saveName(val)}
                 value={name}
-                placeholder={name ? name : "Agrega nombre"}
               />
 
-              <Box display="flex" alignItems="center" w={"100%"}>
+              {/* <Box display="flex" alignItems="center" w={"100%"}>
                 <span
                   style={{
                     color: "red",
@@ -134,7 +142,7 @@ export default function Agregar({
                       {option}
                     </option>
                   ))}
-              </Select>
+              </Select> */}
             </Box>
           </Box>
         </ModalBody>
@@ -147,7 +155,7 @@ export default function Agregar({
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            onClick={onClose}
+            onClick={handleOnClick}
           >
             Cancelar
           </StandardButton>
@@ -161,9 +169,13 @@ export default function Agregar({
             fontSize="14px"
             fontWeight="400"
             type={"button"}
-            onClick={() => {
-              Editar(name, city);
-            }}
+            onClick={
+              name?.length > 0
+                ? () => {
+                    Editar(currentItem, name, handleOnClick);
+                  }
+                : null
+            }
             isLoading={isLoading}
           >
             Guardar Cambios

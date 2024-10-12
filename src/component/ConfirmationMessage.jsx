@@ -29,7 +29,6 @@ export default function ConfirmationMessage({
   funcConfirmar,
   focusRow,
   isLoading,
-  products = null,
 }) {
   const handleClick = async () => {
     await funcConfirmar(focusRow);

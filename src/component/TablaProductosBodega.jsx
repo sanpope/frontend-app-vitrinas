@@ -1,18 +1,19 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { Box, Text } from "@chakra-ui/react";
-
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import { Box, Text, useToast } from "@chakra-ui/react";
+import axios from "axios";
 import EditIcon from "../assets/images/EditIcon";
 import ConfirmationMessage from "./ConfirmationMessage";
 import UnionIcon from "../assets/images/UnionIcon";
 import TrashIcon from "../assets/images/TrashIcon";
 import WarningIcon from "../assets/images/WarningIcon";
-import Editar from "../component/Ingresar_Editar_Producto";
+import Editar from "./EditarProducto";
 import ListComponent from "../component/ListComponent";
 import Agregar from "./Agregar";
 import AgregarCategoria from "./AgregarCategoria";
 import Pagination from "../component/Pagination";
 import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
+import EditarProducto from "./EditarProducto";
 
 const HEADERS = [
   "Productos",
@@ -45,21 +46,363 @@ export default function TablaProductosBodega({
   isSixthModalOpen,
   onSixthModalOpen,
   onSixthModalClose,
-  lista1,
-  lista2,
+  listaProveedores,
+  setListaProveedores,
+  listaCategorias,
+  setListaCategorias,
   displayedArticulos,
   handleSortingClick,
   totalResults,
   currentPage,
   totalPages,
   getMasArticulos,
-  funcConfirmar,
+  productSelected,
+  setProductSelected,
+  editProducto,
+  deleteProducto,
 }) {
+  const toast = useToast();
   const [focusRow, setFocusRow] = useState(null);
+  const [parentHeight, setParentHeight] = useState(0);
+  const parentRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleDeleteButton = (art) => {
-    setFocusRow(art);
-    onSixthModalOpen();
+  useEffect(() => {
+    const updateHeight = () => {
+      if (parentRef.current) {
+        setParentHeight(parentRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  const crearCategoria = async (nuevaCategoria) => {
+    const category = new URLSearchParams();
+    category.append("nombre", `${nuevaCategoria}`);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias`,
+        category,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const index = listaCategorias?.findIndex(
+          (cat) => cat?.toLowerCase() === nuevaCategoria?.toLowerCase(),
+        );
+        if (index === -1) {
+          setListaCategorias((prev) => {
+            let copy = prev ? [...prev] : [];
+            copy.push(nuevaCategoria);
+            return copy;
+          });
+          toast({
+            status: "success",
+            description: "Categoría creado con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      } else {
+        toast({
+          status: "info",
+          description: "La categoría ya existe, no se agregó.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error creando la Categoría.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const editCategoria = async (currentCategoria, categoriaUpdated, onClose) => {
+    const uptCategoria = new URLSearchParams();
+    uptCategoria.append("nuevoNombreCategoria", `${categoriaUpdated}`);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias?nombreCategoria=${currentCategoria}`,
+        uptCategoria,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const index = listaCategorias?.findIndex(
+          (cat) => cat?.toLowerCase() === currentCategoria?.toLowerCase(),
+        );
+
+        if (index !== -1) {
+          setListaCategorias((prev) => {
+            let copy = prev ? [...prev] : [];
+            copy.splice(index, 1, categoriaUpdated);
+
+            return copy;
+          });
+          toast({
+            status: "success",
+            description: "Categoría actualizada con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      } else {
+        toast({
+          status: "info",
+          description: "La categoría ya existe, no se agregó.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error actualizando la Categoría.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+      onClose();
+    }
+  };
+
+  const deleteCategoria = async (currentCategoria) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias?nombreCategoria=${currentCategoria}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const index = listaCategorias?.findIndex(
+          (cat) => cat?.toLowerCase() === currentCategoria?.toLowerCase(),
+        );
+
+        if (index !== -1) {
+          setListaCategorias((prev) => {
+            let copy = prev ? [...prev] : [];
+
+            copy = copy.filter(
+              (cat) => cat?.toLowerCase() !== currentCategoria?.toLowerCase(),
+            );
+
+            return copy;
+          });
+          toast({
+            status: "success",
+            description: "Categoría eliminada con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error eliminando la Categoría.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const crearProveedor = async (nuevoProveedor) => {
+    const prov = new URLSearchParams();
+    prov.append("nombreProveedor", `${nuevoProveedor}`);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores`,
+        prov,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const index = listaProveedores?.findIndex(
+          (cat) => cat?.toLowerCase() === nuevoProveedor?.toLowerCase(),
+        );
+        if (index === -1) {
+          setListaProveedores((prev) => {
+            let copy = prev ? [...prev] : [];
+            copy.push(nuevoProveedor);
+            return copy;
+          });
+          toast({
+            status: "success",
+            description: "Proveedor creado con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      } else {
+        toast({
+          status: "info",
+          description: "El proveedor ya existe, no se agregó.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error creando el proveedor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const editProveedor = async (currentProveedor, proveedorUpdated, onClose) => {
+    const uptProveedor = new URLSearchParams();
+    uptProveedor.append("nuevoNombreProveedor", `${proveedorUpdated}`);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores?nombreProveedor=${currentProveedor}`,
+        uptProveedor,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const index = listaProveedores?.findIndex(
+          (prov) => prov?.toLowerCase() === currentProveedor?.toLowerCase(),
+        );
+
+        if (index !== -1) {
+          setListaProveedores((prev) => {
+            let copy = prev ? [...prev] : [];
+            copy.splice(index, 1, proveedorUpdated);
+            return copy;
+          });
+          toast({
+            status: "success",
+            description: "Proveedor actualizado con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      } else {
+        toast({
+          status: "info",
+          description: "El proveedor ya existe, no se agregó.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error actualizando el Proveedor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+      onClose();
+    }
+  };
+
+  const deleteProveedor = async (currentProveedor) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores?nombreProveedor=${currentProveedor}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const index = listaProveedores?.findIndex(
+          (cat) => cat?.toLowerCase() === currentProveedor?.toLowerCase(),
+        );
+        if (index !== -1) {
+          setListaProveedores((prev) => {
+            let copy = prev ? [...prev] : [];
+
+            copy = copy.filter(
+              (prov) => prov?.toLowerCase() !== currentProveedor?.toLowerCase(),
+            );
+            return copy;
+          });
+          toast({
+            status: "success",
+            description: "Proveedor eliminado con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error eliminando el proveedor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -69,6 +412,7 @@ export default function TablaProductosBodega({
         bgColor={"white"}
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
+        ref={parentRef}
       >
         <Contenedor>
           <thead className="">
@@ -154,12 +498,19 @@ export default function TablaProductosBodega({
                         }}
                       ></span>
                       <EditIcon
-                        onClick={onSecondModalOpen}
+                        onClick={() => {
+                          setProductSelected(articulo);
+                          onSecondModalOpen();
+                        }}
                         width="17px"
                         height="17px"
                       />
                       <TrashIcon
-                        onClick={() => handleDeleteButton(articulo)}
+                        onClick={() => {
+                          setFocusRow(articulo?.codigo);
+
+                          onSixthModalOpen();
+                        }}
                         width="17px"
                         height="17px"
                       />
@@ -174,13 +525,23 @@ export default function TablaProductosBodega({
                 <td
                   colSpan={HEADERS.length}
                   style={{
+                    height: `${parentHeight - 80}px`,
                     textAlign: "center",
                     verticalAlign: "middle",
-                    padding: "20px",
                     color: "grey",
                   }}
                 >
-                  No se encontraron productos
+                  <Text
+                    display={"flex"}
+                    height={"100%"}
+                    width={{ base: "50%", lg: "100%" }}
+                    color={"grey.placeholder"}
+                    textStyle={"RobotoBody"}
+                    justifyContent={{ base: "flex-start", lg: "center" }}
+                    alignItems={"center"}
+                  >
+                    No se encontraron productos
+                  </Text>
                 </td>
               </tr>
             </tbody>
@@ -195,20 +556,24 @@ export default function TablaProductosBodega({
         isFirstModalOpen={isThirdModalOpen}
         onFirstModalOpen={onThirdModalOpen}
         onFirstModalClose={onThirdModalClose}
-        lista={lista1}
+        lista={listaProveedores}
         isSecondModalOpen={isFifthModalOpen}
         onSecondModalOpen={onFifthModalOpen}
         onSixthModalClose={onFifthModalClose}
-        /* Modal que abre el modal Agregar Proveedor */
-        Children={
-          <Agregar
-            isOpen={isFifthModalOpen}
-            onOpen={onFifthModalOpen}
-            onClose={onFifthModalClose}
-            desc={"Proveedor"}
-            desc2={"Nombre del Proveedor"}
-          />
-        }
+        isLoading={isLoading}
+        funcionEditar={editProveedor}
+        funcionEliminar={deleteProveedor}
+      />
+      {/* Modal que abre el modal Agregar Proveedor*/}
+
+      <Agregar
+        isOpen={isFifthModalOpen}
+        onOpen={onFifthModalOpen}
+        onClose={onFifthModalClose}
+        desc={"Proveedor"}
+        desc2={"Nombre del Proveedor"}
+        isLoading={isLoading}
+        Agregar={crearProveedor}
       />
 
       {/* Modal que abre la Lista de Categorias */}
@@ -218,24 +583,30 @@ export default function TablaProductosBodega({
         isFirstModalOpen={isFourthModalOpen}
         onFirstModalOpen={onFourthModalOpen}
         onFirstModalClose={onFourthModalClose}
-        lista={lista2}
+        lista={listaCategorias}
         isSecondModalOpen={isFirstModalOpen}
         onSecondModalOpen={onFirstModalOpen}
         onSixthModalClose={onFirstModalClose}
-        /* Modal que abre el modal Agregar Categoria */
-        Children={
-          <AgregarCategoria
-            isOpen={isFirstModalOpen}
-            onOpen={onFirstModalOpen}
-            onClose={onFirstModalClose}
-          />
-        }
+        isLoading={isLoading}
+        funcionEditar={editCategoria}
+        funcionEliminar={deleteCategoria}
+      />
+      {/* Modal que abre el modal Agregar Categoria */}
+      <AgregarCategoria
+        isOpen={isFirstModalOpen}
+        onOpen={onFirstModalOpen}
+        onClose={onFirstModalClose}
+        desc={"Categoría"}
+        desc2={"Nombre de la Categoría"}
+        isLoading={isLoading}
+        Agregar={crearCategoria}
       />
 
-      {/*Modal para Eliminar*/}
+      {/*Modal para Eliminar Producto*/}
+
       <ConfirmationMessage
         icon={<WarningIcon />}
-        text={"¿Estás seguro que desea eliminar a este producto?"}
+        text={`¿Estás seguro que desea eliminar ${""}`}
         text2={
           "Esta cción eliminará permanentemente los registros de este producto de tu sistema"
         }
@@ -244,17 +615,22 @@ export default function TablaProductosBodega({
         onOpen={onSixthModalOpen}
         onClose={onSixthModalClose}
         focusRow={focusRow}
-        funcConfirmar={funcConfirmar}
-        products={null}
+        funcConfirmar={deleteProducto}
       />
-
       {/* Modal para Editar Producto */}
-      <Editar
-        isOpen={isSecondModalOpen}
-        onOpen={onSecondModalOpen}
-        onClose={onSecondModalClose}
-      />
 
+      {isSecondModalOpen && (
+        <EditarProducto
+          isOpen={isSecondModalOpen}
+          onOpen={onSecondModalOpen}
+          onClose={onSecondModalClose}
+          listaCategorias={listaCategorias}
+          listaProveedores={listaProveedores}
+          producto={productSelected}
+          setProducto={setProductSelected}
+          editProducto={editProducto}
+        />
+      )}
       <BottomTable
         currentPage={currentPage}
         totalPages={totalPages}

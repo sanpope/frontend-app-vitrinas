@@ -336,9 +336,6 @@ export default function Visitas() {
 
   const setReversionVisita = async (idVisita) => {
     const id = parseInt(idVisita);
-    console.log(totalVisitas);
-    console.log(totalMovivmientos);
-    console.log(totalCorrecciones);
 
     setIsLoading(true);
 
@@ -565,7 +562,6 @@ export default function Visitas() {
             )
           }
         />
-        {console.log(totalVisitas)}
 
         <VisitaContainer
           id={"movContainer"}

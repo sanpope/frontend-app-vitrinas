@@ -78,7 +78,7 @@ export default function TablaVentas({
               ))}
             </tr>
           </thead>
-          {console.log(displayedArticulos)}
+         
           {displayedArticulos !== null && displayedArticulos?.length > 0 ? (
             <tbody>
               {displayedArticulos?.map((articulo, articuloIndex) => {

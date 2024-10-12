@@ -7,7 +7,7 @@ import ConfirmationMessage from "./ConfirmationMessage";
 import UnionIcon from "../assets/images/UnionIcon";
 import TrashIcon from "../assets/images/TrashIcon";
 import WarningIcon from "../assets/images/WarningIcon";
-import Editar from "../component/Ingresar_Editar_Producto";
+//import Editar from "../component/Ingresar_Editar_Producto";
 import ListComponent from "../component/ListComponent";
 import Agregar from "./Agregar";
 import AgregarCategoria from "./AgregarCategoria";

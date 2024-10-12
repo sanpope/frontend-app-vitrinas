@@ -99,7 +99,7 @@ export default function AgregarAsesor({
     // saveVitrinas([]);
   };
 
-  const checkFlieds = () => {
+  const checkFileds = () => {
     if (
       name?.length > 0 &&
       user?.length > 0 &&
@@ -260,16 +260,16 @@ export default function AgregarAsesor({
             Cancelar
           </StandardButton>
           <StandardButton
-            variant={checkFlieds() ? "RED_PRIMARY" : "DISABLED"}
+            variant={checkFileds() ? "RED_PRIMARY" : "DISABLED"}
             borderRadius="20px"
             py={"17px"}
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
             type={"button"}
-            onClick={checkFlieds() ? handleOnClik : null}
-            disabled={checkFlieds() ? false : true}
-            cursor={checkFlieds() ? "pointer" : "not-allowed"}
+            onClick={checkFileds() ? handleOnClik : null}
+            disabled={checkFileds() ? false : true}
+            cursor={checkFileds() ? "pointer" : "not-allowed"}
             isLoading={isLoading}
           >
             Agregar

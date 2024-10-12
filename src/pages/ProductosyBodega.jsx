@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, list, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, list, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
 import SearchIcon from "../assets/images/SearchIcon";
-import IngresarProducto from "../component/Ingresar_Editar_Producto";
-import Despachar from "../component/Despachar";
-import Transferir from "../component/Transferir";
+import IngresarProducto from "../component/IngresarProducto";
+import DespacharVitrinas from "../component/Despachar";
+import TransferirVitrinas from "../component/Transferir";
 import TablaProductosBodega from "../component/TablaProductosBodega";
 import axios from "axios";
 
@@ -17,6 +17,7 @@ import { capitalizeFirstLetter } from "../utils/formatting";
 const TOP_HEIGHT = 72;
 
 export default function ProductosyBodega() {
+  const toast = useToast();
   const [busqueda, setBusqueda] = useState(null);
   const [tablaProductos, setTablaProductos] = useState([]);
   const [displayedArticulos, setDisplayedArticulos] = useState([]);
@@ -29,6 +30,8 @@ export default function ProductosyBodega() {
   const totalPages = Math.ceil(tablaProductos?.length / rowsToShow);
   const [totalProveedores, setTotalProveedores] = useState(null);
   const [totalCategorias, setTotalCategorias] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [productSelected, setProductSelected] = useState(null);
 
   useEffect(() => {
     getInventarioInfo();
@@ -152,6 +155,223 @@ export default function ProductosyBodega() {
         return content === "" ? null : content;
       })
       .filter((category) => category !== null);
+  };
+
+  const createProducto = async (newProducto, cerrar) => {
+    const nuevoProducto = new URLSearchParams();
+    nuevoProducto.append("nombre", `${newProducto.nombre}`);
+    nuevoProducto.append("codigo", `${newProducto.codigo}`);
+    nuevoProducto.append("precio", `${newProducto.precio}`);
+    nuevoProducto.append("costo", `${newProducto.costo}`);
+    nuevoProducto.append("cantidadEnBodega", `${newProducto.cantidad}`);
+    nuevoProducto.append("categoria", `${newProducto.categoria}`);
+    nuevoProducto.append("proveedor", `${newProducto.proveedor}`);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`,
+        nuevoProducto,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        const newProd = {
+          ...newProducto,
+          cantidadEnVitrinas: 0,
+          codigo: newProducto.codigo.toString(),
+        };
+
+        const index = tablaProductos?.findIndex(
+          (prod) => prod.codigo == newProd.codigo,
+        );
+
+        if (index === -1) {
+          setTablaProductos((prev) => {
+            const copy = [...(prev || []), newProd];
+            return copy;
+          });
+          setDisplayedArticulos((prev) => {
+            const copy = [...(prev || []), newProd];
+            return copy;
+          });
+
+          toast({
+            status: "success",
+            description: "Producto creado con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        } else {
+          
+          toast({
+            status: "info",
+            description: "El producto ya existe en la base de datos.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error creando el Producto.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+      cerrar();
+    }
+  };
+
+  const EditarProducto = async (productoAtualizado, handleOnClose) => {
+    
+    const updadtedProduct = new URLSearchParams();
+    updadtedProduct.append("nuevoNombre", `${productoAtualizado.nombre}`);
+    updadtedProduct.append("nuevoCodigo", `${productoAtualizado.codigo}`);
+    updadtedProduct.append("nuevoPrecio", `${productoAtualizado.precio}`);
+    updadtedProduct.append("nuevoCosto", `${productoAtualizado.costo}`);
+    updadtedProduct.append(
+      "nuevaCantEnBodega",
+      `${productoAtualizado.cantidad}`,
+    );
+    updadtedProduct.append("nuevaCategoria", `${productoAtualizado.categoria}`);
+    updadtedProduct.append("nuevoProveedor", `${productoAtualizado.proveedor}`);
+
+    const code = Number.parseInt(productSelected?.codigo);
+    setIsLoading(true);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos?codigo=${code}`,
+        updadtedProduct,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status == 200 && response.data) {
+        const index = tablaProductos?.findIndex(
+          (prod) => prod.codigo === productSelected?.codigo?.toString(),
+        );
+        const updProd = {
+          nombre: productoAtualizado.nombre,
+          codigo: productoAtualizado.codigo,
+          precio: productoAtualizado.precio,
+          costo: productoAtualizado.costo,
+          cantidadEnBodega: productoAtualizado.cantidad,
+          cantidadEnVitrinas: productSelected?.cantidadEnVitrinas,
+          proveedor: productoAtualizado.proveedor,
+          categoria: productoAtualizado.categoria,
+        };
+
+        if (index !== -1) {
+          setTablaProductos((prev) => {
+            const copy = [...prev];
+            copy[index] = updProd;
+            return copy;
+          });
+
+          setDisplayedArticulos((prev) => {
+            const copy = [...prev];
+            const index = copy.findIndex(
+              (prod) => prod.codigo === productSelected?.codigo?.toString(),
+            );
+            if (index !== -1) {
+              copy[index] = updProd;
+            }
+            return copy;
+          });
+
+          toast({
+            status: "success",
+            description: "Producto editado con éxito!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error editando el producto.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      handleOnClose();
+      setIsLoading(false);
+      setProductSelected(null);
+    }
+  };
+
+  const DeleteProducto = async (codigo) => {
+    
+    const code = Number.parseInt(codigo);
+    setIsLoading(true);
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos?codigo=${code}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status == 200) {
+        const index = tablaProductos?.findIndex(
+          (prod) => prod.codigo === codigo,
+        );
+
+        if (index !== -1) {
+          setTablaProductos((prev) => {
+            const copy = [...prev];
+            const totalResults = copy.filter((prod) => prod.codigo !== codigo);
+            return totalResults;
+          });
+
+          setDisplayedArticulos((prev) => {
+            const copy = [...prev];
+            const index = copy.findIndex((prod) => prod.codigo === codigo);
+            if (index !== -1) {
+              const totalResults = copy.filter(
+                (prod) => prod.codigo !== codigo,
+              );
+              return totalResults;
+            }
+          });
+          toast({
+            status: "success",
+            description: "Producto eliminado con éxito!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error eliminando el producto.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const {
@@ -281,13 +501,6 @@ export default function ProductosyBodega() {
     );
   };
 
-  const handleConfirmarDelete = (Prod) => {
-    const codigoProd = Prod.Codigo;
-    let copy = [...displayedArticulos];
-    let prodToDelete = copy.filter((p) => p.Codigo != codigoProd);
-    setTablaProductos(prodToDelete);
-  };
-
   React.useEffect(() => {
     getMasArticulos(1);
   }, []);
@@ -307,29 +520,30 @@ export default function ProductosyBodega() {
     >
       <Box
         display={"flex"}
-        flexDirection={{ base: "column", lg: "row" }}
-        justifyContent={{ base: "flex-start", lg: "space-around" }}
-        alignItems={{ base: "flex-start", lg: "center" }}
+        flexDirection={{ base: "column-reverse", xl: "row" }}
+        justifyContent={{ base: "flex-start", xl: "space-between" }}
+        alignItems={{ base: "flex-start", xl: "center" }}
         w={"100%"}
         bg={"white"}
         p={"1rem"}
       >
-        <TextInput
-          maxWidth="300px"
-          placeholder={"Buscar"}
-          leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
-          onChange={(e) => onBuscarChange(e)}
-          value={busqueda}
-        />
+        <Box>
+          <TextInput
+            maxWidth="300px"
+            placeholder={"Buscar"}
+            leftIcon={<SearchIcon width={"15px"} height={"15px"} />}
+            onChange={(e) => onBuscarChange(e)}
+            value={busqueda}
+          />
+        </Box>
 
         <Box
-          w={"100%"}
           display={"flex"}
-          order={{ base: "1", lg: "2" }}
           flexDirection={{ base: "column", md: "row" }}
           justifyContent={{ base: "flex-start", md: "flex-end" }}
           alignItems={{ base: "flex-start", md: "center" }}
-          columnGap={"1rem"}
+          gap={"1rem"}
+          py={2}
         >
           <StandardButton
             variant={"WHITE_RED"}
@@ -422,14 +636,17 @@ export default function ProductosyBodega() {
             handleSortingClick={handleSortingClick}
             totalResults={totalResults}
             currentPage={currentPage}
-            totalPages={
-              displayedArticulos ? displayedArticulos.length / rowsToShow : 0
-            }
+            // totalPages={displayedArticulos ? displayedArticulos.length : 0}
             getMasArticulos={getMasArticulos}
-            funcConfirmar={handleConfirmarDelete}
-            lista1={totalProveedores ? totalProveedores : []}
-            lista2={totalCategorias ? totalCategorias : []}
+            listaProveedores={totalProveedores ? totalProveedores : []}
+            setListaProveedores={setTotalProveedores}
+            listaCategorias={totalCategorias ? totalCategorias : []}
+            setListaCategorias={setTotalCategorias}
             displayedArticulos={displayedArticulos ? displayedArticulos : []}
+            productSelected={productSelected}
+            setProductSelected={setProductSelected}
+            editProducto={EditarProducto}
+            deleteProducto={DeleteProducto}
           />
         }
       </Box>
@@ -437,13 +654,17 @@ export default function ProductosyBodega() {
         isOpen={isFirstModalOpen}
         onOpen={onFirstModalOpen}
         onClose={onFirstModalClose}
+        listaCategorias={totalCategorias}
+        listaProveedores={totalProveedores}
+        isLoading={isLoading}
+        addProducto={createProducto}
       />
-      <Despachar
+      <DespacharVitrinas
         isOpen={isSecondModalOpen}
         onOpen={onSecondModalOpen}
         onClose={onSecondModalClose}
       />
-      <Transferir
+      <TransferirVitrinas
         isOpen={isThirdModalOpen}
         onOpen={onThirdModalOpen}
         onClose={onThirdModalClose}

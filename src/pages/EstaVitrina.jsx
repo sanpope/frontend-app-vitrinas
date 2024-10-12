@@ -134,7 +134,7 @@ export default function EstaVitrina() {
           },
         },
       );
-      console.log(response);
+     
       if (response.status == 200 && response.data) {
         const copy = { ...ciudadesVitrinas };
         const updatedCityArray = [...copy[city]];

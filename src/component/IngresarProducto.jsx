@@ -20,24 +20,23 @@ import StandardButton from "./ui/buttons/standard";
 import NumberInputFloat from "./NumberInputFloat";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
-export default function EditarProducto({
-  desc,
+export default function IngresarProducto({
+  desc = "Ingresar Nuevo",
   isOpen,
   onOpen,
   onClose,
   listaCategorias,
   listaProveedores,
   isLoading,
-  producto,
-  editProducto,
+  addProducto,
 }) {
-  const [nombre, setNombre] = useState(producto?.nombre);
-  const [codigo, setCodigo] = useState(producto?.codigo);
-  const [costo, setCosto] = useState(producto?.costo);
-  const [precio, setPrecio] = useState(producto?.precio);
-  const [cantidad, setCantidad] = useState(producto?.cantidadEnBodega);
-  const [categoria, setCategoria] = useState(producto?.categoria);
-  const [proveedor, setProveedor] = useState(producto?.proveedor);
+  const [nombre, setNombre] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [costo, setCosto] = useState(0);
+  const [precio, setPrecio] = useState(0);
+  const [cantidad, setCantidad] = useState(0);
+  const [categoria, setCategoria] = useState("");
+  const [proveedor, setProveedor] = useState("");
 
   const saveName = (val) => {
     setNombre(val);
@@ -80,7 +79,7 @@ export default function EditarProducto({
   };
 
   const handleSubmit = () => {
-    editProducto(
+    addProducto(
       {
         nombre,
         codigo,
@@ -92,16 +91,18 @@ export default function EditarProducto({
       },
       handleOnClose,
     );
+
+    handleOnClose();
   };
 
   const handleOnClose = () => {
-    setNombre(producto?.nombre);
-    setCodigo(producto?.codigo);
-    setCosto(producto?.costo);
-    setPrecio(producto?.precio);
-    setCantidad(producto?.cantidadEnBodega);
-    setCategoria(producto?.categoria);
-    setProveedor(producto?.proveedor);
+    setNombre("");
+    setCodigo("");
+    setCosto(0);
+    setPrecio(0);
+    setCantidad(0);
+    setCategoria("");
+    setProveedor("");
 
     onClose();
   };
@@ -117,7 +118,7 @@ export default function EditarProducto({
           borderTopRadius="20px"
         >
           <Text textStyle={"RobotoSubtitle"} color={"white"}>
-            Editar Producto
+            {desc} Producto
           </Text>
         </ModalHeader>
         <ModalBody
@@ -147,7 +148,7 @@ export default function EditarProducto({
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="Camisetas"
+                placeholder="Ingrese Nombre del producto"
                 required
                 onChange={(e) => saveName(e)}
                 value={nombre}
@@ -175,6 +176,7 @@ export default function EditarProducto({
                 value={codigo}
               >
                 <NumberInputField
+                  placeholder={"1234"}
                   fontSize={"16px"}
                   textAlign={"left"}
                   w={"100%"}
@@ -281,22 +283,20 @@ export default function EditarProducto({
                 </span>
                 Proveedor
               </FormLabel>
-              <Select
-                required
-                onChange={(e) => saveProveedor(e)}
-                placeholder={
-                  listaProveedores && listaProveedores?.length > 0
-                    ? listaProveedores[0]
-                    : "No se encontraron Proveedores"
-                }
-              >
-                {listaProveedores && listaProveedores.length > 0
-                  ? listaProveedores.map((prov, index) => (
-                      <option key={index} value={prov}>
-                        {prov}
-                      </option>
-                    ))
-                  : null}
+              <Select required onChange={(e) => saveProveedor(e)}>
+                {listaProveedores && listaProveedores.length > 0 ? (
+                  listaProveedores.map((prov, index) => (
+                    <option key={index} value={prov}>
+                      {prov}
+                    </option>
+                  ))
+                ) : (
+                  <option>
+                    <Text color={"grey.placeholder"}>
+                      No existen Proveedores
+                    </Text>
+                  </option>
+                )}
               </Select>
             </Box>
           </Box>

@@ -1,24 +1,15 @@
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
 import EditIcon from "../assets/images/EditIcon";
 import TrashIcon from "../assets/images/TrashIcon";
-import WarningIcon from "../assets/images/WarningIcon";
-import ConfirmationMessage from "./ConfirmationMessage";
-import Editar from "../component/Editar";
 
-export default function Product({ desc, elemento }) {
-  const {
-    isOpen: isFirstModalOpen,
-    onOpen: onFirstModalOpen,
-    onClose: onFirstModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isSecondModalOpen,
-    onOpen: onSecondModalOpen,
-    onClose: onSecondModalClose,
-  } = useDisclosure();
+export default function ListaItem({
+  desc,
+  setCurrentItem,
+  onEditarModalOpen,
+  onEliminarModalOpen,
+}) {
   return (
     <Box
       w={"100%"}
@@ -26,32 +17,31 @@ export default function Product({ desc, elemento }) {
       alignItems={"center"}
       justifyContent={"space-between"}
       py={3}
-      
     >
-      <Text textStyle={"RobotoBody"} color={"black"}>{desc}</Text>
-      <Box display={"flex"} justifyContent={"center"} alignItems={"center"} gap={"5px"}>
-        <EditIcon width={"20px"} height={"17px"} onClick={onFirstModalOpen} />
-        <Editar
-          isOpen={isFirstModalOpen}
-          onOpen={onFirstModalOpen}
-          onClose={onFirstModalClose}
-          onClick={onFirstModalClose}
-          desc={"información del Proveedor"}
-          desc2={"Nombre del proveedor"}
+      <Text textStyle={"RobotoBody"} color={"black"}>
+        {desc}
+      </Text>
+      <Box
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        gap={"5px"}
+      >
+        <EditIcon
+          width={"20px"}
+          height={"17px"}
+          onClick={() => {
+            setCurrentItem(desc);
+            onEditarModalOpen();
+          }}
         />
-        <TrashIcon width={"20px"} height={"17px"} onClick={onSecondModalOpen} />
-        <ConfirmationMessage
-          isOpen={isSecondModalOpen}
-          onOpen={onSecondModalOpen}
-          onClose={onSecondModalClose}
-          icon={<WarningIcon />}
-          text={`¿Estás seguro que desea eliminar este ${elemento}?`}
-          text2={
-            "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-          }
-          colorText2={"red.100"}
-          buttonText={"Continuar"}
-          products={null}
+        <TrashIcon
+          width={"20px"}
+          height={"17px"}
+          onClick={() => {
+            setCurrentItem(desc);
+            onEliminarModalOpen();
+          }}
         />
       </Box>
     </Box>
