@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, HStack, ListItem, OrderedList, Text } from "@chakra-ui/react";
+import { Box, HStack, ListItem, OrderedList, Text, VStack } from "@chakra-ui/react";
 import axios from "axios";
 
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
@@ -339,6 +339,7 @@ export default function HomePage() {
         ¡Hola {name}, bienvenido! 👋🏻
       </Text>
       <Box display="grid" gridGap={"1rem"} className="dashboard-grid-container">
+      
         <Container
           height={{ base: "150px", md: ContainerHeight + "px" }}
           minHeight={{ base: "170px", md: "225px" }}
@@ -375,7 +376,7 @@ export default function HomePage() {
                   >
                     {ventaDelMes != null
                       ? `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
-                      : "No se cuenta con información registrada."}
+                      : <Text color={"grey.placeholder"}>No se cuenta con información registrada.</Text>}
                   </Text>
                 </HStack>
                 {ventaDelMes != null && ventaDelMes?.color != "red.100" ? (

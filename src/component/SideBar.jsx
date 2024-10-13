@@ -281,8 +281,8 @@ export default function SideBar({ setLoggedIn }) {
                       : "BLACK_PRIMARY"
                   }
                   borderRadius="30px"
-                  w="50px"
-                  h="50px"
+                  w="45px"
+                  h="45px"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"

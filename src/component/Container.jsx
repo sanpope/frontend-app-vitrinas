@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 
 export default function Container({
   bg = "white",
@@ -19,7 +19,7 @@ export default function Container({
       position={"relative"}
       bg={bg}
       borderRadius={"20px"}
-      p={2}
+      p={3}
       display="flex"
       flexDir={"column"}
       width={width}
@@ -27,17 +27,19 @@ export default function Container({
       {...props}
     >
       <Box display="flex" alignItems={"flex-start"} columnGap="6px">
-        {icon}
-        {title ? (
-          <Text
-            textStyle={{ base: "RobotoBodyBold", md: "RobotoSubtitleBold" }}
-            color={color}
-            whiteSpace={withLineBreaks ? "pre-line" : "normal"}
-            lineHeight={lineHeight}
-          >
-            {title}
-          </Text>
-        ) : null}
+        <HStack display={"flex"} spacing={"5px"}>
+          {icon}
+          {title ? (
+            <Text
+              textStyle={{ base: "RobotoBodyBold", md: "RobotoSubtitleBold" }}
+              color={color}
+              whiteSpace={withLineBreaks ? "pre-line" : "normal"}
+              lineHeight={lineHeight}
+            >
+              {title}
+            </Text>
+          ) : null}
+        </HStack>
       </Box>
       <Box display="flex" flexGrow={1} height={heightChildren} w={"100%"} p={1}>
         {children}
