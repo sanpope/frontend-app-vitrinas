@@ -14,28 +14,23 @@ import {
 } from "@chakra-ui/react";
 import { Select as ReactSelect } from "chakra-react-select";
 
-import TextInput from "../component/ui/textInput";
-import StandardButton from "../component/ui/buttons/standard";
-import { useSelector, useDispatch } from "react-redux";
+import TextInput from "./ui/textInput";
+import StandardButton from "./ui/buttons/standard";
 
-export default function AgregarAsesor({
-  vitrinaName,
+export default function AgregarAsesorVitrinas({
   isOpen,
   onOpen,
   onClose,
   asesor,
-  setAsesor,
   addAsesor,
   isLoading,
+  ciudadesVitrinas,
 }) {
   const [name, setName] = useState("");
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [habilitado, setHabilitado] = useState(false);
-  const [selectedVitrinas, setSelectedVitrinas] = useState([vitrinaName]);
-  const ciudadesVitrinas = useSelector(
-    (state) => state.vitrinaReducer.ciudadesVitrinas,
-  );
+  const [selectedVitrinas, setSelectedVitrinas] = useState([]);
 
   const totalVitrinas = Object.values(ciudadesVitrinas).flat();
 
@@ -58,13 +53,13 @@ export default function AgregarAsesor({
   };
 
   const saveHabilitado = (e) => {
-    setHabilitado(e === "true" ? true : false);
+    setHabilitado(e === "true" || true ? true : false);
   };
 
   const saveVitrinas = (selectedOptions) => {
     let arrVit = [];
     setSelectedVitrinas(() => {
-      selectedOptions.map((opt) => {
+      selectedOptions?.map((opt) => {
         arrVit.push(opt.label);
       });
       return arrVit;
@@ -73,13 +68,6 @@ export default function AgregarAsesor({
 
   const handleOnClik = () => {
     addAsesor({
-      nombre: name,
-      usuarioApp: user,
-      claveApp: password,
-      vitrinas: selectedVitrinas,
-      habilitado: habilitado,
-    });
-    setAsesor({
       nombre: name,
       usuarioApp: user,
       claveApp: password,
@@ -96,6 +84,7 @@ export default function AgregarAsesor({
     setUser("");
     setPassword("");
     setHabilitado("true");
+    saveVitrinas([]);
   };
 
   const checkFileds = () => {
@@ -103,8 +92,8 @@ export default function AgregarAsesor({
       name?.length > 0 &&
       user?.length > 0 &&
       password?.length > 0 &&
-      habilitado?.length > 0 &&
-      selectedVitrinas?.length
+      habilitado !== null &&
+      selectedVitrinas?.length > 0
     ) {
       return true;
     }
@@ -169,14 +158,14 @@ export default function AgregarAsesor({
                 </span>
                 Vitrina
               </FormLabel>
-
-              <Input
-                type="text"
-                placeholder={vitrinaName}
-                required
-                value={vitrinaName}
-                disabled={true}
-              />
+              <ReactSelect
+                disabled={false}
+                options={options}
+                closeMenuOnSelect={false}
+                placeholder="Selecciona las vitrinas"
+                onChange={(selectedOption) => saveVitrinas(selectedOption)}
+                isMulti
+              ></ReactSelect>
 
               <FormLabel display="flex" alignItems="center">
                 <span
@@ -232,8 +221,8 @@ export default function AgregarAsesor({
                 value={habilitado}
                 onChange={(e) => saveHabilitado(e.target.value)}
               >
-                <option value="false">False</option>
-                <option value="true">True</option>
+                <option value={false}>False</option>
+                <option value={true}>True</option>
               </ChakraSelect>
             </Box>
           </Box>

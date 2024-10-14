@@ -1,22 +1,16 @@
-import React, { useState } from "react";
-import { Box, Text } from "@chakra-ui/react";
-
+import React, { useState, useEffect, useRef } from "react";
+import { Box, Text, useToast } from "@chakra-ui/react";
+import axios from "axios";
 import EditIcon from "../assets/images/EditIcon";
 
-import ConfirmationMessage from "./ConfirmationMessage";
 import UnionIcon from "../assets/images/UnionIcon";
 import TrashIcon from "../assets/images/TrashIcon";
-import WarningIcon from "../assets/images/WarningIcon";
-//import Editar from "../component/Ingresar_Editar_Producto";
-import ListComponent from "../component/ListComponent";
-import Agregar from "./Agregar";
-import AgregarCategoria from "./AgregarCategoria";
-import SwitchElement from "./SwitchElement";
-import EditarAsesor from "./EditarAsesor";
 
 import Pagination from "./Pagination";
 import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
+import SwitchOnIcon from "../assets/images/SwitchOnIcon";
+import SwitchOffIcon from "../assets/images/SwitchOffICon";
 
 const HEADERS = [
   "Asesor",
@@ -29,19 +23,80 @@ const HEADERS = [
 ];
 
 export default function TablaProductosBodega({
-  isSecondModalOpen,
   onSecondModalOpen,
-  onSecondModalClose,
-  isThirdModalOpen,
   onThirdModalOpen,
-  onThirdModalClose,
   displayedArticulos,
+  setDisplayedArticulos,
+  ciudadesVitrina,
   totalResults,
   currentPage,
   totalPages,
   getMasArticulos,
   handleSortingClick,
+  setCurrentAsesor,
 }) {
+  const toast = useToast();
+  const [parentHeight, setParentHeight] = useState(0);
+  const parentRef = useRef(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (parentRef.current) {
+        setParentHeight(parentRef.current.offsetHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  const handleSwitchClick = async (
+    isEnabled,
+    asesor,
+    indice,
+    setDisplayedArticulos,
+  ) => {
+    const newState = !isEnabled;
+    const nombre = asesor.nombre;
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores/habilitar?nombre=${nombre}&habilitar=${newState}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      if (response.status == 200) {
+        setDisplayedArticulos((prev) => {
+          const copy = [...prev] || [];
+          copy[indice] = { ...asesor, habilitado: newState };
+          return copy;
+        });
+        toast({
+          status: newState ? "success" : "warning",
+          description: newState
+            ? "Asesor habilitado para modificación"
+            : "Asesor deshabilitado para modificación",
+          duration: 3000,
+          position: "top",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error con la selección",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+    }
+  };
+
   return (
     <Box h="full">
       <Box
@@ -49,6 +104,7 @@ export default function TablaProductosBodega({
         bgColor={"white"}
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
+        ref={parentRef}
       >
         <Contenedor>
           <thead className="">
@@ -79,15 +135,7 @@ export default function TablaProductosBodega({
                         height={"13px"}
                         fill={"white"}
                         onClick={() =>
-                          handleSortingClick(
-                            name === "Asesor"
-                              ? "asesor"
-                              : name === "Vitrinas"
-                                ? "vitrinas"
-                                : name === "Ubicación"
-                                  ? "ubicacion"
-                                  : "",
-                          )
+                          handleSortingClick(name === "Asesor" ? "asesor" : "")
                         }
                       />
                     ) : null}
@@ -97,38 +145,117 @@ export default function TablaProductosBodega({
             </tr>
           </thead>
           {displayedArticulos != null && displayedArticulos.length > 0 ? (
-            <tbody className="" style={{ height: "100%" }}>
-              {displayedArticulos?.map((articulo, index) => {
+            <tbody style={{ height: "100%" }}>
+              {displayedArticulos?.map((asesor, index) => {
+                // Encontrar las ciudades correspondientes a las vitrinas
+                const ubicaciones = Object.entries(ciudadesVitrina)
+                  .filter(([ciudad, vitrinas]) =>
+                    vitrinas.some((vitrina) =>
+                      asesor.vitrinas.includes(vitrina),
+                    ),
+                  )
+                  .map(([ciudad]) => ciudad);
+
                 return (
-                  <tr key={index} className="">
-                    {Object.values(articulo).map((value, index) => {
-                      return (
-                        <td key={index} className="AsesorTd">
-                          {value === `` ? (
-                            <Box
-                              display={"flex"}
-                              justifyContent={"center"}
-                              alignItems={"center"}
-                            >
-                              <SwitchElement />
-                            </Box>
-                          ) : (
-                            value
-                          )}
-                        </td>
-                      );
-                    })}
+                  <tr key={index}>
+                    {/* Nombre del asesor */}
+                    <td className="AsesorTd">{asesor.nombre}</td>
+
+                    {/* Lista de vitrinas */}
+                    <td className="AsesorTd">
+                      {asesor.vitrinas.map((vitrina, idx) => (
+                        <p
+                          key={idx}
+                          style={{
+                            width: "100%",
+                            textAlign: "justify",
+                            paddingLeft: "10px",
+                          }}
+                        >
+                          {vitrina}
+                        </p>
+                      ))}
+                    </td>
+
+                    {/* Ubicación (Ciudades) */}
+                    <td className="AsesorTd">
+                      {ubicaciones.map((ubicacion, idx) => (
+                        <p
+                          key={idx}
+                          style={{
+                            width: "100%",
+                            textAlign: "justify",
+                            paddingLeft: "15%",
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          {ubicacion}
+                        </p>
+                      ))}
+                    </td>
+
+                    {/* Usuario */}
+                    <td className="AsesorTd">{asesor.usuario}</td>
+
+                    {/* Campo de Contraseña */}
+                    <td className="AsesorTd">{asesor.clave}</td>
+
+                    {/* Switch de Habilitar/Deshabilitar */}
+                    <td className="AsesorTd">
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                      >
+                        {asesor?.habilitado === true ||
+                        asesor?.habilitado === "true" ? (
+                          <SwitchOnIcon
+                            width="1.50rem"
+                            height="1.50rem"
+                            onClick={() =>
+                              handleSwitchClick(
+                                true,
+                                asesor,
+                                index,
+                                setDisplayedArticulos,
+                              )
+                            }
+                          />
+                        ) : (
+                          <SwitchOffIcon
+                            width="1.50rem"
+                            height="1.50rem"
+                            onClick={() =>
+                              handleSwitchClick(
+                                false,
+                                asesor,
+                                index,
+                                setDisplayedArticulos,
+                              )
+                            }
+                          />
+                        )}
+                      </Box>
+                    </td>
+
+                    {/* Acciones (Editar / Eliminar) */}
                     <td className="iconContainer">
-                      <span
-                        style={{
-                          display: "inline-block",
-                          height: "100%",
-                          verticalAlign: "middle",
-                          marginLeft: "15px",
+                      <EditIcon
+                        width="17px"
+                        onClick={() => {
+                          setCurrentAsesor(asesor);
+                          onSecondModalOpen();
                         }}
-                      ></span>
-                      <EditIcon width="17px" onClick={onSecondModalOpen} />
-                      <TrashIcon height="17px" onClick={onThirdModalOpen} />
+                        style={{ cursor: "pointer", marginRight: "10px" }}
+                      />
+                      <TrashIcon
+                        height="17px"
+                        onClick={() => {
+                          setCurrentAsesor(asesor);
+                          onThirdModalOpen();
+                        }}
+                        style={{ cursor: "pointer" }}
+                      />
                     </td>
                   </tr>
                 );
@@ -140,13 +267,23 @@ export default function TablaProductosBodega({
                 <td
                   colSpan={HEADERS.length}
                   style={{
+                    height: `${parentHeight - 80}px`,
                     textAlign: "center",
                     verticalAlign: "middle",
-                    padding: "20px",
                     color: "grey",
                   }}
                 >
-                  No se encontró el asesor
+                  <Text
+                    display={"flex"}
+                    height={"100%"}
+                    width={{ base: "50%", lg: "100%" }}
+                    color={"grey.placeholder"}
+                    textStyle={"RobotoBody"}
+                    justifyContent={{ base: "flex-start", lg: "center" }}
+                    alignItems={"center"}
+                  >
+                    No se encontraron Asesores.
+                  </Text>
                 </td>
               </tr>
             </tbody>
@@ -160,26 +297,6 @@ export default function TablaProductosBodega({
         totalResults={
           displayedArticulos !== null ? displayedArticulos?.length : 0
         }
-      />
-
-      <EditarAsesor
-        desc={"Editar"}
-        isOpen={isSecondModalOpen}
-        onOpen={onSecondModalOpen}
-        onClose={onSecondModalClose}
-      />
-      <ConfirmationMessage
-        isOpen={isThirdModalOpen}
-        onOpen={onThirdModalOpen}
-        onClose={onThirdModalClose}
-        icon={<WarningIcon />}
-        text={"¿Estás seguro que desea eliminar a este Asesor?"}
-        text2={
-          "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
-        }
-        colorText2={"red.100"}
-        buttonText={"Continuar"}
-        products={null}
       />
     </Box>
   );

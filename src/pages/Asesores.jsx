@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
-import Editar from "../component/Editar";
+
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import EditIcon from "../assets/images/EditIcon";
 import TrashIcon from "../assets/images/TrashIcon";
@@ -12,15 +12,20 @@ import PlusCircleIcon from "../assets/images/PlusCircleIcon";
 import SmallRightArrowIcon from "../assets/images/SmallRightArrow";
 import SyncIcon from "../assets/images/SyncIcon";
 import TablaAsesores from "../component/TablaAsesores";
-import AgregarAsesor from "../component/AgregarAsesor";
+import AgregarAsesorVitrinas from "../component/AgregarAsesorVitrinas";
 import { HEADER_HEIGHT } from "../component/Header";
 import xmlToJSON from "../services/XmlToJsonConverter";
 import asesoresData from "../services/asesoresData";
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
+import axios from "axios";
+import { parseData } from "../utils/xmlParse";
+import { capitalizeFirstLetter } from "../utils/formatting";
+import EditarAsesorVitrinas from "../component/EditarAsesorVitrinas";
 
 const TOP_HEIGHT = 72;
 
 export default function Asesores() {
+  const toast = useToast();
   const [tablaAsesores, setTablaAsesores] = useState(null);
   const [displayedArticulos, setDisplayedArticulos] = useState(null);
   const [totalResults, setTotalResults] = useState(null);
@@ -31,32 +36,113 @@ export default function Asesores() {
   const [isAscendent, setIsAscendent] = useState(false);
   const [sortingBy, setSortingBy] = useState(null);
   const [busqueda, setBusqueda] = useState(null);
+  const [ciudadesVitrinas, setCiudadesVitrinas] = useState([]);
+  const [currentAsesor, setCurrentAsesor] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
-    parseData();
+    getVitrinasInfo();
+    getAsesoresInfo();
   }, []);
 
   useEffect(() => {
     getMasArticulos(1);
   }, [tablaAsesores]);
 
-  const parseData = () => {
-    const DataAsesores = xmlToJSON(asesoresData);
-    const infoAsesores = DataAsesores?.asesores;
-    if (infoAsesores && Array.isArray(infoAsesores.asesor)) {
-      const arrAsesores = infoAsesores?.asesor?.map((asesor) => {
-        const nombre = asesor?.nombre["#text"];
-        const vitrina = asesor?.vitrinas?.vitrina?.nombre["#text"];
-        const ciudad = asesor?.vitrinas?.vitrina?.ciudad["#text"];
-        const usuario = asesor?.usuario["#text"];
-        const clave = asesor?.clave["#text"];
-        const empty = "";
-        return { nombre, vitrina, ciudad, usuario, clave, empty };
+  const getVitrinasInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina`;
+    await axios
+      .get(url, {
+        headers: {
+          "Content-Type": "application/xml; charset=utf-8",
+        },
+      })
+      .then((response) => {
+        const xmlDoc = parseData(response.data);
+        setCiudadesVitrinas(vitrinasData(xmlDoc));
+      })
+      .catch((error) => {
+        console.error("Error fetching the XML data: ", error);
+        return error;
       });
-      setTablaAsesores(arrAsesores);
-      setTotalResults(arrAsesores.length);
-      setDisplayedArticulos(arrAsesores);
+  };
+
+  const vitrinasData = (xml) => {
+    const vitrinasList = [];
+    let DataVitrina = xml.querySelector("vitrinas");
+    let totalVitrinas = DataVitrina.querySelectorAll("vitrina");
+    const vitrinasObj = {};
+
+    for (let i = 0; i < totalVitrinas.length; i++) {
+      let city = totalVitrinas[i].getElementsByTagName("ciudad")[0].textContent;
+      let vitrina =
+        totalVitrinas[i].getElementsByTagName("nombre")[0].textContent;
+      vitrinasList.push(vitrina);
+      if (!(city in vitrinasObj)) {
+        vitrinasObj[city] = [];
+      }
+      vitrinasObj[city].push(vitrina);
     }
+    return vitrinasObj;
+  };
+
+  const getAsesoresInfo = async () => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores`;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: "application/xml",
+        },
+      });
+      if (response.status == 200 && response.data) {
+        const xmlDoc = parseData(response.data);
+        console.log(getAsesores(xmlDoc));
+        setTablaAsesores(getAsesores(xmlDoc));
+        setDisplayedArticulos(getAsesores(xmlDoc));
+      }
+    } catch (error) {
+      console.error("Error fetching XML data:", error);
+    }
+  };
+
+  const getAsesores = (xml) => {
+    const totalAsesoresArr = [];
+    const asesoresNegocio = xml?.querySelector("asesores");
+    const listadoAsesores = asesoresNegocio?.querySelectorAll("asesor") ?? [];
+
+    if (listadoAsesores.length > 0) {
+      for (let i = 0; i < listadoAsesores.length; i++) {
+        const asesor = listadoAsesores[i];
+
+        const nombre =
+          asesor.getElementsByTagName("nombre")[0]?.textContent ?? "";
+        const usuario =
+          asesor.getElementsByTagName("usuario")[0]?.textContent ?? "";
+        const clave =
+          asesor.getElementsByTagName("clave")[0]?.textContent ?? "";
+        const habilitado =
+          asesor.getElementsByTagName("habilitado")[0]?.textContent ?? "";
+
+        // Crear un array para las vitrinas del asesor
+        const vitrinasNodes = asesor.querySelectorAll("vitrina");
+        const vitrinas = Array.from(
+          vitrinasNodes,
+          (vitrina) => vitrina.textContent,
+        );
+
+        // Agregar el objeto del asesor al array principal
+        totalAsesoresArr.push({
+          nombre,
+          usuario,
+          clave,
+          habilitado,
+          vitrinas,
+        });
+      }
+    }
+
+    return totalAsesoresArr;
   };
 
   const {
@@ -94,7 +180,7 @@ export default function Asesores() {
         element.nombre
           .toString()
           .toLowerCase()
-          .includes(textToSearch.toLowerCase()) ||
+          .includes(textToSearch?.toLowerCase()) ||
         element.vitrina
           .toString()
           .toLowerCase()
@@ -162,6 +248,163 @@ export default function Asesores() {
     setSortingBy(name);
   };
 
+  const createAsesor = async (newAsesor) => {
+    const nuevoAsesor = new URLSearchParams();
+    nuevoAsesor.append("nombre", `${newAsesor.nombre}`);
+    nuevoAsesor.append("usuarioApp", `${newAsesor.usuarioApp}`);
+    nuevoAsesor.append("claveApp", `${newAsesor.claveApp}`);
+    newAsesor?.vitrinas?.map((vitrina) => {
+      return nuevoAsesor.append("vitrinas", `${vitrina}`);
+    });
+    nuevoAsesor.append("habilitado", `${newAsesor.habilitado}`);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores`,
+        nuevoAsesor,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status == 200) {
+        const index = displayedArticulos?.findIndex(
+          (item) => item.nombre === newAsesor.nombre,
+        );
+
+        if (index === -1) {
+          setDisplayedArticulos((prev) => {
+            const copy = prev ? [...prev] : [];
+            return [
+              ...copy,
+              {
+                nombre: newAsesor.nombre,
+                usuario: newAsesor.usuarioApp,
+                clave: newAsesor.claveApp,
+                vitrinas: newAsesor.vitrinas,
+                habilitado: newAsesor.habilitado,
+              },
+            ];
+          });
+          toast({
+            status: "success",
+            description: "Asesor creado con éxito!.",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error creando el asesor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+      onThirdModalClose();
+    }
+  };
+
+  const editAsesor = async (asesorActualizado, handleOnClose) => {
+    const updatedAsesor = new URLSearchParams();
+    updatedAsesor.append("nuevoNombre", `${asesorActualizado.nombre}`);
+    updatedAsesor.append("nuevoUsuarioApp", `${asesorActualizado.usuarioApp}`);
+    updatedAsesor.append("nuevaClaveApp", `${asesorActualizado.claveApp}`);
+    asesorActualizado?.vitrinas?.map((vitrina) => {
+      return updatedAsesor.append("nuevasVitrinas", `${vitrina}`);
+    });
+    updatedAsesor.append("habilitado", `${asesorActualizado.habilitado}`);
+    setIsLoading(true);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${currentAsesor?.nombre}`,
+        updatedAsesor,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status == 200 && response.data) {
+        const index = displayedArticulos?.findIndex(
+          (item) => item.nombre === asesorActualizado.nombre,
+        );
+        if (index !== -1) {
+          setDisplayedArticulos((prev) => {
+            const copy = [...(prev || [])];
+            copy[index] = asesorActualizado;
+            return copy;
+          });
+
+          toast({
+            status: "success",
+            description: "Asesor actualizado con éxito!",
+            duration: 3000,
+            position: "top-right",
+            isClosable: true,
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error editando el asesor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      handleOnClose();
+      setIsLoading(false);
+    }
+  };
+
+  const deleteAsesor = async (nombreAsesor) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores?nombre=${nombreAsesor}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      if (response.status == 200) {
+        setDisplayedArticulos((prev) => {
+          const copy = [...(prev || [])];
+          return copy.filter((asesor) => asesor.nombre !== nombreAsesor);
+        });
+        toast({
+          status: "success",
+          description: "Asesor eliminado con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        description: "Error eliminando el asesor.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Box
       bg={"mainBg"}
@@ -207,26 +450,60 @@ export default function Asesores() {
       >
         {
           <TablaAsesores
-            isSecondModalOpen={isSecondModalOpen}
             onSecondModalOpen={onSecondModalOpen}
-            onSecondModalClose={onSecondModalClose}
-            isThirdModalOpen={isThirdModalOpen}
             onThirdModalOpen={onThirdModalOpen}
-            onThirdModalClose={onThirdModalClose}
             displayedArticulos={displayedArticulos}
+            setDisplayedArticulos={setDisplayedArticulos}
             totalResults={totalResults}
             currentPage={currentPage}
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
             handleSortingClick={handleSortingClick}
+            setCurrentAsesor={setCurrentAsesor}
+            ciudadesVitrina={ciudadesVitrinas}
           />
         }
       </Box>
-      <AgregarAsesor
+
+      <AgregarAsesorVitrinas
         isOpen={isFirstModalOpen}
         onOpen={onFirstModalOpen}
         onClose={onFirstModalClose}
+        ciudadesVitrinas={ciudadesVitrinas}
+        addAsesor={createAsesor}
+        setAsesor={setCurrentAsesor}
       />
+
+      {isSecondModalOpen && (
+        <EditarAsesorVitrinas
+          desc={"Editar"}
+          isOpen={isSecondModalOpen}
+          onOpen={onSecondModalOpen}
+          onClose={onSecondModalClose}
+          ciudadesVitrinas={ciudadesVitrinas}
+          asesor={currentAsesor}
+          Editar={editAsesor}
+        />
+      )}
+
+      {/* Eliminar un Asesor  */}
+      {isThirdModalOpen && (
+        <ConfirmationMessage
+          isOpen={isThirdModalOpen}
+          onOpen={onThirdModalOpen}
+          onClose={onThirdModalClose}
+          icon={<WarningIcon />}
+          text={"¿Estás seguro que desea eliminar a este Asesor?"}
+          text2={
+            "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
+          }
+          colorText2={"red.100"}
+          buttonText={"Continuar"}
+          products={null}
+          funcConfirmar={deleteAsesor}
+          focusRow={currentAsesor.nombre}
+        />
+      )}
     </Box>
   );
 }

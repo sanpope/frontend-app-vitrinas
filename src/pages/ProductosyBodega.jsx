@@ -61,6 +61,47 @@ export default function ProductosyBodega() {
       console.error("Error fetching XML data:", error);
     }
   };
+   const getProductos = (xml) => {
+     const totalProdsArr = [];
+     const productosNegocio = xml?.querySelector("productosDelNegocio");
+
+     const listadoProds = productosNegocio?.querySelectorAll("producto") ?? [];
+
+     if (listadoProds.length > 0) {
+       for (let i = 0; i < listadoProds.length; i++) {
+         const producto = listadoProds[i];
+
+         const getElementTextContent = (elementName) => {
+           const element = producto?.getElementsByTagName(elementName);
+           return element && element[0] ? element[0].textContent ?? "" : "";
+         };
+
+         const nombre = capitalizeFirstLetter(getElementTextContent("nombre"));
+         const codigo = getElementTextContent("codigo");
+         const precio = getElementTextContent("precio");
+         const costo = getElementTextContent("costo");
+         const cantidadEnBodega = getElementTextContent("cantidadEnBodega");
+         const cantidadEnVitrinas = getElementTextContent("cantidadEnVitrinas");
+         const proveedor = getElementTextContent("proveedor");
+         const categoria = getElementTextContent("categoria");
+
+         totalProdsArr.push({
+           nombre,
+           codigo,
+           precio,
+           costo,
+           cantidadEnBodega,
+           cantidadEnVitrinas,
+           proveedor,
+           categoria,
+         });
+       }
+
+       return totalProdsArr;
+     }
+
+     return []; // Retorna un array vacío si no hay productos
+   };
 
   const getProveedoresInfo = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores`;
@@ -94,48 +135,6 @@ export default function ProductosyBodega() {
     } catch (error) {
       console.error("Error fetching XML data:", error);
     }
-  };
-
-  const getProductos = (xml) => {
-    const totalProdsArr = [];
-    const productosNegocio = xml?.querySelector("productosDelNegocio");
-
-    const listadoProds = productosNegocio?.querySelectorAll("producto") ?? [];
-
-    if (listadoProds.length > 0) {
-      for (let i = 0; i < listadoProds.length; i++) {
-        const producto = listadoProds[i];
-
-        const getElementTextContent = (elementName) => {
-          const element = producto?.getElementsByTagName(elementName);
-          return element && element[0] ? element[0].textContent ?? "" : "";
-        };
-
-        const nombre = capitalizeFirstLetter(getElementTextContent("nombre"));
-        const codigo = getElementTextContent("codigo");
-        const precio = getElementTextContent("precio");
-        const costo = getElementTextContent("costo");
-        const cantidadEnBodega = getElementTextContent("cantidadEnBodega");
-        const cantidadEnVitrinas = getElementTextContent("cantidadEnVitrinas");
-        const proveedor = getElementTextContent("proveedor");
-        const categoria = getElementTextContent("categoria");
-
-        totalProdsArr.push({
-          nombre,
-          codigo,
-          precio,
-          costo,
-          cantidadEnBodega,
-          cantidadEnVitrinas,
-          proveedor,
-          categoria,
-        });
-      }
-
-      return totalProdsArr;
-    }
-
-    return []; // Retorna un array vacío si no hay productos
   };
 
   const getProveedores = (xml) => {
