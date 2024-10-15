@@ -28,21 +28,8 @@ const titleTooltip = () => {
 };
 
 const labelTooltip = (tooltipItem) => {
-  const datasetIndex = tooltipItem.datasetIndex;
-  const dataIndex = tooltipItem.dataIndex;
-  const value = tooltipItem.dataset.data[dataIndex];
-
-  let formattedValue;
-
-  if (value >= 1000000) {
-    formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
-  } else if (value >= 1000) {
-    formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
-  } else {
-    formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
-  }
-
-  return `${formattedValue}`;
+  const value = tooltipItem.dataset.data[tooltipItem.dataIndex];
+  return `$ ${new Intl.NumberFormat().format(value)}`;
 };
 
 const options = {
@@ -81,7 +68,7 @@ const options = {
         color: "black",
         beginAtZero: true,
         maxTicksLimit: 3,
-        callback: function (value, index, values) {
+        callback: function (value) {
           if (value >= 1000000) {
             return (value / 1000000).toFixed(1) + "M";
           } else if (value >= 1000) {
@@ -103,6 +90,7 @@ const options = {
     },
   },
 };
+
 const mesesAbreviados = [
   "Ene",
   "Feb",
@@ -118,39 +106,51 @@ const mesesAbreviados = [
   "Dic",
 ];
 
-const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
+const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
-  const curretYear = fechaActual.getFullYear();
-  let lastYear = false;
+  const anioActual = fechaActual.getFullYear();
 
-  const monthLabels = VentasMesAnterior?.map((d) => {
-    let month = mesesAbreviados[Number(d.mes) - 1];
-    if (d.mes === "12") {
-      lastYear = true;
-    }
-    if (lastYear) {
-      let LastYear = (curretYear - 1).toString().slice(-2);
-      month += `-${LastYear}`;
-    }
-    return month;
-  }).reverse();
+  // Añadir el mes actual al inicio del array
+  const ventasActualizadas = [
+    {
+      mes: mesActual.toString(),
+      valor: ventaMesActual.valor,
+      anio: anioActual,
+    },
+    ...VentasMesAnterior.map((v) => ({
+      ...v,
+      anio: v.mes <= mesActual ? anioActual : anioActual - 1,
+    })),
+  ].slice(0, 12); // Mantener solo los últimos 12 meses
 
-  const arrVentasMesAnterior = VentasMesAnterior?.map((d) =>
-    Number(d?.valor).toLocaleString("es-ES"),
-  ).reverse();
+  const monthLabels = ventasActualizadas
+    .map((d, index) => {
+      let month = mesesAbreviados[Number(d.mes) - 1];
+      if (d.anio < anioActual) {
+        month += `-${d.anio.toString().slice(-2)}`;
+      }
+      return month;
+    })
+    .reverse();
 
   const chartData = {
     labels: monthLabels,
     datasets: [
       {
-        data: VentasMesAnterior?.map((d) => d?.valor).reverse(),
+        data: ventasActualizadas
+          .map((d) => Math.max(0, Number(d.valor)))
+          .reverse(),
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: VentasMesAnterior?.map((d) => {
-          return Number(d.mes) === mesActual ? "#FF0000" : "#000000";
-        }).reverse(),
+        pointBackgroundColor: ventasActualizadas
+          .map((d) =>
+            d.mes === mesActual.toString() && d.anio === anioActual
+              ? "#FF0000"
+              : "#000000",
+          )
+          .reverse(),
         pointRadius: 6,
         pointBorderWidth: 2,
         pointBorderColor: "white",
@@ -161,7 +161,7 @@ const VentasMesesAnteriores = ({ VentasMesAnterior }) => {
 
   return (
     <>
-      {VentasMesAnterior != null && VentasMesAnterior?.length > 0 ? (
+      {ventasActualizadas.length > 0 ? (
         <Box mt={{ base: 1, xl: 4 }}>
           <Line data={chartData} options={options} />
         </Box>

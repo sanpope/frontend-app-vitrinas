@@ -1,12 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  HStack,
-  ListItem,
-  OrderedList,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
 import axios from "axios";
 
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
@@ -58,6 +51,7 @@ export default function HomePage() {
   );
   const name = useSelector((state) => state.userReducer.userName);
   const [ventaDelMes, setVentaDelMes] = useState(null);
+  const [ventaMesActual, setVentaMesActual] = useState(null);
   const [ventasMesesAnteriores, setVentaMesesAnteriores] = useState(null);
   const [VitrinasConMasVtasDelMes, setVitrinasConMasVtasDelMes] =
     useState(null);
@@ -88,12 +82,11 @@ export default function HomePage() {
         dispatch(setVentaTotalMes(getVentaDelMes(xmlDoc)));
         const { valor, porcentajeDeCrecimiento } = getVentaDelMes(xmlDoc);
         setVentaDelMes(getPorcentage(valor, porcentajeDeCrecimiento));
-
+        setVentaMesActual(getVentaDelMes(xmlDoc));
         setVentaMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
         setVitrinasConMasVtasDelMes(getVitrinasVentasMes(xmlDoc));
         setTopTotalVitrinas(getTopVitrinas(xmlDoc));
         setTotalCategorias(getTopCategorias(xmlDoc));
-        //dispatch(setTopCategoriasGlobal(getTopCategorias(xmlDoc)));
         setTopTotalProductos(getTopProductos(xmlDoc));
         setTotalDispAv(getDispositivosAveriados(xmlDoc));
         setTotalDespachos(getDespachosActuales(xmlDoc));
@@ -409,8 +402,9 @@ export default function HomePage() {
             <Box w={"100%"} h={"100%"}>
               <VentasMesesAnteriores
                 VentasMesAnterior={
-                  ventasMesesAnteriores != null ? ventasMesesAnteriores : null
+                  ventasMesesAnteriores != null ? ventasMesesAnteriores : []
                 }
+                ventaMesActual={ventaMesActual != null ? ventaMesActual : {}}
               />
             </Box>
           }
