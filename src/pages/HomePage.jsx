@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, HStack, ListItem, OrderedList, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  ListItem,
+  OrderedList,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import axios from "axios";
 
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
@@ -339,7 +346,6 @@ export default function HomePage() {
         ¡Hola {name}, bienvenido! 👋🏻
       </Text>
       <Box display="grid" gridGap={"1rem"} className="dashboard-grid-container">
-      
         <Container
           height={{ base: "150px", md: ContainerHeight + "px" }}
           minHeight={{ base: "170px", md: "225px" }}
@@ -374,9 +380,13 @@ export default function HomePage() {
                     textStyle={"RobotoSubSmall"}
                     color={`${ventaDelMes?.color}` || "grey.placeholder"}
                   >
-                    {ventaDelMes != null
-                      ? `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
-                      : <Text color={"grey.placeholder"}>No se cuenta con información registrada.</Text>}
+                    {ventaDelMes != null ? (
+                      `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
+                    ) : (
+                      <Text color={"grey.placeholder"}>
+                        No se cuenta con información registrada.
+                      </Text>
+                    )}
                   </Text>
                 </HStack>
                 {ventaDelMes != null && ventaDelMes?.color != "red.100" ? (
@@ -416,7 +426,7 @@ export default function HomePage() {
               flexDirection={{ base: "column", sm: "row" }}
               w={"100%"}
               h={"100%"}
-              justifyContent={"center"}
+              justifyContent={"space-around"}
               p={1}
             >
               <ItemsTopVitrinasdelMes
@@ -561,7 +571,7 @@ export default function HomePage() {
           height={ContainerHeight + "px"}
           minHeight="225px"
           title={"Inventario pendiente de verificar"}
-          icon={<FileCheckIcon  />}
+          icon={<FileCheckIcon />}
           children={
             <Box w={"100%"}>
               <InventarioXverificar

@@ -13,7 +13,7 @@ export default function TopCategoriaItem({ topVitrinas }) {
           w={{ base: "100%" }}
           display={"flex"}
           flexDirection={"column"}
-          justifyContent={"center"}
+          justifyContent={"space-around"}
           alignItems={"center"}
           gap={"1.2rem"}
         >
