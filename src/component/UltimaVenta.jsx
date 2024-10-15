@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, HStack, Stack, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import {
   capitalizeFirstLetter,
   formatDate,
@@ -60,8 +60,7 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
           h={"100%"}
           display={"flex"}
           flexDirection={"column"}
-          justifyContent={"space-around"}
-         
+          justifyContent={"space-between"}
         >
           <Text
             color={"grey.placeholder"}
@@ -82,14 +81,17 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
                 {Prod1Cant}
               </Text>
               <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
-                {Prod1Nomb}
+                {Prod1Nomb}{Prod2Cant && Prod2Nomb ? "," : ""}
               </Text>
             </Box>
             <Box display={"flex"}>
               <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
                 <span style={{ color: "black" }}>{Prod2Cant}</span> {Prod2Nomb}
                 {masProductos !== "false" ? (
-                  <span style={{ color: "red" }}> y otros más...</span>
+                  <>
+                    <span>,</span>
+                    <span style={{ color: "red" }}> y otros más...</span>
+                  </>
                 ) : (
                   ""
                 )}

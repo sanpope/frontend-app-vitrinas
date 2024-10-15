@@ -1,6 +1,6 @@
 const FileExclamationIcon = ({
-  width = "25px",
-  height = "25px",
+  width = "23px",
+  height = "23px",
   fill = "#E60F0F",
 }) => {
   return (

@@ -1,7 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SmallPagination from "../component/SmallPagination";
-import BiggerThanICon from "../assets/images/BiggerThanIcon";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function PocoStock({ productosConPocoStock }) {
@@ -24,6 +23,7 @@ export default function PocoStock({ productosConPocoStock }) {
       {productosConPocoStock != null && productosConPocoStock?.length > 0 ? (
         <Box
           w={"100%"}
+          maxW={"235px"}
           h={"100%"}
           display={"flex"}
           flexGrow={1}
@@ -40,18 +40,28 @@ export default function PocoStock({ productosConPocoStock }) {
           >
             <Box
               w={"100%"}
-              height={"80%"}
               display={"flex"}
               flexDirection={"column"}
               justifyContent={"space-around"}
               gap={2}
+              flex={1}
             >
               {productosConPocoStock != null &&
               Object.keys(currentItem1 || {}) !== null &&
               Object.keys(currentItem1 || {}) !== "undefined" &&
               Object.keys(currentItem1 || {}).length > 0 ? (
                 <Box gap={1}>
-                  <Text textStyle={"RobotoRegular"}>
+                  <Text
+                    minW={"190px"}
+                    textStyle={"RobotoRegular"}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
                     {capitalizeFirstLetter(currentItem1?.nombre)}
                   </Text>
                   <Box
@@ -110,7 +120,17 @@ export default function PocoStock({ productosConPocoStock }) {
               Object.keys(currentItem2 || {}) !== "undefined" &&
               Object.keys(currentItem2 || {}).length > 0 ? (
                 <Box gap={1}>
-                  <Text textStyle={"RobotoRegular"}>
+                  <Text
+                    minW={"190px"}
+                    textStyle={"RobotoRegular"}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
                     {capitalizeFirstLetter(currentItem2?.nombre)}
                   </Text>
                   <Box
@@ -165,12 +185,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 <></>
               )}
             </Box>
-            <Box
-              w={"100%"}
-              h={"15%"}
-              display={"flex"}
-              justifyContent={"flex-end"}
-            >
+            <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
               <SmallPagination
                 currentPage={currentPage}
                 totalPages={totalPages}

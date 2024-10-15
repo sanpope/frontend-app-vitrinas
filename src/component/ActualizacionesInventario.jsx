@@ -32,6 +32,7 @@ export default function ActualizacionesInventario({
             justifyContent={"space-between"}
             alignItems={"center"}
             borderBottomWidth={1}
+            flex={1}
           >
             <Text
               pr={1}
@@ -72,6 +73,7 @@ export default function ActualizacionesInventario({
             alignItems={"flex-start"}
             p={1}
             gap={1}
+            flex={1}
           >
             <Box
               display={"flex"}
@@ -132,12 +134,7 @@ export default function ActualizacionesInventario({
             </Box>
           </Box>
 
-          <Box
-            w={"100%"}
-            h={"15%"}
-            display={"flex"}
-            justifyContent={"flex-end"}
-          >
+          <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
             <SmallPagination
               currentPage={currentPage}
               totalPages={totalPages}

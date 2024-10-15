@@ -7,7 +7,7 @@ export default function Container({
   icon,
   title,
   withLineBreaks = false,
-  lineHeight = "normal",
+  lineHeight = "1.1",
   width,
   children,
   heightChildren,
@@ -28,13 +28,16 @@ export default function Container({
     >
       <Box display="flex" alignItems={"flex-start"} columnGap="6px">
         <HStack display={"flex"} spacing={"5px"}>
-          {icon}
+          <Box minW={"25px"} alignSelf={"flex-start"}>
+            {icon}
+          </Box>
           {title ? (
             <Text
               textStyle={{ base: "RobotoBodyBold", md: "RobotoSubtitleBold" }}
               color={color}
               whiteSpace={withLineBreaks ? "pre-line" : "normal"}
-              lineHeight={lineHeight}
+              lineHeight={{ base: "1.5", lg: lineHeight }}
+              noOfLines={2}
             >
               {title}
             </Text>

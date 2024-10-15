@@ -1,6 +1,6 @@
-import { Box, HStack, ListItem, OrderedList, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import React, { useMemo, useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Container from "../component/Container";
 import ResumenVentaMesAnterior from "../component/ResumenVentaMesAnterior";
 import DistribucionVentas from "../component/DistribucionVentas";
@@ -33,8 +33,6 @@ import { HEADER_HEIGHT } from "../component/Header";
 import axios from "axios";
 import ThumbDownIcon from "../assets/images/ThumbDownIcon";
 import {
-  formatString,
-  formatDate,
   convertirFecha,
   capitalizeFirstLetter,
   formatearNumero,
@@ -497,7 +495,6 @@ export default function Resumen() {
             </Box>
           }
         />
-
         <Container
           height={ContainerHeight + "px"}
           minHeight="215px"

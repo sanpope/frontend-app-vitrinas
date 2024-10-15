@@ -113,7 +113,8 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
     <>
       {dias?.length > 0 && dias !== null ? (
         <Box
-          maxW={"220px"}
+          w={"100%"}
+          maxW={"225px"}
           overflowX="auto"
           css={{
             "&::-webkit-scrollbar": { display: "none" },

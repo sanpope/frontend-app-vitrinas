@@ -11,6 +11,7 @@ export default function TopCategoriaItem({
 }) {
   return (
     <Box
+    
       display={"flex"}
       flexDirection={{ base: flexDirA, sm: flexDirB }}
       justifyContent={justifyContent}
