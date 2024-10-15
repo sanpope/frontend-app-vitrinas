@@ -23,8 +23,8 @@ const BOTTOM_SECTION_HEIGHT = 141.5;
 const BOTTOM_SECTION_HEIGHT_MOBILE = 289.5;
 const MARGINS = 16;
 
-// const FINAL_DATE = new Date();
-// const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
+const FINAL_DATE = new Date();
+const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
 
 export default function Ventas() {
   const toast = useToast();
@@ -45,8 +45,8 @@ export default function Ventas() {
   const [totalDevueltoIntervalo, setTotalDevueltoIntervalo] = useState();
   const [ingresoRecibidoIntervalo, setIngresoRecibido] = useState();
 
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
+  const [fechaInicio, setFechaInicio] = useState(START_DATE);
+  const [fechaFin, setFechaFin] = useState(FINAL_DATE);
 
   const [prods, setProds] = useState(null);
   const [fechaAct, setFechaActual] = useState(null);
@@ -58,16 +58,12 @@ export default function Ventas() {
 
   useEffect(() => {
     if (tablaVentas) {
-      setDisplayedArticulos(
-        selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones,
-      );
-      setTotalResults(
-        selectedOption === "Ventas"
-          ? tablaVentas?.length
-          : tablaDevoluciones?.length,
-      );
+      const newDisplayedArticulos =
+        selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones;
+      setDisplayedArticulos(newDisplayedArticulos);
+      setTotalResults(newDisplayedArticulos?.length);
     }
-  }, [selectedOption]);
+  }, [selectedOption, fechaInicio, fechaFin, tablaVentas, tablaDevoluciones]);
 
   const handleSelectChange = (event) => {
     setSelectedOption(event.target.value);
@@ -219,13 +215,6 @@ export default function Ventas() {
       }
     } catch (error) {
       console.log(error);
-      // toast({
-      //   status: "error",
-      //   description: "Error en la conexión con el servidor",
-      //   duration: 3000,
-      //   position: "top-right",
-      //   isClosable: true,
-      // });
     }
   };
 

@@ -14,6 +14,7 @@ import {
   useMediaQuery,
   InputGroup,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react";
 import StandardButton from "./ui/buttons/standard";
 import SwapRightIcon from "../assets/images/SwapRightIcon";
@@ -33,7 +34,28 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
   const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
   const [focusedStart, setFocusedStart] = useState(startDate);
   const [focusedEnd, setFocusedEnd] = useState(endDate);
-  const today = new Date();
+  const toast = useToast();
+
+  const handleStartDateChange = (date) => {
+    setFocusedStart(date);
+    if (focusedEnd && date > focusedEnd) {
+      setFocusedEnd(null);
+      setEndDate(null);
+    }
+  };
+
+  const handleEndDateChange = (date) => {
+    setFocusedEnd(date);
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return date.toLocaleString("es-ES", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   return (
     <Box
@@ -49,15 +71,7 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
         <InputGroup>
           <Input
             placeholder="Start date"
-            value={
-              startDate
-                ? startDate.toLocaleString("es-ES", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })
-                : ""
-            }
+            value={formatDate(startDate)}
             readOnly
             onClick={onStartOpen}
             fontSize={"1rem"}
@@ -78,17 +92,22 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
         <InputGroup>
           <Input
             placeholder="End date"
-            value={
-              endDate
-                ? endDate.toLocaleString("es-ES", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })
-                : ""
-            }
+            value={formatDate(endDate)}
             readOnly
-            onClick={onEndOpen}
+            onClick={() => {
+              if (startDate) {
+                onEndOpen();
+              } else {
+                toast({
+                  title: "Start date required",
+                  description: "Please select a start date first",
+                  status: "warning",
+                  duration: 3000,
+                  isClosable: true,
+                  position: "top",
+                });
+              }
+            }}
             fontSize={"1rem"}
             w={"11rem"}
             borderTopWidth={"0px"}
@@ -110,11 +129,8 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
             <Box display={"flex"} justifyContent={"center"}>
               <DatePicker
                 selected={focusedStart}
-                onChange={(date) => setFocusedStart(date)}
-                selectsStart
-                startDate={focusedStart}
+                onChange={handleStartDateChange}
                 inline
-                maxDate={today}
               />
             </Box>
           </ModalBody>
@@ -141,11 +157,8 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
             <Box display={"flex"} justifyContent={"center"}>
               <DatePicker
                 selected={focusedEnd}
-                onChange={(date) => setFocusedEnd(date)}
-                selectsEnd
-                endDate={endDate}
-                //minDate={startDate}
-                maxDate={today}
+                onChange={handleEndDateChange}
+                minDate={startDate}
                 inline
               />
             </Box>
