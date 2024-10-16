@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
-import Editar from "../component/Editar";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import EditIcon from "../assets/images/EditIcon";
 import TrashIcon from "../assets/images/TrashIcon";
@@ -19,6 +18,7 @@ import MensajeInfo from "../component/MensajeInfo";
 import { setCity, setName, setCiudadesVitrinas } from "../store/slices/vitrina";
 import { useNavigate } from "react-router-dom";
 import EditarAsesor from "../component/EditarAsesor";
+import EditarEstaVitrina from "../component/EditarEstaVitrina";
 
 export default function EstaVitrina() {
   const navigate = useNavigate();
@@ -448,20 +448,18 @@ export default function EstaVitrina() {
               Editar Vitrina
             </StandardButton>
 
-            <Editar
-              isOpen={isFirstModalOpen}
-              onOpen={onFirstModalOpen}
-              onClose={onFirstModalClose}
-              onClick={onFirstModalClose}
-              desc={"Vitrina"}
-              desc2={"Vitrina"}
-              name={updatedName}
-              setName={setUpdatedName}
-              city={updatedCity}
-              setCity={setUpdatedCity}
-              Editar={updateVitrina}
-              isLoading={isLoading}
-            />
+            {isFirstModalOpen && (
+              <EditarEstaVitrina
+                isOpen={isFirstModalOpen}
+                onOpen={onFirstModalOpen}
+                onClose={onFirstModalClose}
+                onClick={onFirstModalClose}
+                vitrinaName={name}
+                vitrinaCity={city}
+                Editar={updateVitrina}
+                isLoading={isLoading}
+              />
+            )}
             <StandardButton
               variant={"WHITE_RED"}
               borderRadius="20px"
