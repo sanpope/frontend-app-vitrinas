@@ -333,7 +333,7 @@ export default function HomePage() {
       display={"flex"}
       gap={PADDING + "px"}
       p={PADDING + "px"}
-      overflowY={{ base: "hidden", md: "auto" }}
+      overflowY={{ base: "hidden", md: "auto", lg: "hidden" }}
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={"black"}>
         ¡Hola {name}, bienvenido! 👋🏻
@@ -465,9 +465,17 @@ export default function HomePage() {
                 />
               </Box>
             ) : (
-              <Text color={"grey.placeholder"} mt={"50px"}>
-                Información insuficiente para determinar el Top de Vitrinas.
-              </Text>
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"flex-start"}
+              >
+                <Text color={"grey.placeholder"}>
+                  Información insuficiente para determinar el Top de Vitrinas.
+                </Text>
+              </Box>
             )
           }
         />
@@ -478,6 +486,7 @@ export default function HomePage() {
           title={"Top Categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
           heightChildren={"100%"}
+          paddingChildren={topTotalCategorias != null ? 1 : 0}
           children={
             <>
               {topTotalCategorias != null ? (
@@ -496,9 +505,19 @@ export default function HomePage() {
                   ))}
                 </Box>
               ) : (
-                <Text color={"grey.placeholder"} mt={"50px"}>
-                  Información insuficiente para determinar el Top de Categorías
-                </Text>
+                <Box
+                  width={"100%"}
+                  height={"85%"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  flex={1}
+                >
+                  <Text color={"grey.placeholder"}>
+                    Información insuficiente para determinar el Top de
+                    Categorías
+                  </Text>
+                </Box>
               )}
             </>
           }
@@ -509,6 +528,8 @@ export default function HomePage() {
           minHeight="225px"
           title={"Top Productos"}
           icon={<BoxesIcon width={"1.5rem"} height={"1.5rem"} />}
+          heightChildren={topTotalProductos != null ? "" : "100%"}
+          paddingChildren={topTotalProductos != null ? 1 : 0}
           children={
             <>
               {topTotalProductos != null ? (
@@ -529,9 +550,18 @@ export default function HomePage() {
                   ))}
                 </Box>
               ) : (
-                <Text color={"grey.placeholder"} mt={"50px"}>
-                  Información insuficiente para determinar el Top de Productos
-                </Text>
+                <Box
+                  width={"100%"}
+                  height={"85%"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  flex={1}
+                >
+                  <Text color={"grey.placeholder"}>
+                    Información insuficiente para determinar el Top de Productos
+                  </Text>
+                </Box>
               )}
             </>
           }
@@ -542,10 +572,27 @@ export default function HomePage() {
           minHeight="225px"
           title={"Dispositivos averiados"}
           icon={<PhoneLaptopIcon width={"25px"} height={"25px"} />}
+          heightChildren={totalDispAver != null ? "" : "100%"}
+          paddingChildren={totalDispAver != null ? 1 : 0}
           children={
-            <DispositivosAveriados
-              listadoDispositivos={totalDispAver ? totalDispAver : null}
-            />
+            <>
+              {totalDispAver !== null ? (
+                <DispositivosAveriados listadoDispositivos={totalDispAver} />
+              ) : (
+                <Box
+                  width={"100%"}
+                  height={"85%"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  flex={1}
+                >
+                  <Text color={"grey.placeholder"}>
+                    No se encuentra información de los dispositivos Averiados
+                  </Text>
+                </Box>
+              )}
+            </>
           }
         />
         <Container
@@ -554,10 +601,27 @@ export default function HomePage() {
           minHeight="225px"
           title={"Despachos actuales"}
           icon={<TruckIcon width={"25px"} height={"25px"} />}
+          heightChildren={totalDespachos != null ? "" : "100%"}
+          paddingChildren={totalDespachos != null ? 1 : 0}
           children={
-            <DespachosActuales
-              listaDeDespachos={totalDespachos ? totalDespachos : null}
-            />
+            <>
+              {totalDespachos !== null ? (
+                <DespachosActuales listaDeDespachos={totalDespachos} />
+              ) : (
+                <Box
+                  width={"100%"}
+                  height={"85%"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  flex={1}
+                >
+                  <Text color={"grey.placeholder"}>
+                    No se encontró la Lista de los Despachos Actuales
+                  </Text>
+                </Box>
+              )}
+            </>
           }
         />
         <Container
@@ -566,14 +630,31 @@ export default function HomePage() {
           minHeight="225px"
           title={"Inventario pendiente de verificar"}
           icon={<FileCheckIcon />}
+          heightChildren={totalVisitasNoVerif != null ? "" : "100%"}
+          paddingChildren={totalVisitasNoVerif != null ? 1 : 0}
           children={
-            <Box w={"100%"}>
-              <InventarioXverificar
-                visitasNoVerificadas={
-                  totalVisitasNoVerif ? totalVisitasNoVerif : null
-                }
-              />
-            </Box>
+            <>
+              {totalVisitasNoVerif !== null ? (
+                <Box w={"100%"}>
+                  <InventarioXverificar
+                    visitasNoVerificadas={totalVisitasNoVerif}
+                  />
+                </Box>
+              ) : (
+                <Box
+                  width={"100%"}
+                  height={"85%"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  flex={1}
+                >
+                  <Text color={"grey.placeholder"}>
+                    No se encontró el Inventario Pendiente por verificar
+                  </Text>
+                </Box>
+              )}
+            </>
           }
         />
       </Box>

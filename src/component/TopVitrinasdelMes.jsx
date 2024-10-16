@@ -47,17 +47,22 @@ const TopVitrinasdelMes = ({
   };
 
   return (
-    <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-      <Box h={"55%"} display={{ base: "none", sm: "inline-flex" }}>
-        {labels !== null && data !== null ? (
-          <Doughnut data={chartData} options={options} />
-        ) : (
-          <Text color={"grey.placeholder"}>
+    <>
+      {" "}
+      {labels !== null && data !== null ? (
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Box h={"55%"} display={{ base: "none", sm: "inline-flex" }}>
+            <Doughnut data={chartData} options={options} />
+          </Box>
+        </Box>
+      ) : (
+        <Box width={"100%"} height={"100%"} display={"flex"} alignItems={"center"} justifyContent={"flex-start"}>
+          <Text color={"grey.placeholder"} >
             No se encontró información del Top de las vitrinas.
           </Text>
-        )}
-      </Box>
-    </Box>
+        </Box>
+      )}
+    </>
   );
 };
 

@@ -81,7 +81,8 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
                 {Prod1Cant}
               </Text>
               <Text color={"grey.placeholder"} textStyle={"RobotoRegular"}>
-                {Prod1Nomb}{Prod2Cant && Prod2Nomb ? "," : ""}
+                {Prod1Nomb}
+                {Prod2Cant && Prod2Nomb ? "," : ""}
               </Text>
             </Box>
             <Box display={"flex"}>
@@ -90,7 +91,7 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
                 {masProductos !== "false" ? (
                   <>
                     <span>,</span>
-                    <span style={{ color: "red" }}> y otros más...</span>
+                    <span style={{ color: "#E60F0F" }}> y otros más...</span>
                   </>
                 ) : (
                   ""

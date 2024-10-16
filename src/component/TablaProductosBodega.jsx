@@ -63,7 +63,7 @@ export default function TablaProductosBodega({
   setTablaProductos,
   editProducto,
   deleteProducto,
-  setBusqueda
+  setBusqueda,
 }) {
   const toast = useToast();
   const [focusRow, setFocusRow] = useState(null);
@@ -136,6 +136,7 @@ export default function TablaProductosBodega({
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
     }
   };
@@ -214,6 +215,7 @@ export default function TablaProductosBodega({
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
       onClose();
     }
@@ -280,6 +282,7 @@ export default function TablaProductosBodega({
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
     }
   };
@@ -337,6 +340,7 @@ export default function TablaProductosBodega({
       });
     } finally {
       setIsLoading(false);
+      setBusqueda(null);
     }
   };
 
@@ -417,6 +421,7 @@ export default function TablaProductosBodega({
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
       onClose();
     }
@@ -488,6 +493,7 @@ export default function TablaProductosBodega({
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
     }
   };

@@ -207,6 +207,7 @@ export default function EditarAsesor({
             fontWeight="400"
             onClick={() => {
               Editar(
+                asesor,
                 {
                   nombre: newName,
                   usuarioApp: newUser,

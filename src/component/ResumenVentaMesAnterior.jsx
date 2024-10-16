@@ -76,7 +76,7 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
         borderWidth: 2,
         pointBackgroundColor: resumenVentaMesAnterior
           ?.map((d) => {
-            return Number(d.mes) === mesActual ? "#FF0000" : "#000000";
+            return Number(d.mes) === mesActual ? "#E60F0F" : "#000000";
           })
           .reverse(),
         pointRadius: 7,

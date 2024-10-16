@@ -79,7 +79,7 @@ body {
   padding-right: 17px;
 }
 
-/* .scroll-wrapper {
+.scroll-wrapper {
   height: 100%;
   width: calc(100% + 17px);
   overflow-y: scroll;
@@ -106,7 +106,7 @@ body {
 .scroll-wrapper {
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
-} */
+}
 
 .scroll-hidden {
   height: 100%;
@@ -159,15 +159,14 @@ body {
   font-size: 14px;
 }
 
-td {
-  text-align: center;
-  vertical-align: middle;
-}
-
 .content-table tbody tr {
   border-bottom: 1px solid #e5e5e5;
 }
 
+td {
+  text-align: center;
+  vertical-align: middle;
+}
 .inventTh {
   text-align: center;
 }

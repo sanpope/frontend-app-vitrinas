@@ -127,9 +127,7 @@ export default function TablaProductosBodega({
                     >
                       {name}
                     </Text>
-                    {name === "Asesor" ||
-                    name === "Vitrinas" ||
-                    name === "Ubicación" ? (
+                    {name === "Asesor" ? (
                       <UnionIcon
                         width={"13px"}
                         height={"13px"}
@@ -148,6 +146,7 @@ export default function TablaProductosBodega({
             <tbody style={{ height: "100%" }}>
               {displayedArticulos?.map((asesor, index) => {
                 // Encontrar las ciudades correspondientes a las vitrinas
+
                 const ubicaciones = Object.entries(ciudadesVitrina)
                   .filter(([ciudad, vitrinas]) =>
                     vitrinas.some((vitrina) =>
@@ -158,12 +157,10 @@ export default function TablaProductosBodega({
 
                 return (
                   <tr key={index}>
-                    {/* Nombre del asesor */}
                     <td className="AsesorTd">{asesor.nombre}</td>
 
-                    {/* Lista de vitrinas */}
                     <td className="AsesorTd">
-                      {asesor.vitrinas.map((vitrina, idx) => (
+                      {asesor?.vitrinas?.map((vitrina, idx) => (
                         <p
                           key={idx}
                           style={{
@@ -177,9 +174,8 @@ export default function TablaProductosBodega({
                       ))}
                     </td>
 
-                    {/* Ubicación (Ciudades) */}
                     <td className="AsesorTd">
-                      {ubicaciones.map((ubicacion, idx) => (
+                      {ubicaciones?.map((ubicacion, idx) => (
                         <p
                           key={idx}
                           style={{
@@ -194,13 +190,10 @@ export default function TablaProductosBodega({
                       ))}
                     </td>
 
-                    {/* Usuario */}
-                    <td className="AsesorTd">{asesor.usuario}</td>
+                    <td className="AsesorTd">{asesor?.usuario}</td>
 
-                    {/* Campo de Contraseña */}
-                    <td className="AsesorTd">{asesor.clave}</td>
+                    <td className="AsesorTd">{asesor?.clave}</td>
 
-                    {/* Switch de Habilitar/Deshabilitar */}
                     <td className="AsesorTd">
                       <Box
                         display="flex"
@@ -238,7 +231,6 @@ export default function TablaProductosBodega({
                       </Box>
                     </td>
 
-                    {/* Acciones (Editar / Eliminar) */}
                     <td className="iconContainer">
                       <EditIcon
                         width="17px"

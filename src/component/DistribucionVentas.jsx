@@ -23,7 +23,7 @@ ChartJS.register(
 const DistribucionVentas = ({ distribucionVentas }) => {
   const createGradient = (ctx, chartArea) => {
     const gradient = ctx.createLinearGradient(0, 0, 0, chartArea.bottom);
-    gradient.addColorStop(0, "rgba(255, 0, 0, 1)");
+    gradient.addColorStop(0, "rgba(230, 15, 15, 1)");
     gradient.addColorStop(1, "rgba(255, 0, 0, 0.2)");
     return gradient;
   };

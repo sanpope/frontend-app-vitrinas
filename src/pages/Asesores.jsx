@@ -49,6 +49,14 @@ export default function Asesores() {
     getMasArticulos(1);
   }, [tablaAsesores]);
 
+  const getUbicaciones = (vitrinas) => {
+    return Object.entries(ciudadesVitrinas)
+      .filter(([ciudad, vitrinasCity]) =>
+        vitrinasCity.some((vitrina) => vitrinas.includes(vitrina)),
+      )
+      .map(([ciudad]) => ciudad);
+  };
+
   const getVitrinasInfo = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina`;
     await axios
@@ -94,11 +102,27 @@ export default function Asesores() {
           Accept: "application/xml",
         },
       });
-      if (response.status == 200 && response.data) {
+
+      if (response.status === 200 && response.data) {
         const xmlDoc = parseData(response.data);
-        console.log(getAsesores(xmlDoc));
-        setTablaAsesores(getAsesores(xmlDoc));
-        setDisplayedArticulos(getAsesores(xmlDoc));
+        const asesores = getAsesores(xmlDoc);
+
+        // Añadimos las ubicaciones a cada asesor
+        const asesoresConUbicaciones = asesores.map((asesor) => {
+          const ubicaciones = Object.entries(ciudadesVitrinas)
+            .filter(([ciudad, vitrinas]) =>
+              vitrinas.some((vitrina) => asesor.vitrinas.includes(vitrina)),
+            )
+            .map(([ciudad]) => ciudad);
+
+          return {
+            ...asesor,
+            ubicaciones,
+          };
+        });
+
+        setTablaAsesores(asesoresConUbicaciones);
+        setDisplayedArticulos(asesoresConUbicaciones);
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
@@ -183,6 +207,9 @@ export default function Asesores() {
           .includes(textToSearch?.toLowerCase()) ||
         element.vitrinas.some((vitrina) =>
           vitrina.toLowerCase().includes(textToSearch.toLowerCase()),
+        ) ||
+        element.ubicaciones.some((ubicacion) =>
+          ubicacion.toLowerCase().includes(textToSearch.toLowerCase()),
         )
       );
     });
@@ -237,7 +264,9 @@ export default function Asesores() {
   }, []);
 
   const handleSortingClick = (name) => {
-    setIsAscendent(sortingBy === name ? !isAscendent : true);
+    setIsAscendent((prevIsAscendent) =>
+      sortingBy === name ? !prevIsAscendent : true,
+    );
     setSortingBy(name);
   };
 
@@ -263,7 +292,7 @@ export default function Asesores() {
         },
       );
 
-      if (response.status == 200) {
+      if (response.status === 200) {
         const index = displayedArticulos?.findIndex(
           (item) => item.nombre === newAsesor.nombre,
         );
@@ -300,12 +329,17 @@ export default function Asesores() {
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
       onThirdModalClose();
     }
   };
 
-  const editAsesor = async (asesorActualizado, handleOnClose) => {
+  const editAsesor = async (
+    currentAsesor,
+    asesorActualizado,
+    handleOnClose,
+  ) => {
     const updatedAsesor = new URLSearchParams();
     updatedAsesor.append("nuevoNombre", `${asesorActualizado.nombre}`);
     updatedAsesor.append("nuevoUsuarioApp", `${asesorActualizado.usuarioApp}`);
@@ -327,29 +361,51 @@ export default function Asesores() {
       );
 
       if (response.status == 200 && response.data) {
-        const index = displayedArticulos?.findIndex(
-          (item) => item.nombre === asesorActualizado.nombre,
-        );
-        if (index !== -1) {
-          setDisplayedArticulos((prev) => {
-            const copy = [...(prev || [])];
-            copy[index] = asesorActualizado;
-            return copy;
-          });
-          setTablaAsesores((prev) => {
-            const copy = [...(prev || [])];
-            copy[index] = asesorActualizado;
-            return copy;
-          });
+        console.log(asesorActualizado);
+        setDisplayedArticulos((prev) => {
+          const copy = [...prev];
+          const index = copy.findIndex(
+            (item) =>
+              item.nombre.toLowerCase() === currentAsesor.nombre.toLowerCase(),
+          );
+          console.log(index);
+          if (index !== -1) {
+            copy[index] = {
+              nombre: asesorActualizado.nombre,
+              usuario: asesorActualizado.usuarioApp,
+              clave: asesorActualizado.claveApp,
+              vitrinas: asesorActualizado.vitrinas,
+              habilitado: asesorActualizado.habilitado,
+            };
+          }
+          return copy;
+        });
+        setTablaAsesores((prev) => {
+          const copy = [...(prev || [])];
+          const index = copy?.findIndex(
+            (item) =>
+              item.nombre.toLowerCase() === currentAsesor.nombre.toLowerCase(),
+          );
+          if (index !== -1) {
+            copy[index] = {
+              nombre: asesorActualizado.nombre,
+              usuario: asesorActualizado.usuarioApp,
+              clave: asesorActualizado.claveApp,
+              vitrinas: asesorActualizado.vitrinas,
+              habilitado: asesorActualizado.habilitado,
+            };
+          }
 
-          toast({
-            status: "success",
-            description: "Asesor actualizado con éxito!",
-            duration: 3000,
-            position: "top-right",
-            isClosable: true,
-          });
-        }
+          return copy;
+        });
+
+        toast({
+          status: "success",
+          description: "Asesor actualizado con éxito!",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } catch (error) {
       toast({
@@ -360,6 +416,7 @@ export default function Asesores() {
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       handleOnClose();
       setIsLoading(false);
     }
@@ -404,6 +461,7 @@ export default function Asesores() {
         isClosable: true,
       });
     } finally {
+      setBusqueda(null);
       setIsLoading(false);
     }
   };

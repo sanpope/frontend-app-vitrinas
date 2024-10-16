@@ -147,7 +147,7 @@ const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
         pointBackgroundColor: ventasActualizadas
           .map((d) =>
             d.mes === mesActual.toString() && d.anio === anioActual
-              ? "#FF0000"
+              ? "#E60F0F"
               : "#000000",
           )
           .reverse(),

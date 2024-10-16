@@ -11,6 +11,7 @@ export default function Container({
   width,
   children,
   heightChildren,
+  paddingChildren = 1,
   className,
   ...props
 }) {
@@ -44,7 +45,13 @@ export default function Container({
           ) : null}
         </HStack>
       </Box>
-      <Box display="flex" flexGrow={1} height={heightChildren} w={"100%"} p={1}>
+      <Box
+        display="flex"
+        flexGrow={1}
+        height={heightChildren}
+        w={"100%"}
+        p={paddingChildren}
+      >
         {children}
       </Box>
     </Box>
