@@ -14,6 +14,7 @@ import Pagination from "../component/Pagination";
 import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
 import EditarProducto from "./EditarProducto";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
 const HEADERS = [
   "Productos",
@@ -51,6 +52,7 @@ export default function TablaProductosBodega({
   listaCategorias,
   setListaCategorias,
   displayedArticulos,
+  setDisplayedArticulos,
   handleSortingClick,
   totalResults,
   currentPage,
@@ -58,8 +60,10 @@ export default function TablaProductosBodega({
   getMasArticulos,
   productSelected,
   setProductSelected,
+  setTablaProductos,
   editProducto,
   deleteProducto,
+  setBusqueda
 }) {
   const toast = useToast();
   const [focusRow, setFocusRow] = useState(null);
@@ -164,6 +168,26 @@ export default function TablaProductosBodega({
 
             return copy;
           });
+          setDisplayedArticulos((prev) => {
+            if (!prev) return prev;
+            const copy = prev.map((item) =>
+              item?.categoria?.toLowerCase() === currentCategoria?.toLowerCase()
+                ? { ...item, categoria: categoriaUpdated }
+                : item,
+            );
+
+            return copy;
+          });
+          setTablaProductos((prev) => {
+            if (!prev) return prev;
+            const copy = prev.map((item) =>
+              item?.categoria?.toLowerCase() === currentCategoria?.toLowerCase()
+                ? { ...item, categoria: categoriaUpdated }
+                : item,
+            );
+
+            return copy;
+          });
           toast({
             status: "success",
             description: "Categoría actualizada con éxito!",
@@ -215,11 +239,27 @@ export default function TablaProductosBodega({
         if (index !== -1) {
           setListaCategorias((prev) => {
             let copy = prev ? [...prev] : [];
-
             copy = copy.filter(
               (cat) => cat?.toLowerCase() !== currentCategoria?.toLowerCase(),
             );
-
+            return copy;
+          });
+          setDisplayedArticulos((prev) => {
+            if (!prev) return prev;
+            const copy = prev.map((item) =>
+              item?.categoria?.toLowerCase() === currentCategoria?.toLowerCase()
+                ? { ...item, categoria: "" }
+                : item,
+            );
+            return copy;
+          });
+          setTablaProductos((prev) => {
+            if (!prev) return prev;
+            const copy = prev.map((item) =>
+              item?.categoria?.toLowerCase() === currentCategoria?.toLowerCase()
+                ? { ...item, categoria: "" }
+                : item,
+            );
             return copy;
           });
           toast({
@@ -327,6 +367,30 @@ export default function TablaProductosBodega({
             copy.splice(index, 1, proveedorUpdated);
             return copy;
           });
+
+          setDisplayedArticulos((prev) => {
+            if (!prev) return prev;
+
+            const copy = prev.map((item) =>
+              item.proveedor.toLowerCase() === currentProveedor.toLowerCase()
+                ? { ...item, proveedor: proveedorUpdated }
+                : item,
+            );
+
+            return copy;
+          });
+          setTablaProductos((prev) => {
+            if (!prev) return prev;
+
+            const copy = prev.map((item) =>
+              item.proveedor.toLowerCase() === currentProveedor.toLowerCase()
+                ? { ...item, proveedor: proveedorUpdated }
+                : item,
+            );
+
+            return copy;
+          });
+
           toast({
             status: "success",
             description: "Proveedor actualizado con éxito!",
@@ -383,6 +447,29 @@ export default function TablaProductosBodega({
             );
             return copy;
           });
+          setDisplayedArticulos((prev) => {
+            if (!prev) return prev;
+
+            const copy = prev.map((item) =>
+              item.proveedor.toLowerCase() === currentProveedor.toLowerCase()
+                ? { ...item, proveedor: "" }
+                : item,
+            );
+
+            return copy;
+          });
+          setTablaProductos((prev) => {
+            if (!prev) return prev;
+
+            const copy = prev.map((item) =>
+              item.proveedor.toLowerCase() === currentProveedor.toLowerCase()
+                ? { ...item, proveedor: "" }
+                : item,
+            );
+
+            return copy;
+          });
+
           toast({
             status: "success",
             description: "Proveedor eliminado con éxito!",
@@ -472,18 +559,27 @@ export default function TablaProductosBodega({
               ))}
             </tr>
           </thead>
+
           {displayedArticulos != null && displayedArticulos.length > 0 ? (
             <tbody className="" style={{ height: "100%" }}>
               {displayedArticulos.map((articulo, index) => {
                 return (
-                  <tr key={index} className="">
-                    {Object.values(articulo).map((value, index) => {
-                      return (
-                        <td key={index} className="ProdTd">
-                          {value}
-                        </td>
-                      );
-                    })}
+                  <tr key={index}>
+                    <td className="ProdTd">{articulo?.nombre}</td>
+                    <td className="ProdTd">{articulo?.codigo}</td>
+                    <td className="ProdTd">{articulo?.precio}</td>
+                    <td className="ProdTd">{articulo?.costo}</td>
+                    <td className="ProdTd">{articulo?.cantidadEnBodega} Ud.</td>
+                    <td className="ProdTd">
+                      {articulo?.cantidadEnVitrinas} Ud.
+                    </td>
+                    <td className="ProdTd">
+                      {capitalizeFirstLetter(articulo?.proveedor)}
+                    </td>
+                    <td className="ProdTd">
+                      {capitalizeFirstLetter(articulo?.categoria)}
+                    </td>
+
                     <td className="iconContainer">
                       <span
                         style={{

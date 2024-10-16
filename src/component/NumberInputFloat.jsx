@@ -23,10 +23,6 @@ const NumberInputFloat = ({ value, onChange, placeholder }) => {
       onChange={(valueString) => onChange(parse(valueString))}
     >
       <NumberInputField textAlign="left" placeholder={placeholder} />
-      <NumberInputStepper>
-        <NumberIncrementStepper />
-        <NumberDecrementStepper />
-      </NumberInputStepper>
     </NumberInput>
   );
 };

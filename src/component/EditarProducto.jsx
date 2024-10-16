@@ -71,8 +71,7 @@ export default function EditarProducto({
       cantidad !== 0 &&
       categoria !== "" &&
       categoria !== "No existen Categorías" &&
-      proveedor !== "" &&
-      proveedor !== "No se encontraron proveedores"
+      proveedor !== ""
     ) {
       return true;
     }
@@ -105,11 +104,24 @@ export default function EditarProducto({
 
     onClose();
   };
+  const proveedoresFiltered = listaProveedores.filter((prov) => {
+    return prov?.toLowerCase() !== producto?.proveedor?.toLowerCase();
+  });
+
+  const categoriasFiltered = listaCategorias.filter((cat) => {
+    return cat?.toLowerCase() !== producto?.categoria?.toLowerCase();
+  });
+
+  const listProvToShow =
+    producto?.proveedor !== "" ? proveedoresFiltered : listaProveedores;
+
+  const listCatToShow =
+    producto.categoria !== "" ? categoriasFiltered : listaCategorias;
 
   return (
     <Modal isOpen={isOpen} onClose={handleOnClose}>
       <ModalOverlay />
-      <ModalContent borderRadius={"20px"}>
+      <ModalContent borderRadius={"20px"} marginTop={"15px"}>
         <ModalHeader
           bg={"black"}
           display={"flex"}
@@ -256,10 +268,21 @@ export default function EditarProducto({
                 </span>
                 Categoría
               </FormLabel>
-              <Select required onChange={(e) => saveCategoria(e)}>
-                {listaCategorias !== null && listaCategorias?.length > 0 ? (
-                  listaCategorias?.map((cat) => (
-                    <option>{capitalizeFirstLetter(cat)}</option>
+              <Select
+                required
+                onChange={(e) => saveCategoria(e)}
+                value={categoria}
+                placeholder={
+                  producto?.categoria !== ""
+                    ? capitalizeFirstLetter(producto?.categoria)
+                    : "Selecciona la Categoría"
+                }
+              >
+                {listCatToShow !== null && listCatToShow?.length > 0 ? (
+                  listCatToShow?.map((cat, index) => (
+                    <option key={index} value={cat}>
+                      {capitalizeFirstLetter(cat)}
+                    </option>
                   ))
                 ) : (
                   <option>
@@ -284,16 +307,17 @@ export default function EditarProducto({
               <Select
                 required
                 onChange={(e) => saveProveedor(e)}
+                value={proveedor}
                 placeholder={
-                  listaProveedores && listaProveedores?.length > 0
-                    ? listaProveedores[0]
-                    : "No se encontraron Proveedores"
+                  producto?.proveedor !== ""
+                    ? capitalizeFirstLetter(producto?.proveedor)
+                    : "Selecciona Proveedor"
                 }
               >
-                {listaProveedores && listaProveedores.length > 0
-                  ? listaProveedores.map((prov, index) => (
+                {listProvToShow && listProvToShow.length > 0
+                  ? listProvToShow.map((prov, index) => (
                       <option key={index} value={prov}>
-                        {prov}
+                        {capitalizeFirstLetter(prov)}
                       </option>
                     ))
                   : null}

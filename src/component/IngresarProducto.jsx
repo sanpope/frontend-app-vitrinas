@@ -13,6 +13,9 @@ import {
   Select,
   NumberInput,
   NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 
 import TextInput from "./ui/textInput";
@@ -110,7 +113,7 @@ export default function IngresarProducto({
   return (
     <Modal isOpen={isOpen} onClose={handleOnClose}>
       <ModalOverlay />
-      <ModalContent borderRadius={"20px"}>
+      <ModalContent borderRadius={"20px"} marginTop={"15px"}>
         <ModalHeader
           bg={"black"}
           display={"flex"}
@@ -244,6 +247,10 @@ export default function IngresarProducto({
                   textAlign={"left"}
                   w={"100%"}
                 />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
               </NumberInput>
 
               <FormLabel display="flex" alignItems="center" mt={3}>

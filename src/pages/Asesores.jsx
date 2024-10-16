@@ -40,7 +40,6 @@ export default function Asesores() {
   const [currentAsesor, setCurrentAsesor] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-
   useEffect(() => {
     getVitrinasInfo();
     getAsesoresInfo();
@@ -176,22 +175,16 @@ export default function Asesores() {
 
   const Busqueda = (textToSearch) => {
     let result = tablaAsesores?.filter((element) => {
-      if (
+      console.log(tablaAsesores);
+      return (
         element.nombre
           .toString()
           .toLowerCase()
           .includes(textToSearch?.toLowerCase()) ||
-        element.vitrina
-          .toString()
-          .toLowerCase()
-          .includes(textToSearch.toLowerCase()) ||
-        element.ciudad
-          .toString()
-          .toLowerCase()
-          .includes(textToSearch.toLowerCase())
-      ) {
-        return element;
-      }
+        element.vitrinas.some((vitrina) =>
+          vitrina.toLowerCase().includes(textToSearch.toLowerCase()),
+        )
+      );
     });
     setDisplayedArticulos(result);
   };
@@ -343,6 +336,11 @@ export default function Asesores() {
             copy[index] = asesorActualizado;
             return copy;
           });
+          setTablaAsesores((prev) => {
+            const copy = [...(prev || [])];
+            copy[index] = asesorActualizado;
+            return copy;
+          });
 
           toast({
             status: "success",
@@ -378,9 +376,14 @@ export default function Asesores() {
           },
         },
       );
+      console.log(response);
 
       if (response.status == 200) {
         setDisplayedArticulos((prev) => {
+          const copy = [...(prev || [])];
+          return copy.filter((asesor) => asesor.nombre !== nombreAsesor);
+        });
+        setTablaAsesores((prev) => {
           const copy = [...(prev || [])];
           return copy.filter((asesor) => asesor.nombre !== nombreAsesor);
         });
