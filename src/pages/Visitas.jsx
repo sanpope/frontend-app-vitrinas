@@ -26,6 +26,7 @@ import {
   formattingDate,
 } from "../utils/formatting";
 import { parseData } from "../utils/xmlParse";
+import { HEADER_HEIGHT } from "../component/Header";
 
 export default function Visitas() {
   const toast = useToast();
@@ -488,7 +489,7 @@ export default function Visitas() {
       flexDirection={"column"}
       alignItems={"space-between"}
       w={"100%"}
-      h={"100%"}
+      h={"calc(100% - " + HEADER_HEIGHT + "px)"}
       p={"10px"}
     >
       <Box

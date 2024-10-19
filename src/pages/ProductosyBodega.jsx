@@ -27,7 +27,7 @@ export default function ProductosyBodega() {
   const [isAscendent, setIsAscendent] = useState(false);
   const [sortingBy, setSortingBy] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(20);
+  const [rowsToShow, setRowsToShow] = useState(15);
   const totalPages = Math.ceil(tablaProductos?.length / rowsToShow);
   const [totalProveedores, setTotalProveedores] = useState(null);
   const [totalCategorias, setTotalCategorias] = useState(null);
@@ -54,8 +54,10 @@ export default function ProductosyBodega() {
       });
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
-        setTablaProductos(getProductos(xmlDoc));
-        setDisplayedArticulos(getProductos(xmlDoc));
+        const prods = getProductos(xmlDoc);
+        setTablaProductos(prods);
+        setDisplayedArticulos(prods);
+        setTotalResults(prods?.length);
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
@@ -227,7 +229,7 @@ export default function ProductosyBodega() {
       });
     } finally {
       setIsLoading(false);
-      setBusqueda(null)
+      setBusqueda(null);
       cerrar();
     }
   };
@@ -311,7 +313,7 @@ export default function ProductosyBodega() {
     } finally {
       setIsLoading(false);
       setProductSelected(null);
-      setBusqueda(null)
+      setBusqueda(null);
       handleOnClose();
     }
   };
@@ -337,18 +339,16 @@ export default function ProductosyBodega() {
         if (index !== -1) {
           setTablaProductos((prev) => {
             const copy = [...prev];
-            const totalResults = copy.filter((prod) => prod.codigo !== codigo);
-            return totalResults;
+            const total = copy.filter((prod) => prod.codigo !== codigo);
+            return total;
           });
 
           setDisplayedArticulos((prev) => {
             const copy = [...prev];
             const index = copy.findIndex((prod) => prod.codigo === codigo);
             if (index !== -1) {
-              const totalResults = copy.filter(
-                (prod) => prod.codigo !== codigo,
-              );
-              return totalResults;
+              const total = copy.filter((prod) => prod.codigo !== codigo);
+              return total;
             }
           });
           toast({
@@ -369,7 +369,7 @@ export default function ProductosyBodega() {
         isClosable: true,
       });
     } finally {
-      setBusqueda(null)
+      setBusqueda(null);
       setIsLoading(false);
     }
   };
@@ -637,7 +637,7 @@ export default function ProductosyBodega() {
             handleSortingClick={handleSortingClick}
             totalResults={totalResults}
             currentPage={currentPage}
-            // totalPages={displayedArticulos ? displayedArticulos.length : 0}
+            totalPages={totalPages}
             getMasArticulos={getMasArticulos}
             listaProveedores={totalProveedores ? totalProveedores : []}
             setListaProveedores={setTotalProveedores}
@@ -683,7 +683,6 @@ export default function ProductosyBodega() {
           setTotalProdcsBodega={setTablaProductos}
           displayedArticulos={displayedArticulos}
           setDisplayedArticulos={setDisplayedArticulos}
-          
         />
       )}
     </Box>

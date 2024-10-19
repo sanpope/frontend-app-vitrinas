@@ -78,7 +78,7 @@ export default function TablaVentas({
               ))}
             </tr>
           </thead>
-         
+
           {displayedArticulos !== null && displayedArticulos?.length > 0 ? (
             <tbody>
               {displayedArticulos?.map((articulo, articuloIndex) => {
@@ -184,9 +184,7 @@ export default function TablaVentas({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={getMasArticulos}
-        totalResults={
-          displayedArticulos !== null ? displayedArticulos?.length : 0
-        }
+        totalResults={totalResults}
       />
     </Box>
   );

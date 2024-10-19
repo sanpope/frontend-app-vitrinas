@@ -14,6 +14,7 @@ import {
 
 import { parseData } from "../utils/xmlParse";
 import { formatFecha } from "../utils/formatting";
+import { HEADER_HEIGHT } from "../component/Header";
 
 export default function Mensajes() {
   const toast = useToast();
@@ -167,17 +168,14 @@ export default function Mensajes() {
 
   return (
     <Box
-      bg={"mainBg"}
-      w={"100%"}
-      height={"100%"}
       display={"flex"}
-      flexDir={"column"}
-      gap={"10px"}
-      px={"40px"}
-      py={"20px"}
-      overflowY={"scroll"}
+      flexDirection={"column"}
+      alignItems={"space-between"}
+      w={"100%"}
+      h={"calc(100% - " + HEADER_HEIGHT + "px)"}
+      p={"10px"}
     >
-      <Box display={"flex"} flexDir={"column"} gap={"10px"}>
+      <Box position={"sticky"} top={0} p={"10px"}>
         <Text textStyle={" RobotoBody"}>
           {name} - {city}
         </Text>
@@ -218,7 +216,14 @@ export default function Mensajes() {
           </Box>
         </Box>
       </Box>
-      <Box display={"flex"} flexWrap={"wrap"} gap={"20px"} py={"10px"}>
+      <Box
+        display={"flex"}
+        flexWrap={"wrap"}
+        gap={"20px"}
+        p={"10px"}
+        overflowY={"scroll"}
+        flex={1}
+      >
         {totalMensajes !== null && totalMensajes?.length > 0 ? (
           totalMensajes?.map((mensaje, index) => (
             <Message

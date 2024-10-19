@@ -15,7 +15,7 @@ import ShoppingBagIcon from "../../src/assets/images/ShoppingBagIcon";
 import MugIcon from "../../src/assets/images/MugIcon";
 import HeadphonesIcon from "../../src/assets/images/HeadphonesIcon";
 
-import Container from "../component/Container";
+import Container, { CONTAINER_PADDING } from "../component/Container";
 import TopVitrinaItem from "../component/TopVitrinaItem";
 import TopCategoriaItem from "../component/TopCategoriaItem";
 import TopProductoItem from "../component/TopProductoItem";
@@ -41,7 +41,6 @@ import {
 import { parseData } from "../utils/xmlParse";
 import TopVitrinas from "../component/TopVitrinas";
 
-const PADDING = 15;
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -320,7 +319,7 @@ export default function HomePage() {
   };
 
   const ContainerHeight = useMemo(() => {
-    return Math.floor((height - HEADER_HEIGHT - PADDING * 5 - 35) / 3);
+    return Math.floor((height - HEADER_HEIGHT - CONTAINER_PADDING * 5 - 35) / 3);
   }, [height]);
 
   return (
@@ -331,9 +330,9 @@ export default function HomePage() {
       position="relative"
       flexDir={"column"}
       display={"flex"}
-      gap={PADDING + "px"}
-      p={PADDING + "px"}
-      overflowY={{ base: "hidden", md: "auto", lg: "hidden" }}
+      gap={CONTAINER_PADDING + "px"}
+      p={CONTAINER_PADDING + "px"}
+      overflowY={{ base: "hidden", lg: "auto" }}
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={"black"}>
         ¡Hola {name}, bienvenido! 👋🏻
@@ -486,7 +485,7 @@ export default function HomePage() {
           title={"Top Categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
           heightChildren={"100%"}
-          paddingChildren={topTotalCategorias != null ? 1 : 0}
+          paddingChildren={topTotalCategorias != null ? 0 : 1}
           children={
             <>
               {topTotalCategorias != null ? (
@@ -528,7 +527,7 @@ export default function HomePage() {
           minHeight="225px"
           title={"Top Productos"}
           icon={<BoxesIcon width={"1.5rem"} height={"1.5rem"} />}
-          heightChildren={topTotalProductos != null ? "" : "100%"}
+          heightChildren={topTotalProductos != null ? "auto" : "100%"}
           paddingChildren={topTotalProductos != null ? 1 : 0}
           children={
             <>
@@ -572,8 +571,8 @@ export default function HomePage() {
           minHeight="225px"
           title={"Dispositivos averiados"}
           icon={<PhoneLaptopIcon width={"25px"} height={"25px"} />}
-          heightChildren={totalDispAver != null ? "" : "100%"}
-          paddingChildren={totalDispAver != null ? 1 : 0}
+          heightChildren={totalDispAver != null ? "auto" : "100%"}
+          paddingChildren={totalDispAver != null ? 0 : 1}
           children={
             <>
               {totalDispAver !== null ? (
@@ -601,8 +600,8 @@ export default function HomePage() {
           minHeight="225px"
           title={"Despachos actuales"}
           icon={<TruckIcon width={"25px"} height={"25px"} />}
-          heightChildren={totalDespachos != null ? "" : "100%"}
-          paddingChildren={totalDespachos != null ? 1 : 0}
+          heightChildren={totalDespachos != null ? "auto" : "100%"}
+          paddingChildren={totalDespachos != null ? 0 : 1}
           children={
             <>
               {totalDespachos !== null ? (
@@ -630,7 +629,7 @@ export default function HomePage() {
           minHeight="225px"
           title={"Inventario pendiente de verificar"}
           icon={<FileCheckIcon />}
-          heightChildren={totalVisitasNoVerif != null ? "" : "100%"}
+          heightChildren={totalVisitasNoVerif != null ? "auto" : "100%"}
           paddingChildren={totalVisitasNoVerif != null ? 1 : 0}
           children={
             <>

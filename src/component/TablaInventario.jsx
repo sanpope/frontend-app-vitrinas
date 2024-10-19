@@ -27,6 +27,7 @@ const HEADERS = [
 ];
 
 export default function TablaInventario({
+  TablaInventario,
   displayedArticulos,
   totalResults,
   currentPage,
@@ -146,7 +147,7 @@ export default function TablaInventario({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={getMasArticulos}
-        totalResults={displayedArticulos ? displayedArticulos?.length : "0"}
+        totalResults={TablaInventario ? TablaInventario?.length : "0"}
       />
       <Editar />
     </Box>

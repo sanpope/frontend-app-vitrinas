@@ -7,6 +7,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const getPageNumbers = () => {
     const pages = [];
     const siblingCount = 1; // Número de páginas a mostrar a los lados de la página actual
+
     const totalPageNumbers = siblingCount * 2 + 5; // Número total de páginas a mostrar (ajustable)
 
     if (totalPages <= totalPageNumbers) {
@@ -73,10 +74,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             if (page === "...") {
               if (index === 1) {
                 // Al hacer clic en los puntos a la izquierda, ir a la página anterior
-                onPageChange(currentPage - 1);
+                // onPageChange(currentPage - 1);
               } else {
                 // Al hacer clic en los puntos a la derecha, ir a la página siguiente
-                onPageChange(currentPage + 1);
+                // onPageChange(currentPage + 1);
               }
             } else {
               onPageChange(page);

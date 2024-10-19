@@ -126,8 +126,9 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
         <ModalOverlay />
         <ModalContent w={"100%"} top={"80px"} left={"300px"}>
           <ModalBody>
-            <Box display={"flex"} justifyContent={"center"}>
+            <Box display={"flex"} justifyContent={"center"} minH={"270px"}>
               <DatePicker
+                minH={"270px"}
                 selected={focusedStart}
                 onChange={handleStartDateChange}
                 inline
@@ -154,8 +155,9 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
         <ModalOverlay />
         <ModalContent w={"100%"} top={"80px"} left={"300px"}>
           <ModalBody>
-            <Box display={"flex"} justifyContent={"center"}>
+            <Box display={"flex"} justifyContent={"center"} minH={"270px"}>
               <DatePicker
+                minH={"270px"}
                 selected={focusedEnd}
                 onChange={handleEndDateChange}
                 minDate={startDate}

@@ -1,6 +1,8 @@
 import React from "react";
 import { Box, HStack, Text } from "@chakra-ui/react";
 
+export const CONTAINER_PADDING = 15;
+
 export default function Container({
   bg = "white",
   color = "black",
@@ -20,7 +22,7 @@ export default function Container({
       position={"relative"}
       bg={bg}
       borderRadius={"20px"}
-      p={3}
+      p={CONTAINER_PADDING + "px"}
       display="flex"
       flexDir={"column"}
       width={width}
@@ -45,13 +47,7 @@ export default function Container({
           ) : null}
         </HStack>
       </Box>
-      <Box
-        display="flex"
-        flexGrow={1}
-        height={heightChildren}
-        w={"100%"}
-        p={paddingChildren}
-      >
+      <Box display="flex" flexGrow={1} height={heightChildren} w={"100%"} p={paddingChildren}>
         {children}
       </Box>
     </Box>

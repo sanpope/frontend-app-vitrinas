@@ -28,17 +28,18 @@ export default function Inventario() {
 
   const [tablaInventario, setTablaInventario] = useState([]);
   const [displayedArticulos, setDisplayedArticulos] = useState([]);
-  const [totalResults, setTotalResults] = useState(null);
-  const [loading, toggleLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsToShow, setRowsToShow] = useState(30);
+  const [rowsToShow, setRowsToShow] = useState(15);
   const [busqueda, setBusqueda] = useState(null);
   const [verificacionesPendientes, setVerificacionesPendientes] =
     useState(null);
 
   const [selectedArticulo, setSelectedArticulo] = useState(null);
 
+  const [totalResults, setTotalResults] = useState(null);
+  const [loading, toggleLoading] = useState(false);
   const totalPages = Math.ceil(tablaInventario?.length / rowsToShow);
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -300,6 +301,7 @@ export default function Inventario() {
         {
           <TablaInventario
             displayedArticulos={displayedArticulos}
+            TablaInventario={tablaInventario}
             //totalResults={totalResults || "0"}
             currentPage={currentPage}
             totalPages={totalPages}

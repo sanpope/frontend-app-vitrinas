@@ -16,12 +16,11 @@ import { formatearNumero, formattingDate } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
 import VerExistencias from "../component/VerExistencias";
 
-const ROWS_TO_SHOW = 30;
-
 const TOP_SECTION_HEIGHT = 64;
 const BOTTOM_SECTION_HEIGHT = 141.5;
 const BOTTOM_SECTION_HEIGHT_MOBILE = 289.5;
 const MARGINS = 16;
+const rowsToShow = 200;
 
 const FINAL_DATE = new Date();
 const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
@@ -38,8 +37,7 @@ export default function Ventas() {
   const [totalResults, setTotalResults] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, toggleLoading] = useState(false);
-
-  const totalPages = Math.ceil(tablaVentas?.length / ROWS_TO_SHOW);
+  const totalPages = Math.ceil(displayedArticulos?.length / rowsToShow);
 
   const [totalVendidoIntervalo, setTotalVendidoIntervalo] = useState();
   const [totalDevueltoIntervalo, setTotalDevueltoIntervalo] = useState();
@@ -58,10 +56,12 @@ export default function Ventas() {
 
   useEffect(() => {
     if (tablaVentas) {
-      const newDisplayedArticulos =
+      const tabla =
         selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones;
-      setDisplayedArticulos(newDisplayedArticulos);
-      setTotalResults(newDisplayedArticulos?.length);
+
+      setDisplayedArticulos(tabla);
+
+      setTotalResults(tabla?.length);
     }
   }, [selectedOption, fechaInicio, fechaFin, tablaVentas, tablaDevoluciones]);
 
@@ -75,8 +75,8 @@ export default function Ventas() {
     const arr = selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones;
     setDisplayedArticulos(
       arr?.slice(
-        (pageNumber - 1) * ROWS_TO_SHOW,
-        (pageNumber - 1) * ROWS_TO_SHOW + ROWS_TO_SHOW,
+        (pageNumber - 1) * rowsToShow,
+        (pageNumber - 1) * rowsToShow + rowsToShow,
       ),
     );
   };
@@ -85,13 +85,11 @@ export default function Ventas() {
     const ventasYDevoluciones = xml.querySelector("ventasYDevoluciones");
     const devoluciones = ventasYDevoluciones.querySelectorAll("devolucion");
     const ventas = ventasYDevoluciones.querySelectorAll("venta");
-    // Array para almacenar la información extraída
     const result = {
       devoluciones: [],
       ventas: [],
     };
 
-    // Iteramos sobre devoluciones
     for (let i = 0; i < devoluciones.length; i++) {
       const devolucion = devoluciones[i];
       const fechaHora =
@@ -158,7 +156,7 @@ export default function Ventas() {
     let fecha1 = formattingDate(date1);
     let fecha2 = formattingDate(date2);
 
-    const url1 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${fecha1}&numeroDeElementos=${ROWS_TO_SHOW}&fechaLimite=${fecha2}`;
+    const url1 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/parte-de-intervalo?nombreVitrina=${name}&fechaPartida=${fecha1}&numeroDeElementos=${rowsToShow}&fechaLimite=${fecha2}`;
 
     try {
       const response = await axios.get(url1, {
@@ -166,18 +164,18 @@ export default function Ventas() {
           "Content-Type": "application/xml",
         },
       });
+      console.log("Parcial: ", response);
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
 
         setTablaVentas(ventas);
         setTablaDevoluciones(devoluciones);
-        setTotalResults(
-          (selectedOption === "Ventas" ? ventas : devoluciones).length,
-        );
-        setDisplayedArticulos(
-          selectedOption === "Ventas" ? ventas : devoluciones,
-        );
+        const currentTable =
+          selectedOption === "Ventas" ? ventas : devoluciones;
+
+        setTotalResults(currentTable?.length);
+        setDisplayedArticulos(currentTable);
       }
     } catch (error) {
       console.log(error);
@@ -188,7 +186,7 @@ export default function Ventas() {
     let fecha1 = formattingDate(date1);
     let fecha2 = formattingDate(date2);
 
-    const url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fecha1}&fechaFin=${fecha2}&numeroDeElementos=${ROWS_TO_SHOW}`;
+    const url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fecha1}&fechaFin=${fecha2}&numeroDeElementos=${rowsToShow}`;
 
     try {
       const response = await axios.get(url2, {
@@ -196,6 +194,7 @@ export default function Ventas() {
           "Content-Type": "application/xml",
         },
       });
+      console.log("Total: ", response);
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
@@ -208,9 +207,12 @@ export default function Ventas() {
         setIngresoRecibido(
           xmlDoc?.getElementsByTagName("ingresoReal")[0]?.textContent,
         );
+
         setTablaVentas(ventas);
         setTablaDevoluciones(devoluciones);
-        setTotalResults(ventas?.length);
+        const currentTable =
+          selectedOption === "Ventas" ? ventas : devoluciones;
+        setTotalResults(currentTable?.length);
         setDisplayedArticulos(ventas);
       }
     } catch (error) {
@@ -236,7 +238,7 @@ export default function Ventas() {
         justifyContent={"space-between"}
         alignContent={"flex-end"}
         flexWrap={"wrap"}
-        mb={2}
+        mb={4}
       >
         <Box
           display={"flex"}
@@ -287,7 +289,6 @@ export default function Ventas() {
             <option>Devoluciones</option>
           </Select>
         </Box>
-        <Box></Box>
       </Box>
       <Box
         w={"100%"}
@@ -302,9 +303,6 @@ export default function Ventas() {
         <TablaVentas
           displayedArticulos={displayedArticulos}
           totalResults={totalResults}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          getMasArticulos={getMasArticulos}
           tableTitle={
             selectedOption === "Ventas"
               ? "Productos Vendidos"
@@ -317,6 +315,9 @@ export default function Ventas() {
           isOpen={isOpen}
           onOpen={onOpen}
           onClose={onClose}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          getMasArticulos={getMasArticulos}
         />
       </Box>
 
@@ -326,6 +327,7 @@ export default function Ventas() {
         flexWrap={"wrap"}
         gridGap={"1rem"}
         justifyContent={"space-between"}
+        pt={3}
       >
         <Container
           flex={"1 1 auto"}
