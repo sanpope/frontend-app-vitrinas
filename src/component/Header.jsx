@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import colors from "../theme/colors";
 import BarsMain from "../assets/images/BarsMenuIcon";
@@ -6,14 +6,20 @@ import UserIcon from "../assets/images/UserIcon";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleMenu } from "../store/slices/menu";
 import { useNavigate } from "react-router-dom";
+import { getItem } from "../utils/localStorage";
 
 export const HEADER_HEIGHT = 50;
 
 export default function Header() {
   const dispatch = useDispatch();
-  const name = useSelector((state) => state.userReducer.userName);
+  const [name, setName] = useState("");
   const isMenuOpen = useSelector((state) => state.menuReducer.isMenuOpen);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedName = getItem("rememberedUser");
+    setName(savedName);
+  }, []);
 
   const handleToggleMenu = () => {
     dispatch(toggleMenu());

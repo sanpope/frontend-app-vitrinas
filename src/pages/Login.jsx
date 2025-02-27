@@ -1,109 +1,71 @@
 import { useState } from "react";
-
+import axios from "axios";
 import { Box, Text } from "@chakra-ui/react";
 import Checkbox from "../component/ui/checkbox/index";
 import StandardButton from "../component/ui/buttons/standard/index";
 import TextInput from "../component/ui/textInput";
 import LogoComplete from "../assets/images/logoComplete";
-import colors from "../theme/colors";
-import { color } from "framer-motion";
-import BUTTON_VARIANTS from "../component/ui/buttons/standard/types";
-import textStyles from "../theme/textStyles";
-import login from "../services/login";
+import { setItem, getItem } from "../utils/localStorage";
 
 function Login({ setLoggedIn }) {
-
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const [errEmail, setErrEmail] = useState("");
-  const [errPassword, setErrPassword] = useState("");
+  const [err, setErr] = useState("");
   const [errCheck, setErrCheck] = useState("");
 
-
   const onChangeEmail = (e) => {
-    let emailLowerCase = e.toLowerCase();
-
-    setEmail(emailLowerCase);
+    setUser(e.trim());
   };
 
   const onChangePassword = (e) => {
-    setPassword(e);
+    setPassword(e.toString().trim());
   };
 
-  const emailValidation = () => {
-
-    let result = false;
-    const rgExp = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
-
-    if (rgExp.test(email)) {
-      setErrEmail("");
-      result = false;
-    } else if (email === "") {
-      setErrEmail("Ingrese un correo");
-      result = true;
-    } else if (!rgExp.test(email)) {
-      setErrEmail("Ingrese un correo valido");
-      result = true;
-    } else {
-      setErrEmail("");
-      result = false;
+  const handleLoginAdmin = async () => {
+    if (!user || !password) {
+      alert("Error", "Usuario y contraseña son requeridos");
+      return;
     }
 
-    return result;
-  };
+    setLoading(true);
+    try {
+      console.log("datos a enviar: ", user, " ", password);
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/auth/login/`,
+        `<credentials><username>${user}</username><password>${password}</password></credentials>`,
+        {
+          headers: {
+            "Content-Type": "application/xml",
+          },
+        },
+      );
+      console.log("Respuesta autenticacion: ", response);
 
-  const passwordValidation = (pw) => {
-
-    setErrPassword("");
-    let result = false;
-    let msg = "";
-
-    const rgExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{6,15}$/;
-
-    if (rgExp.test(pw)) {
-
-      setErrPassword("");
-      result = false;
-      return result;
-
-    } else {
-
-      if (pw.length === 0) {
-        msg = "El campo no puede estar vacío, agrega una contraseña";
-        setErrPassword(msg);
-        result = true;
-      } else if (pw.length > 0 && pw.length < 6) {
-        msg = "La contraseña debe:\n Contener mínimo 6 carácteres";
-        result = true;
-      } else if (pw.length > 15) {
-        msg += "La contraseña debe:\n Contener máximo 15 carácteres.";
-        result = true;
+      if (response.status === 200) {
+        setItem("authToken", response.data);
+        setItem("rememberedUser", user);
+        if (check) {
+          setItem("hasRemembered", "true");
+        }
+        setLoggedIn(true);
       }
-
-      setErrPassword(msg);
-    }
-
-    return result;
-  };
-
-  const handleLogin = async (e) => {
-    
-    e.preventDefault();
-    const loginData = await login.login({ user: email, password });
-    const validEmail = emailValidation();
-    const validPassword = passwordValidation(password);
-
-    /* if (!validEmail && !validPassword && loginData.status) {
-
-      setLoggedIn(true);
-
-    } */
-    if (loginData.status) {
-
-      setLoggedIn(true);
-
+    } catch (error) {
+      console.log("error para iniciar sesion: ", error);
+      setErr(
+        "Usuario o contraseña invalidos, por favor ingresa las credenciales correctas!",
+      );
+    } finally {
+      console.log(check);
+      if (check) {
+      } else {
+        setLoading(false);
+        setUser("");
+        setPassword("");
+        setErr("");
+      }
     }
   };
 
@@ -162,7 +124,10 @@ function Login({ setLoggedIn }) {
               padding: "10px",
               borderRadius: "10px",
             }}
-            onSubmit={(e) => handleLogin(e)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLoginAdmin();
+            }}
           >
             <Box
               style={{
@@ -183,21 +148,20 @@ function Login({ setLoggedIn }) {
               label="Usuario"
               type="text"
               id="user"
-              value={email}
+              value={user}
               onChange={(e) => onChangeEmail(e)}
-              error={errEmail}
+              error={err}
               rounded="md"
-              placeholder={"example"}
             />
 
             <Box w="100%">
               <TextInput
                 label="Contraseña"
+                id="password"
                 value={password}
                 onChange={(e) => onChangePassword(e)}
-                error={errPassword}
-                placeholder={"************"}
-                isPassword
+                error={err}
+                type="text"
               />
             </Box>
 
@@ -233,6 +197,7 @@ function Login({ setLoggedIn }) {
                 borderRadius="30px"
                 w="fit-content"
                 type={"submit"}
+                onClick={handleLoginAdmin}
               >
                 Iniciar sesión
               </StandardButton>

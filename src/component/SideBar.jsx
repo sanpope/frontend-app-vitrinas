@@ -21,6 +21,8 @@ import BriefCaseIcon from "../assets/images/BriefCaseIcon.jsx";
 import ModalVitrinas from "../pages/ModalVitrinas.jsx";
 
 import { useSelector, useDispatch } from "react-redux";
+import { removeItem } from "../utils/localStorage.js";
+import useNormalize from "../hooks/useNormalize.js";
 
 const routes = [
   {
@@ -93,6 +95,7 @@ export const BIG_WIDTH = "266px";
 export const SMALL_WIDTH = "80px";
 
 export default function SideBar({ setLoggedIn }) {
+  const normalize = useNormalize();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
 
@@ -116,6 +119,9 @@ export default function SideBar({ setLoggedIn }) {
 
   const handleClickLogOut = () => {
     setLoggedIn(false);
+    removeItem("authToken");
+    removeItem("rememberedUser");
+    removeItem("hasRemembered");
   };
 
   useEffect(() => {}, [router]);
@@ -311,15 +317,17 @@ export default function SideBar({ setLoggedIn }) {
         bottom={"40px"}
         cursor={"pointer"}
         my={"2rem"}
+        onClick={handleClickLogOut}
       >
-        <SignOutIcon width={"24px"} height={"24px"} />
+        <SignOutIcon width={normalize(7)} height={normalize(7)} />
         {isDeskMenuOpen && !isSmallScreen ? (
           <Text
             display={"inline-flex"}
             textStyle={"RobotoRegular"}
             color={"white"}
+            fontSize={normalize(5)}
           >
-            Cerrar Sesión
+            Cerrar sesión
           </Text>
         ) : null}
       </Box>

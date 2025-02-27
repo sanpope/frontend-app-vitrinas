@@ -10,7 +10,6 @@ const login = async (credentials) => {
   `;
 
   try {
-    console.log("Llamada a fetch");
 
     const respuesta = await fetch('http://localhost:8080/app/rest/auth/login', {
       method: 'POST',

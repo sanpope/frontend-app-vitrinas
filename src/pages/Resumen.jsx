@@ -352,7 +352,7 @@ export default function Resumen() {
           height={ContainerHeight + "px"}
           minHeight="215px"
           icon={<AlarmClockIcon />}
-          title={"Tiempo de Inactividad"}
+          title={"Tiempo de inactividad"}
           children={
             <Box
               h={"100%"}

@@ -40,7 +40,7 @@ import {
 } from "../utils/formatting";
 import { parseData } from "../utils/xmlParse";
 import TopVitrinas from "../component/TopVitrinas";
-
+import { setItem, getItem } from "../utils/localStorage";
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -48,7 +48,7 @@ export default function HomePage() {
   const ventaTotalMes = useSelector(
     (state) => state.homePageReducer.ventaTotalMes,
   );
-  const name = useSelector((state) => state.userReducer.userName);
+  const [name, setName] = useState("");
   const [ventaDelMes, setVentaDelMes] = useState(null);
   const [ventaMesActual, setVentaMesActual] = useState(null);
   const [ventasMesesAnteriores, setVentaMesesAnteriores] = useState(null);
@@ -69,6 +69,10 @@ export default function HomePage() {
   }, []);
 
   const savingData = async () => {
+    const savedName = await getItem("rememberedUser");
+    setName(savedName);
+    console.log(savedName);
+
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/resumen`;
     axios
       .get(url, {
@@ -319,7 +323,9 @@ export default function HomePage() {
   };
 
   const ContainerHeight = useMemo(() => {
-    return Math.floor((height - HEADER_HEIGHT - CONTAINER_PADDING * 5 - 35) / 3);
+    return Math.floor(
+      (height - HEADER_HEIGHT - CONTAINER_PADDING * 5 - 35) / 3,
+    );
   }, [height]);
 
   return (
