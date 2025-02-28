@@ -1,20 +1,27 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { Box, Text } from "@chakra-ui/react";
+import { useAuth } from "../context/AuthContext";
 import Checkbox from "../component/ui/checkbox/index";
 import StandardButton from "../component/ui/buttons/standard/index";
 import TextInput from "../component/ui/textInput";
 import LogoComplete from "../assets/images/logoComplete";
-import { setItem, getItem } from "../utils/localStorage";
+import { useNavigate, useLocation } from "react-router-dom";
 
-function Login({ setLoggedIn }) {
+function Login() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState(true);
-  const [loading, setLoading] = useState(false);
 
-  const [err, setErr] = useState("");
-  const [errCheck, setErrCheck] = useState("");
+  const { login, error, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
 
   const onChangeEmail = (e) => {
     setUser(e.trim());
@@ -24,48 +31,19 @@ function Login({ setLoggedIn }) {
     setPassword(e.toString().trim());
   };
 
-  const handleLoginAdmin = async () => {
+  const handleLoginAdmin = async (e) => {
+    e.preventDefault();
+
     if (!user || !password) {
       alert("Error", "Usuario y contraseña son requeridos");
       return;
     }
 
-    setLoading(true);
-    try {
-      console.log("datos a enviar: ", user, " ", password);
-      const response = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/auth/login/`,
-        `<credentials><username>${user}</username><password>${password}</password></credentials>`,
-        {
-          headers: {
-            "Content-Type": "application/xml",
-          },
-        },
-      );
-      console.log("Respuesta autenticacion: ", response);
+    const success = await login(user, password, check);
 
-      if (response.status === 200) {
-        setItem("authToken", response.data);
-        setItem("rememberedUser", user);
-        if (check) {
-          setItem("hasRemembered", "true");
-        }
-        setLoggedIn(true);
-      }
-    } catch (error) {
-      console.log("error para iniciar sesion: ", error);
-      setErr(
-        "Usuario o contraseña invalidos, por favor ingresa las credenciales correctas!",
-      );
-    } finally {
-      console.log(check);
-      if (check) {
-      } else {
-        setLoading(false);
-        setUser("");
-        setPassword("");
-        setErr("");
-      }
+    if (!success && !check) {
+      setUser("");
+      setPassword("");
     }
   };
 
@@ -124,10 +102,7 @@ function Login({ setLoggedIn }) {
               padding: "10px",
               borderRadius: "10px",
             }}
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleLoginAdmin();
-            }}
+            onSubmit={handleLoginAdmin}
           >
             <Box
               style={{
@@ -150,7 +125,7 @@ function Login({ setLoggedIn }) {
               id="user"
               value={user}
               onChange={(e) => onChangeEmail(e)}
-              error={err}
+              error={error}
               rounded="md"
             />
 
@@ -160,8 +135,8 @@ function Login({ setLoggedIn }) {
                 id="password"
                 value={password}
                 onChange={(e) => onChangePassword(e)}
-                error={err}
-                type="text"
+                error={error}
+                type="password"
               />
             </Box>
 
@@ -177,7 +152,6 @@ function Login({ setLoggedIn }) {
               <Checkbox
                 value={check}
                 onChange={setCheck}
-                error={errCheck}
                 defaultChecked={check}
               />
               <Text>Recordarme</Text>
@@ -197,6 +171,7 @@ function Login({ setLoggedIn }) {
                 borderRadius="30px"
                 w="fit-content"
                 type={"submit"}
+                isLoading={loading}
                 onClick={handleLoginAdmin}
               >
                 Iniciar sesión

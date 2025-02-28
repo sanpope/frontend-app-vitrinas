@@ -69,7 +69,7 @@ export default function HomePage() {
   }, []);
 
   const savingData = async () => {
-    const savedName = await getItem("rememberedUser");
+    const savedName = await getItem("userName");
     setName(savedName);
     console.log(savedName);
 

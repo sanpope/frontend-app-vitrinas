@@ -33,3 +33,29 @@ export const generateProductsListXML = (productos) => {
       ${productosXML}
     </productosAMover>`;
 };
+
+export const extraerDatosUsuario = (xmlDoc) => {
+  const datos = {
+    nombre: "",
+    longitudClave: 0,
+    usuario: "",
+  };
+
+  const nombreElement = xmlDoc.getElementsByTagName("nombre")[0];
+  if (nombreElement) {
+    datos.nombre = nombreElement.textContent;
+  }
+
+  const caracteresClaveElement =
+    xmlDoc.getElementsByTagName("caracteresClave")[0];
+  if (caracteresClaveElement) {
+    datos.longitudClave = parseInt(caracteresClaveElement.textContent, 10);
+  }
+
+  const usuarioElement = xmlDoc.getElementsByTagName("usuario")[0];
+  if (usuarioElement) {
+    datos.usuario = usuarioElement.textContent;
+  }
+
+  return datos;
+};

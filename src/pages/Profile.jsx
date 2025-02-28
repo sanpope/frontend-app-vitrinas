@@ -1,99 +1,218 @@
-import React, { useState } from "react";
-import {
-  Box,
-  FormControl,
-  FormLabel,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import { Box, FormControl, FormLabel, Text, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import TextInput from "../component/ui/textInput";
 import EditIcon from "../assets/images/EditIcon";
-import UserIcon from "../assets/images/UserIcon";
 import UserCircleIcon from "../assets/images/UserCircleIcon";
 import LockIcon from "../assets/images/LockIcon";
-import EnvelopeIcon from "../assets/images/EnvelopeIcon";
-import SetPassword from "../component/SetPassword";
-
-import { useSelector, useDispatch } from "react-redux";
+import EyeSlashIcon from "../assets/images/EyeSlashIcon";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
-  const name = useSelector((state) => state.userReducer.userName);
-  const [isEditing, setIsEditing] = useState(false);
+  const { user, userInfo, fetchUserData, updateUserProfile, updatePassword } =
+    useAuth();
+  const [formData, setFormData] = useState({
+    nombre: "",
+    username: "",
+  });
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+  });
+  const [view, setView] = useState("profile");
 
-  const {
-    isOpen: isFirstModalOpen,
-    onOpen: onFirstModalOpen,
-    onClose: onFirstModalClose,
-  } = useDisclosure();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const {
-    isOpen: isSecondModalOpen,
-    onOpen: onSecondModalOpen,
-    onClose: onSecondModalClose,
-  } = useDisclosure();
+  const toast = useToast();
 
-  const {
-    isOpen: isThirdModalOpen,
-    onOpen: onThirdModalOpen,
-    onClose: onThirdModalClose,
-  } = useDisclosure();
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!userInfo) {
+        await fetchUserData();
+      } else {
+        setFormData({
+          nombre: userInfo.nombre || "",
+          username: userInfo.usuario || "",
+        });
+      }
+    };
 
-  return (
-    <Box
-      bg={"mainBg"}
-      w={"100%"}
-      height={"100%"}
-      display={"flex"}
-      p={2}
-      justifyContent={"center"}
-      alignItems={"center"}
-    >
-      {isEditing === false ? (
+    loadUserData();
+  }, [userInfo, fetchUserData]);
+
+  const handleInputChange = (field, value) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+  };
+
+  const handlePasswordChange = (field, value) => {
+    setPasswordData({
+      ...passwordData,
+      [field]: value,
+    });
+  };
+
+  const handleSaveChanges = async (e) => {
+    e.preventDefault();
+
+    setIsSaving(true);
+
+    try {
+      const success = await updateUserProfile(
+        formData.nombre,
+        formData.username,
+      );
+
+      if (success) {
+        toast({
+          title: "Perfil actualizado",
+          description: "Tu información ha sido actualizada exitosamente.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        setView("profile");
+      } else {
+        toast({
+          title: "Error",
+          description:
+            "No se pudo actualizar tu información. Intenta de nuevo.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Ocurrió un error al actualizar tu información.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    setIsChangingPassword(true);
+
+    try {
+      const success = await updatePassword(
+        passwordData.oldPassword,
+        passwordData.newPassword,
+      );
+
+      if (success) {
+        toast({
+          title: "Contraseña actualizada",
+          description: "Tu contraseña ha sido actualizada exitosamente.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        setView("profile");
+        setPasswordData({
+          oldPassword: "",
+          newPassword: "",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "No se pudo actualizar tu contraseña. Intenta de nuevo.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      let errorMessage = "Ocurrió un error al actualizar tu contraseña.";
+
+      if (error.response && error.response.data) {
+        errorMessage = error.response.data.message || errorMessage;
+      }
+
+      toast({
+        title: "Error",
+        description: errorMessage,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const cancelEditing = () => {
+    if (userInfo) {
+      setFormData({
+        nombre: userInfo.nombre || "",
+        username: userInfo.usuario || "",
+      });
+    }
+    setView("profile");
+  };
+
+  const cancelPasswordChange = () => {
+    setPasswordData({
+      oldPassword: "",
+      newPassword: "",
+    });
+    setView("profile");
+  };
+
+  if (view === "profile") {
+    return (
+      <Box
+        bg={"mainBg"}
+        w={"100%"}
+        height={"100%"}
+        display={"flex"}
+        p={6}
+        justifyContent={"center"}
+        alignItems={"flex-start"}
+      >
         <Box
           w={"100%"}
           maxW={"480px"}
           display={"flex"}
           flexDir={"column"}
-          gap={"10px"}
+          gap={"25px"}
           bg={"white"}
           borderRadius={"20px"}
-          p={"2.5rem"}
+          p={"2rem"}
         >
           <Box
             borderBottom={"1px"}
             borderBottomColor={"mainBg"}
-            py={5}
             display={"flex"}
             alignItems={"flex-start"}
           >
-            <Text textStyle={"RobotoTitleBold"} color={"black"}>
-              Asesor, {name}
+            <Text textStyle={"RobotoTitleBold"} color={"black"} pb={2}>
+              {user}
             </Text>
           </Box>
           <Box display={"flex"} flexDir={"column"}>
-            <Box display={"flex"} p={2} alignItems={"center"} py={5}>
-              <UserCircleIcon width={"15px"} height={"15px"} />
-              <Text textStyle={"RobotoRegular"} ml={2}>
-                {name}
+            <Box display={"flex"} alignItems={"center"} py={4}>
+              <UserCircleIcon width={"18px"} height={"18px"} />
+              <Text textStyle={"RobotoSubtitle"} ml={2}>
+                {(userInfo && userInfo.usuario) || ""}
               </Text>
             </Box>
-            <Box display={"flex"} p={2} alignItems={"center"} py={5}>
-              <UserIcon width={"15px"} height={"15px"} fill={"black"} />
-              <Text textStyle={"RobotoRegular"} ml={2}>
-                @AlejandroPereira
-              </Text>
-            </Box>
-            <Box display={"flex"} p={2} alignItems={"center"} py={5}>
-              <EnvelopeIcon width={"15px"} height={"15px"} />
-              <Text textStyle={"RobotoRegular"} ml={2}>
-                AlejandroPereira@info.com
-              </Text>
-            </Box>
-            <Box display={"flex"} p={2} alignItems={"center"} py={5}>
-              <LockIcon width={"15px"} height={"15px"} />
-              <Text textStyle={"RobotoRegular"} ml={2} textAlign={"center"}>
-                ******
+
+            <Box display={"flex"} alignItems={"center"} py={4}>
+              <LockIcon width={"17px"} height={"17px"} />
+              <Text textStyle={"RobotoSubtitle"} ml={2} textAlign={"center"}>
+                {userInfo && userInfo.longitudClave
+                  ? "*".repeat(userInfo.longitudClave)
+                  : ""}
               </Text>
             </Box>
           </Box>
@@ -102,46 +221,56 @@ export default function Profile() {
             gap={"15px"}
             alignItems={"center"}
             justifyContent={"center"}
+            pt={4}
           >
             <StandardButton
               variant={"WHITE_RED"}
               borderRadius="20px"
               py={"17px"}
-              w={"fit-content"}
-              fontSize="14px"
+              w={"185px"}
+              fontSize="15px"
               fontWeight="400"
               leftIcon={<LockIcon width={"10px"} height={"10px"} />}
-              onClick={onFirstModalOpen}
+              onClick={() => setView("changePassword")}
+              size="md"
             >
               Cambiar Contraseña
             </StandardButton>
-            <SetPassword
-              isOpen={isFirstModalOpen}
-              onOpen={onFirstModalOpen}
-              onClose={onFirstModalClose}
-            />
             <StandardButton
               variant={"RED_PRIMARY"}
               borderRadius="20px"
               py={"17px"}
-              w={"fit-content"}
-              fontSize="14px"
+              w={"185px"}
+              fontSize="15px"
               fontWeight="400"
               leftIcon={<EditIcon fill="white" />}
-              onClick={() => setIsEditing(true)}
-              size="xs"
+              onClick={() => setView("editProfile")}
+              size="md"
             >
               Editar Información
             </StandardButton>
           </Box>
         </Box>
-      ) : (
+      </Box>
+    );
+  }
+
+  if (view === "editProfile") {
+    return (
+      <Box
+        bg={"mainBg"}
+        w={"100%"}
+        height={"100%"}
+        display={"flex"}
+        p={6}
+        justifyContent={"center"}
+        alignItems={"flex-start"}
+      >
         <Box
           w={"100%"}
           maxW={"480px"}
           display={"flex"}
           flexDir={"column"}
-          gap={"10px"}
           bg={"white"}
           borderRadius={"20px"}
         >
@@ -162,17 +291,19 @@ export default function Profile() {
             justifyContent={"center"}
             alignItems={"center"}
             px={6}
-            py={8}
+            py={2}
           >
             <FormControl
               w={"100%"}
               display={"flex"}
               flexDir={"column"}
-              justifyContent={"center"}
+              justifyContent={"space-between"}
               alignItems={"flex-start"}
-              onSubmit={"(e) => EditarInfor(e)"}
+              as="form"
+              onSubmit={handleSaveChanges}
+              gap={2}
             >
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" margin={0}>
                 <span
                   style={{
                     color: "red",
@@ -186,9 +317,10 @@ export default function Profile() {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Nombre completo"
                 required
-                onChange={""}
+                value={formData.nombre}
+                onChange={(value) => handleInputChange("nombre", value)}
               />
 
               <FormLabel display="flex" alignItems="center">
@@ -205,10 +337,99 @@ export default function Profile() {
               </FormLabel>
               <TextInput
                 type="text"
-                placeholder="example"
+                placeholder="Nombre de usuario"
                 required
-                onChange={""}
+                value={formData.username}
+                onChange={(value) => handleInputChange("username", value)}
               />
+
+              <Box
+                display={"flex"}
+                justifyContent={"center"}
+                gap={"10px"}
+                p={4}
+                w={"100%"}
+              >
+                <StandardButton
+                  variant={"WHITE_RED"}
+                  borderRadius="20px"
+                  py={"17px"}
+                  w={"185px"}
+                  fontWeight="400"
+                  onClick={cancelEditing}
+                  isDisabled={isSaving}
+                  size="md"
+                >
+                  Cancelar
+                </StandardButton>
+                <StandardButton
+                  variant={"RED_PRIMARY"}
+                  borderRadius="20px"
+                  py={"17px"}
+                  w={"185px"}
+                  fontWeight="400"
+                  type={"submit"}
+                  isLoading={isSaving}
+                  size="md"
+                >
+                  Guardar Cambios
+                </StandardButton>
+              </Box>
+            </FormControl>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (view === "changePassword") {
+    return (
+      <Box
+        bg={"mainBg"}
+        w={"100%"}
+        height={"100%"}
+        display={"flex"}
+        p={6}
+        justifyContent={"center"}
+        alignItems={"flex-start"}
+      >
+        <Box
+          w={"100%"}
+          maxW={"480px"}
+          display={"flex"}
+          flexDir={"column"}
+          bg={"white"}
+          borderRadius={"20px"}
+        >
+          <Box
+            bg={"black"}
+            display={"flex"}
+            flexDir={"column"}
+            borderTopRadius="20px"
+            p={4}
+          >
+            <Text textStyle={"RobotoBodyBold"} color={"white"}>
+              Cambiar Contraseña
+            </Text>
+          </Box>
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            px={6}
+            py={2}
+          >
+            <FormControl
+              w={"100%"}
+              display={"flex"}
+              flexDir={"column"}
+              justifyContent={"center"}
+              alignItems={"flex-start"}
+              as="form"
+              onSubmit={handlePasswordSubmit}
+              gap={2}
+            >
               <FormLabel display="flex" alignItems="center">
                 <span
                   style={{
@@ -219,41 +440,76 @@ export default function Profile() {
                 >
                   *
                 </span>
-                Correo electrónico
+                Contraseña anterior
               </FormLabel>
               <TextInput
-                type="text"
-                placeholder="example"
+                type="password"
+                placeholder="*****"
                 required
-                onChange={""}
+                value={passwordData.oldPassword}
+                onChange={(value) => handlePasswordChange("oldPassword", value)}
+                isPassword
+                rightIcon={<EyeSlashIcon />}
               />
-            </FormControl>
 
-            <Box display={"flex"} gap={"10px"} p={8}>
-              <StandardButton
-                variant={"WHITE_RED"}
-                borderRadius="20px"
-                py={"17px"}
-                w={"150px"}
-                fontWeight="400"
-                onClick={() => setIsEditing(false)}
+              <FormLabel display="flex" alignItems="center">
+                <span
+                  style={{
+                    color: "red",
+                    marginRight: "0.25rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  *
+                </span>
+                Nueva contraseña
+              </FormLabel>
+              <TextInput
+                type="password"
+                placeholder="*****"
+                required
+                value={passwordData.newPassword}
+                onChange={(value) => handlePasswordChange("newPassword", value)}
+                isPassword
+                rightIcon={<EyeSlashIcon />}
+              />
+
+              <Box
+                display={"flex"}
+                justifyContent={"center"}
+                gap={"10px"}
+                p={4}
+                w={"100%"}
               >
-                Cancelar
-              </StandardButton>
-              <StandardButton
-                variant={"RED_PRIMARY"}
-                borderRadius="20px"
-                py={"17px"}
-                w={"150px"}
-                fontWeight="400"
-                type={"submit"}
-              >
-                Guardar Cambios
-              </StandardButton>
-            </Box>
+                <StandardButton
+                  variant={"WHITE_RED"}
+                  borderRadius="20px"
+                  py={"17px"}
+                  w={"185px"}
+                  fontWeight="400"
+                  onClick={cancelPasswordChange}
+                  isDisabled={isChangingPassword}
+                  size="md"
+                >
+                  Cancelar
+                </StandardButton>
+                <StandardButton
+                  variant={"RED_PRIMARY"}
+                  borderRadius="20px"
+                  py={"17px"}
+                  w={"185px"}
+                  fontWeight="400"
+                  type={"submit"}
+                  isLoading={isChangingPassword}
+                  size="md"
+                >
+                  Cambiar
+                </StandardButton>
+              </Box>
+            </FormControl>
           </Box>
         </Box>
-      )}
-    </Box>
-  );
+      </Box>
+    );
+  }
 }

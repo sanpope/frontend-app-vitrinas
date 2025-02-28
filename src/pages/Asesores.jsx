@@ -15,7 +15,7 @@ import TablaAsesores from "../component/TablaAsesores";
 import AgregarAsesorVitrinas from "../component/AgregarAsesorVitrinas";
 import { HEADER_HEIGHT } from "../component/Header";
 import xmlToJSON from "../services/XmlToJsonConverter";
-import asesoresData from "../services/asesoresData";
+
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 import axios from "axios";
 import { parseData } from "../utils/xmlParse";

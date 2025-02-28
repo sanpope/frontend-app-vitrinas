@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Box, Text, useDisclosure, useMediaQuery } from "@chakra-ui/react";
+
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
 import NameLogo from "../assets/images/NameLogo";
 import IconLogo from "../assets/images/IconLogo";
 import SignOutIcon from "../assets/images/SignOutIcon.jsx";
@@ -95,6 +99,8 @@ export const BIG_WIDTH = "266px";
 export const SMALL_WIDTH = "80px";
 
 export default function SideBar({ setLoggedIn }) {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const normalize = useNormalize();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
@@ -117,11 +123,9 @@ export default function SideBar({ setLoggedIn }) {
     onClose: onFirstModalClose,
   } = useDisclosure();
 
-  const handleClickLogOut = () => {
-    setLoggedIn(false);
-    removeItem("authToken");
-    removeItem("rememberedUser");
-    removeItem("hasRemembered");
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   useEffect(() => {}, [router]);
@@ -146,7 +150,7 @@ export default function SideBar({ setLoggedIn }) {
         display="flex"
         flexDirection={"column"}
         p={{ base: "5px", md: "10px" }}
-        gap="10px"
+        gap="5px"
         className="scroll-hidden"
       >
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -160,8 +164,9 @@ export default function SideBar({ setLoggedIn }) {
               display={{ base: "none", md: "flex" }}
               justifyContent={isDeskMenuOpen ? "flex-start" : "center"}
               alignItems={{ base: "none", md: "center" }}
-              gap={"20px"}
-              p={2}
+              gap={'10px'}
+              py={2}
+              px={normalize(2)}
             >
               <IconLogo width={"40px"} height={"40px"} stroke={"white"} />
               {isDeskMenuOpen ? (
@@ -317,15 +322,14 @@ export default function SideBar({ setLoggedIn }) {
         bottom={"40px"}
         cursor={"pointer"}
         my={"2rem"}
-        onClick={handleClickLogOut}
+        onClick={handleLogout}
       >
-        <SignOutIcon width={normalize(7)} height={normalize(7)} />
+        <SignOutIcon width={"24px"} height={"24px"} />
         {isDeskMenuOpen && !isSmallScreen ? (
           <Text
             display={"inline-flex"}
-            textStyle={"RobotoRegular"}
+            textStyle={"RobotoBody"}
             color={"white"}
-            fontSize={normalize(5)}
           >
             Cerrar sesión
           </Text>

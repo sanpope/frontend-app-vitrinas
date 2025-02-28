@@ -1,29 +1,18 @@
 import "./App.css";
-import { useState, useEffect } from "react";
-import Login from "./pages/Login";
-import {
-  Route,
-  BrowserRouter,
-  Routes,
-  Navigate,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
 import { Box } from "@chakra-ui/react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Spinner } from "@chakra-ui/react";
+import ProtectedRoute from "./context/ProtectedRoute";
+import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 import Profile from "./pages/Profile";
 import ProductosyBodega from "./pages/ProductosyBodega";
 import Asesores from "./pages/Asesores";
 import ErrorPage from "./pages/ErrorPage";
 import SideBar from "./component/SideBar";
-import HomeIcon from "./assets/images/HomeIcon";
-import StoreIcon from "./assets/images/StoreIcon";
-import WareHouseIcon from "./assets/images/WareHouseIcon";
-import BriefCaseIcon from "./assets/images/BriefCaseIcon";
 import Header from "./component/Header";
-import colors from "./theme/colors";
 import Resumen from "./pages/Resumen";
-import MinusIcon from "./assets/images/minusIcon";
 import Inventario from "./pages/Inventario";
 import Visitas from "./pages/Visitas";
 import Ventas from "./pages/Ventas";
@@ -32,43 +21,70 @@ import Mensajes from "./pages/Mensajes";
 import EstaVitrina from "./pages/EstaVitrina";
 import ModalVitrinas from "./pages/ModalVitrinas";
 
-function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false); // TODO get from cache
+import HomeIcon from "./assets/images/HomeIcon";
+import StoreIcon from "./assets/images/StoreIcon";
+import WareHouseIcon from "./assets/images/WareHouseIcon";
+import BriefCaseIcon from "./assets/images/BriefCaseIcon";
+import MinusIcon from "./assets/images/minusIcon";
+
+function AppRoutes() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div>
+        <Spinner size="md" />
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return (
+      <Box display={"flex"} width={"100%"} height={"100%"}>
+        <SideBar />
+        <Box
+          position={"relative"}
+          height={"100%"}
+          display={"flex"}
+          flexGrow={1}
+          overflowX={"auto"}
+          flexDir={"column"}
+          bg={"mainBg"}
+        >
+          <Header />
+          <Routes>
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<ProtectedRoute>{route.element}</ProtectedRoute>}
+                errorElement={route.errorElement || <ErrorPage />}
+              />
+            ))}
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
-    <>
-      {isLoggedIn ? (
-        <BrowserRouter>
-          <Box display={"flex"} width={"100%"} height={"100%"}>
-            <SideBar setLoggedIn={setLoggedIn} />
-            <Box
-              position={"relative"}
-              height={"100%"}
-              display={"flex"}
-              flexGrow={1}
-              overflowX={"auto"}
-              flexDir={"column"}
-              bg={"mainBg"}
-            >
-              <Header />
-              <Routes>
-                <Route path="*" element={<Navigate to="/" replace />} />
-                {routes.map((route, index) => (
-                  <Route
-                    key={index}
-                    path={route.path}
-                    element={route.element}
-                    errorElement={route.errorElement}
-                  />
-                ))}
-              </Routes>
-            </Box>
-          </Box>
-        </BrowserRouter>
-      ) : (
-        <Login setLoggedIn={setLoggedIn} />
-      )}
-    </>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
