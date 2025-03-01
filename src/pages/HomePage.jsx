@@ -40,15 +40,17 @@ import {
 } from "../utils/formatting";
 import { parseData } from "../utils/xmlParse";
 import TopVitrinas from "../component/TopVitrinas";
-import { setItem, getItem } from "../utils/localStorage";
+import useNormalize from "../hooks/useNormalize";
+import LoadingComponent from "../component/LoadingComponent";
 
 export default function HomePage() {
+  const normalize = useNormalize();
   const dispatch = useDispatch();
   const { height } = useWindowDimensions();
   const ventaTotalMes = useSelector(
     (state) => state.homePageReducer.ventaTotalMes,
   );
-  const [name, setName] = useState("");
+  const name = useSelector((state) => state.userReducer.userName);
   const [ventaDelMes, setVentaDelMes] = useState(null);
   const [ventaMesActual, setVentaMesActual] = useState(null);
   const [ventasMesesAnteriores, setVentaMesesAnteriores] = useState(null);
@@ -69,10 +71,6 @@ export default function HomePage() {
   }, []);
 
   const savingData = async () => {
-    const savedName = await getItem("userName");
-    setName(savedName);
-    console.log(savedName);
-
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/resumen`;
     axios
       .get(url, {
@@ -323,9 +321,11 @@ export default function HomePage() {
   };
 
   const ContainerHeight = useMemo(() => {
-    return Math.floor(
-      (height - HEADER_HEIGHT - CONTAINER_PADDING * 5 - 35) / 3,
+    const result = Math.floor(
+      (height - normalize(1) - HEADER_HEIGHT - CONTAINER_PADDING * 5 - 35) / 3,
     );
+
+    return result;
   }, [height]);
 
   return (
@@ -338,118 +338,136 @@ export default function HomePage() {
       display={"flex"}
       gap={CONTAINER_PADDING + "px"}
       p={CONTAINER_PADDING + "px"}
-      overflowY={{ base: "hidden", lg: "auto" }}
+      overflowY={"auto"}
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={"black"}>
         ¡Hola {name}, bienvenido! 👋🏻
       </Text>
       <Box display="grid" gridGap={"1rem"} className="dashboard-grid-container">
         <Container
-          height={{ base: "150px", md: ContainerHeight + "px" }}
-          minHeight={{ base: "170px", md: "225px" }}
+          height={ContainerHeight + "px"}
           title={"Venta del mes"}
           icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
             <Box
+              width={"100%"}
               display={"flex"}
               flexDir={"column"}
               justifyContent={"center"}
-              alignItems={"flex-start"}
+              alignItems={ventaDelMes === null ? "center" : "flex-start"}
               gap={"10px"}
             >
-              <Box display={"flex"} alignItems={"center"} flexGrow={1}>
-                <Text
-                  textStyle={{
-                    base: "RobotoSubheadingBold",
-                    lg: "RobotoeBannerBold",
-                  }}
-                  color={"black"}
-                >
-                  $ {ventaDelMes != null ? `${ventaDelMes.valor}` : "0"}
-                </Text>
-              </Box>
-              <Box
-                display={{ base: "none", md: "flex" }}
-                alignItems={"center"}
-                columnGap={"5px"}
-              >
-                <HStack display={"flex"}>
-                  <Text
-                    textStyle={"RobotoSubSmall"}
-                    color={`${ventaDelMes?.color}` || "grey.placeholder"}
+              {ventaDelMes === null ? (
+                <LoadingComponent />
+              ) : (
+                <>
+                  <Box display={"flex"} alignItems={"center"} flexGrow={1}>
+                    <Text
+                      textStyle={{
+                        base: "RobotoSubheadingBold",
+                        lg: "RobotoeBannerBold",
+                      }}
+                      color={"black"}
+                    >
+                      $ {ventaDelMes != null ? `${ventaDelMes.valor}` : "0"}
+                    </Text>
+                  </Box>
+                  <Box
+                    display={{ base: "none", md: "flex" }}
+                    alignItems={"center"}
+                    columnGap={"5px"}
                   >
-                    {ventaDelMes != null ? (
-                      `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
-                    ) : (
-                      <Text color={"grey.placeholder"}>
-                        No se cuenta con información registrada.
+                    <HStack display={"flex"}>
+                      <Text
+                        textStyle={"RobotoSubSmall"}
+                        color={`${ventaDelMes?.color}` || "grey.placeholder"}
+                      >
+                        {ventaDelMes != null ? (
+                          `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
+                        ) : (
+                          <Text color={"grey.placeholder"}>
+                            No se cuenta con información registrada.
+                          </Text>
+                        )}
                       </Text>
-                    )}
-                  </Text>
-                </HStack>
-                {ventaDelMes != null && ventaDelMes?.color != "red.100" ? (
-                  <Text>
-                    <GreenArrowICon />
-                  </Text>
-                ) : null}
-              </Box>
+                    </HStack>
+                    {ventaDelMes != null && ventaDelMes?.color != "red.100" ? (
+                      <Text>
+                        <GreenArrowICon />
+                      </Text>
+                    ) : null}
+                  </Box>
+                </>
+              )}
             </Box>
           }
         />
         <Container
           display={{ base: "none", xl: "block" }}
           height={ContainerHeight + "px"}
-          minHeight={"225px"}
+          heightChildren={"90%"}
           maxW={"450px"}
           title={"Venta en meses anteriores"}
           icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
-            <Box w={"100%"} h={"100%"}>
-              <VentasMesesAnteriores
-                VentasMesAnterior={
-                  ventasMesesAnteriores != null ? ventasMesesAnteriores : []
-                }
-                ventaMesActual={ventaMesActual != null ? ventaMesActual : {}}
-              />
+            <Box width={"100%"} height={"100%"}>
+              {ventasMesesAnteriores === null || ventaMesActual === null ? (
+                <LoadingComponent />
+              ) : (
+                <VentasMesesAnteriores
+                  VentasMesAnterior={
+                    ventasMesesAnteriores != null ? ventasMesesAnteriores : []
+                  }
+                  ventaMesActual={ventaMesActual != null ? ventaMesActual : {}}
+                />
+              )}
             </Box>
           }
         />
         <Container
           height={ContainerHeight + "px"}
-          minHeight={{ base: "170px", md: "225px" }}
+          heightChildren={"100%"}
           title={"Top Vitrinas del Mes"}
           icon={<StarIcon />}
           children={
-            <Box
-              display={"flex"}
-              flexDirection={{ base: "column", sm: "row" }}
-              w={"100%"}
-              h={"100%"}
-              justifyContent={"space-around"}
-              p={1}
-            >
-              <ItemsTopVitrinasdelMes
-                topVitrinas={
-                  VitrinasConMasVtasDelMes !== null
-                    ? VitrinasConMasVtasDelMes
-                    : null
-                }
-              />
+            <>
+              {VitrinasConMasVtasDelMes === null ? (
+                <LoadingComponent />
+              ) : (
+                <Box
+                  display={"flex"}
+                  flexDirection={{ base: "column", sm: "row" }}
+                  w={"100%"}
+                  h={"100%"}
+                  justifyContent={"space-around"}
+                  p={1}
+                >
+                  <ItemsTopVitrinasdelMes
+                    topVitrinas={
+                      VitrinasConMasVtasDelMes !== null
+                        ? VitrinasConMasVtasDelMes
+                        : null
+                    }
+                  />
 
-              <TopVitrinasdelMes
-                labels={labels !== null ? labels : null}
-                data={dataChart !== null ? dataChart : null}
-              />
-            </Box>
+                  <TopVitrinasdelMes
+                    labels={labels !== null ? labels : null}
+                    data={dataChart !== null ? dataChart : null}
+                  />
+                </Box>
+              )}
+            </>
           }
         />
         <Container
           height={ContainerHeight + "px"}
-          minHeight={{ base: "170px", md: "225px" }}
+          heightChildren={"100%"}
           title={"Top Vitrinas"}
           icon={<TrophyIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
-            topTotalVitrinas != null ? (
+            topTotalVitrinas === null ? (
+              <LoadingComponent />
+            ) : topTotalVitrinas != null ? (
               <Box w={"100%"} display={"flex"}>
                 <Box
                   display={"flex"}
@@ -487,14 +505,16 @@ export default function HomePage() {
         <Container
           display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
+          heightChildren={"100%"}
           minHeight="225px"
           title={"Top Categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
-          heightChildren={"100%"}
           paddingChildren={topTotalCategorias != null ? 0 : 1}
           children={
             <>
-              {topTotalCategorias != null ? (
+              {topTotalCategorias === null ? (
+                <LoadingComponent />
+              ) : topTotalCategorias != null ? (
                 <Box h={"100%"} display={"flex"} flexWrap={"wrap"} gap={1}>
                   {topTotalCategorias?.map((cat, index) => (
                     <TopCategoriaItem
@@ -537,7 +557,9 @@ export default function HomePage() {
           paddingChildren={topTotalProductos != null ? 1 : 0}
           children={
             <>
-              {topTotalProductos != null ? (
+              {topTotalProductos === null ? (
+                <LoadingComponent />
+              ) : topTotalProductos != null ? (
                 <Box
                   display={"flex"}
                   flexDirection={"column"}
@@ -581,7 +603,9 @@ export default function HomePage() {
           paddingChildren={totalDispAver != null ? 0 : 1}
           children={
             <>
-              {totalDispAver !== null ? (
+              {totalDispAver === null ? (
+                <LoadingComponent />
+              ) : totalDispAver !== null ? (
                 <DispositivosAveriados listadoDispositivos={totalDispAver} />
               ) : (
                 <Box
@@ -610,7 +634,9 @@ export default function HomePage() {
           paddingChildren={totalDespachos != null ? 0 : 1}
           children={
             <>
-              {totalDespachos !== null ? (
+              {totalDespachos === null ? (
+                <LoadingComponent />
+              ) : totalDespachos !== null ? (
                 <DespachosActuales listaDeDespachos={totalDespachos} />
               ) : (
                 <Box
@@ -639,7 +665,9 @@ export default function HomePage() {
           paddingChildren={totalVisitasNoVerif != null ? 1 : 0}
           children={
             <>
-              {totalVisitasNoVerif !== null ? (
+              {totalVisitasNoVerif === null ? (
+                <LoadingComponent />
+              ) : totalVisitasNoVerif !== null ? (
                 <Box w={"100%"}>
                   <InventarioXverificar
                     visitasNoVerificadas={totalVisitasNoVerif}

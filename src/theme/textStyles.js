@@ -47,13 +47,6 @@ const textStyles = {
     lineHeight: "normal",
     letterSpacing: "0.5px",
   },
-  RobotoTitleBold: {
-    fontFamily: "Roboto",
-    fontSize: "20px",
-    fontStyle: "normal",
-    fontWeight: 600,
-    lineHeight: "150%",
-  },
   RobotoTitleSemiBold: {
     fontFamily: "Roboto",
     fontSize: "21.5px",
@@ -61,6 +54,14 @@ const textStyles = {
     fontWeight: 600,
     lineHeight: "150%",
   },
+  RobotoTitleBold: {
+    fontFamily: "Roboto",
+    fontSize: "20px",
+    fontStyle: "normal",
+    fontWeight: 600,
+    lineHeight: "150%",
+  },
+
   RobotoTitle: {
     fontFamily: "Roboto",
     fontSize: "20px",

@@ -28,6 +28,7 @@ export default function Container({
       width={width}
       className={className}
       {...props}
+      minH={"150px"}
     >
       <Box display="flex" alignItems={"flex-start"} columnGap="6px">
         <HStack display={"flex"} spacing={"5px"}>
@@ -47,7 +48,13 @@ export default function Container({
           ) : null}
         </HStack>
       </Box>
-      <Box display="flex" flexGrow={1} height={heightChildren} w={"100%"} p={paddingChildren}>
+      <Box
+        display="flex"
+        flexGrow={1}
+        height={heightChildren}
+        w={"100%"}
+        p={paddingChildren}
+      >
         {children}
       </Box>
     </Box>

@@ -106,23 +106,47 @@ const mesesAbreviados = [
   "Dic",
 ];
 
+const parseNumberSafely = (value) => {
+  if (typeof value === "number") return value;
+
+  if (typeof value === "string") {
+    let result = Number(value);
+    if (!isNaN(result)) return result;
+
+    const cleanValue = value.replace(/\./g, "").replace(/,/g, ".");
+
+    result = Number(cleanValue);
+    if (!isNaN(result)) return result;
+  }
+
+  return 0;
+};
+
 const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
   const anioActual = fechaActual.getFullYear();
 
-  // Añadir el mes actual al inicio del array
+  const ventasMesesAnterioresFiltradas = VentasMesAnterior.filter(
+    (v) => v.mes !== mesActual.toString(),
+  );
+
+  const valorMesActual = parseNumberSafely(ventaMesActual.valor);
+
   const ventasActualizadas = [
     {
       mes: mesActual.toString(),
-      valor: ventaMesActual.valor,
+      valor: valorMesActual,
       anio: anioActual,
     },
-    ...VentasMesAnterior.map((v) => ({
+    ...ventasMesesAnterioresFiltradas.map((v) => ({
       ...v,
+      valor: parseNumberSafely(v.valor),
       anio: v.mes <= mesActual ? anioActual : anioActual - 1,
     })),
-  ].slice(0, 12); // Mantener solo los últimos 12 meses
+  ].slice(0, 12);
+
+  const datosRevertidos = [...ventasActualizadas].reverse();
 
   const monthLabels = ventasActualizadas
     .map((d, index) => {
@@ -134,23 +158,23 @@ const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
     })
     .reverse();
 
+  const colors = datosRevertidos.map((item) =>
+    item.mes === mesActual.toString() && item.anio === anioActual
+      ? "#E60F0F"
+      : "#000000",
+  );
+
+  const valoresDataset = datosRevertidos.map((d) => Math.max(0, d.valor));
+
   const chartData = {
     labels: monthLabels,
     datasets: [
       {
-        data: ventasActualizadas
-          .map((d) => Math.max(0, Number(d.valor)))
-          .reverse(),
+        data: valoresDataset,
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: ventasActualizadas
-          .map((d) =>
-            d.mes === mesActual.toString() && d.anio === anioActual
-              ? "#E60F0F"
-              : "#000000",
-          )
-          .reverse(),
+        pointBackgroundColor: colors,
         pointRadius: 6,
         pointBorderWidth: 2,
         pointBorderColor: "white",
@@ -162,17 +186,33 @@ const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
   return (
     <>
       {ventasActualizadas.length > 0 ? (
-        <Box mt={{ base: 1, xl: 4 }}>
-          <Line data={chartData} options={options} />
+        <Box
+          w="100%"
+          h="100%"
+          position="relative"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          overflow="hidden"
+        >
+          <Line
+            data={chartData}
+            options={options}
+            style={{
+              maxHeight: "100%",
+              width: "100%",
+            }}
+          />
         </Box>
       ) : (
         <Box
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          mt={"50px"}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          h="100%"
+          w="100%"
         >
-          <Text color={"grey.placeholder"}>
+          <Text color="grey.placeholder">
             No existen ventas registradas en los meses anteriores
           </Text>
         </Box>

@@ -7,7 +7,7 @@ import ProtectedRoute from "./context/ProtectedRoute";
 import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 import Profile from "./pages/Profile";
-import ProductosyBodega from "./pages/ProductosyBodega";
+import ProductosyBodega from "./pages/HomePage";
 import Asesores from "./pages/Asesores";
 import ErrorPage from "./pages/ErrorPage";
 import SideBar from "./component/SideBar";
@@ -34,14 +34,13 @@ function AppRoutes() {
     return (
       <div>
         <Spinner size="md" />
-        <p>Cargando...</p>
       </div>
     );
   }
 
   if (isAuthenticated) {
     return (
-      <Box display={"flex"} width={"100%"} height={"100%"}>
+      <Box display={"flex"} width={"100wh"} height={"100vh"}>
         <SideBar />
         <Box
           position={"relative"}
