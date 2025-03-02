@@ -47,7 +47,9 @@ export default function Note({ width = "100%", text1, text2, arr }) {
           })}
         </UnorderedList>
       ) : (
-        <Text>{text2}</Text>
+        <Box flex={1} display={"flex"}>
+          <Text alignSelf={"center"}>{text2}</Text>
+        </Box>
       )}
     </Box>
   );

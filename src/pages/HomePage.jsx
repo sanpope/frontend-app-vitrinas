@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, HStack, Text } from "@chakra-ui/react";
+import { Box, HStack, Text, useMediaQuery } from "@chakra-ui/react";
 import axios from "axios";
 
 import ReceiptIcon from "../../src/assets/images/ReceiptIcon";
@@ -14,6 +14,7 @@ import GemIcon from "../../src/assets/images/GemIcon";
 import ShoppingBagIcon from "../../src/assets/images/ShoppingBagIcon";
 import MugIcon from "../../src/assets/images/MugIcon";
 import HeadphonesIcon from "../../src/assets/images/HeadphonesIcon";
+import { useDispatch, useSelector } from "react-redux";
 
 import Container, { CONTAINER_PADDING } from "../component/Container";
 import TopVitrinaItem from "../component/TopVitrinaItem";
@@ -30,7 +31,6 @@ import InventarioXverificar from "../component/InventarioXverificar";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HEADER_HEIGHT } from "../component/Header";
 
-import { useSelector, useDispatch } from "react-redux";
 import { setVentaTotalMes } from "../store/slices/homePage";
 import {
   capitalizeFirstLetter,
@@ -42,11 +42,12 @@ import { parseData } from "../utils/xmlParse";
 import TopVitrinas from "../component/TopVitrinas";
 import useNormalize from "../hooks/useNormalize";
 import LoadingComponent from "../component/LoadingComponent";
+import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
 
 export default function HomePage() {
   const normalize = useNormalize();
   const dispatch = useDispatch();
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const ventaTotalMes = useSelector(
     (state) => state.homePageReducer.ventaTotalMes,
   );
@@ -65,6 +66,11 @@ export default function HomePage() {
   const [totalDespachos, setTotalDespachos] = useState(null);
   const [totalVisitasNoVerif, setTotalVisiasNoVerif] = useState(null);
   const [output, setOutput] = useState("");
+
+  const isDeskMenuOpen = useSelector(
+    (state) => state.menuReducer.isDeskMenuOpen,
+  );
+  const [isSmallScreen] = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     savingData();
@@ -320,6 +326,30 @@ export default function HomePage() {
     return visitasArr;
   };
 
+  const ContainerWidth = useMemo(() => {
+    let sidebarWidth = 0;
+
+    if (isSmallScreen) {
+      sidebarWidth = parseInt(SMALL_WIDTH, 10);
+    } else {
+      sidebarWidth = isDeskMenuOpen
+        ? parseInt(BIG_WIDTH, 10)
+        : parseInt(SMALL_WIDTH, 10);
+    }
+
+    const columnCount = width > 1280 ? 3 : width > 768 ? 2 : 1;
+
+    const availableWidth =
+      width -
+      sidebarWidth -
+      normalize(10) -
+      CONTAINER_PADDING * (columnCount + 1);
+
+    const result = Math.floor(availableWidth / columnCount);
+
+    return result;
+  }, [width, isDeskMenuOpen, isSmallScreen]);
+
   const ContainerHeight = useMemo(() => {
     const result = Math.floor(
       (height - normalize(1) - HEADER_HEIGHT - CONTAINER_PADDING * 5 - 35) / 3,
@@ -338,14 +368,20 @@ export default function HomePage() {
       display={"flex"}
       gap={CONTAINER_PADDING + "px"}
       p={CONTAINER_PADDING + "px"}
-      overflowY={"auto"}
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={"black"}>
         ¡Hola {name}, bienvenido! 👋🏻
       </Text>
-      <Box display="grid" gridGap={"1rem"} className="dashboard-grid-container">
+      <Box
+        display="grid"
+        gridGap={"1rem"}
+        className="dashboard-grid-container"
+        overflow={{ base: "auto", xl: "hidden" }}
+        maxHeight={{ base: "none", xl: "100%" }}
+      >
         <Container
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           title={"Venta del mes"}
           icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
@@ -405,8 +441,8 @@ export default function HomePage() {
         <Container
           display={{ base: "none", xl: "block" }}
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           heightChildren={"90%"}
-          maxW={"450px"}
           title={"Venta en meses anteriores"}
           icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
@@ -426,6 +462,7 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           heightChildren={"100%"}
           title={"Top Vitrinas del Mes"}
           icon={<StarIcon />}
@@ -461,6 +498,7 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           heightChildren={"100%"}
           title={"Top Vitrinas"}
           icon={<TrophyIcon width={"1.5rem"} height={"1.5rem"} />}
@@ -503,8 +541,8 @@ export default function HomePage() {
           }
         />
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           heightChildren={"100%"}
           minHeight="225px"
           title={"Top Categorías"}
@@ -548,8 +586,8 @@ export default function HomePage() {
           }
         />
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Top Productos"}
           icon={<BoxesIcon width={"1.5rem"} height={"1.5rem"} />}
@@ -594,8 +632,8 @@ export default function HomePage() {
           }
         />
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Dispositivos averiados"}
           icon={<PhoneLaptopIcon width={"25px"} height={"25px"} />}
@@ -625,8 +663,8 @@ export default function HomePage() {
           }
         />
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Despachos actuales"}
           icon={<TruckIcon width={"25px"} height={"25px"} />}
@@ -656,8 +694,8 @@ export default function HomePage() {
           }
         />
         <Container
-          display={{ base: "none", lg: "block" }}
           height={ContainerHeight + "px"}
+          width={{ base: "100%", md: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Inventario pendiente de verificar"}
           icon={<FileCheckIcon />}
