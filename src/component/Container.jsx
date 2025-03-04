@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, HStack, Text } from "@chakra-ui/react";
+import useNormalize from "../hooks/useNormalize";
 
 export const CONTAINER_PADDING = 15;
 
@@ -15,6 +16,7 @@ export default function Container({
   heightChildren,
   paddingChildren = 1,
   className,
+  overflow = "hidden",
   ...props
 }) {
   return (
@@ -29,8 +31,10 @@ export default function Container({
       className={className}
       {...props}
       minH={"150px"}
+      boxSizing="border-box"
+      overflow={overflow}
     >
-      <Box display="flex" alignItems={"flex-start"} columnGap="6px">
+      <Box display="flex" alignItems={"flex-start"} columnGap="6px" marginBottom={2}>
         <HStack display={"flex"} spacing={"5px"}>
           <Box minW={"25px"} alignSelf={"flex-start"}>
             {icon}

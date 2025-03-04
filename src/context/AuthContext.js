@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { setItem, getItem, removeItem } from "../utils/localStorage";
 import { useDispatch } from "react-redux";
+import { useToast } from "@chakra-ui/react";
 import { setUserName } from "../store/slices/user";
 import { parseData, extraerDatosUsuario } from "../utils/xmlParse";
 
@@ -13,7 +14,10 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+
+  const toast = useToast();
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -34,15 +38,24 @@ export const AuthProvider = ({ children }) => {
           console.error("Error validando token:", error);
           removeItem("authToken");
           removeItem("userName");
+
+          toast({
+            title: "Error de autenticación",
+            description:
+              "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
         }
       }
       setInitialLoading(false);
     };
 
     checkAuthStatus();
-  }, [dispatch]);
+  }, [dispatch, toast]);
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (skipToast = false) => {
     try {
       const userData = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/admin/`,
@@ -68,12 +81,24 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error obteniendo los datos del usuario:", error);
+
+      if (!skipToast) {
+        toast({
+          title: "Error",
+          description: "No se pudieron obtener los datos del usuario.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+
       return null;
     }
   };
 
   const login = async (username, password, remember) => {
     setError("");
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -110,20 +135,42 @@ export const AuthProvider = ({ children }) => {
       setError(
         "Usuario o contraseña inválidos, por favor ingresa las credenciales correctas!",
       );
-      throw error;
+
+      toast({
+        title: "Error de inicio de sesión",
+        description:
+          "Usuario o contraseña inválidos. Por favor, inténtalo nuevamente.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const updateUserProfile = async (nuevoNombre, nuevoUsuario) => {
+  const updateUserProfile = async (
+    nuevoNombre,
+    nuevoUsuario,
+    showToast = true,
+  ) => {
+    const prevIsAuthenticated = isAuthenticated;
+
+    let localLoading = true;
+
     try {
-      const xmlData = `<admin><nombre>${nuevoNombre}</nombre><usuario>${nuevoUsuario}</usuario></admin>`;
+      const formData = new URLSearchParams();
+      formData.append("nombre", nuevoNombre);
+      formData.append("usuario", nuevoUsuario);
 
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/admin/`,
-        xmlData,
+        formData,
         {
           headers: {
-            "Content-Type": "application/xml",
+            "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `Bearer ${getItem("authToken")}`,
           },
         },
@@ -140,49 +187,149 @@ export const AuthProvider = ({ children }) => {
           usuario: nuevoUsuario,
         }));
 
-        await fetchUserData();
+        if (prevIsAuthenticated !== isAuthenticated) {
+          setIsAuthenticated(prevIsAuthenticated);
+        }
+
+        if (showToast) {
+          toast({
+            title: "Perfil actualizado",
+            description: "Tu información ha sido actualizada exitosamente.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+
         return true;
       } else {
         throw new Error("Error al actualizar el perfil");
       }
     } catch (error) {
       console.error("Error actualizando perfil:", error);
-      throw error;
+
+      if (prevIsAuthenticated !== isAuthenticated) {
+        setIsAuthenticated(prevIsAuthenticated);
+      }
+
+      if (showToast) {
+        toast({
+          title: "Error",
+          description:
+            "No se pudo actualizar tu información. Intenta de nuevo.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+
+      return false;
+    } finally {
+      localLoading = false;
+
+      if (loading) {
+        setLoading(false);
+      }
     }
   };
 
-  const updatePassword = async (antiguaClave, nuevaClave) => {
+  const updatePassword = async (antiguaClave, nuevaClave, showToast = true) => {
+    const prevIsAuthenticated = isAuthenticated;
+
+    let localLoading = true;
+
     try {
-      const xmlData = `<admin><antiguaClave>${antiguaClave}</antiguaClave><nuevaClave>${nuevaClave}</nuevaClave></admin>`;
+      const formData = new URLSearchParams();
+      formData.append("clave", antiguaClave);
+      formData.append("nuevaClave", nuevaClave);
 
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/admin/clave`,
-        xmlData,
+        formData,
         {
           headers: {
-            "Content-Type": "application/xml",
+            "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `Bearer ${getItem("authToken")}`,
           },
         },
       );
 
       if (response.status === 200) {
+        if (showToast) {
+          toast({
+            title: "Contraseña actualizada",
+            description: "Tu contraseña ha sido actualizada exitosamente.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+
+        if (prevIsAuthenticated !== isAuthenticated) {
+          setIsAuthenticated(prevIsAuthenticated);
+        }
+
+        if (userInfo && nuevaClave) {
+          setUserInfo({
+            ...userInfo,
+            longitudClave: nuevaClave.length,
+          });
+        }
+
         return true;
       } else {
         throw new Error("Error al actualizar la contraseña");
       }
     } catch (error) {
       console.error("Error actualizando contraseña:", error);
+
+      let errorMessage =
+        "No se pudo actualizar tu contraseña. Intenta de nuevo.";
+
+      if (error.response && error.response.data) {
+        errorMessage = error.response.data.message || errorMessage;
+      }
+
+      if (showToast) {
+        toast({
+          title: "Error",
+          description: errorMessage,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+
+      if (prevIsAuthenticated !== isAuthenticated) {
+        setIsAuthenticated(prevIsAuthenticated);
+      }
+
       throw error;
+    } finally {
+      localLoading = false;
+
+      if (loading) {
+        setLoading(false);
+      }
     }
   };
 
   const logout = () => {
     removeItem("authToken");
     removeItem("userName");
+    removeItem("hasRemembered");
+    sessionStorage.removeItem("username");
     setIsAuthenticated(false);
     setUser(null);
     setUserInfo(null);
+
+    toast({
+      title: "Sesión cerrada",
+      description: "Has cerrado sesión exitosamente.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+    });
   };
 
   const value = {
@@ -190,11 +337,13 @@ export const AuthProvider = ({ children }) => {
     user,
     userInfo,
     initialLoading,
+    loading,
     error,
     login,
     logout,
     fetchUserData,
     updateUserProfile,
+    updatePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

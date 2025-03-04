@@ -49,7 +49,6 @@ export default function Header() {
         transform="translateY(-50%)"
         alignItems="center"
         justifyContent="flex-end"
-        gap={"15px"}
       >
         <UserIcon
           fill={colors.black}
@@ -61,6 +60,7 @@ export default function Header() {
           textStyle={"RobotoSubtitle"}
           cursor={"pointer"}
           onClick={goToProfile}
+          px={3}
         >
           {user || "Usuario"}
         </Text>

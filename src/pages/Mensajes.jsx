@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Text, useDisclosure, useToast } from "@chakra-ui/react";
+import { Box, Text, useDisclosure, useToast, Spinner } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import ConfirmationMessage from "../component/ConfirmationMessage";
 import WarningIcon from "../assets/images/WarningIcon";
@@ -13,7 +13,7 @@ import {
 } from "../store/slices/vitrina";
 
 import { parseData } from "../utils/xmlParse";
-import { formatFecha } from "../utils/formatting";
+import { formatFecha, formatearFechaSimplificada } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
 
 export default function Mensajes() {
@@ -26,6 +26,7 @@ export default function Mensajes() {
   );
   const [currentMsg, setCurrentMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   const {
     isOpen: isConfirmationModalOpen,
@@ -39,7 +40,59 @@ export default function Mensajes() {
     onClose: onEliminarMensajeClose,
   } = useDisclosure();
 
+  useEffect(() => {
+    if (name) {
+      getMensajesVitrina();
+    }
+  }, [name]);
+
+  const marcarTodosMensajesComoLeidos = async () => {
+    const mensajesNoLeidos = totalMensajes.filter(
+      (msj) => msj.visto === "false",
+    );
+    if (mensajesNoLeidos.length === 0 || !name) return;
+
+    try {
+      const promesas = mensajesNoLeidos.map(async (mensaje) => {
+        const id = Number.parseInt(mensaje.id);
+        return axios.put(
+          `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes/marcar-como-visto?vitrina=${name}&mensaje=${id}`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/xml",
+            },
+          },
+        );
+      });
+
+      await Promise.all(promesas);
+
+      const mensajesActualizados = totalMensajes.map((msj) => ({
+        ...msj,
+        visto: "true",
+      }));
+
+      dispatch(setMensajesVitrina(mensajesActualizados));
+      dispatch(setMensajesNoLeidos(0));
+
+      localStorage.setItem(
+        `mensajes_${name}`,
+        JSON.stringify(mensajesActualizados),
+      );
+    } catch (error) {
+      console.error("Error al marcar mensajes como leídos:", error);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      marcarTodosMensajesComoLeidos();
+    };
+  }, [totalMensajes, name]);
+
   const getMensajesVitrina = async () => {
+    setIsLoadingMessages(true);
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}`,
@@ -49,7 +102,8 @@ export default function Mensajes() {
           },
         },
       );
-      if (response.status == 200 && response.data) {
+      if (response.status === 200 && response.data) {
+        console.log("mensajes xmlData: ", response.data);
         const xmlDoc = parseData(response.data);
         dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
       }
@@ -62,6 +116,7 @@ export default function Mensajes() {
         isClosable: true,
       });
     } finally {
+      setIsLoadingMessages(false);
     }
   };
 
@@ -69,12 +124,49 @@ export default function Mensajes() {
     const mensajes = xml.querySelector("mensajes");
     const totalMensajes = mensajes.querySelectorAll("mensaje");
     let mensajesArr = [];
+
+    function formatearFechaSimplificada(fechaStr) {
+      try {
+        if (fechaStr.length < 16) {
+          return "Fecha no disponible";
+        }
+
+        const año = fechaStr.substring(0, 4);
+        const mes = fechaStr.substring(5, 7);
+        const dia = fechaStr.substring(8, 10);
+        const hora = fechaStr.substring(11, 13);
+        const minuto = fechaStr.substring(14, 16);
+
+        const segundo =
+          fechaStr.length >= 19 ? fechaStr.substring(17, 19) : "00";
+
+        if (
+          isNaN(parseInt(año)) ||
+          isNaN(parseInt(mes)) ||
+          isNaN(parseInt(dia)) ||
+          isNaN(parseInt(hora)) ||
+          isNaN(parseInt(minuto)) ||
+          isNaN(parseInt(segundo))
+        ) {
+          return "Fecha no disponible";
+        }
+
+        return `${dia}/${mes}/${año} a las ${hora}:${minuto}:${segundo}`;
+      } catch (error) {
+        console.error(`Error procesando fecha:`, fechaStr, error);
+        return "Fecha no disponible";
+      }
+    }
+
     for (let i = 0; i < totalMensajes?.length; i++) {
+      const fechaTexto =
+        totalMensajes[i]?.getElementsByTagName("fechaHora")[0].textContent;
+
+      const fechaFormateada = formatearFechaSimplificada(fechaTexto);
+
       mensajesArr.push({
         id: totalMensajes[i]?.getElementsByTagName("id")[0].textContent,
-        fechaHora: formatFecha(
-          totalMensajes[i]?.getElementsByTagName("fechaHora")[0].textContent,
-        ),
+        fechaHora: fechaFormateada,
         visto: totalMensajes[i]?.getElementsByTagName("visto")[0].textContent,
         remitente:
           totalMensajes[i]?.getElementsByTagName("remitente")[0].textContent,
@@ -83,6 +175,10 @@ export default function Mensajes() {
           totalMensajes[i]?.getElementsByTagName("contenido")[0].textContent,
       });
     }
+
+    const mensajesNoLeidos = mensajesArr.filter((msj) => msj.visto === "false");
+    dispatch(setMensajesNoLeidos(mensajesNoLeidos.length));
+
     return mensajesArr;
   };
 
@@ -99,7 +195,7 @@ export default function Mensajes() {
         },
       );
 
-      if (response.status == 200 && response.data) {
+      if (response.status === 200 && response.data) {
         const copy = [...totalMensajes];
         const index = copy.findIndex((item) => item.id === mensaje.id);
         if (index !== -1) {
@@ -109,6 +205,8 @@ export default function Mensajes() {
         dispatch(setMensajesVitrina(copy));
 
         dispatch(setMensajesNoLeidos(mensajesNoLeidos?.length));
+        localStorage.setItem(`mensajes_${name}`, JSON.stringify(copy));
+
         toast({
           status: "success",
           description: "Mensaje eliminado con éxito!.",
@@ -131,42 +229,47 @@ export default function Mensajes() {
     }
   };
 
-  const deleteTotalMensajes = async (mensajes) => {
+  const deleteTotalMensajes = async () => {
     try {
       const response = await axios.delete(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${name}&idMensaje=${""}`,
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes/vaciar?vitrina=${name}`,
         {
           headers: {
             "Content-Type": "application/xml",
           },
         },
       );
+      if (response.status === 200) {
+        dispatch(setMensajesVitrina([]));
+        dispatch(setMensajesNoLeidos(0));
+        localStorage.setItem(`mensajes_${name}`, JSON.stringify([]));
+
+        toast({
+          status: "success",
+          description: "Mensajes eliminados con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
     } catch (error) {
+      toast({
+        status: "error",
+        description: "Error eliminando los mensajes.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     } finally {
       onConfirmationModalClose();
     }
   };
 
-  // useEffect(() => {
-  //   return () => {
-  //     try {
-  //       const response = axios.get(
-  //         //ToDo Actualizar el EndPoint para marcas los mensajes como leidos, esta funcion se ejecutara cuando el usuario abandona la pag de mensajes
-  //         `${process.env.REACT_APP_SERVER_URL}/app/rest/`,
-  //         {
-  //           headers: {
-  //             "Content-Type": "application/xml",
-  //           },
-  //         },
-  //       );
-  //
-  //     } catch (error) {
-  //
-  //     }
-  //   };
-  // }, []);
-
-  return (
+  return isLoadingMessages ? (
+    <Box display="flex" justifyContent="center" alignItems="center" flex={1}>
+      <Spinner size="xl" />
+    </Box>
+  ) : (
     <Box
       display={"flex"}
       flexDirection={"column"}
@@ -193,32 +296,32 @@ export default function Mensajes() {
             gap={"10px"}
           >
             <StandardButton
-              variant={"DISABLED"}
+              variant={totalMensajes?.length === 0 ? "DISABLED" : "RED_PRIMARY"}
               borderRadius="20px"
               py={"17px"}
               w={"fit-content"}
               fontSize="14px"
               fontWeight="400"
               onClick={onConfirmationModalOpen}
-              disabled={true}
-              cursor={"not-allowed"}
+              disabled={totalMensajes?.length === 0}
+              cursor={totalMensajes?.length === 0 ? "not-allowed" : "pointer"}
             >
-              Vaciar bendeja de entrada
+              Vaciar bandeja de entrada
             </StandardButton>
             <ConfirmationMessage
               icon={<WarningIcon />}
               text={`¿Estás seguro que desea eliminar Todos los mensajes?`}
-              // isOpen={isConfirmationModalOpen}
-              // onOpen={onConfirmationModalOpen}
-              // onClose={onConfirmationModalClose}
-              // products={null}
+              isOpen={isConfirmationModalOpen}
+              onOpen={onConfirmationModalOpen}
+              onClose={onConfirmationModalClose}
+              funcConfirmar={deleteTotalMensajes}
             />
           </Box>
         </Box>
       </Box>
       <Box
         display={"flex"}
-        flexWrap={"wrap"}
+        flexDirection={"column"}
         gap={"20px"}
         p={"10px"}
         overflowY={"scroll"}

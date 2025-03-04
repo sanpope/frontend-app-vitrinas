@@ -11,6 +11,7 @@ export default function Message({ mensaje, onClick }) {
       bg={colors.white}
       borderRadius={"10px"}
       w={"100%"}
+      h={"180px"}
       p={"20px"}
       display={"flex"}
       flexDir={"column"}
@@ -57,7 +58,7 @@ export default function Message({ mensaje, onClick }) {
           }
         >
           {mensaje?.fechaHora !== null && mensaje?.fechaHora !== ""
-            ? formatFecha(mensaje?.fechaHora)
+            ? mensaje?.fechaHora
             : ""}
         </Text>
       </Box>

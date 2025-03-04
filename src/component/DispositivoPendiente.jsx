@@ -13,6 +13,7 @@ export default function DispositivoContainer({
   title = "Título",
   onAceptar,
   onRechazar,
+  loading,
 }) {
   const normalize = useNormalize();
   return (
@@ -51,6 +52,7 @@ export default function DispositivoContainer({
           onClick={() => {
             onAceptar();
           }}
+          loading={loading}
         >
           Aceptar
         </StandardButton>

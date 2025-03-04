@@ -61,7 +61,6 @@ const textStyles = {
     fontWeight: 600,
     lineHeight: "150%",
   },
-
   RobotoTitle: {
     fontFamily: "Roboto",
     fontSize: "20px",

@@ -21,6 +21,7 @@ import TopVitrinaItem from "../component/TopVitrinaItem";
 import TopCategoriaItem from "../component/TopCategoriaItem";
 import TopProductoItem from "../component/TopProductoItem";
 import GreenArrowICon from "../assets/images/GreenArrowIcon";
+import RedArrowDownIcon from "../assets/images/RedArrowDownIcon";
 import VentasMesesAnteriores from "../component/VentasMesesAnteriores";
 import TopVitrinasdelMes from "../component/TopVitrinasdelMes";
 import ItemsTopVitrinasdelMes from "../component/ItemsTopVitrinasdelMes";
@@ -303,8 +304,6 @@ export default function HomePage() {
       const asesor =
         totalVisitas[i].getElementsByTagName("asesor")[0].textContent;
 
-      //ToDo, Verificar la longitud del nombre del asesor y si está vacio asignar N/A
-
       const ingresos =
         totalVisitas[i].getElementsByTagName("ingresos")[0].textContent;
 
@@ -327,27 +326,25 @@ export default function HomePage() {
   };
 
   const ContainerWidth = useMemo(() => {
-    let sidebarWidth = 0;
-
-    if (isSmallScreen) {
-      sidebarWidth = parseInt(SMALL_WIDTH, 10);
-    } else {
-      sidebarWidth = isDeskMenuOpen
+    const sidebarWidth = isSmallScreen
+      ? parseInt(SMALL_WIDTH, 10)
+      : isDeskMenuOpen
         ? parseInt(BIG_WIDTH, 10)
         : parseInt(SMALL_WIDTH, 10);
+
+    const safetyMargin = 20;
+
+    if (width > 768) {
+      const columnCount = width > 1280 ? 3 : 2;
+      const availableWidth =
+        width - sidebarWidth - CONTAINER_PADDING * 2 - safetyMargin;
+
+      return Math.floor(
+        (availableWidth - 16 * (columnCount - 1)) / columnCount,
+      );
+    } else {
+      return width - sidebarWidth - CONTAINER_PADDING * 2 - safetyMargin;
     }
-
-    const columnCount = width > 1280 ? 3 : width > 768 ? 2 : 1;
-
-    const availableWidth =
-      width -
-      sidebarWidth -
-      normalize(10) -
-      CONTAINER_PADDING * (columnCount + 1);
-
-    const result = Math.floor(availableWidth / columnCount);
-
-    return result;
   }, [width, isDeskMenuOpen, isSmallScreen]);
 
   const ContainerHeight = useMemo(() => {
@@ -366,14 +363,28 @@ export default function HomePage() {
       position="relative"
       flexDir={"column"}
       display={"flex"}
-      gap={CONTAINER_PADDING + "px"}
-      p={CONTAINER_PADDING + "px"}
+      gap={{
+        base: CONTAINER_PADDING - 3 + "px",
+        md: CONTAINER_PADDING - 2 + "px",
+        lg: CONTAINER_PADDING + "px",
+      }}
+      p={{
+        base: CONTAINER_PADDING / 2 + "px",
+        md: CONTAINER_PADDING + "px",
+      }}
+      boxSizing="border-box"
+      overflow="hidden"
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={"black"}>
         ¡Hola {name}, bienvenido! 👋🏻
       </Text>
       <Box
         display="grid"
+        gridTemplateColumns={{
+          base: "1fr",
+          lg: "repeat(2, 1fr)",
+          xl: "repeat(3, 1fr)",
+        }}
         gridGap={"1rem"}
         className="dashboard-grid-container"
         overflow={{ base: "auto", xl: "hidden" }}
@@ -381,7 +392,8 @@ export default function HomePage() {
       >
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
+          maxWidth={{ base: "100%", lg: "none" }}
           title={"Venta del mes"}
           icon={<ReceiptIcon width={"26px"} height={"27px"} />}
           children={
@@ -408,11 +420,7 @@ export default function HomePage() {
                       $ {ventaDelMes != null ? `${ventaDelMes.valor}` : "0"}
                     </Text>
                   </Box>
-                  <Box
-                    display={{ base: "none", md: "flex" }}
-                    alignItems={"center"}
-                    columnGap={"5px"}
-                  >
+                  <Box display={"flex"} alignItems={"center"} columnGap={"5px"}>
                     <HStack display={"flex"}>
                       <Text
                         textStyle={"RobotoSubSmall"}
@@ -422,16 +430,20 @@ export default function HomePage() {
                           `${ventaDelMes?.porcentajeDeCrecimiento}% ${ventaDelMes?.text}`
                         ) : (
                           <Text color={"grey.placeholder"}>
-                            No se cuenta con información registrada.
+                            Sin ventas registradas.
                           </Text>
                         )}
                       </Text>
                     </HStack>
-                    {ventaDelMes != null && ventaDelMes?.color != "red.100" ? (
-                      <Text>
+                    <Text>
+                      {ventaDelMes != null &&
+                      ventaDelMes?.color === "red.100" ? (
+                        <RedArrowDownIcon />
+                      ) : ventaDelMes != null &&
+                        ventaDelMes?.color !== "red.100" ? (
                         <GreenArrowICon />
-                      </Text>
-                    ) : null}
+                      ) : null}
+                    </Text>
                   </Box>
                 </>
               )}
@@ -439,9 +451,8 @@ export default function HomePage() {
           }
         />
         <Container
-          display={{ base: "none", xl: "block" }}
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           heightChildren={"90%"}
           title={"Venta en meses anteriores"}
           icon={<ReceiptIcon width={"26px"} height={"27px"} />}
@@ -462,9 +473,9 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           heightChildren={"100%"}
-          title={"Top Vitrinas del Mes"}
+          title={"Top vitrinas del mes"}
           icon={<StarIcon />}
           children={
             <>
@@ -476,8 +487,13 @@ export default function HomePage() {
                   flexDirection={{ base: "column", sm: "row" }}
                   w={"100%"}
                   h={"100%"}
-                  justifyContent={"space-around"}
+                  justifyContent={{
+                    base: "center",
+                    lg: "space-around",
+                  }}
+                  gap={{ base: "0.5rem", lg: "1.2rem" }}
                   p={1}
+                  overflow={"hidden"}
                 >
                   <ItemsTopVitrinasdelMes
                     topVitrinas={
@@ -498,19 +514,23 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           heightChildren={"100%"}
-          title={"Top Vitrinas"}
+          title={"Top vitrinas"}
           icon={<TrophyIcon width={"1.5rem"} height={"1.5rem"} />}
           children={
             topTotalVitrinas === null ? (
               <LoadingComponent />
             ) : topTotalVitrinas != null ? (
-              <Box w={"100%"} display={"flex"}>
+              <Box w={"100%"} display={"flex"} overflow={"hidden"}>
                 <Box
                   display={"flex"}
                   flexDirection={"column"}
-                  justifyContent={"space-around"}
+                  justifyContent={{
+                    base: "center",
+                    lg: "space-around",
+                  }}
+                  gap={{ base: "0.5rem", lg: "1.2rem" }}
                   width="100%"
                 >
                   {topTotalVitrinas?.map((vitrina, index) => (
@@ -533,19 +553,17 @@ export default function HomePage() {
                 alignItems={"center"}
                 justifyContent={"flex-start"}
               >
-                <Text color={"grey.placeholder"}>
-                  Información insuficiente para determinar el Top de Vitrinas.
-                </Text>
+                <Text color={"grey.placeholder"}>Sin información.</Text>
               </Box>
             )
           }
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           heightChildren={"100%"}
           minHeight="225px"
-          title={"Top Categorías"}
+          title={"Top categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
           paddingChildren={topTotalCategorias != null ? 0 : 1}
           children={
@@ -553,7 +571,14 @@ export default function HomePage() {
               {topTotalCategorias === null ? (
                 <LoadingComponent />
               ) : topTotalCategorias != null ? (
-                <Box h={"100%"} display={"flex"} flexWrap={"wrap"} gap={1}>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  maxH={"160px"}
+                  overflowY={"scroll"}
+                  w={"100%"}
+                  className="scroll-wrapper"
+                >
                   {topTotalCategorias?.map((cat, index) => (
                     <TopCategoriaItem
                       key={index}
@@ -577,8 +602,7 @@ export default function HomePage() {
                   flex={1}
                 >
                   <Text color={"grey.placeholder"}>
-                    Información insuficiente para determinar el Top de
-                    Categorías
+                   Sin información.
                   </Text>
                 </Box>
               )}
@@ -587,9 +611,9 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           minHeight="225px"
-          title={"Top Productos"}
+          title={"Top productos"}
           icon={<BoxesIcon width={"1.5rem"} height={"1.5rem"} />}
           heightChildren={topTotalProductos != null ? "auto" : "100%"}
           paddingChildren={topTotalProductos != null ? 1 : 0}
@@ -624,7 +648,7 @@ export default function HomePage() {
                   flex={1}
                 >
                   <Text color={"grey.placeholder"}>
-                    Información insuficiente para determinar el Top de Productos
+                    Sin información.
                   </Text>
                 </Box>
               )}
@@ -633,7 +657,7 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Dispositivos averiados"}
           icon={<PhoneLaptopIcon width={"25px"} height={"25px"} />}
@@ -655,7 +679,7 @@ export default function HomePage() {
                   flex={1}
                 >
                   <Text color={"grey.placeholder"}>
-                    No se encuentra información de los dispositivos Averiados
+                    Sin información.
                   </Text>
                 </Box>
               )}
@@ -664,7 +688,7 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Despachos actuales"}
           icon={<TruckIcon width={"25px"} height={"25px"} />}
@@ -686,7 +710,7 @@ export default function HomePage() {
                   flex={1}
                 >
                   <Text color={"grey.placeholder"}>
-                    No se encontró la Lista de los Despachos Actuales
+                   Sin información.
                   </Text>
                 </Box>
               )}
@@ -695,7 +719,7 @@ export default function HomePage() {
         />
         <Container
           height={ContainerHeight + "px"}
-          width={{ base: "100%", md: ContainerWidth + "px" }}
+          width={{ base: "100%", lg: ContainerWidth + "px" }}
           minHeight="225px"
           title={"Inventario pendiente de verificar"}
           icon={<FileCheckIcon />}
@@ -721,7 +745,7 @@ export default function HomePage() {
                   flex={1}
                 >
                   <Text color={"grey.placeholder"}>
-                    No se encontró el Inventario Pendiente por verificar
+                   Sin información.
                   </Text>
                 </Box>
               )}

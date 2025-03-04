@@ -137,9 +137,15 @@ export default function AgregarAsesor({
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <Box w={"100%"}>
-              <FormLabel display="flex" alignItems="center">
-                <span
+            <Box
+              w={"100%"}
+              display={"flex"}
+              flexDir={"column"}
+              gap={1}
+              justifyContent={"space-between"}
+            >
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
+                <Text
                   style={{
                     color: "red",
                     marginRight: "0.25rem",
@@ -147,7 +153,7 @@ export default function AgregarAsesor({
                   }}
                 >
                   *
-                </span>
+                </Text>
                 Nombre
               </FormLabel>
               <TextInput
@@ -157,8 +163,8 @@ export default function AgregarAsesor({
                 onChange={(e) => saveName(e)}
                 value={name}
               />
-              <FormLabel display="flex" alignItems="center">
-                <span
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
+                <Text
                   style={{
                     color: "red",
                     marginRight: "0.25rem",
@@ -166,7 +172,7 @@ export default function AgregarAsesor({
                   }}
                 >
                   *
-                </span>
+                </Text>
                 Vitrina
               </FormLabel>
 
@@ -178,8 +184,8 @@ export default function AgregarAsesor({
                 disabled={true}
               />
 
-              <FormLabel display="flex" alignItems="center">
-                <span
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
+                <Text
                   style={{
                     color: "red",
                     marginRight: "0.25rem",
@@ -187,7 +193,7 @@ export default function AgregarAsesor({
                   }}
                 >
                   *
-                </span>
+                </Text>
                 Usuario
               </FormLabel>
               <TextInput
@@ -197,8 +203,8 @@ export default function AgregarAsesor({
                 onChange={(e) => saveUser(e)}
                 value={user}
               />
-              <FormLabel display="flex" alignItems="center">
-                <span
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
+                <Text
                   style={{
                     color: "red",
                     marginRight: "0.25rem",
@@ -206,7 +212,7 @@ export default function AgregarAsesor({
                   }}
                 >
                   *
-                </span>
+                </Text>
                 Contraseña
               </FormLabel>
               <TextInput
@@ -216,8 +222,8 @@ export default function AgregarAsesor({
                 onChange={(e) => savePassword(e)}
                 value={password}
               />
-              <FormLabel display="flex" alignItems="center">
-                <span
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
+                <Text
                   style={{
                     color: "red",
                     marginRight: "0.25rem",
@@ -225,7 +231,7 @@ export default function AgregarAsesor({
                   }}
                 >
                   *
-                </span>
+                </Text>
                 Habilitado
               </FormLabel>
               <ChakraSelect

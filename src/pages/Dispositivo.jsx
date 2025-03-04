@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, Toast } from "@chakra-ui/react";
+import { Box, Text, Spinner, Center, useToast } from "@chakra-ui/react";
 import ConexionIcon from "../assets/images/ConexionIcon";
 import DevIcon from "../assets/images/DevIcon";
 import MobileIcon from "../assets/images/MobileIcon";
@@ -13,6 +13,8 @@ import DispositivoPendiente from "../component/DispositivoPendiente";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import handleHttpError from "../utils/handleHttpError";
+import StandardButton from "../component/ui/buttons/standard/index";
+import LoadingComponent from "../component/LoadingComponent";
 
 import { parseData } from "../utils/xmlParse";
 import {
@@ -21,6 +23,7 @@ import {
   formatDate,
 } from "../utils/formatting";
 import NoteDispositivo from "../component/Note";
+import HEADER_HEIGHT from "../component/Header";
 
 export default function Dispositivo() {
   const city = useSelector((state) => state.vitrinaReducer.city);
@@ -29,6 +32,13 @@ export default function Dispositivo() {
   const [dispositivosPendientes, setDispositivosPendientes] = useState(false);
   const [infoDispPend, setInfoDispPend] = useState([]);
   const [selectedCodApp, setSelectedCodApp] = useState(null);
+  const toast = useToast();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    savingDispositivoData();
+  }, []);
 
   useEffect(() => {
     savingDispositivoData();
@@ -47,7 +57,6 @@ export default function Dispositivo() {
       });
 
       if (response.status === 200) {
-        console.log("Datos del dispositivo en xml: ", response.data);
         const xmlDoc = parseData(response.data);
         console.log("datos parseados: ", parseData(xmlDoc));
         setInfoDispositivo(dispositivoData(xmlDoc));
@@ -72,6 +81,7 @@ export default function Dispositivo() {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo/pendientes?vitrina=${name}`;
 
     try {
+      setLoading(true);
       const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/xml; charset=utf-8",
@@ -85,7 +95,15 @@ export default function Dispositivo() {
         setInfoDispPend(pendientes);
       }
     } catch (error) {
-      Toast("Ha ocurrido un error, ", error);
+      toast({
+        status: "error",
+        description: "Error obteniendo la información de la vitrina.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,6 +125,7 @@ export default function Dispositivo() {
             "",
         ),
       },
+      codApp: safeGetTextContent(xmlDoc.getElementsByTagName("codApp")),
       conexionAInternet: {
         conectado: safeGetTextContent(xmlDoc.getElementsByTagName("conectado")),
         fechaDeLaUltimaConexion: safeGetTextContent(
@@ -117,11 +136,14 @@ export default function Dispositivo() {
         detalleDeEstado: safeGetTextContent(
           xmlDoc.getElementsByTagName("detalleDeEstado"),
         ),
-        estado:
-          xmlDoc.getElementsByTagName("estado").length > 1
-            ? xmlDoc.getElementsByTagName("estado")[1].textContent
-            : "",
+        estado: safeGetTextContent(
+          xmlDoc.getElementsByTagName("estado")[1] || [],
+        ),
       },
+      fechaVinculacion: safeGetTextContent(
+        xmlDoc.getElementsByTagName("fechaVinculacion"),
+      ),
+      nombre: safeGetTextContent(xmlDoc.getElementsByTagName("nombre")),
       perifericos: {
         escaner: {
           conectado: safeGetTextContent(
@@ -189,6 +211,7 @@ export default function Dispositivo() {
 
   const aprobarSolicitudVinculacion = async (codApp) => {
     try {
+      setLoading(true);
       if (!codApp) {
         console.error("No hay código de aplicación disponible");
         return;
@@ -208,14 +231,28 @@ export default function Dispositivo() {
       );
 
       if (response.status === 200) {
-        Toast("El dispositivo ha sido aprobado!");
+        toast({
+          status: "success",
+          description: "Solicitud aprobada con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
         console.log(response.data);
         savingDispositivoData();
         setDispositivosPendientes(false);
       }
     } catch (error) {
       console.error("Error al aprobar solicitud:", error);
-      Toast("Ha ocurrido un error al aprobar la solicitud");
+      toast({
+        status: "error",
+        description: "Error aprobando la solicitud.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -237,13 +274,66 @@ export default function Dispositivo() {
       );
 
       if (response.status === 200) {
-        Toast("El dispositivo ha sido rechazado con éxito!");
+        toast({
+          status: "success",
+          description: "El dispositivo ha sido rechazado con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
 
         savingDispositivoData();
       }
     } catch (error) {
       console.error("Error al rechazar solicitud:", error);
-      Toast("Ha ocurrido un error al rechazar la solicitud");
+
+      toast({
+        status: "error",
+        description: "Ha ocurrido un error al rechazar la solicitud.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    }
+  };
+
+  const eliminarVinculo = async (codApp) => {
+    try {
+      if (!codApp) {
+        console.error("No hay código de aplicación disponible");
+        return;
+      }
+
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo/vinculacion`,
+        {
+          headers: {
+            Accept: "*/*",
+            "codigo-aplicacion": codApp.toString(),
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        toast({
+          status: "success",
+          description: "El dispositivo ha sido desvinculado con éxito!.",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+
+        savingDispositivoData();
+      }
+    } catch (error) {
+      console.error("Error al rechazar solicitud:", error);
+      toast({
+        status: "error",
+        description: "Ha ocurrido un error al desvincular el dispositivo!.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
     }
   };
 
@@ -257,7 +347,11 @@ export default function Dispositivo() {
     }
   };
 
-  return (
+  return loading ? (
+    <Center w="100%" h="100%" position="absolute" top="0" left="0">
+      <LoadingComponent size="xl" />
+    </Center>
+  ) : (
     <Box
       bg={"mainBg"}
       w={"100%"}
@@ -301,31 +395,58 @@ export default function Dispositivo() {
                 minW="200px"
                 maxW="250px"
                 height="100px"
+                loading={loading}
               />
             ))}
           </Box>
         )
       ) : (
         <>
-          {/* {infoDispositivo?.estado?.detalleDeEstado?.length > 0 && (
-            <Box w={"100%"}>
-              <NoteDispositivo text2={infoDispositivo.estado.detalleDeEstado} />
-            </Box>
-          )} */}
-
           {
             <Box
-              display="flex"
+              display={"flex"}
+              flexDirection={{ base: "column", lg: "row" }}
+              justifyContent={{ base: "flex-start", lg: "space-between" }}
+              alignItems={{ lg: "center" }}
               w={"100%"}
               borderWidth={1}
               borderColor={"#FFE58F"}
               bg={"#FFFBE6"}
-              p="10px"
+              p={"10px"}
+              gap={"10px"}
             >
               <Box display="flex" flexDirection={"column"}>
-                <Text></Text> <Text></Text> <Text></Text>
+                <Text textStyle={"RobotoSubtitleBold"}>
+                  {infoDispositivo?.nombre}
+                </Text>
+                <Box display={"flex"} gap={"5px"}>
+                  <Text textStyle={"RobotoBody"}>Código de aplicación: </Text>
+                  <Text textStyle={"RobotoBodyBold"}>
+                    {infoDispositivo?.codApp}
+                  </Text>
+                </Box>
+                <Box display={"flex"} gap={"5px"}>
+                  <Text textStyle={"RobotoBody"}>Vinculado desde: </Text>
+                  <Text textStyle={"RobotoBodyBold"}>
+                    {infoDispositivo?.fechaVinculacion
+                      ? renderSafeDate(infoDispositivo.fechaVinculacion)
+                      : "No disponible"}
+                  </Text>
+                </Box>
               </Box>
-              <Box></Box>
+              <Box display={"flex"}>
+                <StandardButton
+                  variant={"RED_PRIMARY"}
+                  borderRadius="30px"
+                  w={"160px"}
+                  onClick={() => {
+                    eliminarVinculo(infoDispositivo?.codApp);
+                  }}
+                  loading={loading}
+                >
+                  Eliminar dispositivo
+                </StandardButton>
+              </Box>
             </Box>
           }
 

@@ -18,7 +18,6 @@ export const menuSlice = createSlice({
   },
 });
 
-// Action creators are generated for each case reducer function
 export const { toggleMenu, closeMenu, openMenu, setVitrinaActive } =
   menuSlice.actions;
 

@@ -147,3 +147,35 @@ export function getPorcentage(valor, porcentaje) {
     text,
   };
 }
+
+export function formatearFechaSimplificada(fechaStr) {
+  try {
+    if (fechaStr.length < 16) {
+      return "Fecha no disponible";
+    }
+
+    const año = fechaStr.substring(0, 4);
+    const mes = fechaStr.substring(5, 7);
+    const dia = fechaStr.substring(8, 10);
+    const hora = fechaStr.substring(11, 13);
+    const minuto = fechaStr.substring(14, 16);
+
+    const segundo = fechaStr.length >= 19 ? fechaStr.substring(17, 19) : "00";
+
+    if (
+      isNaN(parseInt(año)) ||
+      isNaN(parseInt(mes)) ||
+      isNaN(parseInt(dia)) ||
+      isNaN(parseInt(hora)) ||
+      isNaN(parseInt(minuto)) ||
+      isNaN(parseInt(segundo))
+    ) {
+      return "Fecha no disponible";
+    }
+
+    return `${dia}/${mes}/${año} a las ${hora}:${minuto}:${segundo}`;
+  } catch (error) {
+    console.error(`Error procesando fecha:`, fechaStr, error);
+    return "Fecha no disponible";
+  }
+}

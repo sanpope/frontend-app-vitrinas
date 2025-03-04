@@ -147,14 +147,12 @@ export default function Asesores() {
         const habilitado =
           asesor.getElementsByTagName("habilitado")[0]?.textContent ?? "";
 
-        // Crear un array para las vitrinas del asesor
         const vitrinasNodes = asesor.querySelectorAll("vitrina");
         const vitrinas = Array.from(
           vitrinasNodes,
           (vitrina) => vitrina.textContent,
         );
 
-        // Agregar el objeto del asesor al array principal
         totalAsesoresArr.push({
           nombre,
           usuario,

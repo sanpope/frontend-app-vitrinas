@@ -27,7 +27,7 @@ export default function Agregar({
   isLoading,
 }) {
   const [name, setName] = useState("");
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState("Barranquilla");
 
   const saveName = (e) => {
     setName(e);
@@ -43,7 +43,7 @@ export default function Agregar({
   };
 
   const handleGuardar = () => {
-    Agregar(name);
+    Agregar(city, name);
     handleOnClose();
   };
 
@@ -75,27 +75,8 @@ export default function Agregar({
             justifyContent={"center"}
             alignItems={"center"}
           >
-            <FormControl pt={"10px"}>
+            <FormControl display={"flex"} flexDirection={"column"}>
               <FormLabel display="flex" alignItems="center">
-                <span
-                  style={{
-                    color: "red",
-                    marginRight: "0.25rem",
-                    marginTop: "0.25rem",
-                  }}
-                >
-                  *
-                </span>
-                {desc2}
-              </FormLabel>
-              <TextInput
-                type="text"
-                placeholder="Alejandro SantaMaria"
-                required
-                onChange={(e) => saveName(e)}
-                value={name}
-              />
-              {/* <FormLabel display="flex" alignItems="center" mt={3}>
                 <span
                   style={{
                     color: "red",
@@ -109,17 +90,19 @@ export default function Agregar({
               </FormLabel>
               <Select
                 required
+                mb={3}
                 onChange={(e) => saveCity(e)}
+                defaultValue="Barranquilla"
                 sx={{
                   borderColor: "mainBg",
                   borderWidth: "1px",
                   _hover: {
-                    borderColor: "blue.50",
+                    borderColor: "mainBg",
                     borderWidth: "1px",
                   },
                   _focus: {
-                    borderColor: "blue.50",
-                    boxShadow: "0px 0px 5px 0px rgba(88, 178, 255, 1)",
+                    borderColor: "mainBg",
+
                     borderWidth: "1px",
                   },
                 }}
@@ -137,7 +120,26 @@ export default function Agregar({
                 <option>Pasto</option>
                 <option>Pereira</option>
                 <option>Villavicencio</option>
-              </Select> */}
+              </Select>
+              <FormLabel display="flex" alignItems="center">
+                <span
+                  style={{
+                    color: "red",
+                    marginRight: "0.25rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  *
+                </span>
+                {desc2}
+              </FormLabel>
+              <TextInput
+                type="text"
+                placeholder="Ingrese el nombre de la vitrina"
+                required
+                onChange={(e) => saveName(e)}
+                value={name}
+              />
             </FormControl>
           </Box>
         </ModalBody>

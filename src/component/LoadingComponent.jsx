@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Spinner } from "@chakra-ui/react";
 import colors from "../theme/colors";
 
-export default function LoadingComponent() {
+export default function LoadingComponent({ size = "lg" }) {
   return (
     <Box
       width={"100%"}
@@ -11,7 +11,7 @@ export default function LoadingComponent() {
       justifyContent={"center"}
       alignItems={"center"}
     >
-      <Spinner size={"lg"} />
+      <Spinner size={size} color="gray.400" thickness="3px" />
     </Box>
   );
 }

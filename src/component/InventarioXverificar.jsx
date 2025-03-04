@@ -5,6 +5,7 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
   return (
     <Box
       w={"100%"}
+      h={"100%"}
       display={"flex"}
       flexDirection={"column"}
       justifyContent={"center"}
@@ -80,13 +81,18 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
       </Box>
 
       <Box
+        position={"relative"} 
+        flex={1}
         display={"flex"}
         flexDirection={"column"}
         w={"100%"}
-        height={"100px"}
         flexGrow={1}
         className={"scroll-wrapper"}
         gap={3}
+        marginInline={10}
+        overflow={"auto"} 
+        maxH={"calc(100% - 80px)"} 
+        minH={"150px"} 
       >
         {visitasNoVerificadas?.map((visita, index) => (
           <Box

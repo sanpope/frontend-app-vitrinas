@@ -127,7 +127,7 @@ export default function AgregarAsesorVitrinas({
             alignItems={"center"}
           >
             <Box w={"100%"}>
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
                 <span
                   style={{
                     color: "red",
@@ -146,7 +146,7 @@ export default function AgregarAsesorVitrinas({
                 onChange={(e) => saveName(e)}
                 value={name}
               />
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
                 <span
                   style={{
                     color: "red",
@@ -167,7 +167,7 @@ export default function AgregarAsesorVitrinas({
                 isMulti
               ></ReactSelect>
 
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
                 <span
                   style={{
                     color: "red",
@@ -186,7 +186,7 @@ export default function AgregarAsesorVitrinas({
                 onChange={(e) => saveUser(e)}
                 value={user}
               />
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
                 <span
                   style={{
                     color: "red",
@@ -205,7 +205,7 @@ export default function AgregarAsesorVitrinas({
                 onChange={(e) => savePassword(e)}
                 value={password}
               />
-              <FormLabel display="flex" alignItems="center">
+              <FormLabel display="flex" alignItems="center" marginTop={3}>
                 <span
                   style={{
                     color: "red",

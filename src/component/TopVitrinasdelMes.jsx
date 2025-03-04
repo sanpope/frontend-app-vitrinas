@@ -11,20 +11,17 @@ const TopVitrinasdelMes = ({
   backgroundColor,
   hoverBackgroundColor,
 }) => {
-  // Convertir los datos a números y eliminar puntos decimales si existen
   const dataNumber = data?.map((dato) => parseFloat(dato.replace(/\./g, "")));
 
-  // Verificar si todas las ventas son 0
   const allZeroVentas = dataNumber?.every((dato) => dato === 0);
 
-  // Si todas las ventas son 0, se asignan valores iguales
   const chartData = {
     labels: labels,
     datasets: [
       {
-        data: allZeroVentas ? [1, 1, 1] : dataNumber, // Partes iguales si todas las ventas son 0
+        data: allZeroVentas ? [1, 1, 1] : dataNumber,
         backgroundColor: allZeroVentas
-          ? ["#BBBBBB", "#BBBBBB", "#BBBBBB"] // Color gris si todas las ventas son 0
+          ? ["#BBBBBB", "#BBBBBB", "#BBBBBB"]
           : backgroundColor || ["#000000", "#555555", "#BBBBBB"],
         hoverBackgroundColor: allZeroVentas
           ? ["#BBBBBB", "#BBBBBB", "#BBBBBB"]
@@ -48,7 +45,6 @@ const TopVitrinasdelMes = ({
 
   return (
     <>
-      {" "}
       {labels !== null && data !== null ? (
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box h={"55%"} display={{ base: "none", sm: "inline-flex" }}>
@@ -56,9 +52,15 @@ const TopVitrinasdelMes = ({
           </Box>
         </Box>
       ) : (
-        <Box width={"100%"} height={"100%"} display={"flex"} alignItems={"center"} justifyContent={"flex-start"}>
-          <Text color={"grey.placeholder"} >
-            No se encontró información del Top de las vitrinas.
+        <Box
+          width={"100%"}
+          height={"100%"}
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"flex-start"}
+        >
+          <Text color={"grey.placeholder"}>
+            Sin información.
           </Text>
         </Box>
       )}

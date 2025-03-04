@@ -79,16 +79,9 @@ body {
   padding-right: 17px;
 }
 
-.scroll-wrapper {
-  height: 100%;
-  width: calc(100% + 17px);
-  overflow-y: scroll;
-  margin-right: -17px;
-  padding-right: 17px;
-}
 
 .scroll-wrapper::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 .scroll-wrapper::-webkit-scrollbar-track {

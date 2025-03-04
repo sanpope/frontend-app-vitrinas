@@ -40,7 +40,7 @@ const routes = [
   },
   {
     path: "/productosybodega",
-    label: "Productos y Bodega",
+    label: "Productos y bodega",
     leftIcon: <WareHouseIcon />,
   },
   {
@@ -136,7 +136,7 @@ export default function SideBar({ setLoggedIn }) {
 
   return (
     <Box
-      w={isSmallScreen ? SMALL_WIDTH : ""}
+      w={isSmallScreen ? SMALL_WIDTH : isDeskMenuOpen ? BIG_WIDTH : SMALL_WIDTH}
       h={"100%"}
       bg={"black"}
       display={"flex"}
@@ -164,9 +164,9 @@ export default function SideBar({ setLoggedIn }) {
               display={{ base: "none", md: "flex" }}
               justifyContent={isDeskMenuOpen ? "flex-start" : "center"}
               alignItems={{ base: "none", md: "center" }}
-              gap={'10px'}
+              gap={"10px"}
               py={2}
-              px={normalize(2)}
+              px={normalize(1.2)}
             >
               <IconLogo width={"40px"} height={"40px"} stroke={"white"} />
               {isDeskMenuOpen ? (

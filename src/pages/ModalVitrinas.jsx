@@ -56,10 +56,6 @@ export default function ModalVitrinas({
   const [isLoading, setIsLoading] = useState(null);
   const [createVitrinaLoading, setCreateVitrinaLoading] = useState(false);
 
-  const mensajesNoLeidos = useSelector(
-    (state) => state.vitrinaReducer.mensajesNoLeidos,
-  );
-
   const {
     isOpen: isSecondModalOpen,
     onOpen: onSecondModalOpen,
@@ -86,10 +82,9 @@ export default function ModalVitrinas({
       });
 
       const data = response.data;
-      // Parseamos el XML
       if (data) {
         navigate("/resumen");
-        getMensajesVitrina(vitrinaName);
+        getMensajesNoLeidos(vitrinaName);
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
@@ -218,56 +213,34 @@ export default function ModalVitrinas({
     return vitrinasObj;
   };
 
-  const getMensajesVitrina = async (nombre) => {
+  const getMensajesNoLeidos = async (vitrinaName) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${nombre}`,
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/mensajes?vitrina=${vitrinaName}`,
         {
           headers: {
             "Content-Type": "application/xml",
           },
         },
       );
-      if (response.status == 200 && response.data) {
+      if (response.status === 200 && response.data) {
         const xmlDoc = parseData(response.data);
-        dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
-        dispatch(setMensajesNoLeidos(getMensajesNoLeidos(getMensajes(xmlDoc))));
+        const mensajes = xmlDoc.querySelector("mensajes");
+        const noLeidos = mensajes.querySelectorAll("mensaje > visto");
+        const count = Array.from(noLeidos).filter(
+          (elem) => elem.textContent === "false",
+        ).length;
+        dispatch(setMensajesNoLeidos(count));
       }
     } catch (error) {
       toast({
         status: "error",
-        description: "Error obteniendo los mensajes.",
+        description: "Error obteniendo mensajes no leídos.",
         duration: 3000,
         position: "top-right",
         isClosable: true,
       });
-    } finally {
     }
-  };
-
-  const getMensajes = (xml) => {
-    const mensajes = xml.querySelector("mensajes");
-    const totalMensajes = mensajes.querySelectorAll("mensaje");
-    let mensajesArr = [];
-    for (let i = 0; i < totalMensajes?.length; i++) {
-      mensajesArr.push({
-        id: totalMensajes[i]?.getElementsByTagName("id")[0].textContent,
-        fechaHora:
-          totalMensajes[i]?.getElementsByTagName("fechaHora")[0].textContent,
-        visto: totalMensajes[i]?.getElementsByTagName("visto")[0].textContent,
-        remitente:
-          totalMensajes[i]?.getElementsByTagName("remitente")[0].textContent,
-        asunto: totalMensajes[i]?.getElementsByTagName("asunto")[0].textContent,
-        contenido:
-          totalMensajes[i]?.getElementsByTagName("contenido")[0].textContent,
-      });
-    }
-    return mensajesArr;
-  };
-
-  const getMensajesNoLeidos = (mensajes) => {
-    const msjNoLeidos = mensajes.filter((msj) => msj.visto === "false");
-    return msjNoLeidos.length;
   };
 
   return (
@@ -275,7 +248,7 @@ export default function ModalVitrinas({
       <Modal
         isOpen={isFirstModalOpen}
         onClose={handleFirstModalClose}
-        size={"xl"}
+        size={"lg"}
         scrollBehavior={"inside"}
       >
         <ModalOverlay className="overlay-vitrinas" bg={"rgba(0, 0, 0, 0.2)"} />
@@ -304,7 +277,7 @@ export default function ModalVitrinas({
             </Box>
             <ModalBody
               display={"flex"}
-              justifyContent={"center"}
+              justifyContent={"flex-start"}
               flexWrap={"wrap"}
               gap={{ base: "0px", md: "20px" }}
               flexDir={"row"}
@@ -316,23 +289,33 @@ export default function ModalVitrinas({
               Object.keys(ciudadesVitrinas).length > 0 ? (
                 <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
                   {Object.entries(ciudadesVitrinas)
-                    .filter(([_, vitrinas]) => vitrinas.length > 0) // Filtrar ciudades con vitrinas
+                    .filter(([_, vitrinas]) => vitrinas.length > 0)
                     .sort(([ciudadA], [ciudadB]) =>
                       ciudadA.localeCompare(ciudadB),
-                    ) // Ordenar ciudades ascendentemente
+                    )
                     .map(([ciudad, vitrinas], index) => (
                       <UnorderedList
                         key={index}
                         cursor={"pointer"}
                         flex={"1 1 120px"}
-                        boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 1)"
+                        boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 0.3)"
                         p={3}
                         maxH={"200px"}
+                        minW={"120px"}
+                        maxW={"140px"}
                         overflowY={"auto"}
+                        borderRadius={20}
                       >
-                        <Text textStyle={"RobotoBodyBold"}>{ciudad}</Text>
+                        <Text
+                          textStyle={"RobotoBodyBold"}
+                          py={2}
+                          borderBottom="1px"
+                          borderBottomColor={"mainBg"}
+                        >
+                          {ciudad}
+                        </Text>
                         {vitrinas.map((name, index) => (
-                          <ListItem ml={2} key={index}>
+                          <ListItem ml={2} key={index} borderRadius={30}>
                             <Text
                               textStyle={"RobotoBody"}
                               onClick={() => handleVitrinaClick(ciudad, name)}
@@ -349,10 +332,10 @@ export default function ModalVitrinas({
               ) : ciudadesVitrinas != null &&
                 Object.keys(ciudadesVitrinas).length > 0 ? (
                 Object.entries(ciudadesVitrinas)
-                  .filter(([_, vitrinas]) => vitrinas.length > 0) // Filtrar ciudades con vitrinas
+                  .filter(([_, vitrinas]) => vitrinas.length > 0)
                   .sort(([ciudadA], [ciudadB]) =>
                     ciudadA.localeCompare(ciudadB),
-                  ) // Ordenar ciudades ascendentemente
+                  )
                   .map(([ciudad, vitrinas]) => (
                     <Vitrina
                       key={ciudad}
@@ -381,12 +364,13 @@ export default function ModalVitrinas({
               <StandardButton
                 variant={"RED_PRIMARY"}
                 borderRadius="30px"
-                size="14px"
+                size="15px"
+                w={180}
                 p={2}
                 onClick={onSecondModalOpen}
                 children={
                   <Text textStyle={"RobotoSubtitleRegular"}>
-                    Crear una Vitrina
+                    Crear una vitrina
                   </Text>
                 }
               ></StandardButton>
@@ -397,7 +381,7 @@ export default function ModalVitrinas({
                 onClick={onSecondModalClose}
                 desc={"Vitrina"}
                 desc2={"Nombre de la vitrina"}
-                funcAgregar={createNewVitrina}
+                Agregar={createNewVitrina}
                 mensajeError={mensaje}
                 isLoading={createVitrinaLoading}
               />

@@ -1,48 +1,32 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-export default function TopCategoriaItem({
-  icon,
-  catName,
-  catPercentage,
-  justifyContent,
-  flexDirA,
-  flexDirB,
-}) {
+export default function TopCategoriaItem({ icon, catName, catPercentage }) {
   return (
     <Box
-    
       display={"flex"}
-      flexDirection={{ base: flexDirA, sm: flexDirB }}
-      justifyContent={justifyContent}
+      flexDirection={{ base: "column", sm: "row" }}
+      justifyContent={"space-between"}
       alignItems={"center"}
-      flex={"1 1 auto"}
-      maxH={"40px"}
+      py={2}
     >
-      <Box
-        display={"flex"}
-        justifyContent={"flex-start"}
-        alignItems={"center"}
-        h={"100%"}
-      >
+      <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
         {icon}
-        <Text textStyle={"RobotoBody"} px={2} w={"95px"}>
+        <Text textStyle={"RobotoBody"} marginLeft={2}>
           {catName}
         </Text>
       </Box>
       <Box
         display={"flex"}
         justifyContent={"flex-end"}
-        alignItems={"center"}
-        h={"80%"}
+        borderLeftWidth={"2px"}
+        borderLeftColor={"mainBg"}
       >
         <Text
+          w={"50px"}
           textStyle={"RobotoBodyBold"}
-          textAlign={"left"}
-          pl={2}
-          minW={"40px"}
-          borderLeftWidth={"2px"}
-          borderLeftColor={"grey.placeholder"}
+          textAlign={"rigth"}
+          ml={1}
         >
           {catPercentage}%
         </Text>

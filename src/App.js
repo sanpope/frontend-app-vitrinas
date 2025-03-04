@@ -7,7 +7,7 @@ import ProtectedRoute from "./context/ProtectedRoute";
 import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 import Profile from "./pages/Profile";
-import ProductosyBodega from "./pages/HomePage";
+import ProductosyBodega from "./pages/ProductosyBodega";
 import Asesores from "./pages/Asesores";
 import ErrorPage from "./pages/ErrorPage";
 import SideBar from "./component/SideBar";
@@ -110,7 +110,7 @@ export const routes = [
   {
     path: "/productosybodega",
     element: <ProductosyBodega />,
-    label: "Productos y Bodega",
+    label: "Productos y bodega",
     leftIcon: <WareHouseIcon />,
   },
   {
