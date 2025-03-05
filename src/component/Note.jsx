@@ -4,8 +4,8 @@ import React from "react";
 export default function Note({ width = "100%", text1, text2, arr }) {
   return (
     <Box
+      flex={1}
       display="flex"
-      height="70px"
       flexDirection={"column"}
       w={width}
       borderWidth={1}

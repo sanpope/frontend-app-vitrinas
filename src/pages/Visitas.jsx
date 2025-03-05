@@ -15,6 +15,7 @@ import ProductosEnDespacho from "../component/ProductosEnDespacho";
 import CardVisitas from "../component/CardVisitas";
 import CardMovimientosInventario from "../component/CardMovimientosInventario";
 import CardCorreccionesInventario from "../component/CardCorreccionesInventario";
+import LoadingComponent from "../component/LoadingComponent";
 
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -45,6 +46,11 @@ export default function Visitas() {
   const [productosDespachados, setProductosDespachados] = useState(null);
   const [enviarProdcsLoading, setEnviarProdcsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [visitasLoading, setVisitasLoading] = useState(false);
+  const [movimientosLoading, setMovimientosLoading] = useState(false);
+  const [correccionesLoading, setCorreccionesLoading] = useState(false);
+  const [productosDespachoLoading, setProductosDespachoLoading] =
+    useState(false);
 
   const [visitaSelected, setVisitaSelected] = useState(null);
 
@@ -53,6 +59,11 @@ export default function Visitas() {
   }, [selectedOption]);
 
   const getIntervaloVisitas = async (date1, date2) => {
+    // Activamos todos los estados de carga
+    setVisitasLoading(true);
+    setMovimientosLoading(true);
+    setCorreccionesLoading(true);
+
     let fecha1, fecha2;
     if (date1 === null || date2 === null) {
       let today = new Date();
@@ -88,13 +99,16 @@ export default function Visitas() {
         isClosable: true,
       });
     } finally {
+      setTimeout(() => setVisitasLoading(false), 300);
+      setTimeout(() => setMovimientosLoading(false), 400);
+      setTimeout(() => setCorreccionesLoading(false), 500);
     }
   };
 
   const getVisitasData = (xml) => {
     const visitasContainer = xml.querySelector("visitas");
     const totalVisitas = visitasContainer.querySelectorAll("visita");
-    // Extraer visitas
+
     const visitasArray = [];
     for (let i = 0; i < totalVisitas?.length; i++) {
       visitasArray.push({
@@ -118,7 +132,6 @@ export default function Visitas() {
       });
     }
 
-    // Extraer movimientos
     const movimientosContainer = xml.querySelector("movimientos");
     const movimientos = movimientosContainer?.querySelectorAll("movimiento");
     const movimientosArray = [];
@@ -164,7 +177,6 @@ export default function Visitas() {
       });
     }
 
-    // Extraer correcciones
     const correccionesContainer = xml.querySelector("correcciones");
     const correcciones = correccionesContainer.querySelectorAll("correccion");
     const correccionesArray = [];
@@ -226,22 +238,18 @@ export default function Visitas() {
     const today = new Date();
     let startDate, endDate;
 
-    // Fecha de fin siempre es la fecha actual
-    endDate = formattingDate(today); // Usamos la función formattingDate
+    endDate = formattingDate(today);
     setFechaFin(endDate);
 
     if (option === "Mes actual") {
-      // Primer día del mes actual
       startDate = new Date(today.getFullYear(), today.getMonth(), 1);
     } else if (option === "Últimos tres meses") {
-      // Fecha exacta tres meses atrás
       startDate = new Date(
         today.getFullYear(),
         today.getMonth() - 3,
         today.getDate(),
       );
     } else if (option === "Último semestre") {
-      // Fecha exacta seis meses atrás
       startDate = new Date(
         today.getFullYear(),
         today.getMonth() - 6,
@@ -254,6 +262,8 @@ export default function Visitas() {
 
   const handleClickVerProductos = async () => {
     onFirstModalOpen();
+    setProductosDespachoLoading(true);
+
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/visitas/productos-despachados?vitrina=${name}`,
@@ -273,12 +283,34 @@ export default function Visitas() {
           error.response.status,
         );
         console.error("Detalles:", error.response.data);
+        toast({
+          status: "error",
+          description: "Error al cargar los productos en despacho",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       } else if (error.request) {
         console.error("No se recibió respuesta del servidor:", error.request);
+        toast({
+          status: "error",
+          description: "No se obtuvo respuesta del servidor",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       } else {
         console.error("Error en la solicitud:", error.message);
+        toast({
+          status: "error",
+          description: "Error en la solicitud",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
       }
     } finally {
+      setTimeout(() => setProductosDespachoLoading(false), 300);
     }
   };
 
@@ -296,7 +328,7 @@ export default function Visitas() {
       if (response.status == 200 && response.data) {
         toast({
           status: "success",
-          description: "Productos Ingresados con éxito!.",
+          description: "¡Productos Ingresados con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -534,7 +566,17 @@ export default function Visitas() {
           title="Visitas realizadas a esta vitrina"
           maxW="310px"
           children={
-            totalVisitas !== null && totalVisitas?.length > 0 ? (
+            visitasLoading ? (
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <LoadingComponent size="md" />
+              </Box>
+            ) : totalVisitas !== null && totalVisitas?.length > 0 ? (
               totalVisitas?.map((visita, index) => (
                 <CardVisitas
                   key={index}
@@ -569,7 +611,17 @@ export default function Visitas() {
           title="Movimientos de inventario"
           maxW="310px"
           children={
-            totalMovivmientos !== null && totalMovivmientos?.length > 0 ? (
+            movimientosLoading ? (
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <LoadingComponent size="md" />
+              </Box>
+            ) : totalMovivmientos !== null && totalMovivmientos?.length > 0 ? (
               totalMovivmientos?.map((movimiento, index) => (
                 <CardMovimientosInventario
                   key={index}
@@ -598,7 +650,17 @@ export default function Visitas() {
           w="100%"
           maxW="310px"
           children={
-            totalCorrecciones !== null && totalCorrecciones?.length > 0 ? (
+            correccionesLoading ? (
+              <Box
+                width={"100%"}
+                height={"100%"}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <LoadingComponent size="md" />
+              </Box>
+            ) : totalCorrecciones !== null && totalCorrecciones?.length > 0 ? (
               totalCorrecciones?.map((corr, index) => (
                 <CardCorreccionesInventario key={index} correccion={corr} />
               ))
@@ -635,8 +697,13 @@ export default function Visitas() {
           fontSize={{ base: "12px", lg: "14px" }}
           fontWeight="400"
           onClick={handleClickVerProductos}
+          isDisabled={productosDespachoLoading}
         >
-          {isSmallScreen ? "Ver productos" : "Ver productos en despacho"}
+          {productosDespachoLoading
+            ? "Cargando..."
+            : isSmallScreen
+              ? "Ver productos"
+              : "Ver productos en despacho"}
         </StandardButton>
         <ProductosEnDespacho
           isOpen={isFirstModalOpen}
@@ -644,7 +711,7 @@ export default function Visitas() {
           onClose={onFirstModalClose}
           products={productosDespachados}
           handleIngresarProductos={enviarProductosEnDespacho}
-          isLoading={enviarProdcsLoading}
+          isLoading={enviarProdcsLoading || productosDespachoLoading}
         />
         <StandardButton
           variant={visitaSelected != null ? "RED_PRIMARY" : "DISABLED"}
@@ -657,10 +724,13 @@ export default function Visitas() {
           onClick={visitaSelected != null ? onConfirmationModalOpen : null}
           disabled={visitaSelected != null ? false : true}
           cursor={visitaSelected != null ? "cursor" : "not-allowed"}
+          isDisabled={isLoading}
         >
-          {isSmallScreen
-            ? "Revertir movimientos"
-            : "Revertir movimientos y correcciones"}
+          {isLoading
+            ? "Procesando..."
+            : isSmallScreen
+              ? "Revertir movimientos"
+              : "Revertir movimientos y correcciones"}
         </StandardButton>
         <ConfirmationMessage
           icon={<WarningIcon />}

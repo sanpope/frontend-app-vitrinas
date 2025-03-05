@@ -19,7 +19,7 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
     prodslUltimasVentas?.valor !== "undefined" &&
     prodslUltimasVentas?.valor !== ""
       ? formatearNumero(prodslUltimasVentas?.valor)
-      : 0;
+      : "No se han registrado ventas";
   const Prod1Cant =
     prodslUltimasVentas?.prod1?.cantidad !== null &&
     prodslUltimasVentas?.prod1?.cantidad !== undefined &&
@@ -70,9 +70,15 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
             {fecha}
           </Text>
           <Box display={"flex"} flexDirection={"column"}>
-            <Text textStyle={"RobotoHeaderBold"} color={"black"}>
-              ${valor}
-            </Text>
+            {valor === "No se han registrado ventas" ? (
+              <Text textStyle={"RobotoBody"} color={"grey.placeholder"}>
+                {valor}
+              </Text>
+            ) : (
+              <Text textStyle={"RobotoHeaderBold"} color={"black"}>
+                ${valor}
+              </Text>
+            )}
           </Box>
 
           <Box>
@@ -102,7 +108,7 @@ const UltimaVenta = ({ prodslUltimasVentas }) => {
         </Box>
       ) : (
         <Text color={"grey.placeholder"} alignSelf={"center"}>
-          Última venta No registrada!.
+          Sin información.
         </Text>
       )}
     </>

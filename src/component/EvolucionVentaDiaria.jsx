@@ -142,7 +142,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
           justifyContent={"center"}
         >
           <Text color={"grey.placeholder"} alignSelf={"center"}>
-            No existe registro de ventas diarias.
+            No existe registro de ventas diarias
           </Text>
         </Box>
       )}

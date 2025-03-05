@@ -14,6 +14,7 @@ import { parseData } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
 import DespacharProdsBod from "../component/DespacharProdsBod";
 import TransferirProdsBod from "../component/TransferirProdsBod";
+import LoadingComponent from "../component/LoadingComponent";
 
 const TOP_HEIGHT = 72;
 
@@ -45,6 +46,7 @@ export default function ProductosyBodega() {
   }, [tablaProductos]);
 
   const getInventarioInfo = async () => {
+    setIsLoading(true);
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
     try {
       const response = await axios.get(url, {
@@ -61,6 +63,15 @@ export default function ProductosyBodega() {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+      toast({
+        status: "error",
+        description: "Error al cargar los productos.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   const getProductos = (xml) => {
@@ -102,10 +113,11 @@ export default function ProductosyBodega() {
       return totalProdsArr;
     }
 
-    return []; // Retorna un array vacío si no hay productos
+    return [];
   };
 
   const getProveedoresInfo = async () => {
+    setIsLoading(true);
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores`;
     try {
       const response = await axios.get(url, {
@@ -119,10 +131,20 @@ export default function ProductosyBodega() {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+      toast({
+        status: "error",
+        description: "Error al cargar los proveedores.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const getCategoriasInfo = async () => {
+    setIsLoading(true);
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias`;
     try {
       const response = await axios.get(url, {
@@ -136,6 +158,15 @@ export default function ProductosyBodega() {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+      toast({
+        status: "error",
+        description: "Error al cargar las categorías.",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -491,14 +522,18 @@ export default function ProductosyBodega() {
   }, [sortingBy, isAscendent]);
 
   const getMasArticulos = (pageNumber) => {
-    toggleLoading(true);
+    setIsLoading(true);
     setCurrentPage(pageNumber);
-    setDisplayedArticulos(
-      tablaProductos?.slice(
-        (pageNumber - 1) * rowsToShow,
-        (pageNumber - 1) * rowsToShow + rowsToShow,
-      ),
-    );
+
+    setTimeout(() => {
+      setDisplayedArticulos(
+        tablaProductos?.slice(
+          (pageNumber - 1) * rowsToShow,
+          (pageNumber - 1) * rowsToShow + rowsToShow,
+        ),
+      );
+      setIsLoading(false);
+    }, 300);
   };
 
   React.useEffect(() => {
@@ -614,6 +649,22 @@ export default function ProductosyBodega() {
         w={"100%"}
         minH={MIN_TABLE_HEIGHT + "px"}
       >
+        {isLoading && (
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            zIndex="10"
+            bg="rgba(255, 255, 255, 0.7)"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <LoadingComponent size="xl" />
+          </Box>
+        )}
         {
           <TablaProductosBodega
             isFirstModalOpen={isFourthModalOpen}
@@ -651,6 +702,7 @@ export default function ProductosyBodega() {
             editProducto={EditarProducto}
             deleteProducto={DeleteProducto}
             setBusqueda={setBusqueda}
+            isLoading={isLoading}
           />
         }
       </Box>

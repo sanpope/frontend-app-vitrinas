@@ -13,6 +13,7 @@ import VerExistencias from "./VerExistencias";
 import Note from "../component/Note";
 import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
+import LoadingComponent from "./LoadingComponent";
 import {
   formatFecha,
   formatearNumero,
@@ -33,15 +34,9 @@ export default function TablaVentas({
   isOpen,
   onOpen,
   onClose,
+  loading,
 }) {
-  const HEADERS = [
-    "Venta",
-    "Fecha y Hora",
-    "Precio",
-    tableTitle,
-    "Nota",
-    "Acciones",
-  ];
+  const HEADERS = ["Fecha y Hora", "Precio", tableTitle, "Nota", "Acciones"];
 
   const [parentHeight, setParentHeight] = useState(0);
   const parentRef = useRef(null);
@@ -79,7 +74,26 @@ export default function TablaVentas({
             </tr>
           </thead>
 
-          {displayedArticulos !== null && displayedArticulos?.length > 0 ? (
+          {loading ? (
+            <tbody>
+              <tr
+                style={{
+                  borderBottom: "none",
+                }}
+              >
+                <td
+                  colSpan={HEADERS.length}
+                  style={{
+                    height: `${parentHeight - 80}px`,
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                  }}
+                >
+                  <LoadingComponent />
+                </td>
+              </tr>
+            </tbody>
+          ) : displayedArticulos !== null && displayedArticulos?.length > 0 ? (
             <tbody>
               {displayedArticulos?.map((articulo, articuloIndex) => {
                 const productosVisibles =
@@ -88,7 +102,6 @@ export default function TablaVentas({
                   (articulo?.productosAfectados?.length || 0) - 2;
                 return (
                   <tr key={articuloIndex} className="">
-                    <td className="ventasTd">{articulo.codigo}</td>
                     <td className="ventasTd">
                       {formatFecha(articulo.fechaHora)}
                     </td>
@@ -172,7 +185,7 @@ export default function TablaVentas({
                     justifyContent={{ base: "flex-start", lg: "center" }}
                     alignItems={"center"}
                   >
-                    {`No se encontraron ${selectedOption} para mostrar.`}
+                    {`No se encontraron ${selectedOption.toLowerCase()} para mostrar.`}
                   </Text>
                 </td>
               </tr>

@@ -18,7 +18,7 @@ import StandardButton from "./ui/buttons/standard";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
 export default function ConfirmationMessage({
-  icon = <InfoIcon />,
+  icon = <InfoIcon width="70px" height="45px" />,
   text,
   text2,
   colorText2,

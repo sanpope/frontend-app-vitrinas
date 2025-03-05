@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Text,
@@ -13,6 +13,7 @@ import {
   UnorderedList,
   ListItem,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import LeftTriangleIcon from "../assets/images/LeftTriangleIcon";
 import StandardButton from "../component/ui/buttons/standard";
@@ -56,11 +57,34 @@ export default function ModalVitrinas({
   const [isLoading, setIsLoading] = useState(null);
   const [createVitrinaLoading, setCreateVitrinaLoading] = useState(false);
 
+  const [hasScroll, setHasScroll] = useState(false);
+
+  const modalBodyRef = useRef(null);
+
   const {
     isOpen: isSecondModalOpen,
     onOpen: onSecondModalOpen,
     onClose: onSecondModalClose,
   } = useDisclosure();
+
+  const checkForScroll = () => {
+    if (modalBodyRef.current) {
+      const { scrollHeight, clientHeight } = modalBodyRef.current;
+      setHasScroll(scrollHeight > clientHeight);
+    }
+  };
+
+  useEffect(() => {
+    if (isFirstModalOpen && !isLoading) {
+      checkForScroll();
+
+      window.addEventListener("resize", checkForScroll);
+
+      return () => {
+        window.removeEventListener("resize", checkForScroll);
+      };
+    }
+  }, [isFirstModalOpen, isLoading, ciudadesVitrinas]);
 
   useEffect(() => {
     getVitrinasInfo();
@@ -97,7 +121,7 @@ export default function ModalVitrinas({
     const formData = new URLSearchParams();
     formData.append("nombre", name);
     formData.append("ciudad", city);
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/vitrinas`;
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/vitrina`;
 
     if (city in ciudadesVitrinas) {
       const index = ciudadesVitrinas[city].findIndex((item) => item === name);
@@ -266,7 +290,7 @@ export default function ModalVitrinas({
             left={{ base: "0px", md: "-45px" }}
           >
             <Box
-              display={{ base: "none", xl: "block" }}
+              display={{ base: "none", sm: "block" }}
               position={"absolute"}
               left={"-26px"}
               top={"40px"}
@@ -276,74 +300,42 @@ export default function ModalVitrinas({
               <LeftTriangleIcon width={"40px"} height={"30px"} />
             </Box>
             <ModalBody
+              ref={modalBodyRef}
               display={"flex"}
-              justifyContent={"flex-start"}
-              flexWrap={"wrap"}
-              gap={{ base: "0px", md: "20px" }}
-              flexDir={"row"}
+              justifyContent={"center"}
+              alignItems={"center"}
               w={"100%"}
               mt={{ base: "0px", md: "15px" }}
+              onScroll={checkForScroll}
             >
-              {isSmallScreen &&
-              ciudadesVitrinas != null &&
-              Object.keys(ciudadesVitrinas).length > 0 ? (
-                <Box w={"100%"} display={"flex"} flexWrap={"wrap"} gap={"10px"}>
+              {ciudadesVitrinas != null &&
+              Object.keys(ciudadesVitrinas).length > 0 &&
+              Object.values(ciudadesVitrinas).some(
+                (vitrinas) => vitrinas.length > 0,
+              ) ? (
+                <Box
+                  w={"100%"}
+                  height={"100%"}
+                  display={"flex"}
+                  flexWrap={"wrap"}
+                  gap={{ base: "10px", sm: "25px", xl: "30px" }}
+                  alignSelf={"center"}
+                  className="vitrinasContainer"
+                >
                   {Object.entries(ciudadesVitrinas)
                     .filter(([_, vitrinas]) => vitrinas.length > 0)
                     .sort(([ciudadA], [ciudadB]) =>
                       ciudadA.localeCompare(ciudadB),
                     )
-                    .map(([ciudad, vitrinas], index) => (
-                      <UnorderedList
-                        key={index}
-                        cursor={"pointer"}
-                        flex={"1 1 120px"}
-                        boxShadow="1px 0px 11px -5px rgba(66, 68, 90, 0.3)"
-                        p={3}
-                        maxH={"200px"}
-                        minW={"120px"}
-                        maxW={"140px"}
-                        overflowY={"auto"}
-                        borderRadius={20}
-                      >
-                        <Text
-                          textStyle={"RobotoBodyBold"}
-                          py={2}
-                          borderBottom="1px"
-                          borderBottomColor={"mainBg"}
-                        >
-                          {ciudad}
-                        </Text>
-                        {vitrinas.map((name, index) => (
-                          <ListItem ml={2} key={index} borderRadius={30}>
-                            <Text
-                              textStyle={"RobotoBody"}
-                              onClick={() => handleVitrinaClick(ciudad, name)}
-                              color={"black"}
-                              _hover={{ color: "red.100" }}
-                            >
-                              {name}
-                            </Text>
-                          </ListItem>
-                        ))}
-                      </UnorderedList>
+                    .map(([ciudad, vitrinas]) => (
+                      <Vitrina
+                        key={ciudad}
+                        city={ciudad}
+                        names={vitrinas}
+                        onClick={handleVitrinaClick}
+                      />
                     ))}
                 </Box>
-              ) : ciudadesVitrinas != null &&
-                Object.keys(ciudadesVitrinas).length > 0 ? (
-                Object.entries(ciudadesVitrinas)
-                  .filter(([_, vitrinas]) => vitrinas.length > 0)
-                  .sort(([ciudadA], [ciudadB]) =>
-                    ciudadA.localeCompare(ciudadB),
-                  )
-                  .map(([ciudad, vitrinas]) => (
-                    <Vitrina
-                      key={ciudad}
-                      city={ciudad}
-                      names={vitrinas}
-                      onClick={handleVitrinaClick}
-                    />
-                  ))
               ) : (
                 <Box
                   display={"flex"}
@@ -353,15 +345,20 @@ export default function ModalVitrinas({
                   alignItems={"center"}
                 >
                   <Text color={"grey.placeholder"}>
-                    No se encontraron vitrinas disponibles, por favor crea una
-                    vitrina.
+                    No se encontraron vitrinas disponibles, por favor crea una.
                   </Text>
                 </Box>
               )}
             </ModalBody>
 
-            <ModalFooter m={"0px"} display={{ base: "none", md: "flex" }} p={3}>
+            <ModalFooter
+              m={"0px"}
+              p={3}
+              borderTopWidth={hasScroll ? "1px" : "none"}
+              borderTopColor={hasScroll ? "mainBg" : "transparent"}
+            >
               <StandardButton
+                display={{ base: "none", md: "flex" }}
                 variant={"RED_PRIMARY"}
                 borderRadius="30px"
                 size="15px"
@@ -401,6 +398,16 @@ export default function ModalVitrinas({
             left={{ base: "0px", md: "-45px" }}
           >
             <Box
+              display={{ base: "none", sm: "block" }}
+              position={"absolute"}
+              left={"-26px"}
+              top={"40px"}
+              w={"40px"}
+              h={"30px"}
+            >
+              <LeftTriangleIcon width={"40px"} height={"30px"} />
+            </Box>
+            <Box
               display={"flex"}
               width={"100%"}
               height={"100%"}
@@ -409,7 +416,7 @@ export default function ModalVitrinas({
               flexDirection={"column"}
               gap={"20px"}
             >
-              <Loader />
+              <Spinner size={"xl"} />
               <Text color={"grey.placeholder"}>
                 Cargando información de las vitrinas.
               </Text>

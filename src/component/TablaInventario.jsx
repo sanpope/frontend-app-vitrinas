@@ -12,6 +12,7 @@ import WarningIcon from "../assets/images/WarningIcon";
 import Pagination from "./Pagination";
 import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
+import LoadingComponent from "./LoadingComponent";
 
 const HEADERS = [
   "Código",
@@ -19,10 +20,10 @@ const HEADERS = [
   "Categoría",
   "Precio",
   "Costo",
-  "Existencia",
-  "Exis verificadas",
-  "Stok mín",
-  "Stok máx",
+  "Existencias",
+  "Exist verificadas",
+  "Stock mín",
+  "Stock máx",
   "Acciones",
 ];
 
@@ -34,6 +35,7 @@ export default function TablaInventario({
   totalPages,
   getMasArticulos,
   setArticulo,
+  loading = false,
 }) {
   const [parentHeight, setParentHeight] = useState(0);
   const parentRef = useRef(null);
@@ -60,6 +62,22 @@ export default function TablaInventario({
         borderTopRightRadius={{ base: "0px", md: "20px" }}
         ref={parentRef}
       >
+        {loading && (
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            zIndex="10"
+            bg="rgba(255, 255, 255, 0.7)" // Semi-transparent background
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <LoadingComponent size="xl" />
+          </Box>
+        )}
         <Contenedor>
           <thead className="">
             <tr className="">

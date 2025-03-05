@@ -22,7 +22,6 @@ ChartJS.register(
   Legend,
 );
 
-let arrResumenVentasMesAnterior;
 const mesesAbreviados = [
   "Ene",
   "Feb",
@@ -39,78 +38,86 @@ const mesesAbreviados = [
 ];
 
 const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
-  arrResumenVentasMesAnterior = resumenVentaMesAnterior
-    ?.map((d) => {
-      return Number(d?.valor).toLocaleString("es-ES");
-    })
-    .reverse();
+  console.log(resumenVentaMesAnterior);
+
+  if (!resumenVentaMesAnterior || resumenVentaMesAnterior.length === 0) {
+    return (
+      <Box
+        width="100%"
+        height="100%"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text color="grey.placeholder">
+          No se encontraron Registros de ventas en los meses anteriores.
+        </Text>
+      </Box>
+    );
+  }
 
   const fechaActual = new Date();
-  const mesActual = fechaActual.getMonth() + 1; // Cambiado para que vaya de 1 a 12
+  const mesActual = fechaActual.getMonth() + 1;
   const curretYear = fechaActual.getFullYear();
-  let lastYear = false;
 
-  const monthLabels = resumenVentaMesAnterior
-    ?.map((d) => {
+  // Crear un array donde cada elemento tenga la etiqueta y su valor correspondiente
+  const datosProcesados = resumenVentaMesAnterior
+    .map((d) => {
       let month = mesesAbreviados[Number(d.mes) - 1];
-      if (d.mes === "12") {
-        lastYear = true;
+      let isLastYear = Number(d.mes) > mesActual;
+
+      // Si el mes es Diciembre y estamos en un mes distinto, es del año pasado
+      if (d.mes === "12" && mesActual !== 12) {
+        isLastYear = true;
       }
-      if (lastYear) {
-        let LastYear = (curretYear - 1).toString().slice(-2);
-        month += `-${LastYear}`;
+
+      if (isLastYear) {
+        let lastYear = (curretYear - 1).toString().slice(-2);
+        month += `-${lastYear}`;
       }
-      return month;
+
+      return {
+        etiqueta: month,
+        valor: d.valor,
+        mes: Number(d.mes),
+        esActual: Number(d.mes) === mesActual,
+      };
     })
     .reverse();
+
+  // Extraer las etiquetas y valores manteniendo la correspondencia
+  const monthLabels = datosProcesados.map((d) => d.etiqueta);
 
   const chartData = {
     labels: monthLabels,
     datasets: [
       {
-        data: resumenVentaMesAnterior?.map((d) => {
-          return d?.valor;
-        }),
+        data: datosProcesados.map((d) => d.valor),
         fill: false,
         borderColor: "#000000",
         borderWidth: 2,
-        pointBackgroundColor: resumenVentaMesAnterior
-          ?.map((d) => {
-            return Number(d.mes) === mesActual ? "#E60F0F" : "#000000";
-          })
-          .reverse(),
-        pointRadius: 7,
-        pointBorderWidth: 3,
+        pointBackgroundColor: datosProcesados.map((d) =>
+          d.esActual ? "#E60F0F" : "#000000",
+        ),
+        pointRadius: 6,
+        pointBorderWidth: 2,
         pointBorderColor: "white",
         pointHoverRadius: 8,
       },
     ],
   };
 
-  const titleTooltip = () => {
-    return "VENTAS:";
-  };
+  const titleTooltip = () => "VENTAS:";
 
   const labelTooltip = (tooltipItem) => {
-    const datasetIndex = tooltipItem.datasetIndex;
-    const dataIndex = tooltipItem.dataIndex;
-    const value = tooltipItem.dataset.data[dataIndex];
-
-    let formattedValue;
-
-    if (value >= 1000000) {
-      formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
-    } else if (value >= 1000) {
-      formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
-    } else {
-      formattedValue = `$ ${new Intl.NumberFormat().format(value)}`;
-    }
-
-    return `${formattedValue}`;
+    const value = tooltipItem.dataset.data[tooltipItem.dataIndex];
+    return `$ ${new Intl.NumberFormat().format(value)}`;
   };
 
   const options = {
+    responsive: true,
     maintainAspectRatio: false,
+    animation: false,
     plugins: {
       legend: {
         display: false,
@@ -137,17 +144,11 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
       y: {
         type: "linear",
         position: "left",
-        title: {
-          display: false,
-        },
+        beginAtZero: true,
         ticks: {
+          stepSize: 1000000,
           color: "black",
-          beginAtZero: true,
-          min: 0,
-          max: 5000,
-          stepSize: 5000,
-          maxTicksLimit: 3,
-          callback: function (value, index, values) {
+          callback: function (value) {
             if (value >= 1000000) {
               return (value / 1000000).toFixed(1) + "M";
             } else if (value >= 1000) {
@@ -166,22 +167,30 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
         grid: {
           display: false,
         },
+        ticks: {
+          maxRotation: 0,
+          autoSkip: true,
+        },
       },
     },
   };
 
   return (
-    <Box width={"100%"} height={"100%"} display={"flex"} alignItems={"center"}>
-      {resumenVentaMesAnterior != null &&
-      resumenVentaMesAnterior?.length > 0 ? (
+    <Box
+      width="100%"
+      height="90%"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Box
+        width="100%"
+        position="relative"
+        paddingTop="10px"
+        paddingBottom="10px"
+      >
         <Line data={chartData} options={options} />
-      ) : (
-        <Box>
-          <Text color={"grey.placeholder"}>
-            No se encontraron Registros de ventas en los meses anteriores.
-          </Text>
-        </Box>
-      )}
+      </Box>
     </Box>
   );
 };

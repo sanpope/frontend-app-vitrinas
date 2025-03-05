@@ -79,7 +79,6 @@ body {
   padding-right: 17px;
 }
 
-
 .scroll-wrapper::-webkit-scrollbar {
   width: 3px;
 }
@@ -241,4 +240,15 @@ td {
   display: inline-block;
   vertical-align: middle;
   margin-inline: 5px;
+}
+
+.vitrinasContainer {
+  justify-content: flex-start;
+}
+
+@media screen and (max-width: 1083px) {
+  .vitrinasContainer {
+    justify-content: center;
+    padding: 28px;
+  }
 }

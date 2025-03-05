@@ -15,6 +15,7 @@ import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
 import EditarProducto from "./EditarProducto";
 import { capitalizeFirstLetter } from "../utils/formatting";
+import LoadingComponent from "./LoadingComponent";
 
 const HEADERS = [
   "Productos",
@@ -64,12 +65,13 @@ export default function TablaProductosBodega({
   editProducto,
   deleteProducto,
   setBusqueda,
+  isLoading,
 }) {
   const toast = useToast();
   const [focusRow, setFocusRow] = useState(null);
   const [parentHeight, setParentHeight] = useState(0);
   const parentRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -88,7 +90,7 @@ export default function TablaProductosBodega({
     const category = new URLSearchParams();
     category.append("nombre", `${nuevaCategoria}`);
 
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias`,
@@ -137,7 +139,7 @@ export default function TablaProductosBodega({
       });
     } finally {
       setBusqueda(null);
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -145,7 +147,7 @@ export default function TablaProductosBodega({
     const uptCategoria = new URLSearchParams();
     uptCategoria.append("nuevoNombreCategoria", `${categoriaUpdated}`);
 
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias?nombreCategoria=${currentCategoria}`,
@@ -216,13 +218,13 @@ export default function TablaProductosBodega({
       });
     } finally {
       setBusqueda(null);
-      setIsLoading(false);
+      setLoading(false);
       onClose();
     }
   };
 
   const deleteCategoria = async (currentCategoria) => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/categorias?nombreCategoria=${currentCategoria}`,
@@ -283,7 +285,7 @@ export default function TablaProductosBodega({
       });
     } finally {
       setBusqueda(null);
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -291,7 +293,7 @@ export default function TablaProductosBodega({
     const prov = new URLSearchParams();
     prov.append("nombreProveedor", `${nuevoProveedor}`);
 
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores`,
@@ -339,7 +341,7 @@ export default function TablaProductosBodega({
         isClosable: true,
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
       setBusqueda(null);
     }
   };
@@ -348,7 +350,7 @@ export default function TablaProductosBodega({
     const uptProveedor = new URLSearchParams();
     uptProveedor.append("nuevoNombreProveedor", `${proveedorUpdated}`);
 
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores?nombreProveedor=${currentProveedor}`,
@@ -422,13 +424,13 @@ export default function TablaProductosBodega({
       });
     } finally {
       setBusqueda(null);
-      setIsLoading(false);
+      setLoading(false);
       onClose();
     }
   };
 
   const deleteProveedor = async (currentProveedor) => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/proveedores?nombreProveedor=${currentProveedor}`,
@@ -494,7 +496,7 @@ export default function TablaProductosBodega({
       });
     } finally {
       setBusqueda(null);
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -507,6 +509,22 @@ export default function TablaProductosBodega({
         borderTopRightRadius={{ base: "0px", md: "20px" }}
         ref={parentRef}
       >
+        {isLoading && (
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            zIndex="10"
+            bg="rgba(255, 255, 255, 0.7)"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <LoadingComponent size="xl" />
+          </Box>
+        )}
         <Contenedor>
           <thead className="">
             <tr className="">

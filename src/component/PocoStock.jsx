@@ -23,7 +23,6 @@ export default function PocoStock({ productosConPocoStock }) {
       {productosConPocoStock != null && productosConPocoStock?.length > 0 ? (
         <Box
           w={"100%"}
-          maxW={"235px"}
           h={"100%"}
           display={"flex"}
           flexGrow={1}
@@ -37,13 +36,16 @@ export default function PocoStock({ productosConPocoStock }) {
             display={"flex"}
             flexDirection={"column"}
             justifyContent={"space-between"}
+            alignItems={"center"}
           >
             <Box
               w={"100%"}
               display={"flex"}
               flexDirection={"column"}
-              justifyContent={"space-around"}
-              gap={2}
+              justifyContent={"center"}
+              alignItems={"flex-start"}
+              p={1}
+              gap={1}
               flex={1}
             >
               {productosConPocoStock != null &&
@@ -207,7 +209,7 @@ export default function PocoStock({ productosConPocoStock }) {
             justifySelf={"center"}
             color={"grey.placeholder"}
           >
-            No se encontraron productos.
+            Sin información
           </Text>
         </Box>
       )}

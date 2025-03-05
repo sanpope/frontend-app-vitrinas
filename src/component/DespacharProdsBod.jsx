@@ -259,7 +259,7 @@ export default function DespacharProdsBod({
 
           toast({
             status: "success",
-            description: "Despacho realizado con éxito!.",
+            description: "¡Despacho realizado con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,

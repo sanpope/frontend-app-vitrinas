@@ -39,6 +39,7 @@ import {
   formatearNumero,
   getPorcentage,
 } from "../utils/formatting";
+
 import { parseData } from "../utils/xmlParse";
 import TopVitrinas from "../component/TopVitrinas";
 import useNormalize from "../hooks/useNormalize";
@@ -745,7 +746,7 @@ export default function HomePage() {
                   flex={1}
                 >
                   <Text color={"grey.placeholder"}>
-                   Sin información.
+                   Sin información
                   </Text>
                 </Box>
               )}

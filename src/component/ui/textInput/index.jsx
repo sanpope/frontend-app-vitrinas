@@ -57,7 +57,11 @@ export default function TextInput(props) {
       {label && (
         <FormLabel lineHeight={"100%"} htmlFor={name}>
           <Flex>
-            {required && <Text as="span" color="red">*&nbsp;</Text>}
+            {required && (
+              <Text as="span" color="red">
+                *&nbsp;
+              </Text>
+            )}
             {label}&nbsp;
           </Flex>
         </FormLabel>

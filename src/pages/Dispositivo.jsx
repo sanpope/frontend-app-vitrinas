@@ -34,7 +34,14 @@ export default function Dispositivo() {
   const [selectedCodApp, setSelectedCodApp] = useState(null);
   const toast = useToast();
 
+  // Estados para controlar loading por tipo de operación
   const [loading, setLoading] = useState(false);
+  const [loadingInfo, setLoadingInfo] = useState(false);
+  const [loadingPendientes, setLoadingPendientes] = useState(false);
+  const [loadingAprobar, setLoadingAprobar] = useState(false);
+  const [loadingRechazar, setLoadingRechazar] = useState(false);
+  const [loadingEliminar, setLoadingEliminar] = useState(false);
+  const [processingCodApp, setProcessingCodApp] = useState(null);
 
   useEffect(() => {
     savingDispositivoData();
@@ -48,6 +55,7 @@ export default function Dispositivo() {
 
   const savingDispositivoData = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo?vitrina=${name}`;
+    setLoadingInfo(true);
 
     try {
       const response = await axios.get(url, {
@@ -60,6 +68,7 @@ export default function Dispositivo() {
         const xmlDoc = parseData(response.data);
         console.log("datos parseados: ", parseData(xmlDoc));
         setInfoDispositivo(dispositivoData(xmlDoc));
+        setDispositivosPendientes(false);
       }
     } catch (error) {
       const handlers = {
@@ -74,14 +83,16 @@ export default function Dispositivo() {
       };
 
       handleHttpError(error, handlers, defaultHandler);
+    } finally {
+      setLoadingInfo(false);
     }
   };
 
   const getDispositivosPendientes = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo/pendientes?vitrina=${name}`;
+    setLoadingPendientes(true);
 
     try {
-      setLoading(true);
       const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/xml; charset=utf-8",
@@ -103,7 +114,7 @@ export default function Dispositivo() {
         isClosable: true,
       });
     } finally {
-      setLoading(false);
+      setLoadingPendientes(false);
     }
   };
 
@@ -211,7 +222,9 @@ export default function Dispositivo() {
 
   const aprobarSolicitudVinculacion = async (codApp) => {
     try {
-      setLoading(true);
+      setLoadingAprobar(true);
+      setProcessingCodApp(codApp);
+
       if (!codApp) {
         console.error("No hay código de aplicación disponible");
         return;
@@ -252,12 +265,16 @@ export default function Dispositivo() {
         isClosable: true,
       });
     } finally {
-      setLoading(false);
+      setLoadingAprobar(false);
+      setProcessingCodApp(null);
     }
   };
 
   const rechazarSolicitudVinculacion = async (codApp) => {
     try {
+      setLoadingRechazar(true);
+      setProcessingCodApp(codApp);
+
       if (!codApp) {
         console.error("No hay código de aplicación disponible");
         return;
@@ -282,7 +299,7 @@ export default function Dispositivo() {
           isClosable: true,
         });
 
-        savingDispositivoData();
+        getDispositivosPendientes();
       }
     } catch (error) {
       console.error("Error al rechazar solicitud:", error);
@@ -294,11 +311,16 @@ export default function Dispositivo() {
         position: "top-right",
         isClosable: true,
       });
+    } finally {
+      setLoadingRechazar(false);
+      setProcessingCodApp(null);
     }
   };
 
   const eliminarVinculo = async (codApp) => {
     try {
+      setLoadingEliminar(true);
+
       if (!codApp) {
         console.error("No hay código de aplicación disponible");
         return;
@@ -334,6 +356,8 @@ export default function Dispositivo() {
         position: "top-right",
         isClosable: true,
       });
+    } finally {
+      setLoadingEliminar(false);
     }
   };
 
@@ -347,7 +371,10 @@ export default function Dispositivo() {
     }
   };
 
-  return loading ? (
+  // Verificar si estamos cargando cualquier operación
+  const isLoading = loadingInfo || loadingPendientes;
+
+  return isLoading ? (
     <Center w="100%" h="100%" position="absolute" top="0" left="0">
       <LoadingComponent size="xl" />
     </Center>
@@ -395,7 +422,11 @@ export default function Dispositivo() {
                 minW="200px"
                 maxW="250px"
                 height="100px"
-                loading={loading}
+                loading={loadingAprobar || loadingRechazar}
+                disabled={
+                  (loadingAprobar || loadingRechazar) &&
+                  processingCodApp === dispositivo.codApp
+                }
               />
             ))}
           </Box>
@@ -442,9 +473,10 @@ export default function Dispositivo() {
                   onClick={() => {
                     eliminarVinculo(infoDispositivo?.codApp);
                   }}
-                  loading={loading}
+                  loading={loadingEliminar}
+                  disabled={loadingEliminar}
                 >
-                  Eliminar dispositivo
+                  {loadingEliminar ? "Eliminando..." : "Eliminar dispositivo"}
                 </StandardButton>
               </Box>
             </Box>

@@ -31,6 +31,7 @@ import ConfirmationMessage from "./ConfirmationMessage";
 import axios from "axios";
 import { generateProductsListXML, parseData } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
+import LoadingComponent from "./LoadingComponent";
 
 export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
   const toast = useToast();
@@ -60,6 +61,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
   const getBodegaInfo = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
     try {
+      setLoading(true);
       const response = await axios.get(url, {
         headers: {
           Accept: "application/xml",
@@ -84,6 +86,8 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -215,7 +219,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
         if (response.status == 200) {
           toast({
             status: "success",
-            description: "Despacho realizado con éxito!.",
+            description: "¡Despacho realizado con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -262,8 +266,8 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
               Despachar
             </Text>
           </ModalHeader>
-          <ModalBody display={"flex"} flexDirection={"column"} gap={2}>
-            <Box w={"100%"} display={"flex"} flexDir={"column"}>
+          <ModalBody display={"flex"} flexDirection={"column"} gap={"10px"}>
+            <Box w={"100%"} display={"flex"} flexDir={"column"} mt={"10px"}>
               <Box
                 w={"100%"}
                 display={"flex"}
@@ -334,9 +338,11 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
             </Box>
             <Box
               w={"100%"}
+              height={"100%"}
               display={"flex"}
               gap={"1.25rem"}
               flexDirection={{ base: "column", md: "row" }}
+              paddingTop={"10px"}
             >
               <Box
                 w={{ base: "100%", md: "50%" }}
@@ -345,57 +351,83 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                 border="1px"
                 borderColor="gray.200"
                 p={"0.938rem"}
+                pl={"20px"}
               >
                 <FormControl>
-                  <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                  <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                     Seleccionar productos
                   </Text>
-                  <FormLabel
-                    display="flex"
-                    alignItems="center"
-                    justifyContent={"space-between"}
-                    gap={"0.625rem"}
-                  >
-                    <TextInput
-                      placeholder={"Buscar"}
-                      leftIcon={<SearchIcon />}
-                      onChange={(e) => onBuscarChange(e)}
-                      value={busqueda}
-                    />
-                    <FilterIcon />
-                  </FormLabel>
+                  {loading ? (
+                    <Box height="160px">
+                      <LoadingComponent
+                        size="md"
+                        text="Cargando productos..."
+                      />
+                    </Box>
+                  ) : displayedArticulos && displayedArticulos.length > 0 ? (
+                    <>
+                      <FormLabel
+                        display="flex"
+                        flexDirection={"column"}
+                        alignItems="center"
+                        justifyContent={"center"}
+                        gap={"0.625rem"}
+                        width={"100%"}
+                        height={"100%"}
+                      >
+                        <TextInput
+                          placeholder={"Buscar"}
+                          leftIcon={<SearchIcon width="17px" height="17px" />}
+                          onChange={(e) => onBuscarChange(e)}
+                          value={busqueda}
+                        />
+                      </FormLabel>
 
-                  <FormLabel display="flex" alignItems="center">
-                    <UnorderedList
-                      styleType="none"
-                      w={"100%"}
-                      height={"120px"}
-                      overflowY="scroll"
-                      overflowX="hidden"
-                      m={0}
-                      px={1}
-                      sx={{
-                        "::-webkit-scrollbar": {
-                          width: "8px",
-                          height: "4px",
-                        },
-                        "::-webkit-scrollbar-track": {
-                          background: "tranparent",
-                        },
-                        "::-webkit-scrollbar-thumb": {
-                          background: "gray.200",
-                          borderRadius: "10px",
-                        },
-                        "::-webkit-scrollbar-thumb:hover": {
-                          background: "gray.200",
-                        },
-                      }}
+                      <FormLabel display="flex" alignItems="center">
+                        <UnorderedList
+                          styleType="none"
+                          w={"100%"}
+                          height={"120px"}
+                          overflowY="scroll"
+                          overflowX="hidden"
+                          m={0}
+                          px={"5px"}
+                          sx={{
+                            "::-webkit-scrollbar": {
+                              width: "8px",
+                              height: "4px",
+                            },
+                            "::-webkit-scrollbar-track": {
+                              background: "tranparent",
+                            },
+                            "::-webkit-scrollbar-thumb": {
+                              background: "gray.200",
+                              borderRadius: "10px",
+                            },
+                            "::-webkit-scrollbar-thumb:hover": {
+                              background: "gray.200",
+                            },
+                          }}
+                        >
+                          {displayedArticulos?.map((product, index) => {
+                            return ProductListItem(product, index);
+                          })}
+                        </UnorderedList>
+                      </FormLabel>
+                    </>
+                  ) : (
+                    <Box
+                      width="100%"
+                      height="160px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
                     >
-                      {displayedArticulos?.map((product, index) => {
-                        return ProductListItem(product, index);
-                      })}
-                    </UnorderedList>
-                  </FormLabel>
+                      <Text color={"grey.placeholder"}>
+                        No hay productos que mostrar
+                      </Text>
+                    </Box>
+                  )}
                 </FormControl>
               </Box>
               <Box
@@ -412,22 +444,39 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                     display={"flex"}
                     flexDirection={"column"}
                   >
-                    <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                    <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                       Productos a despachar
                     </Text>
 
                     <Box
                       alignSelf={"flex-end"}
-                      mr={"12%"}
                       display={"flex"}
-                      w={"50%"}
+                      w={"100%"}
                       alignItems={"center"}
-                      justifyContent={"space-around"}
+                      justifyContent={"center"}
                     >
-                      <Text textStyle={"RobotoBody"} py={"10px"}>
+                      <Text
+                        flex={1}
+                        textStyle={"RobotoBodyBold"}
+                        py={"5px"}
+                        textAlign={"center"}
+                      >
+                        Producto
+                      </Text>
+                      <Text
+                        flex={1}
+                        textStyle={"RobotoBodyBold"}
+                        py={"5px"}
+                        textAlign={"center"}
+                      >
                         Stock
                       </Text>
-                      <Text textStyle={"RobotoBody"} py={"10px"}>
+                      <Text
+                        flex={1}
+                        textStyle={"RobotoBodyBold"}
+                        py={"5px"}
+                        textAlign={"left"}
+                      >
                         Cantidad
                       </Text>
                     </Box>
@@ -505,7 +554,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                     display={"flex"}
                     flexDirection={"column"}
                   >
-                    <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                    <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                       Productos a despachar
                     </Text>
                     <Box
@@ -516,7 +565,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
                       justifyContent={"center"}
                     >
                       <Text color={"grey.placeholder"}>
-                        Porfavor seleccione los productos a despachar
+                        Por favor seleccione los productos a despachar
                       </Text>
                     </Box>
                   </Box>
@@ -525,7 +574,7 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
             </Box>
           </ModalBody>
 
-          <ModalFooter display={"flex"} gap={"10px"}>
+          <ModalFooter display={"flex"} gap={"10px"} paddingTop={"10px"}>
             <StandardButton
               variant={"WHITE_RED"}
               borderRadius="20px"

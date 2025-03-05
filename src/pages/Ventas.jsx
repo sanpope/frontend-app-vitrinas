@@ -15,6 +15,7 @@ import { parseData } from "../utils/xmlParse";
 import { formatearNumero, formattingDate } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
 import VerExistencias from "../component/VerExistencias";
+import LoadingComponent from "../component/LoadingComponent";
 
 const TOP_SECTION_HEIGHT = 64;
 const BOTTOM_SECTION_HEIGHT = 141.5;
@@ -36,7 +37,7 @@ export default function Ventas() {
   const [displayedArticulos, setDisplayedArticulos] = useState(null);
   const [totalResults, setTotalResults] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, toggleLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const totalPages = Math.ceil(displayedArticulos?.length / rowsToShow);
 
   const [totalVendidoIntervalo, setTotalVendidoIntervalo] = useState();
@@ -70,7 +71,7 @@ export default function Ventas() {
   };
 
   const getMasArticulos = (pageNumber) => {
-    toggleLoading(true);
+    setLoading(true);
     setCurrentPage(pageNumber);
     const arr = selectedOption === "Ventas" ? tablaVentas : tablaDevoluciones;
     setDisplayedArticulos(
@@ -79,6 +80,10 @@ export default function Ventas() {
         (pageNumber - 1) * rowsToShow + rowsToShow,
       ),
     );
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
   };
 
   const getVentasyDevoluciones = (xml) => {
@@ -99,7 +104,6 @@ export default function Ventas() {
       )[0].textContent;
       const productos = devolucion.getElementsByTagName("producto");
 
-      // Almacenamos los productos afectados
       const productosAfectados = [];
       for (let j = 0; j < productos.length; j++) {
         productosAfectados.push({
@@ -111,7 +115,6 @@ export default function Ventas() {
         });
       }
 
-      // Guardamos la devolución en el array
       result.devoluciones.push({
         fechaHora,
         generadaEnCorreccion,
@@ -120,7 +123,6 @@ export default function Ventas() {
       });
     }
 
-    // Iteramos sobre ventas
     for (let i = 0; i < ventas.length; i++) {
       const venta = ventas[i];
       const fechaHora = venta.getElementsByTagName("fechaHora")[0].textContent;
@@ -129,7 +131,6 @@ export default function Ventas() {
       )[0].textContent;
       const productos = venta.getElementsByTagName("producto");
 
-      // Almacenamos los productos afectados
       const productosAfectados = [];
       for (let j = 0; j < productos.length; j++) {
         productosAfectados.push({
@@ -141,7 +142,6 @@ export default function Ventas() {
         });
       }
 
-      // Guardamos la venta en el array
       result.ventas.push({
         fechaHora,
         generadaEnCorreccion,
@@ -153,6 +153,7 @@ export default function Ventas() {
   };
 
   const getIntervaloVentas = async (date1, date2) => {
+    setLoading(true);
     let fecha1 = formattingDate(date1);
     let fecha2 = formattingDate(date2);
 
@@ -179,10 +180,20 @@ export default function Ventas() {
       }
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Error",
+        description: "Error al cargar los datos. Intente nuevamente.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   const getTotalIntervaloVentas = async (date1, date2) => {
+    setLoading(true);
     let fecha1 = formattingDate(date1);
     let fecha2 = formattingDate(date2);
 
@@ -217,6 +228,15 @@ export default function Ventas() {
       }
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Error",
+        description: "Error al cargar los datos. Intente nuevamente.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -318,21 +338,22 @@ export default function Ventas() {
           currentPage={currentPage}
           totalPages={totalPages}
           getMasArticulos={getMasArticulos}
+          loading={loading}
         />
       </Box>
 
       <Box
         w={"100%"}
         display="flex"
-        flexWrap={"wrap"}
+        flexWrap={"no-wrap"}
         gridGap={"1rem"}
         justifyContent={"space-between"}
         pt={3}
       >
         <Container
-          flex={"1 1 auto"}
+          flex={1}
           bg={"black"}
-          title={"Total vendido en el intervalo"}
+          title={"Total vendido"}
           color="white"
           icon={<CoinsIcon />}
           children={
@@ -344,20 +365,24 @@ export default function Ventas() {
               alignItems={"flex-start"}
               p={"20px"}
             >
-              <Text textStyle={"RobotoSubheading"} color={"success.30"}>
-                $
-                {totalVendidoIntervalo !== null &&
-                totalVendidoIntervalo !== "" &&
-                totalVendidoIntervalo !== undefined
-                  ? formatearNumero(totalVendidoIntervalo)
-                  : "0"}
-              </Text>
+              {loading ? (
+                <LoadingComponent size="md" />
+              ) : (
+                <Text textStyle={"RobotoSubheading"} color={"success.30"}>
+                  $
+                  {totalVendidoIntervalo !== null &&
+                  totalVendidoIntervalo !== "" &&
+                  totalVendidoIntervalo !== undefined
+                    ? formatearNumero(totalVendidoIntervalo)
+                    : "0"}
+                </Text>
+              )}
             </Box>
           }
         />
         <Container
-          flex={"1 1 auto"}
-          title={"Total devuelto en el intervalo"}
+          flex={1}
+          title={"Total devuelto"}
           icon={<ChartLineDownIcon />}
           children={
             <Box
@@ -368,20 +393,24 @@ export default function Ventas() {
               alignItems={"flex-start"}
               p={"20px"}
             >
-              <Text textStyle={"RobotoSubheading"}>
-                $
-                {totalDevueltoIntervalo !== null &&
-                totalDevueltoIntervalo !== undefined &&
-                totalDevueltoIntervalo !== ""
-                  ? formatearNumero(totalDevueltoIntervalo)
-                  : "0"}
-              </Text>
+              {loading ? (
+                <LoadingComponent size="md" />
+              ) : (
+                <Text textStyle={"RobotoSubheading"}>
+                  $
+                  {totalDevueltoIntervalo !== null &&
+                  totalDevueltoIntervalo !== undefined &&
+                  totalDevueltoIntervalo !== ""
+                    ? formatearNumero(totalDevueltoIntervalo)
+                    : "0"}
+                </Text>
+              )}
             </Box>
           }
         />
         <Container
-          flex={"1 1 auto"}
-          title={"Ingreso real recibido en el intervalo"}
+          flex={1}
+          title={"Ingreso real recibido"}
           icon={<HandsUsdIcon />}
           children={
             <Box
@@ -392,14 +421,18 @@ export default function Ventas() {
               alignItems={"flex-start"}
               p={"20px"}
             >
-              <Text textStyle={"RobotoSubheading"}>
-                $
-                {ingresoRecibidoIntervalo !== null &&
-                ingresoRecibidoIntervalo !== "" &&
-                ingresoRecibidoIntervalo !== undefined
-                  ? formatearNumero(ingresoRecibidoIntervalo)
-                  : "0"}
-              </Text>
+              {loading ? (
+                <LoadingComponent size="md" />
+              ) : (
+                <Text textStyle={"RobotoSubheading"}>
+                  $
+                  {ingresoRecibidoIntervalo !== null &&
+                  ingresoRecibidoIntervalo !== "" &&
+                  ingresoRecibidoIntervalo !== undefined
+                    ? formatearNumero(ingresoRecibidoIntervalo)
+                    : "0"}
+                </Text>
+              )}
             </Box>
           }
         />

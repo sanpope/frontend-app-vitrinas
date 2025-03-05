@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -21,114 +21,80 @@ ChartJS.register(
 );
 
 const DistribucionVentas = ({ distribucionVentas }) => {
-  const createGradient = (ctx, chartArea) => {
-    const gradient = ctx.createLinearGradient(0, 0, 0, chartArea.bottom);
-    gradient.addColorStop(0, "rgba(230, 15, 15, 1)");
-    gradient.addColorStop(1, "rgba(255, 0, 0, 0.2)");
-    return gradient;
-  };
+  const [chartVisible, setChartVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setChartVisible(true);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const safeData = Array.isArray(distribucionVentas) ? distribucionVentas : [];
 
   const chartData = {
-    labels: distribucionVentas.map((d) => d.hora),
+    labels: safeData.map((d) => d.hora),
     datasets: [
       {
-        data: distribucionVentas.map((d) => d.valor),
-        backgroundColor: function (context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-
-          if (!chartArea) {
-            return null;
-          }
-          const gradient = ctx.createLinearGradient(0, 0, 0, chartArea.bottom);
-          gradient.addColorStop(0, "rgba(255, 99, 132, 1)");
-          gradient.addColorStop(1, "rgba(255, 99, 132, 0.2)");
-          return gradient;
-        },
+        data: safeData.map((d) => d.valor),
+        backgroundColor: "rgba(255, 99, 132, 0.7)",
         borderSkipped: false,
         borderRadius: 20,
-        barPercentage: 0.5,
-        hoverBackgroundColor: function (context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-
-          if (!chartArea) {
-            return null;
-          }
-          return createGradient(ctx, chartArea);
-        },
+        barPercentage: 0.7,
+        categoryPercentage: 0.9,
+        hoverBackgroundColor: "rgba(230, 15, 15, 0.8)",
       },
     ],
   };
 
-  const titleTooltip = (tooltipItems) => {
-    const [tooltipItem] = tooltipItems;
-    const dataIndex = tooltipItem.dataIndex;
-  };
-
-  const labelTooltip = (tooltipItem) => {
-    const datasetIndex = tooltipItem.datasetIndex;
-    const dataIndex = tooltipItem.dataIndex;
-    return ` ${chartData.datasets[datasetIndex].data[dataIndex]}%+`;
-  };
-
   const options = {
+    responsive: true,
     maintainAspectRatio: false,
     barThickness: 25,
+    animation: false,
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 20,
+      },
+    },
     plugins: {
       legend: {
         display: false,
       },
       tooltip: {
+        enabled: true,
         displayColors: false,
-        padding: 5,
-        caretSize: 10,
         callbacks: {
-          title: titleTooltip,
-          label: labelTooltip,
+          label: (context) => `${context.parsed.y}%`,
         },
-        titleFont: {
-          size: 14,
-          weight: "bold",
-        },
-        bodyFont: {
-          size: 16,
-          style: "normal",
-          weight: "bold",
-        },
-        titleColor: "white",
-        bodyColor: "#00ff00",
-        bodyAlign: "center",
       },
     },
     scales: {
       y: {
-        beginAtZero: false,
+        beginAtZero: true,
         min: 0,
         max: 100,
         grace: "10%",
-
         title: {
           display: false,
         },
         ticks: {
           callback: (value) => {
-            if (value < 5) {
-              return "0%";
-            } else if (value >= 5 && value <= 20) {
-              return "20%";
-            } else if (value > 20 && value <= 40) {
-              return "40%";
-            } else if (value >= 40 && value <= 60) {
-              return "60%";
-            } else if (value >= 60 && value <= 80) {
-              return "80%";
-            } else {
-              return "100%";
-            }
+            if (value < 5) return "0%";
+            if (value <= 20) return "20%";
+            if (value <= 40) return "40%";
+            if (value <= 60) return "60%";
+            if (value <= 80) return "80%";
+            return "100%";
+          },
+          font: {
+            size: 9,
           },
         },
-
         grid: {
           display: false,
         },
@@ -141,30 +107,43 @@ const DistribucionVentas = ({ distribucionVentas }) => {
           font: {
             size: 9,
           },
+          maxRotation: 0,
+          autoSkip: false,
+          maxTicksLimit: 24,
+          padding: 5,
         },
+        offset: true,
       },
     },
   };
 
+  if (!Array.isArray(distribucionVentas) || distribucionVentas.length === 0) {
+    return (
+      <Box
+        width="100%"
+        height="100%"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="grey.placeholder">Sin información</Text>
+      </Box>
+    );
+  }
+
   return (
-    <>
-      {distribucionVentas !== null && distribucionVentas.length > 0 ? (
-        <Box>
-          <Bar data={chartData} options={options} />
-        </Box>
-      ) : (
-        <Box
-          width={"100%"}
-          height={"100%"}
-          display={"flex"}
-          justifyContent={"center"}
-        >
-          <Text color={"grey.placeholder"} alignSelf={"center"}>
-            No existe registro de distribución.
-          </Text>
-        </Box>
-      )}
-    </>
+    <Box
+      width="100%"
+      minW={"300px"}
+      height="100%"
+      display="flex"
+      alignItems="flex-start"
+      justifyContent="flex-start"
+    >
+      <Box width="100%" height="100%">
+        {chartVisible && <Bar data={chartData} options={options} />}
+      </Box>
+    </Box>
   );
 };
 

@@ -10,7 +10,7 @@ export default function NoteInventario({ width = "100%", text1, text2, arr }) {
       borderWidth={1}
       borderColor={"#FFE58F"}
       bg={"#FFFBE6"}
-      p="10px"
+      p="5px"
       display={"flex"}
       flexWrap={"wrap"}
     >
@@ -18,8 +18,13 @@ export default function NoteInventario({ width = "100%", text1, text2, arr }) {
       {arr != null ? (
         arr?.map((modif, index) => {
           return (
-            <Text>
+            <Text key={index}>
               {modif?.fecha} ({modif.cantidadDeCambios})
+              {index < arr.length - 2
+                ? ", "
+                : index === arr.length - 2
+                  ? " \u00A0y "
+                  : ""}
             </Text>
           );
         })

@@ -32,6 +32,7 @@ import { parseData } from "../utils/xmlParse";
 import { generateProductsListXML } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
 import { useMemo } from "react";
+import LoadingComponent from "./LoadingComponent";
 
 export default function Transferir({
   vitrina,
@@ -50,7 +51,6 @@ export default function Transferir({
   const [busqueda, setBusqueda] = useState(null);
   const [loading, setLoading] = useState(false);
   const [productsToShow, setProductsToShow] = useState([]);
-
   const [activeProdcs, setActiveProdcs] = useState([]);
 
   useEffect(() => {
@@ -138,6 +138,7 @@ export default function Transferir({
           copy[index]["cantidad"] = val;
           return copy;
         }
+        return prev; // Aseguramos que siempre devuelva un valor
       });
     }
   };
@@ -150,6 +151,7 @@ export default function Transferir({
         copy.splice(index, 1);
         return copy;
       }
+      return prev; // Aseguramos que siempre devuelva un valor
     });
   };
 
@@ -266,6 +268,7 @@ export default function Transferir({
   const getBodegaInfo = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos`;
     try {
+      setLoading(true);
       const response = await axios.get(url, {
         headers: {
           Accept: "application/xml",
@@ -297,6 +300,8 @@ export default function Transferir({
         position: "top-right",
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -358,8 +363,8 @@ export default function Transferir({
             Transferir
           </Text>
         </ModalHeader>
-        <ModalBody display={"flex"} flexDirection={"column"} gap={2}>
-          <Box w={"100%"} display={"flex"} flexDir={"column"}>
+        <ModalBody display={"flex"} flexDirection={"column"} gap={"10px"}>
+          <Box w={"100%"} display={"flex"} flexDir={"column"} mt={"10px"}>
             <Box
               w={"100%"}
               display={"flex"}
@@ -447,6 +452,7 @@ export default function Transferir({
             justifyContent={"center"}
             alignItems={"center"}
             gap={"1.25rem"}
+            paddingTop={"10px"}
           >
             <Box
               w={{ base: "100%", md: "50%" }}
@@ -455,56 +461,76 @@ export default function Transferir({
               border="1px"
               borderColor="gray.200"
               p={"0.938rem"}
+              pl={"20px"}
             >
               <FormControl>
-                <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                   Seleccionar productos
                 </Text>
-                <FormLabel
-                  display="flex"
-                  alignItems="center"
-                  justifyContent={"space-between"}
-                  gap={"0.625rem"}
-                >
-                  <TextInput
-                    placeholder={"Buscar"}
-                    leftIcon={<SearchIcon />}
-                    onChange={(e) => onBuscarChange(e)}
-                    value={busqueda}
-                  />
-                  <FilterIcon />
-                </FormLabel>
+                {loading ? (
+                  <Box height="160px">
+                    <LoadingComponent size="md" text="Cargando productos..." />
+                  </Box>
+                ) : productsToShow && productsToShow.length > 0 ? (
+                  <>
+                    <FormLabel
+                      display="flex"
+                      alignItems="center"
+                      justifyContent={"space-between"}
+                      gap={"0.625rem"}
+                    >
+                      <TextInput
+                        placeholder={"Buscar"}
+                        leftIcon={<SearchIcon width="17px" height="17px" />}
+                        onChange={(e) => onBuscarChange(e)}
+                        value={busqueda}
+                      />
+                    </FormLabel>
 
-                <FormLabel display="flex" alignItems="center">
-                  <UnorderedList
-                    styleType="none"
-                    w={"100%"}
-                    m={0}
-                    px={1}
-                    height={"120px"}
-                    overflowY="scroll"
-                    sx={{
-                      "::-webkit-scrollbar": {
-                        width: "8px",
-                        height: "4px",
-                      },
-                      "::-webkit-scrollbar-track": {
-                        background: "tranparent",
-                      },
-                      "::-webkit-scrollbar-thumb": {
-                        background: "gray.200",
-                        borderRadius: "10px",
-                      },
-                      "::-webkit-scrollbar-thumb:hover": {
-                        background: "gray.200",
-                      },
-                    }}
+                    <FormLabel display="flex" alignItems="center">
+                      <UnorderedList
+                        styleType="none"
+                        w={"100%"}
+                        m={0}
+                        px={1}
+                        height={"120px"}
+                        overflowY="scroll"
+                        sx={{
+                          "::-webkit-scrollbar": {
+                            width: "8px",
+                            height: "4px",
+                          },
+                          "::-webkit-scrollbar-track": {
+                            background: "tranparent",
+                          },
+                          "::-webkit-scrollbar-thumb": {
+                            background: "gray.200",
+                            borderRadius: "10px",
+                          },
+                          "::-webkit-scrollbar-thumb:hover": {
+                            background: "gray.200",
+                          },
+                        }}
+                      >
+                        {productsToShow?.map((product, index) => {
+                          return ProductListItem(product, index);
+                        })}
+                      </UnorderedList>
+                    </FormLabel>
+                  </>
+                ) : (
+                  <Box
+                    width="100%"
+                    height="160px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    {productsToShow?.map((product, index) => {
-                      return ProductListItem(product, index);
-                    })}
-                  </UnorderedList>
-                </FormLabel>
+                    <Text color="grey.placeholder" textAlign="center">
+                      No hay productos que mostrar
+                    </Text>
+                  </Box>
+                )}
               </FormControl>
             </Box>
             <Box
@@ -521,22 +547,39 @@ export default function Transferir({
                   display={"flex"}
                   flexDirection={"column"}
                 >
-                  <Text textStyle={"RobotoSubtitleBold"} p={"10px"}>
+                  <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                     Productos a transferir
                   </Text>
 
                   <Box
                     alignSelf={"flex-end"}
-                    mr={"12%"}
                     display={"flex"}
-                    w={"50%"}
+                    w={"100%"}
                     alignItems={"center"}
-                    justifyContent={"space-around"}
+                    justifyContent={"center"}
                   >
-                    <Text textStyle={"RobotoBody"} py={"10px"}>
+                    <Text
+                      flex={1}
+                      textStyle={"RobotoBodyBold"}
+                      py={"5px"}
+                      textAlign={"center"}
+                    >
+                      Producto
+                    </Text>
+                    <Text
+                      flex={1}
+                      textStyle={"RobotoBodyBold"}
+                      py={"5px"}
+                      textAlign={"center"}
+                    >
                       Stock
                     </Text>
-                    <Text textStyle={"RobotoBody"} py={"10px"}>
+                    <Text
+                      flex={1}
+                      textStyle={"RobotoBodyBold"}
+                      py={"5px"}
+                      textAlign={"left"}
+                    >
                       Cantidad
                     </Text>
                   </Box>
@@ -570,6 +613,9 @@ export default function Transferir({
                       w={"100%"}
                       height={"120px"}
                       overflowY="scroll"
+                      overflowX="hidden"
+                      m={0}
+                      px={"5px"}
                       sx={{
                         "::-webkit-scrollbar": {
                           width: "8px",
@@ -614,7 +660,7 @@ export default function Transferir({
                   display={"flex"}
                   flexDirection={"column"}
                 >
-                  <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                  <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                     Productos a transferir
                   </Text>
                   <Box
@@ -625,7 +671,7 @@ export default function Transferir({
                     justifyContent={"center"}
                   >
                     <Text color={"grey.placeholder"}>
-                      Porfavor seleccione los productos a transferir
+                      Por favor seleccione los productos a transferir
                     </Text>
                   </Box>
                 </Box>
@@ -634,7 +680,7 @@ export default function Transferir({
           </Box>
         </ModalBody>
 
-        <ModalFooter display={"flex"} gap={"10px"}>
+        <ModalFooter display={"flex"} gap={"10px"} paddingTop={"10px"}>
           <StandardButton
             variant={"WHITE_RED"}
             borderRadius="20px"

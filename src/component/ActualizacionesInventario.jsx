@@ -37,16 +37,16 @@ export default function ActualizacionesInventario({
             <Text
               pr={1}
               color="grey.placeholder"
-              textStyle={"RobotoBody"}
+              textStyle={"RobotoRegular"}
               textAlign={"center"}
             >
               Visita
             </Text>
 
             <Text
-              px={1}
+              px={3}
               color="grey.placeholder"
-              textStyle={"RobotoBody"}
+              textStyle={"RobotoRegular"}
               borderRightWidth={"2px"}
               borderRightColor={"grey.placeholder"}
               borderLeftWidth={"2px"}
@@ -59,7 +59,7 @@ export default function ActualizacionesInventario({
             <Text
               pl={1}
               color="grey.placeholder"
-              textStyle={"RobotoBody"}
+              textStyle={"RobotoRegular"}
               textAlign={"center"}
             >
               {currentItem?.hora}
@@ -125,7 +125,7 @@ export default function ActualizacionesInventario({
                 display={"inline-flex"}
               ></Box>
               <Text textStyle={"RobotoRegular"} pr={1}>
-                Correcciones{" "}
+                Correcciones
               </Text>
               <BiggerThanICon width={"14px"} height={"14px"} />
               <Text textStyle={"RobotoRegular"} pl={1}>
@@ -151,7 +151,7 @@ export default function ActualizacionesInventario({
           alignItems={"center"}
         >
           <Text color={"grey.placeholder"} alignSelf={"center"}>
-            No existen registros para mostrar.
+            No existen registros para mostrar
           </Text>
         </Box>
       )}

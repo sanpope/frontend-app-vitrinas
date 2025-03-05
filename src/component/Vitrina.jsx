@@ -7,7 +7,8 @@ export default function Vitrina({ city, names, onClick }) {
     <Box
       bg={colors.white}
       borderRadius={"20px"}
-      w={"250px"}
+      w={"100%"}
+      maxW={{ base: "200px", md: "240px", xl: "250px" }}
       display={"flex"}
       flexDir={"column"}
       gap={"15px"}
@@ -23,11 +24,14 @@ export default function Vitrina({ city, names, onClick }) {
         borderBottom="1px"
         borderBottomColor={"mainBg"}
       >
-        <Text textStyle={"RobotoBodyBold"} ml={2}>{city}</Text>
+        <Text textStyle={"RobotoSubtitleBold"} ml={2}>
+          {city}
+        </Text>
       </Box>
-      <Box w={"80%"} alignSelf={"center"} justifySelf={"center"}>
+      <Box alignSelf={"center"} justifySelf={"center"}>
         <UnorderedList
           w={"100%"}
+          margin={0}
           height={"100%"}
           display={"flex"}
           flexDir={"column"}
@@ -44,7 +48,7 @@ export default function Vitrina({ city, names, onClick }) {
             return (
               <ListItem
                 key={index}
-                textStyle={"RobotoRegular"}
+                textStyle={" RobotoBody"}
                 _hover={{ color: "red" }}
                 onClick={() => onClick(city, name)}
                 py={1}

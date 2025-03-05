@@ -1,9 +1,9 @@
 import React from "react";
 
 export default function SearchIcon({
-  width = "10px",
-  height = "10px",
-  fill = "black",
+  width = "15px",
+  height = "15px",
+  fill = "grey",
 }) {
   return (
     <svg

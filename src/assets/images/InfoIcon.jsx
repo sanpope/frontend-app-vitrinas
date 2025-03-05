@@ -11,6 +11,7 @@ const InfoIcon = ({ width = "44px", height = "44px" }) => {
         width={width}
         height={height}
         rx="5"
+        ry="5"
         fill="#CFE6FC"
         fill-opacity="0.5"
       />

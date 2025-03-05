@@ -1,17 +1,11 @@
 import {
   Box,
-  Select,
   Text,
-  Input,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Center,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import TextInput from "./ui/textInput";
+import React, { useState } from "react";
 import CloseIcon from "../assets/images/CloseIcon";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
@@ -23,20 +17,47 @@ export default function Product({
   producto,
 }) {
   const [message, setMessage] = useState("");
+  const [localValue, setLocalValue] = useState(producto.cantidad);
 
-  const handleOnChange = (e) => {
-    const cantidad = e.length ? Number.parseInt(e) : 0;
+  const handleLocalChange = (valueString) => {
+    setLocalValue(valueString);
+  };
+
+  const handleBlur = () => {
+    if (localValue === "" || localValue === "0" || Number(localValue) === 0) {
+      setLocalValue("1");
+      setProdCantidad("1");
+      setMessage("");
+      return;
+    }
+
+    if (isNaN(Number(localValue))) {
+      setLocalValue(producto.cantidad);
+      return;
+    }
+
+    const cantidad = Number.parseInt(localValue);
+
     if (cantidad <= existencias) {
       setMessage("");
-      setProdCantidad(e);
-    } else if (cantidad > existencias) {
+      setProdCantidad(localValue);
+    } else {
       setMessage("La cantidad no puede superar la existencia.");
+      setLocalValue(existencias);
+      setProdCantidad(existencias.toString());
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleBlur();
     }
   };
 
   const handleClick = () => {
     deleteProduct(producto);
   };
+
   return (
     <>
       <Box
@@ -74,8 +95,7 @@ export default function Product({
           required
           borderRadius={"5px"}
           mx={2}
-          onChange={handleOnChange}
-          value={producto.cantidad}
+          value={localValue}
         >
           <NumberInputField
             fontSize={"16px"}
@@ -83,6 +103,9 @@ export default function Product({
             w={"100%"}
             m={0}
             p={0}
+            onChange={(e) => handleLocalChange(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
           />
         </NumberInput>
 

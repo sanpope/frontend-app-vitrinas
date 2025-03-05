@@ -20,6 +20,7 @@ import {
 import { HEADER_HEIGHT } from "../component/Header";
 import NoteInventario from "../component/NoteInventario";
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
+import LoadingComponent from "../component/LoadingComponent";
 
 export default function Inventario() {
   const toast = useToast();
@@ -119,6 +120,7 @@ export default function Inventario() {
   const getInventarioInfo = async (vitrinaName) => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/inventario?vitrina=${vitrinaName}`;
     try {
+      setIsLoading(true);
       const response = await axios.get(url, {
         headers: {
           Accept: "application/xml",
@@ -133,6 +135,8 @@ export default function Inventario() {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -307,6 +311,7 @@ export default function Inventario() {
             totalPages={totalPages}
             getMasArticulos={getMasArticulos}
             setArticulo={setSelectedArticulo}
+            loading={isLoading}
           />
         }
       </Box>
@@ -315,7 +320,6 @@ export default function Inventario() {
         arr={
           verificacionesPendientes?.length > 0 ? verificacionesPendientes : null
         }
-        text2={"No se encontraron visitas pendientes"}
       />
       <EditarExistencia
         isOpen={!!selectedArticulo}
