@@ -143,7 +143,7 @@ export default function ProductosEnDespacho({
                 alignItems={"center"}
               >
                 <Text color={"grey.placeholder"}>
-                  No se encontraron productos pendientes para Despacho
+                  No se encontraron productos despachados
                 </Text>
               </Box>
             )}
@@ -190,7 +190,7 @@ export default function ProductosEnDespacho({
                   : "not-allowed"
               }
             >
-              Ingresar todos los productos en despacho
+              Ingresar productos en despacho
             </StandardButton>
           </ModalFooter>
         </ModalContent>

@@ -110,7 +110,7 @@ export default function Mensajes() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error obteniendo los mensajes.",
+        description: "Error obteniendo los mensajes",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -209,7 +209,7 @@ export default function Mensajes() {
 
         toast({
           status: "success",
-          description: "Mensaje eliminado con éxito!.",
+          description: "¡Mensaje eliminado con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -218,7 +218,7 @@ export default function Mensajes() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error eliminando el mensaje.",
+        description: "Error eliminando el mensaje",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -246,7 +246,7 @@ export default function Mensajes() {
 
         toast({
           status: "success",
-          description: "Mensajes eliminados con éxito!.",
+          description: "Mensajes eliminados con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -255,7 +255,7 @@ export default function Mensajes() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error eliminando los mensajes.",
+        description: "Error eliminando los mensajes",
         duration: 3000,
         position: "top-right",
         isClosable: true,

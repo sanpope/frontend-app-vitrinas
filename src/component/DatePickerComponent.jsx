@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Input,
@@ -15,38 +13,80 @@ import {
   InputGroup,
   InputRightElement,
   useToast,
+  Grid,
+  GridItem,
+  Flex,
+  Text,
+  Button,
+  IconButton,
+  VStack,
+  HStack,
 } from "@chakra-ui/react";
 import StandardButton from "./ui/buttons/standard";
 import SwapRightIcon from "../assets/images/SwapRightIcon";
 import CalendarIcon from "../assets/images/CalendarIcon";
+import PrevIcon from "../assets/images/PrevIcon";
+import NextIcon from "../assets/images/NextIcon";
+import { capitalizeFirstLetter } from "../utils/formatting";
 
-const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
+const DualCalendarDateRangePicker = ({
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  onFilterChange,
+}) => {
   const {
-    isOpen: isStartOpen,
-    onOpen: onStartOpen,
-    onClose: onStartClose,
+    isOpen: isCalendarOpen,
+    onOpen: onCalendarOpen,
+    onClose: onCalendarClose,
   } = useDisclosure();
-  const {
-    isOpen: isEndOpen,
-    onOpen: onEndOpen,
-    onClose: onEndClose,
-  } = useDisclosure();
-  const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
-  const [focusedStart, setFocusedStart] = useState(startDate);
-  const [focusedEnd, setFocusedEnd] = useState(endDate);
+
   const toast = useToast();
-
-  const handleStartDateChange = (date) => {
-    setFocusedStart(date);
-    if (focusedEnd && date > focusedEnd) {
-      setFocusedEnd(null);
-      setEndDate(null);
+  const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
+  const [leftMonth, setLeftMonth] = useState(() => {
+    if (startDate) {
+      return new Date(startDate);
     }
-  };
 
-  const handleEndDateChange = (date) => {
-    setFocusedEnd(date);
-  };
+    return new Date();
+  });
+
+  const [rightMonth, setRightMonth] = useState(() => {
+    if (endDate) {
+      return new Date(endDate);
+    } else if (startDate) {
+      return new Date(startDate);
+    } else {
+      return new Date();
+    }
+  });
+
+  const [selectedDatesLocal, setSelectedDatesLocal] = useState([
+    startDate ? new Date(startDate) : null,
+    endDate ? new Date(endDate) : null,
+  ]);
+
+  useEffect(() => {
+    if (
+      (startDate || endDate) &&
+      !selectedDatesLocal[0] &&
+      !selectedDatesLocal[1]
+    ) {
+      const newStartDate = startDate ? new Date(startDate) : null;
+      const newEndDate = endDate ? new Date(endDate) : null;
+
+      setSelectedDatesLocal([newStartDate, newEndDate]);
+
+      if (newStartDate) {
+        setLeftMonth(new Date(newStartDate));
+      }
+
+      if (newEndDate) {
+        setRightMonth(new Date(newEndDate));
+      }
+    }
+  }, []);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -57,127 +97,375 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
     });
   };
 
+  const formatMonth = (date) => {
+    if (!date) return "";
+    return date.toLocaleString("es-ES", {
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const formatDateToYYYYMMDD = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateSelect = (date, isStartDate) => {
+    const newDate = new Date(date);
+    newDate.setHours(12, 0, 0, 0);
+
+    let newDates = [...selectedDatesLocal];
+
+    if (isStartDate) {
+      newDates[0] = newDate;
+
+      if (newDates[1] && newDate > newDates[1]) {
+        newDates[1] = null;
+      }
+    } else {
+      if (newDates[0]) {
+        if (newDate >= newDates[0]) {
+          newDates[1] = newDate;
+        } else {
+          newDates[0] = newDate;
+          newDates[1] = null;
+        }
+      } else {
+        newDates[0] = newDate;
+      }
+    }
+
+    setSelectedDatesLocal(newDates);
+  };
+
+  const handleConfirm = () => {
+    if (selectedDatesLocal[0] && selectedDatesLocal[1]) {
+      setStartDate(selectedDatesLocal[0]);
+      setEndDate(selectedDatesLocal[1]);
+
+      if (onFilterChange) {
+        onFilterChange({
+          startDate: formatDateToYYYYMMDD(selectedDatesLocal[0]),
+          endDate: formatDateToYYYYMMDD(selectedDatesLocal[1]),
+        });
+      }
+
+      onCalendarClose();
+    } else if (selectedDatesLocal[0] && !selectedDatesLocal[1]) {
+      if (toast) {
+        toast({
+          title: "Fecha de fin requerida",
+          description:
+            "Por favor selecciona una fecha de fin para completar el rango",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });
+      } else {
+        alert("Por favor selecciona una fecha de fin para completar el rango");
+      }
+    } else {
+      if (toast) {
+        toast({
+          title: "Fechas requeridas",
+          description: "Por favor selecciona ambas fechas",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });
+      } else {
+        alert("Por favor selecciona ambas fechas");
+      }
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedDatesLocal([null, null]);
+  };
+
+  const navigateMonth = (calendar, direction) => {
+    const monthOffset = direction === "prev" ? -1 : 1;
+
+    if (calendar === "left") {
+      const newDate = new Date(leftMonth);
+      newDate.setMonth(newDate.getMonth() + monthOffset);
+      setLeftMonth(newDate);
+    } else {
+      const newDate = new Date(rightMonth);
+      newDate.setMonth(newDate.getMonth() + monthOffset);
+      setRightMonth(newDate);
+    }
+  };
+
+  const generateCalendarDays = (baseDate) => {
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    let firstDayOfWeek = firstDay.getDay();
+
+    if (firstDayOfWeek === 0) firstDayOfWeek = 7;
+
+    const days = [];
+
+    for (let i = firstDayOfWeek - 1; i > 0; i--) {
+      const date = new Date(year, month, 1 - i);
+      days.push({
+        date,
+        dayNumber: date.getDate(),
+        isCurrentMonth: false,
+      });
+    }
+
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      days.push({
+        date: new Date(year, month, i),
+        dayNumber: i,
+        isCurrentMonth: true,
+      });
+    }
+
+    const remainingDays = 42 - days.length;
+    for (let i = 1; i <= remainingDays; i++) {
+      const date = new Date(year, month + 1, i);
+      days.push({
+        date,
+        dayNumber: date.getDate(),
+        isCurrentMonth: false,
+      });
+    }
+
+    return days;
+  };
+
+  const renderCalendar = (baseDate, isLeftCalendar) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const days = generateCalendarDays(baseDate);
+
+    const isDateDisabled = (date) => {
+      if (date > today) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const isSelectedStart = (date) => {
+      return (
+        selectedDatesLocal[0] &&
+        date.getFullYear() === selectedDatesLocal[0].getFullYear() &&
+        date.getMonth() === selectedDatesLocal[0].getMonth() &&
+        date.getDate() === selectedDatesLocal[0].getDate()
+      );
+    };
+
+    const isSelectedEnd = (date) => {
+      return (
+        selectedDatesLocal[1] &&
+        date.getFullYear() === selectedDatesLocal[1].getFullYear() &&
+        date.getMonth() === selectedDatesLocal[1].getMonth() &&
+        date.getDate() === selectedDatesLocal[1].getDate()
+      );
+    };
+
+    const isInRange = (date) => {
+      return false;
+    };
+
+    return (
+      <VStack spacing={3} align="stretch">
+        <Flex
+          justify="space-between"
+          align="center"
+          borderBottomWidth={"1px"}
+          borderBottomColor={"placeholder"}
+          paddingBottom={"10px"}
+        >
+          <IconButton
+            style={{ backgroundColor: "transparent" }}
+            size="sm"
+            icon={<PrevIcon />}
+            aria-label="Previous month"
+            onClick={() =>
+              navigateMonth(isLeftCalendar ? "left" : "right", "prev")
+            }
+          />
+          <Text textStyle={"RobotoSubtitle"}>
+            {capitalizeFirstLetter(
+              baseDate.toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              }),
+            )}
+          </Text>
+          <IconButton
+            style={{ backgroundColor: "transparent" }}
+            size="sm"
+            icon={<NextIcon />}
+            aria-label="Next month"
+            onClick={() =>
+              navigateMonth(isLeftCalendar ? "left" : "right", "next")
+            }
+            isDisabled={
+              baseDate.getMonth() === today.getMonth() &&
+              baseDate.getFullYear() === today.getFullYear()
+            }
+          />
+        </Flex>
+
+        <Grid templateColumns="repeat(7, 1fr)" mb={1}>
+          {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((day) => (
+            <GridItem key={day} textAlign="center">
+              <Text textStyle={"RobotoBody"}>{day}</Text>
+            </GridItem>
+          ))}
+        </Grid>
+
+        <Grid templateColumns="repeat(7, 1fr)" gap={1}>
+          {days.map((day, index) => {
+            const isDisabled = isDateDisabled(day.date);
+            const isStart = isSelectedStart(day.date);
+            const isEnd = isSelectedEnd(day.date);
+            const inRange = isInRange(day.date);
+
+            return (
+              <GridItem key={index} textAlign="center">
+                <Button
+                  size="sm"
+                  variant={"ghost"}
+                  colorScheme={"gray"}
+                  fontWeight={400}
+                  textStyle="RobotoBody"
+                  p={2}
+                  bg={isStart ? "red.500" : isEnd ? "red.500" : "transparent"}
+                  color={
+                    isStart || isEnd
+                      ? "white"
+                      : !day.isCurrentMonth
+                        ? "gray.400"
+                        : isDisabled
+                          ? "gray.300"
+                          : "black"
+                  }
+                  opacity={!day.isCurrentMonth ? 0.5 : 1}
+                  onClick={() => handleDateSelect(day.date, isLeftCalendar)}
+                  isDisabled={isDisabled || !day.isCurrentMonth}
+                  _hover={{
+                    bg:
+                      day.isCurrentMonth && !isDisabled ? "red.100" : undefined,
+                  }}
+                  height="30px"
+                  minWidth="30px"
+                  padding="0"
+                >
+                  {day.dayNumber}
+                </Button>
+              </GridItem>
+            );
+          })}
+        </Grid>
+      </VStack>
+    );
+  };
+
   return (
-    <Box
-      display={"flex"}
-      border={"1px"}
-      borderColor={"grey.placeholder"}
-      bg={"white"}
-      borderRadius={"5px"}
-      px={0}
-      flex={"0 1 auto"}
-    >
-      <FormControl display={"flex"} alignContent={"center"}>
-        <InputGroup>
-          <Input
-            placeholder="Start date"
-            value={formatDate(startDate)}
-            readOnly
-            onClick={onStartOpen}
-            fontSize={"1rem"}
-            w={"auto"}
-            borderTopWidth={"0px"}
-            borderBottomWidth={"0px"}
-            borderRightWidth={"0px"}
-            borderLeftWidth={"0px"}
-            color={"black"}
-            cursor={"pointer"}
-          />
-          <InputRightElement width="4.5rem">
-            {!isSmallScreen ? <SwapRightIcon /> : <></>}
-          </InputRightElement>
-        </InputGroup>
-      </FormControl>
-      <FormControl>
-        <InputGroup>
-          <Input
-            placeholder="End date"
-            value={formatDate(endDate)}
-            readOnly
-            onClick={() => {
-              if (startDate) {
-                onEndOpen();
-              } else {
-                toast({
-                  title: "Start date required",
-                  description: "Please select a start date first",
-                  status: "warning",
-                  duration: 3000,
-                  isClosable: true,
-                  position: "top",
-                });
-              }
-            }}
-            fontSize={"1rem"}
-            w={"11rem"}
-            borderTopWidth={"0px"}
-            borderBottomWidth={"0px"}
-            borderRightWidth={"0px"}
-            borderLeftWidth={"0px"}
-            color={"black"}
-            cursor={"pointer"}
-          />
-          <InputRightElement width="4.5rem">
-            {!isSmallScreen ? <CalendarIcon /> : <></>}
-          </InputRightElement>
-        </InputGroup>
-      </FormControl>
-      <Modal isOpen={isStartOpen} onClose={onStartClose} size={"xs"}>
+    <Box>
+      <Box
+        display={"flex"}
+        border={"1px"}
+        borderColor={"grey.placeholder"}
+        bg={"white"}
+        borderRadius={"5px"}
+        px={0}
+        flex={"0 1 auto"}
+      >
+        <FormControl display={"flex"} alignContent={"center"}>
+          <InputGroup>
+            <Input
+              placeholder="Fecha de inicio"
+              value={formatDate(startDate)}
+              readOnly
+              onClick={onCalendarOpen}
+              fontSize={"1rem"}
+              w={"auto"}
+              borderTopWidth={"0px"}
+              borderBottomWidth={"0px"}
+              borderRightWidth={"0px"}
+              borderLeftWidth={"0px"}
+              color={"black"}
+              cursor={"pointer"}
+            />
+            <InputRightElement width="4.5rem">
+              {!isSmallScreen ? <SwapRightIcon /> : <></>}
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+        <FormControl>
+          <InputGroup>
+            <Input
+              placeholder="Fecha de fin"
+              value={formatDate(endDate)}
+              readOnly
+              onClick={onCalendarOpen}
+              fontSize={"1rem"}
+              w={"11rem"}
+              borderTopWidth={"0px"}
+              borderBottomWidth={"0px"}
+              borderRightWidth={"0px"}
+              borderLeftWidth={"0px"}
+              color={"black"}
+              cursor={"pointer"}
+            />
+            <InputRightElement width="4.5rem">
+              {!isSmallScreen ? <CalendarIcon /> : <></>}
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
+      </Box>
+
+      <Modal
+        isOpen={isCalendarOpen}
+        onClose={() => {
+          onCalendarClose();
+        }}
+        size={"xl"}
+      >
         <ModalOverlay />
-        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
-          <ModalBody>
-            <Box display={"flex"} justifyContent={"center"} minH={"270px"}>
-              <DatePicker
-                minH={"270px"}
-                selected={focusedStart}
-                onChange={handleStartDateChange}
-                inline
-              />
-            </Box>
+        <ModalContent w={"100%"} maxW={"800px"}>
+          <ModalBody py={4}>
+            <Flex
+              direction={isSmallScreen ? "column" : "row"}
+              justifyContent={"space-between"}
+              gap={4}
+            >
+              <Box flex="1" py={3}>
+                {renderCalendar(leftMonth, true)}
+              </Box>
+
+              <Box flex="1" py={3}>
+                {renderCalendar(rightMonth, false)}
+              </Box>
+            </Flex>
           </ModalBody>
           <ModalFooter>
-            <StandardButton
-              variant={"RED_PRIMARY"}
-              w={"fit-content"}
-              fontSize="14px"
-              fontWeight="400"
-              onClick={() => {
-                setStartDate(focusedStart);
-                onStartClose();
-              }}
-            >
-              Ok
-            </StandardButton>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isEndOpen} onClose={onEndClose} size={"xs"}>
-        <ModalOverlay />
-        <ModalContent w={"100%"} top={"80px"} left={"300px"}>
-          <ModalBody>
-            <Box display={"flex"} justifyContent={"center"} minH={"270px"}>
-              <DatePicker
-                minH={"270px"}
-                selected={focusedEnd}
-                onChange={handleEndDateChange}
-                minDate={startDate}
-                inline
-              />
-            </Box>
-          </ModalBody>
-          <ModalFooter>
-            <StandardButton
-              variant={"RED_PRIMARY"}
-              w={"fit-content"}
-              fontSize="14px"
-              fontWeight="400"
-              onClick={() => {
-                setEndDate(focusedEnd);
-                onEndClose();
-              }}
-            >
-              Ok
-            </StandardButton>
+            <HStack>
+              <StandardButton
+                variant={"RED_PRIMARY"}
+                w={"fit-content"}
+                fontSize="14px"
+                onClick={handleConfirm}
+              >
+                Ok
+              </StandardButton>
+            </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -185,4 +473,4 @@ const DateRangePicker = ({ startDate, setStartDate, endDate, setEndDate }) => {
   );
 };
 
-export default DateRangePicker;
+export default DualCalendarDateRangePicker;

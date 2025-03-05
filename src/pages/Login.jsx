@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useToast } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
 import Checkbox from "../component/ui/checkbox/index";
 import StandardButton from "../component/ui/buttons/standard/index";
@@ -8,6 +8,7 @@ import LogoComplete from "../assets/images/logoComplete";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
+   const toast = useToast();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState(true);

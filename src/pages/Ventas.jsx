@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Select, Text, useDisclosure, useToast } from "@chakra-ui/react";
@@ -16,6 +16,7 @@ import { formatearNumero, formattingDate } from "../utils/formatting";
 import { HEADER_HEIGHT } from "../component/Header";
 import VerExistencias from "../component/VerExistencias";
 import LoadingComponent from "../component/LoadingComponent";
+import useWindowDimensions from "../hooks/useWindowDimensions";
 
 const TOP_SECTION_HEIGHT = 64;
 const BOTTOM_SECTION_HEIGHT = 141.5;
@@ -27,6 +28,7 @@ const FINAL_DATE = new Date();
 const START_DATE = new Date(FINAL_DATE.getFullYear(), FINAL_DATE.getMonth(), 1);
 
 export default function Ventas() {
+  const { height, width } = useWindowDimensions();
   const toast = useToast();
   const city = useSelector((state) => state.vitrinaReducer.city);
   const name = useSelector((state) => state.vitrinaReducer.name);
@@ -182,7 +184,7 @@ export default function Ventas() {
       console.log(error);
       toast({
         title: "Error",
-        description: "Error al cargar los datos. Intente nuevamente.",
+        description: "Error al cargar los datos. Intente nuevamente",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -230,7 +232,7 @@ export default function Ventas() {
       console.log(error);
       toast({
         title: "Error",
-        description: "Error al cargar los datos. Intente nuevamente.",
+        description: "Error al cargar los datos. Intente nuevamente",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -242,15 +244,22 @@ export default function Ventas() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const ContainerHeight = useMemo(() => {
+    const result = Math.floor(height - HEADER_HEIGHT - MARGINS);
+    console.log(result);
+    return result;
+  }, [height]);
+
   return (
     <Box
       bg={"mainBg"}
+      width={"100%"}
       height={"100%"}
       display={"flex"}
       flexDir={"column"}
-      overflowY={"auto"}
+      overflowY={"hidden"}
       p={"1.25rem"}
-      h={"calc(100% - " + HEADER_HEIGHT + "px)"}
+      h={ContainerHeight}
     >
       <Box
         w={"100%"}
@@ -316,7 +325,7 @@ export default function Ventas() {
         flexDir={"column"}
         mb={2}
         h={{
-          base: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT_MOBILE}px - ${MARGINS}px)`,
+          base: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT_MOBILE}px - ${MARGINS}px )`,
           lg: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT}px - ${MARGINS}px)`,
         }}
       >
@@ -325,8 +334,8 @@ export default function Ventas() {
           totalResults={totalResults}
           tableTitle={
             selectedOption === "Ventas"
-              ? "Productos Vendidos"
-              : "Productos Devueltos"
+              ? "Productos vendidos"
+              : "Productos devueltos"
           }
           selectedOption={selectedOption}
           setProds={setProds}
@@ -348,7 +357,6 @@ export default function Ventas() {
         flexWrap={"no-wrap"}
         gridGap={"1rem"}
         justifyContent={"space-between"}
-        pt={3}
       >
         <Container
           flex={1}

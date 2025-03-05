@@ -108,7 +108,7 @@ export default function Dispositivo() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error obteniendo la información de la vitrina.",
+        description: "Error obteniendo la información de la vitrina",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -246,7 +246,7 @@ export default function Dispositivo() {
       if (response.status === 200) {
         toast({
           status: "success",
-          description: "Solicitud aprobada con éxito!.",
+          description: "¡Solicitud aprobada con éxito!.",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -259,7 +259,7 @@ export default function Dispositivo() {
       console.error("Error al aprobar solicitud:", error);
       toast({
         status: "error",
-        description: "Error aprobando la solicitud.",
+        description: "Error aprobando la solicitud",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -293,7 +293,7 @@ export default function Dispositivo() {
       if (response.status === 200) {
         toast({
           status: "success",
-          description: "El dispositivo ha sido rechazado con éxito!.",
+          description: "¡El dispositivo ha sido rechazado con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -306,7 +306,7 @@ export default function Dispositivo() {
 
       toast({
         status: "error",
-        description: "Ha ocurrido un error al rechazar la solicitud.",
+        description: "Ha ocurrido un error al rechazar la solicitud",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -339,7 +339,7 @@ export default function Dispositivo() {
       if (response.status === 200) {
         toast({
           status: "success",
-          description: "El dispositivo ha sido desvinculado con éxito!.",
+          description: "¡El dispositivo ha sido desvinculado con éxito!.",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -351,7 +351,7 @@ export default function Dispositivo() {
       console.error("Error al rechazar solicitud:", error);
       toast({
         status: "error",
-        description: "Ha ocurrido un error al desvincular el dispositivo!.",
+        description: "Ha ocurrido un error al desvincular el dispositivo",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -371,7 +371,6 @@ export default function Dispositivo() {
     }
   };
 
-  // Verificar si estamos cargando cualquier operación
   const isLoading = loadingInfo || loadingPendientes;
 
   return isLoading ? (

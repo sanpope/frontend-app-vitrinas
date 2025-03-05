@@ -36,7 +36,7 @@ export default function TablaVentas({
   onClose,
   loading,
 }) {
-  const HEADERS = ["Fecha y Hora", "Precio", tableTitle, "Nota", "Acciones"];
+  const HEADERS = ["Fecha y hora", "Precio", tableTitle, "Nota", "Acciones"];
 
   const [parentHeight, setParentHeight] = useState(0);
   const parentRef = useRef(null);
@@ -57,7 +57,7 @@ export default function TablaVentas({
   return (
     <Box h="100%">
       <Box
-        h="calc(100% - 60px)"
+        h="calc(100% - 80px)"
         bgColor={"white"}
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}

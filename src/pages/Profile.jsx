@@ -118,7 +118,7 @@ export default function Profile() {
       console.error("Error actualizando perfil:", error);
       toast({
         title: "Error",
-        description: "No se pudo actualizar tu información. Intenta de nuevo.",
+        description: "No se pudo actualizar tu información. Intenta de nuevo",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -154,7 +154,7 @@ export default function Profile() {
         setTimeout(() => {
           toast({
             title: "Contraseña actualizada",
-            description: "Tu contraseña ha sido actualizada exitosamente.",
+            description: "Tu contraseña ha sido actualizada exitosamente",
             status: "success",
             duration: 5000,
             isClosable: true,
@@ -181,7 +181,7 @@ export default function Profile() {
       console.error("Error actualizando contraseña:", error);
 
       let errorMessage =
-        "No se pudo actualizar tu contraseña. Intenta de nuevo.";
+        "No se pudo actualizar tu contraseña. Intenta de nuevo";
       if (error.response && error.response.data) {
         errorMessage = error.response.data.message || errorMessage;
       }

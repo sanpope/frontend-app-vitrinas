@@ -4,6 +4,7 @@ import React from "react";
 export default function Note({ width = "100%", text1, text2, arr }) {
   return (
     <Box
+      width={"100%"}
       flex={1}
       display="flex"
       flexDirection={"column"}
@@ -11,7 +12,7 @@ export default function Note({ width = "100%", text1, text2, arr }) {
       borderWidth={1}
       borderColor={"#FFE58F"}
       bg={"#FFFBE6"}
-      p="10px"
+      p="5px"
     >
       {arr != null && <Text>{text1}</Text>}
       {arr != null ? (

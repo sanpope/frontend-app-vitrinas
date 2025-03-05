@@ -80,7 +80,7 @@ export default function EstaVitrina() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error obteniendo la información de la vitrina.",
+        description: "Error obteniendo la información de la vitrina",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -161,7 +161,7 @@ export default function EstaVitrina() {
           }
           toast({
             status: "success",
-            description: "Vitrina actualizada con éxito!.",
+            description: "¡Vitrina actualizada con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -171,7 +171,7 @@ export default function EstaVitrina() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error actualizando la vitrina.",
+        description: "Error actualizando la vitrina",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -208,7 +208,7 @@ export default function EstaVitrina() {
         }
         toast({
           status: "success",
-          description: "Vitrina Eliminada con éxito!.",
+          description: "¡Vitrina Eliminada con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -217,7 +217,7 @@ export default function EstaVitrina() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error eliminando la vitrina.",
+        description: "Error eliminando la vitrina",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -272,7 +272,7 @@ export default function EstaVitrina() {
       }
       toast({
         status: "success",
-        description: "Asesor creado con éxito!.",
+        description: "¡Asesor creado con éxito!",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -280,7 +280,7 @@ export default function EstaVitrina() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error creando el asesor.",
+        description: "Error creando el asesor",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -333,7 +333,7 @@ export default function EstaVitrina() {
         }
         toast({
           status: "success",
-          description: "Asesor editado con éxito!.",
+          description: "¡Asesor editado con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -342,7 +342,7 @@ export default function EstaVitrina() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error editando el asesor.",
+        description: "Error editando el asesor",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -376,7 +376,7 @@ export default function EstaVitrina() {
         });
         toast({
           status: "success",
-          description: "Asesor eliminado con éxito!.",
+          description: "¡Asesor eliminado con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -385,7 +385,7 @@ export default function EstaVitrina() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error eliminando el asesor.",
+        description: "Error eliminando el asesor",
         duration: 3000,
         position: "top-right",
         isClosable: true,

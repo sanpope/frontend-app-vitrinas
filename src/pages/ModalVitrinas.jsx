@@ -141,7 +141,7 @@ export default function ModalVitrinas({
             dispatch(setCiudadesVitrinas(copy));
             toast({
               status: "success",
-              description: "Vitrina Agregada con Éxito!.",
+              description: "¡Vitrina agregada con éxito!",
               duration: 3000,
               position: "top-right",
               isClosable: true,
@@ -169,7 +169,7 @@ export default function ModalVitrinas({
           dispatch(setCiudadesVitrinas(copy));
           toast({
             status: "success",
-            description: "Vitrina Agregada con Éxito!.",
+            description: "¡Vitrina agregada con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -179,7 +179,7 @@ export default function ModalVitrinas({
       } catch (error) {
         toast({
           status: "error",
-          description: "Error creando la vitrina.",
+          description: "Error creando la vitrina",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -259,7 +259,7 @@ export default function ModalVitrinas({
     } catch (error) {
       toast({
         status: "error",
-        description: "Error obteniendo mensajes no leídos.",
+        description: "Error obteniendo mensajes no leídos",
         duration: 3000,
         position: "top-right",
         isClosable: true,

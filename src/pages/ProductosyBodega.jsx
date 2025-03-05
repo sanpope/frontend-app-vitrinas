@@ -65,7 +65,7 @@ export default function ProductosyBodega() {
       console.error("Error fetching XML data:", error);
       toast({
         status: "error",
-        description: "Error al cargar los productos.",
+        description: "Error al cargar los productos",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -133,7 +133,7 @@ export default function ProductosyBodega() {
       console.error("Error fetching XML data:", error);
       toast({
         status: "error",
-        description: "Error al cargar los proveedores.",
+        description: "Error al cargar los proveedores",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -160,7 +160,7 @@ export default function ProductosyBodega() {
       console.error("Error fetching XML data:", error);
       toast({
         status: "error",
-        description: "Error al cargar las categorías.",
+        description: "Error al cargar las categorías",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -235,7 +235,7 @@ export default function ProductosyBodega() {
 
           toast({
             status: "success",
-            description: "Producto creado con éxito!",
+            description: "¡Producto creado con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -243,7 +243,7 @@ export default function ProductosyBodega() {
         } else {
           toast({
             status: "info",
-            description: "El producto ya existe en la base de datos.",
+            description: "El producto ya existe en la base de datos",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -253,7 +253,7 @@ export default function ProductosyBodega() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error creando el Producto.",
+        description: "Error creando el Producto",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -326,7 +326,7 @@ export default function ProductosyBodega() {
 
           toast({
             status: "success",
-            description: "Producto editado con éxito!.",
+            description: "¡Producto editado con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -336,7 +336,7 @@ export default function ProductosyBodega() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error editando el producto.",
+        description: "Error editando el producto",
         duration: 3000,
         position: "top-right",
         isClosable: true,

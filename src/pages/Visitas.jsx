@@ -16,6 +16,7 @@ import CardVisitas from "../component/CardVisitas";
 import CardMovimientosInventario from "../component/CardMovimientosInventario";
 import CardCorreccionesInventario from "../component/CardCorreccionesInventario";
 import LoadingComponent from "../component/LoadingComponent";
+import useWindowDimensions from "../hooks/useWindowDimensions";
 
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -54,12 +55,14 @@ export default function Visitas() {
 
   const [visitaSelected, setVisitaSelected] = useState(null);
 
+  const { height } = useWindowDimensions();
+  const containerHeight = height - HEADER_HEIGHT - 150;
+
   useEffect(() => {
     getIntervaloVisitas(fechaInicio, fechaFin);
   }, [selectedOption]);
 
   const getIntervaloVisitas = async (date1, date2) => {
-    // Activamos todos los estados de carga
     setVisitasLoading(true);
     setMovimientosLoading(true);
     setCorreccionesLoading(true);
@@ -93,7 +96,7 @@ export default function Visitas() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error obteniendo la información",
+        description: "Error al obtener información",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -328,7 +331,7 @@ export default function Visitas() {
       if (response.status == 200 && response.data) {
         toast({
           status: "success",
-          description: "¡Productos Ingresados con éxito!",
+          description: "¡Productos ingresados con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -337,7 +340,7 @@ export default function Visitas() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error ingresando los productos.",
+        description: "Error ingresando los productos",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -422,7 +425,7 @@ export default function Visitas() {
         });
         toast({
           status: "success",
-          description: "Reversión realizada con éxito!.",
+          description: "Reversión realizada con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -469,7 +472,7 @@ export default function Visitas() {
 
           toast({
             status: "success",
-            description: "Visita verificada Correctamente!.",
+            description: "Visita verificada correctamente",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -478,7 +481,7 @@ export default function Visitas() {
       } catch (error) {
         toast({
           status: "error",
-          description: "Error Verificando la visita.",
+          description: "Error verificando la visita",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -528,8 +531,9 @@ export default function Visitas() {
         display={"flex"}
         flexDir={{ base: "column", md: "row" }}
         justifyContent={{ base: "flex-start", md: "space-between" }}
-        py={5}
+        alignItems={"flex-end"}
         gap={"10px"}
+        py={"10px"}
       >
         <Box>
           <Text textStyle={"RobotoBody"}>
@@ -555,16 +559,16 @@ export default function Visitas() {
       </Box>
       <Box
         order={{ base: "2", xl: "1" }}
-        h={"80%"}
         display="flex"
         flexWrap="noWrap"
         gap={"1.25rem"}
-        height={"100%"}
-        overflowY={"scroll"}
+        height={`${containerHeight}px`}
+        overflowY="hidden"
       >
         <VisitaContainer
           title="Visitas realizadas a esta vitrina"
           maxW="310px"
+          height={`${containerHeight}px`}
           children={
             visitasLoading ? (
               <Box
@@ -599,7 +603,7 @@ export default function Visitas() {
                 alignItems={"center"}
               >
                 <Text color={"grey.placeholder"} textAlign={"center"}>
-                  No se encontraron visitas en el intervalo seleccionado
+                  Sin Información
                 </Text>
               </Box>
             )
@@ -610,6 +614,7 @@ export default function Visitas() {
           id={"movContainer"}
           title="Movimientos de inventario"
           maxW="310px"
+          height={`${containerHeight}px`}
           children={
             movimientosLoading ? (
               <Box
@@ -637,7 +642,7 @@ export default function Visitas() {
                 alignItems={"center"}
               >
                 <Text color={"grey.placeholder"} textAlign={"center"}>
-                  No se encontraron movimientos en el intervalo seleccionado
+                  Sin Información
                 </Text>
               </Box>
             )
@@ -647,8 +652,8 @@ export default function Visitas() {
         <VisitaContainer
           id={"corrContainer"}
           title="Correcciones de inventario"
-          w="100%"
           maxW="310px"
+          height={`${containerHeight}px`}
           children={
             correccionesLoading ? (
               <Box
@@ -673,7 +678,7 @@ export default function Visitas() {
                 alignItems={"center"}
               >
                 <Text color={"grey.placeholder"} textAlign={"center"}>
-                  No se encontraron correcciones en el intervalo seleccionado
+                  Sin Información
                 </Text>
               </Box>
             )

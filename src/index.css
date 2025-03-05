@@ -185,18 +185,26 @@ td {
   width: 20%;
   text-align: center;
 }
+.ventastTh:nth-child(3) {
+  width: 30%;
+}
 .ventastTh:nth-child(4) {
-  width: 25%;
+  width: 30%;
+}
+
+.ventastTh:nth-child(5) {
+  width: 10%;
 }
 
 .ventastTd {
   vertical-align: text-top;
 }
 
-.ventasTd:nth-child(4) {
+.ventasTd:nth-child(3) {
   text-align: justify;
 }
-.ventasTd:nth-child(4) ul {
+
+.ventasTd:nth-child(3) ul {
   list-style-type: circle;
 }
 
@@ -251,4 +259,162 @@ td {
     justify-content: center;
     padding: 28px;
   }
+}
+
+/* IMPLEMENTACION NUEVA DEL SCROLL DE LA TABLA */
+
+/* Estilos base para ambas tablas */
+.content-table {
+  width: 100%;
+  min-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+/* Contenedor del encabezado */
+.table-header-container {
+  height: 60px; /* Altura fija para el encabezado */
+}
+
+/* Tabla del encabezado */
+.header-table {
+  background-color: black;
+}
+
+.header-table thead {
+  height: 60px;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* Tabla del cuerpo */
+.body-table {
+  background-color: white;
+  margin-top: -1px; /* Elimina un posible espacio entre las tablas */
+}
+
+/* Estilo común para celdas */
+.content-table th,
+.content-table td {
+  padding: 10px 5px;
+  font-size: 14px;
+}
+
+/* Filas del cuerpo */
+.body-table tbody tr {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* Elimina bordes superiores para que parezca una tabla continua */
+.body-table tbody tr:first-child {
+  border-top: none;
+}
+
+/* Contenedor del cuerpo con scroll */
+.table-body-container {
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* Personalización de la barra de desplazamiento */
+.table-body-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-body-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-body-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.table-body-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.ventastTh,
+.ventasTd {
+  width: 20%;
+}
+
+.ventastTh:nth-child(3),
+.ventasTd:nth-child(3) {
+  width: 30%;
+}
+
+.ventastTh:nth-child(4),
+.ventasTd:nth-child(4) {
+  width: 30%;
+}
+
+.ventastTh:nth-child(5),
+.ventasTd:nth-child(5) {
+  width: 10%;
+}
+
+@media screen and (max-width: 768px) {
+  .table-body-container {
+    overflow-x: auto;
+  }
+}
+
+.ventastTh:nth-child(1),
+.ventasTd:nth-child(1) {
+  width: 20%;
+}
+
+.ventastTh:nth-child(2),
+.ventasTd:nth-child(2) {
+  width: 15%;
+}
+
+.ventastTh:nth-child(3),
+.ventasTd:nth-child(3) {
+  width: 30%;
+  box-sizing: border-box;
+}
+
+.ventastTh:nth-child(4),
+.ventasTd:nth-child(4) {
+  width: 25%;
+  box-sizing: border-box;
+}
+
+.ventastTh:nth-child(5),
+.ventasTd:nth-child(5) {
+  width: 10%;
+}
+
+.ventasTd {
+  overflow: hidden;
+  white-space: normal;
+  word-wrap: break-word;
+  box-sizing: border-box;
+}
+
+.ventasTd:nth-child(3) ul {
+  list-style-type: circle;
+}
+
+.ventasTd:nth-child(4) > div {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ventasTd:nth-child(4) .chakra-box {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ventasTd:nth-child(4) .chakra-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-wrap: break-word;
 }

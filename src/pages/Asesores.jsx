@@ -366,7 +366,7 @@ export default function Asesores() {
             (item) =>
               item.nombre.toLowerCase() === currentAsesor.nombre.toLowerCase(),
           );
-          console.log(index);
+
           if (index !== -1) {
             copy[index] = {
               nombre: asesorActualizado.nombre,
@@ -399,7 +399,7 @@ export default function Asesores() {
 
         toast({
           status: "success",
-          description: "Asesor actualizado con éxito!",
+          description: "¡Asesor actualizado con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -444,7 +444,7 @@ export default function Asesores() {
         });
         toast({
           status: "success",
-          description: "Asesor eliminado con éxito!.",
+          description: "¡Asesor eliminado con éxito!.",
           duration: 3000,
           position: "top-right",
           isClosable: true,
