@@ -17,6 +17,7 @@ export default function Container({
   paddingChildren = 1,
   className,
   overflow = "hidden",
+  hasScroll = false,
   ...props
 }) {
   return (
@@ -34,7 +35,12 @@ export default function Container({
       boxSizing="border-box"
       overflow={overflow}
     >
-      <Box display="flex" alignItems={"flex-start"} columnGap="6px" marginBottom={2}>
+      <Box
+        display="flex"
+        alignItems={"flex-start"}
+        columnGap="6px"
+        marginBottom={2}
+      >
         <HStack display={"flex"} spacing={"5px"}>
           <Box minW={"25px"} alignSelf={"flex-start"}>
             {icon}
@@ -58,6 +64,15 @@ export default function Container({
         height={heightChildren}
         w={"100%"}
         p={paddingChildren}
+        sx={
+          hasScroll
+            ? {
+                "& .scroll-wrapper": {
+                  paddingBottom: "10px",
+                },
+              }
+            : {}
+        }
       >
         {children}
       </Box>

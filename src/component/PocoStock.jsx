@@ -23,12 +23,11 @@ export default function PocoStock({ productosConPocoStock }) {
       {productosConPocoStock != null && productosConPocoStock?.length > 0 ? (
         <Box
           w={"100%"}
-          h={"100%"}
           display={"flex"}
-          flexGrow={1}
           flexDirection={"column"}
           justifyContent={"space-between"}
-          gap={1}
+          alignItems={"center"}
+         
         >
           <Box
             w={"100%"}
@@ -36,13 +35,14 @@ export default function PocoStock({ productosConPocoStock }) {
             display={"flex"}
             flexDirection={"column"}
             justifyContent={"space-between"}
-            alignItems={"center"}
+            alignItems={"space-between"}
+           
           >
             <Box
               w={"100%"}
               display={"flex"}
               flexDirection={"column"}
-              justifyContent={"center"}
+              justifyContent={"space-between"}
               alignItems={"flex-start"}
               p={1}
               gap={1}
@@ -52,7 +52,7 @@ export default function PocoStock({ productosConPocoStock }) {
               Object.keys(currentItem1 || {}) !== null &&
               Object.keys(currentItem1 || {}) !== "undefined" &&
               Object.keys(currentItem1 || {}).length > 0 ? (
-                <Box gap={1}>
+                <Box width={"100%"}>
                   <Text
                     minW={"190px"}
                     textStyle={"RobotoRegular"}
@@ -121,7 +121,7 @@ export default function PocoStock({ productosConPocoStock }) {
               Object.keys(currentItem2 || {}) !== null &&
               Object.keys(currentItem2 || {}) !== "undefined" &&
               Object.keys(currentItem2 || {}).length > 0 ? (
-                <Box gap={1}>
+                <Box width={"100%"}>
                   <Text
                     minW={"190px"}
                     textStyle={"RobotoRegular"}
@@ -187,7 +187,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 <></>
               )}
             </Box>
-            <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
+            <Box w={"100%"} display={"flex"} justifyContent={"flex-end"} pt={4}>
               <SmallPagination
                 currentPage={currentPage}
                 totalPages={totalPages}

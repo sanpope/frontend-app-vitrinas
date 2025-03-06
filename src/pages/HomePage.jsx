@@ -17,6 +17,7 @@ import HeadphonesIcon from "../../src/assets/images/HeadphonesIcon";
 import { useDispatch, useSelector } from "react-redux";
 
 import Container, { CONTAINER_PADDING } from "../component/Container";
+import ScrollContainer from "../component/ScrollContainer";
 import TopVitrinaItem from "../component/TopVitrinaItem";
 import TopCategoriaItem from "../component/TopCategoriaItem";
 import TopProductoItem from "../component/TopProductoItem";
@@ -242,21 +243,51 @@ export default function HomePage() {
   };
 
   const getDispositivosAveriados = (xml) => {
+    console.log(xml);
     const dispositivosArr = [];
+
+    if (!xml) {
+      console.error("XML no proporcionado");
+      return dispositivosArr;
+    }
+
     let dispositivos = xml.querySelector("dispositivosConProblemas");
+
+    if (!dispositivos) {
+      console.warn("No se encontraron dispositivos con problemas en el XML");
+      return dispositivosArr;
+    }
+
     let totalDispositivos = dispositivos.querySelectorAll("dispositivo");
 
-    for (let i = 0; i < totalDispositivos.length; i++) {
-      const vitrina =
-        totalDispositivos[i].getElementsByTagName("vitrina")[0].textContent;
-      const detalleDeEstado =
-        totalDispositivos[i].getElementsByTagName("detalleDeEstado")[0]
-          .textContent;
-      let fechaDelProblema =
-        totalDispositivos[i].getElementsByTagName("fechaDelProblema")[0]
-          .textContent;
+    const getFechaActual = () => {
+      const fecha = new Date();
+      return formatDate(fecha.toISOString());
+    };
 
-      fechaDelProblema = formatDate(fechaDelProblema);
+    for (let i = 0; i < totalDispositivos.length; i++) {
+      const dispositivo = totalDispositivos[i];
+
+      const vitrinaElement = dispositivo.getElementsByTagName("vitrina")[0];
+      const vitrina = vitrinaElement
+        ? vitrinaElement.textContent
+        : "Vitrina no especificada";
+
+      const detalleElement =
+        dispositivo.getElementsByTagName("detalleDeEstado")[0];
+      const detalleDeEstado = detalleElement
+        ? detalleElement.textContent
+        : "Estado no especificado";
+
+      const fechaElement =
+        dispositivo.getElementsByTagName("fechaDelProblema")[0];
+      let fechaDelProblema = fechaElement ? fechaElement.textContent : null;
+
+      if (!fechaDelProblema) {
+        fechaDelProblema = getFechaActual();
+      } else {
+        fechaDelProblema = formatDate(fechaDelProblema);
+      }
 
       dispositivosArr.push({
         vitrina,
@@ -264,6 +295,7 @@ export default function HomePage() {
         fechaDelProblema,
       });
     }
+
     return dispositivosArr;
   };
 
@@ -567,19 +599,13 @@ export default function HomePage() {
           title={"Top categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
           paddingChildren={topTotalCategorias != null ? 0 : 1}
+          hasScroll={true}
           children={
             <>
               {topTotalCategorias === null ? (
                 <LoadingComponent />
               ) : topTotalCategorias != null ? (
-                <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  maxH={"160px"}
-                  overflowY={"scroll"}
-                  w={"100%"}
-                  className="scroll-wrapper"
-                >
+                <ScrollContainer>
                   {topTotalCategorias?.map((cat, index) => (
                     <TopCategoriaItem
                       key={index}
@@ -592,7 +618,7 @@ export default function HomePage() {
                       catPercentage={cat.porcentaje}
                     />
                   ))}
-                </Box>
+                </ScrollContainer>
               ) : (
                 <Box
                   width={"100%"}
@@ -602,9 +628,7 @@ export default function HomePage() {
                   justifyContent={"flex-start"}
                   flex={1}
                 >
-                  <Text color={"grey.placeholder"}>
-                   Sin información.
-                  </Text>
+                  <Text color={"grey.placeholder"}>Sin información.</Text>
                 </Box>
               )}
             </>
@@ -618,19 +642,13 @@ export default function HomePage() {
           icon={<BoxesIcon width={"1.5rem"} height={"1.5rem"} />}
           heightChildren={topTotalProductos != null ? "auto" : "100%"}
           paddingChildren={topTotalProductos != null ? 1 : 0}
+          hasScroll={true}
           children={
             <>
               {topTotalProductos === null ? (
                 <LoadingComponent />
               ) : topTotalProductos != null ? (
-                <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  maxH={"160px"}
-                  overflowY={"scroll"}
-                  w={"100%"}
-                  className="scroll-wrapper"
-                >
+                <ScrollContainer>
                   {topTotalProductos?.map((prod, index) => (
                     <TopProductoItem
                       key={index}
@@ -638,7 +656,7 @@ export default function HomePage() {
                       prodPercentage={prod.porcentaje}
                     />
                   ))}
-                </Box>
+                </ScrollContainer>
               ) : (
                 <Box
                   width={"100%"}
@@ -648,9 +666,7 @@ export default function HomePage() {
                   justifyContent={"flex-start"}
                   flex={1}
                 >
-                  <Text color={"grey.placeholder"}>
-                    Sin información.
-                  </Text>
+                  <Text color={"grey.placeholder"}>Sin información.</Text>
                 </Box>
               )}
             </>
@@ -679,9 +695,7 @@ export default function HomePage() {
                   justifyContent={"flex-start"}
                   flex={1}
                 >
-                  <Text color={"grey.placeholder"}>
-                    Sin información.
-                  </Text>
+                  <Text color={"grey.placeholder"}>Sin información.</Text>
                 </Box>
               )}
             </>
@@ -710,9 +724,7 @@ export default function HomePage() {
                   justifyContent={"flex-start"}
                   flex={1}
                 >
-                  <Text color={"grey.placeholder"}>
-                   Sin información.
-                  </Text>
+                  <Text color={"grey.placeholder"}>Sin información.</Text>
                 </Box>
               )}
             </>
@@ -726,16 +738,17 @@ export default function HomePage() {
           icon={<FileCheckIcon />}
           heightChildren={totalVisitasNoVerif != null ? "auto" : "100%"}
           paddingChildren={totalVisitasNoVerif != null ? 1 : 0}
+          hasScroll={true}
           children={
             <>
               {totalVisitasNoVerif === null ? (
                 <LoadingComponent />
               ) : totalVisitasNoVerif !== null ? (
-                <Box w={"100%"}>
+                <ScrollContainer>
                   <InventarioXverificar
                     visitasNoVerificadas={totalVisitasNoVerif}
                   />
-                </Box>
+                </ScrollContainer>
               ) : (
                 <Box
                   width={"100%"}
@@ -745,9 +758,7 @@ export default function HomePage() {
                   justifyContent={"flex-start"}
                   flex={1}
                 >
-                  <Text color={"grey.placeholder"}>
-                   Sin información
-                  </Text>
+                  <Text color={"grey.placeholder"}>Sin información</Text>
                 </Box>
               )}
             </>

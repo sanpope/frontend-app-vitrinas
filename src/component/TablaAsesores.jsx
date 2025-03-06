@@ -11,6 +11,7 @@ import BottomTable from "./ui/tablas/Bottom";
 import Contenedor from "./ui/tablas/Contenedor";
 import SwitchOnIcon from "../assets/images/SwitchOnIcon";
 import SwitchOffIcon from "../assets/images/SwitchOffICon";
+import LoadingComponent from "./LoadingComponent";
 
 const HEADERS = [
   "Asesor",
@@ -34,6 +35,7 @@ export default function TablaProductosBodega({
   getMasArticulos,
   handleSortingClick,
   setCurrentAsesor,
+  isLoading,
 }) {
   const toast = useToast();
   const [parentHeight, setParentHeight] = useState(0);
@@ -106,6 +108,22 @@ export default function TablaProductosBodega({
         borderTopRightRadius={{ base: "0px", md: "20px" }}
         ref={parentRef}
       >
+        {isLoading && (
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            right="0"
+            bottom="0"
+            zIndex="10"
+            bg="rgba(255, 255, 255, 0.7)"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <LoadingComponent size="xl" />
+          </Box>
+        )}
         <Contenedor>
           <thead className="">
             <tr className="">
@@ -145,8 +163,6 @@ export default function TablaProductosBodega({
           {displayedArticulos != null && displayedArticulos.length > 0 ? (
             <tbody style={{ height: "100%" }}>
               {displayedArticulos?.map((asesor, index) => {
-                // Encontrar las ciudades correspondientes a las vitrinas
-
                 const ubicaciones = Object.entries(ciudadesVitrina)
                   .filter(([ciudad, vitrinas]) =>
                     vitrinas.some((vitrina) =>

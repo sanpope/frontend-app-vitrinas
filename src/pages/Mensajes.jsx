@@ -324,7 +324,7 @@ export default function Mensajes() {
         flexDirection={"column"}
         gap={"20px"}
         p={"10px"}
-        overflowY={"scroll"}
+        overflowY={"auto"}
         flex={1}
       >
         {totalMensajes !== null && totalMensajes?.length > 0 ? (
@@ -339,9 +339,7 @@ export default function Mensajes() {
             />
           ))
         ) : (
-          <MensajeInfo
-            mensaje={"No tienes mensajes en tu bandeja de entrada."}
-          />
+          <MensajeInfo mensaje={"Sin información"} />
         )}
       </Box>
 

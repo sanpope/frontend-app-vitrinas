@@ -44,49 +44,41 @@ const DualCalendarDateRangePicker = ({
 
   const toast = useToast();
   const [isSmallScreen] = useMediaQuery("(max-width: 350px)");
-  const [leftMonth, setLeftMonth] = useState(() => {
-    if (startDate) {
-      return new Date(startDate);
-    }
-
-    return new Date();
-  });
-
-  const [rightMonth, setRightMonth] = useState(() => {
-    if (endDate) {
-      return new Date(endDate);
-    } else if (startDate) {
-      return new Date(startDate);
-    } else {
-      return new Date();
-    }
-  });
 
   const [selectedDatesLocal, setSelectedDatesLocal] = useState([
     startDate ? new Date(startDate) : null,
     endDate ? new Date(endDate) : null,
   ]);
 
-  useEffect(() => {
-    if (
-      (startDate || endDate) &&
-      !selectedDatesLocal[0] &&
-      !selectedDatesLocal[1]
-    ) {
-      const newStartDate = startDate ? new Date(startDate) : null;
-      const newEndDate = endDate ? new Date(endDate) : null;
-
-      setSelectedDatesLocal([newStartDate, newEndDate]);
-
-      if (newStartDate) {
-        setLeftMonth(new Date(newStartDate));
-      }
-
-      if (newEndDate) {
-        setRightMonth(new Date(newEndDate));
-      }
+  const [leftMonth, setLeftMonth] = useState(() => {
+    if (startDate) {
+      return new Date(startDate);
     }
-  }, []);
+    return new Date();
+  });
+
+  const [rightMonth, setRightMonth] = useState(() => {
+    if (endDate) {
+      return new Date(endDate);
+    } else {
+      return new Date(leftMonth);
+    }
+  });
+
+  useEffect(() => {
+    const newStartDate = startDate ? new Date(startDate) : null;
+    const newEndDate = endDate ? new Date(endDate) : null;
+
+    setSelectedDatesLocal([newStartDate, newEndDate]);
+
+    if (newStartDate) {
+      setLeftMonth(new Date(newStartDate));
+    }
+
+    if (newEndDate) {
+      setRightMonth(new Date(newEndDate));
+    }
+  }, [startDate, endDate]);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -146,7 +138,7 @@ const DualCalendarDateRangePicker = ({
       setStartDate(selectedDatesLocal[0]);
       setEndDate(selectedDatesLocal[1]);
 
-      if (onFilterChange) {
+      if (typeof onFilterChange === "function") {
         onFilterChange({
           startDate: formatDateToYYYYMMDD(selectedDatesLocal[0]),
           endDate: formatDateToYYYYMMDD(selectedDatesLocal[1]),
@@ -195,10 +187,16 @@ const DualCalendarDateRangePicker = ({
       const newDate = new Date(leftMonth);
       newDate.setMonth(newDate.getMonth() + monthOffset);
       setLeftMonth(newDate);
+
+      const newRightDate = new Date(newDate);
+      setRightMonth(newRightDate);
     } else {
       const newDate = new Date(rightMonth);
       newDate.setMonth(newDate.getMonth() + monthOffset);
       setRightMonth(newDate);
+
+      const newLeftDate = new Date(newDate);
+      setLeftMonth(newLeftDate);
     }
   };
 
@@ -254,26 +252,25 @@ const DualCalendarDateRangePicker = ({
       if (date > today) {
         return true;
       }
-
       return false;
     };
 
-    const isSelectedStart = (date) => {
-      return (
-        selectedDatesLocal[0] &&
-        date.getFullYear() === selectedDatesLocal[0].getFullYear() &&
-        date.getMonth() === selectedDatesLocal[0].getMonth() &&
-        date.getDate() === selectedDatesLocal[0].getDate()
-      );
-    };
-
-    const isSelectedEnd = (date) => {
-      return (
-        selectedDatesLocal[1] &&
-        date.getFullYear() === selectedDatesLocal[1].getFullYear() &&
-        date.getMonth() === selectedDatesLocal[1].getMonth() &&
-        date.getDate() === selectedDatesLocal[1].getDate()
-      );
+    const isSelected = (date) => {
+      if (isLeftCalendar) {
+        return (
+          selectedDatesLocal[0] &&
+          date.getFullYear() === selectedDatesLocal[0].getFullYear() &&
+          date.getMonth() === selectedDatesLocal[0].getMonth() &&
+          date.getDate() === selectedDatesLocal[0].getDate()
+        );
+      } else {
+        return (
+          selectedDatesLocal[1] &&
+          date.getFullYear() === selectedDatesLocal[1].getFullYear() &&
+          date.getMonth() === selectedDatesLocal[1].getMonth() &&
+          date.getDate() === selectedDatesLocal[1].getDate()
+        );
+      }
     };
 
     const isInRange = (date) => {
@@ -332,8 +329,7 @@ const DualCalendarDateRangePicker = ({
         <Grid templateColumns="repeat(7, 1fr)" gap={1}>
           {days.map((day, index) => {
             const isDisabled = isDateDisabled(day.date);
-            const isStart = isSelectedStart(day.date);
-            const isEnd = isSelectedEnd(day.date);
+            const selected = isSelected(day.date);
             const inRange = isInRange(day.date);
 
             return (
@@ -345,9 +341,9 @@ const DualCalendarDateRangePicker = ({
                   fontWeight={400}
                   textStyle="RobotoBody"
                   p={2}
-                  bg={isStart ? "red.500" : isEnd ? "red.500" : "transparent"}
+                  bg={selected ? "red.500" : "transparent"}
                   color={
-                    isStart || isEnd
+                    selected
                       ? "white"
                       : !day.isCurrentMonth
                         ? "gray.400"

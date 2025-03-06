@@ -19,6 +19,7 @@ import { setCity, setName, setCiudadesVitrinas } from "../store/slices/vitrina";
 import { useNavigate } from "react-router-dom";
 import EditarAsesor from "../component/EditarAsesor";
 import EditarEstaVitrina from "../component/EditarEstaVitrina";
+import LoadingComponent from "../component/LoadingComponent";
 
 export default function EstaVitrina() {
   const navigate = useNavigate();
@@ -37,7 +38,8 @@ export default function EstaVitrina() {
   const [infoTotalVitrina, setInfoTotalVitrina] = useState();
   const [asesor, setAsesor] = useState();
   const [currentAsesor, setCurrentAsesor] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
   useEffect(() => {
     getInfoVitrina();
@@ -62,6 +64,7 @@ export default function EstaVitrina() {
   } = useDisclosure();
 
   const getInfoVitrina = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/info?vitrina=${name}`,
@@ -76,6 +79,7 @@ export default function EstaVitrina() {
         const infoVitrina = getInfoEstaVitrina(xmlDoc);
         setInfoTotalVitrina(infoVitrina);
         setUpdatedCity(infoVitrina.ciudadDeVitrina);
+        setIsDataFetched(true);
       }
     } catch (error) {
       toast({
@@ -86,6 +90,7 @@ export default function EstaVitrina() {
         isClosable: true,
       });
     } finally {
+      setIsLoading(false);
       onSecondModalClose();
     }
   };
@@ -395,6 +400,11 @@ export default function EstaVitrina() {
     }
   };
 
+  // Show loading spinner while data is being fetched
+  if (isLoading && !isDataFetched) {
+    return <LoadingComponent />;
+  }
+
   return (
     <Box
       bg={"mainBg"}
@@ -405,7 +415,25 @@ export default function EstaVitrina() {
       gap={"20px"}
       p={"20px"}
       overflowY={"scroll"}
+      position="relative"
     >
+      {isLoading && (
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          bg="rgba(255, 255, 255, 0.7)"
+          zIndex="10"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <LoadingComponent />
+        </Box>
+      )}
+
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
         <Box
           display={"flex"}
@@ -444,6 +472,7 @@ export default function EstaVitrina() {
               fontSize={"14px"}
               fontWeight={"400"}
               onClick={onFirstModalOpen}
+              isDisabled={isLoading}
             >
               Editar Vitrina
             </StandardButton>
@@ -468,6 +497,7 @@ export default function EstaVitrina() {
               fontSize={"14px"}
               fontWeight={"400"}
               onClick={onSecondModalOpen}
+              isDisabled={isLoading}
             >
               Eliminar Vitrina
             </StandardButton>
@@ -476,9 +506,9 @@ export default function EstaVitrina() {
               onOpen={onSecondModalOpen}
               onClose={onSecondModalClose}
               icon={<WarningIcon />}
-              text={"¿Estás seguro que desea eliminar  esta vitrina?"}
+              text={"¿Estás seguro de que deseas eliminar esta vitrina?"}
               text2={
-                "Esta acción eliminará permanentemente los registros de esta vitrina de tu sistema"
+                "Esta acción eliminará la vitrina permanentemente de tu sistema"
               }
               colorText2={"red.100"}
               buttonText={"Continuar"}
@@ -522,6 +552,7 @@ export default function EstaVitrina() {
           fontWeight={"400"}
           onClick={onThirdModalOpen}
           leftIcon={<PlusCircleIcon />}
+          isDisabled={isLoading}
         >
           Agregar Asesor
         </StandardButton>

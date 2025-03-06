@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -22,6 +22,8 @@ ChartJS.register(
 
 const DistribucionVentas = ({ distribucionVentas }) => {
   const [chartVisible, setChartVisible] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,7 +33,52 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerWidth(containerRef.current.offsetWidth);
+
+      const observer = new ResizeObserver(() => {
+        if (containerRef.current) {
+          setContainerWidth(containerRef.current.offsetWidth);
+        }
+      });
+
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    }
+
+    return undefined;
+  }, []);
+
+  useEffect(() => {
+    if (containerWidth > 0 && containerWidth < 310) {
+      console.log(`Ancho crítico detectado: ${containerWidth}px`);
+    }
+  }, [containerWidth]);
+
   const safeData = Array.isArray(distribucionVentas) ? distribucionVentas : [];
+
+  if (safeData.length === 0) {
+    return (
+      <Box
+        width="100%"
+        height="100%"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="grey.placeholder">Sin información</Text>
+      </Box>
+    );
+  }
+
+  const isNarrowCriticalWidth = containerWidth > 0 && containerWidth < 310;
+
+  const minWidthNeeded = Math.max(320, safeData.length * 25);
+
+  const needsScroll =
+    isNarrowCriticalWidth ||
+    (minWidthNeeded > containerWidth && containerWidth > 0);
 
   const chartData = {
     labels: safeData.map((d) => d.hora),
@@ -40,9 +87,21 @@ const DistribucionVentas = ({ distribucionVentas }) => {
         data: safeData.map((d) => d.valor),
         backgroundColor: "rgba(255, 99, 132, 0.7)",
         borderSkipped: false,
-        borderRadius: 20,
-        barPercentage: 0.7,
-        categoryPercentage: 0.9,
+        borderRadius: isNarrowCriticalWidth
+          ? 5
+          : safeData.length > 15
+            ? 10
+            : 20,
+        barPercentage: isNarrowCriticalWidth
+          ? 0.4
+          : safeData.length > 15
+            ? 0.5
+            : 0.6,
+        categoryPercentage: isNarrowCriticalWidth
+          ? 0.6
+          : safeData.length > 15
+            ? 0.7
+            : 0.8,
         hoverBackgroundColor: "rgba(230, 15, 15, 0.8)",
       },
     ],
@@ -51,12 +110,12 @@ const DistribucionVentas = ({ distribucionVentas }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    barThickness: 25,
+    barThickness: isNarrowCriticalWidth ? 10 : "flex",
     animation: false,
     layout: {
       padding: {
-        left: 10,
-        right: 10,
+        left: 5,
+        right: isNarrowCriticalWidth ? 30 : 15,
         top: 10,
         bottom: 20,
       },
@@ -78,7 +137,7 @@ const DistribucionVentas = ({ distribucionVentas }) => {
         beginAtZero: true,
         min: 0,
         max: 100,
-        grace: "10%",
+        grace: "5%",
         title: {
           display: false,
         },
@@ -103,45 +162,102 @@ const DistribucionVentas = ({ distribucionVentas }) => {
         grid: {
           display: false,
         },
+        bounds: "data",
         ticks: {
           font: {
-            size: 9,
+            size: 8,
           },
-          maxRotation: 0,
-          autoSkip: false,
-          maxTicksLimit: 24,
-          padding: 5,
+          maxRotation: isNarrowCriticalWidth ? 60 : 45,
+          minRotation: isNarrowCriticalWidth ? 45 : 0,
+          autoSkip: true,
+          maxTicksLimit: isNarrowCriticalWidth
+            ? Math.min(8, safeData.length)
+            : safeData.length > 15
+              ? 12
+              : 24,
+          padding: 2,
+          align: "center",
         },
-        offset: true,
+        offset: false,
+        afterFit: (scale) => {
+          if (isNarrowCriticalWidth) {
+            scale.width = scale.width * 1.2;
+            scale.paddingRight = 35;
+          } else {
+            scale.width = scale.width * 1.1;
+            scale.paddingRight = 20;
+          }
+        },
       },
     },
   };
 
-  if (!Array.isArray(distribucionVentas) || distribucionVentas.length === 0) {
-    return (
-      <Box
-        width="100%"
-        height="100%"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text color="grey.placeholder">Sin información</Text>
-      </Box>
-    );
-  }
-
   return (
     <Box
+      ref={containerRef}
       width="100%"
       minW={"300px"}
       height="100%"
       display="flex"
       alignItems="flex-start"
       justifyContent="flex-start"
+      overflow={needsScroll ? "auto" : "hidden"}
+      position="relative"
+      sx={{
+        "&::-webkit-scrollbar": {
+          height: "3px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "rgba(0,0,0,0.2)",
+          borderRadius: "3px",
+        },
+      }}
     >
-      <Box width="100%" height="100%">
-        {chartVisible && <Bar data={chartData} options={options} />}
+      <Box
+        width={
+          needsScroll
+            ? isNarrowCriticalWidth
+              ? "350px"
+              : `${minWidthNeeded}px`
+            : "100%"
+        }
+        height="100%"
+        pb="5px"
+        position="relative"
+        pl="5px"
+        pr={isNarrowCriticalWidth ? "40px" : "20px"}
+      >
+        {chartVisible && (
+          <Bar
+            data={chartData}
+            options={{
+              ...options,
+
+              ...(isNarrowCriticalWidth && {
+                elements: {
+                  bar: {
+                    borderWidth: 0,
+                  },
+                },
+              }),
+              layout: {
+                ...options.layout,
+                padding: {
+                  ...options.layout.padding,
+                  right: isNarrowCriticalWidth ? 40 : 25,
+                },
+              },
+              plugins: {
+                ...options.plugins,
+                beforeInit: (chart) => {
+                  chart.canvas.dispatchEvent(
+                    new Event("chartjs-render-complete"),
+                  );
+                },
+              },
+            }}
+          />
+        )}
       </Box>
     </Box>
   );

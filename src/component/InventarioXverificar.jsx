@@ -17,6 +17,10 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
         display={"flex"}
         justifyContent={"flex-start"}
         gap={"1rem"}
+        position={"sticky"}
+        top={0}
+        backgroundColor={"white"}
+        zIndex={2000}
       >
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box
@@ -81,7 +85,7 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
       </Box>
 
       <Box
-        position={"relative"} 
+        position={"relative"}
         flex={1}
         display={"flex"}
         flexDirection={"column"}
@@ -90,9 +94,9 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
         className={"scroll-wrapper"}
         gap={3}
         marginInline={10}
-        overflow={"auto"} 
-        maxH={"calc(100% - 80px)"} 
-        minH={"150px"} 
+        overflow={"auto"}
+        maxH={"calc(100% - 80px)"}
+        minH={"150px"}
       >
         {visitasNoVerificadas?.map((visita, index) => (
           <Box

@@ -527,7 +527,7 @@ export default function TablaProductosBodega({
         )}
         <Contenedor>
           <thead className="">
-            <tr className="">
+            <tr className="ProdTr">
               {HEADERS.map((name, index) => (
                 <th key={index} className="ProdTh">
                   {name === "Código" ||

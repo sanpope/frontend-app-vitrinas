@@ -59,20 +59,23 @@ export default function Asesores() {
 
   const getVitrinasInfo = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina`;
-    await axios
-      .get(url, {
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/xml; charset=utf-8",
         },
-      })
-      .then((response) => {
-        const xmlDoc = parseData(response.data);
-        setCiudadesVitrinas(vitrinasData(xmlDoc));
-      })
-      .catch((error) => {
-        console.error("Error fetching the XML data: ", error);
-        return error;
       });
+
+      const xmlDoc = parseData(response.data);
+      setCiudadesVitrinas(vitrinasData(xmlDoc));
+    } catch (error) {
+      console.error("Error fetching the XML data: ", error);
+      return error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const vitrinasData = (xml) => {
@@ -97,6 +100,7 @@ export default function Asesores() {
   const getAsesoresInfo = async () => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/asesores`;
     try {
+      setIsLoading(true);
       const response = await axios.get(url, {
         headers: {
           Accept: "application/xml",
@@ -126,6 +130,8 @@ export default function Asesores() {
       }
     } catch (error) {
       console.error("Error fetching XML data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -520,6 +526,7 @@ export default function Asesores() {
             handleSortingClick={handleSortingClick}
             setCurrentAsesor={setCurrentAsesor}
             ciudadesVitrina={ciudadesVitrinas}
+            isLoading={isLoading}
           />
         }
       </Box>
@@ -552,9 +559,9 @@ export default function Asesores() {
           onOpen={onThirdModalOpen}
           onClose={onThirdModalClose}
           icon={<WarningIcon />}
-          text={"¿Estás seguro que desea eliminar a este Asesor?"}
+          text={"¿Estás seguro de que deseas eliminar este asesor?"}
           text2={
-            "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
+            "Esta acción eliminará al asesor permanentemente de tu sistema"
           }
           colorText2={"red.100"}
           buttonText={"Continuar"}

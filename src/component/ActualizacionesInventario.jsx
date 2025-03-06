@@ -69,7 +69,7 @@ export default function ActualizacionesInventario({
             w={"100%"}
             display={"flex"}
             flexDirection={"column"}
-            justifyContent={"center"}
+            justifyContent={"space-between"}
             alignItems={"flex-start"}
             p={1}
             gap={1}

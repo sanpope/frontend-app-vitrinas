@@ -4,7 +4,6 @@ import React from "react";
 export const MIN_TABLE_HEIGHT = 400;
 
 export default function Contenedor({ children }) {
-  // Extraer thead y tbody del children
   const tableHead = React.Children.toArray(children).find(
     (child) => child.type === "thead",
   );
@@ -25,7 +24,6 @@ export default function Contenedor({ children }) {
       overflow="hidden"
       className="table-outer-container"
     >
-      {/* Header con fondo negro y sin scroll */}
       <Box
         position="relative"
         zIndex="2"
@@ -38,7 +36,6 @@ export default function Contenedor({ children }) {
         <table className="content-table header-table">{tableHead}</table>
       </Box>
 
-      {/* Cuerpo con scroll */}
       <Box
         overflow="auto"
         height="calc(100% - 60px)"

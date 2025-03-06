@@ -2,6 +2,7 @@ import { Box, Text, useMediaQuery } from "@chakra-ui/react";
 import React, { useMemo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Container from "../component/Container";
+import ScrollContainer from "../component/ScrollContainer";
 import LoadingComponent from "../component/LoadingComponent";
 import ResumenVentaMesAnterior from "../component/ResumenVentaMesAnterior";
 import DistribucionVentas from "../component/DistribucionVentas";
@@ -441,14 +442,7 @@ export default function Resumen() {
               <LoadingComponent />
             ) : topTotalCategorias !== null &&
               topTotalCategorias?.length > 0 ? (
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                maxH={"160px"}
-                overflowY={"scroll"}
-                w={"100%"}
-                className="scroll-wrapper"
-              >
+              <ScrollContainer>
                 {topTotalCategorias?.map((cat, index) => (
                   <TopCategoriaItem
                     key={index}
@@ -460,7 +454,7 @@ export default function Resumen() {
                     catPercentage={cat.porcentaje}
                   />
                 ))}
-              </Box>
+              </ScrollContainer>
             ) : (
               <Box
                 w={"100%"}
@@ -512,7 +506,7 @@ export default function Resumen() {
               h={"100%"}
               display={"flex"}
               justifyContent={"center"}
-              alignItems={"flex-start"}
+             
             >
               {totalProductosPocoStock === null ? (
                 <LoadingComponent />
