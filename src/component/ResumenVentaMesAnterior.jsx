@@ -38,8 +38,6 @@ const mesesAbreviados = [
 ];
 
 const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
-  console.log(resumenVentaMesAnterior);
-
   if (!resumenVentaMesAnterior || resumenVentaMesAnterior.length === 0) {
     return (
       <Box
@@ -60,13 +58,13 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
   const mesActual = fechaActual.getMonth() + 1;
   const curretYear = fechaActual.getFullYear();
 
-  // Crear un array donde cada elemento tenga la etiqueta y su valor correspondiente
+ 
   const datosProcesados = resumenVentaMesAnterior
     .map((d) => {
       let month = mesesAbreviados[Number(d.mes) - 1];
       let isLastYear = Number(d.mes) > mesActual;
 
-      // Si el mes es Diciembre y estamos en un mes distinto, es del año pasado
+      
       if (d.mes === "12" && mesActual !== 12) {
         isLastYear = true;
       }
@@ -85,7 +83,7 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
     })
     .reverse();
 
-  // Extraer las etiquetas y valores manteniendo la correspondencia
+ 
   const monthLabels = datosProcesados.map((d) => d.etiqueta);
 
   const chartData = {

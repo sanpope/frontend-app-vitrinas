@@ -269,7 +269,6 @@ export default function DespacharProdsBod({
         hanldeOnCloseDespahar();
       })
       .catch((error) => {
-        console.log(error);
         toast({
           status: "error",
           description: "Error despachando los productos",

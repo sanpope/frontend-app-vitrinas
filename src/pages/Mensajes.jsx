@@ -103,7 +103,6 @@ export default function Mensajes() {
         },
       );
       if (response.status === 200 && response.data) {
-        console.log("mensajes xmlData: ", response.data);
         const xmlDoc = parseData(response.data);
         dispatch(setMensajesVitrina(getMensajes(xmlDoc)));
       }

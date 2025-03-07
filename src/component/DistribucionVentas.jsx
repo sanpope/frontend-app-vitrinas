@@ -87,21 +87,17 @@ const DistribucionVentas = ({ distribucionVentas }) => {
         data: safeData.map((d) => d.valor),
         backgroundColor: "rgba(255, 99, 132, 0.7)",
         borderSkipped: false,
-        borderRadius: isNarrowCriticalWidth
-          ? 5
-          : safeData.length > 15
-            ? 10
-            : 20,
+        borderRadius: isNarrowCriticalWidth ? 4 : safeData.length > 15 ? 9 : 18,
         barPercentage: isNarrowCriticalWidth
-          ? 0.4
+          ? 0.3
           : safeData.length > 15
-            ? 0.5
-            : 0.6,
+            ? 0.4
+            : 0.5,
         categoryPercentage: isNarrowCriticalWidth
-          ? 0.6
+          ? 0.5
           : safeData.length > 15
-            ? 0.7
-            : 0.8,
+            ? 0.6
+            : 0.7,
         hoverBackgroundColor: "rgba(230, 15, 15, 0.8)",
       },
     ],
@@ -110,11 +106,11 @@ const DistribucionVentas = ({ distribucionVentas }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    barThickness: isNarrowCriticalWidth ? 10 : "flex",
+    barThickness: isNarrowCriticalWidth ? 8 : "flex",
     animation: false,
     layout: {
       padding: {
-        left: 5,
+        left: 0,
         right: isNarrowCriticalWidth ? 30 : 15,
         top: 10,
         bottom: 20,
@@ -127,6 +123,7 @@ const DistribucionVentas = ({ distribucionVentas }) => {
       tooltip: {
         enabled: true,
         displayColors: false,
+        bodyColor: "rgb(144, 238, 0)",
         callbacks: {
           label: (context) => `${context.parsed.y}%`,
         },
@@ -137,7 +134,7 @@ const DistribucionVentas = ({ distribucionVentas }) => {
         beginAtZero: true,
         min: 0,
         max: 100,
-        grace: "5%",
+        grace: "3%",
         title: {
           display: false,
         },
@@ -151,7 +148,7 @@ const DistribucionVentas = ({ distribucionVentas }) => {
             return "100%";
           },
           font: {
-            size: 9,
+            size: 8,
           },
         },
         grid: {
@@ -167,14 +164,14 @@ const DistribucionVentas = ({ distribucionVentas }) => {
           font: {
             size: 8,
           },
-          maxRotation: isNarrowCriticalWidth ? 60 : 45,
-          minRotation: isNarrowCriticalWidth ? 45 : 0,
+          maxRotation: 45,
+          minRotation: 45,
           autoSkip: true,
           maxTicksLimit: isNarrowCriticalWidth
             ? Math.min(8, safeData.length)
             : safeData.length > 15
-              ? 12
-              : 24,
+              ? 10
+              : 22,
           padding: 2,
           align: "center",
         },
@@ -196,7 +193,6 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     <Box
       ref={containerRef}
       width="100%"
-      minW={"300px"}
       height="100%"
       display="flex"
       alignItems="flex-start"
@@ -212,6 +208,7 @@ const DistribucionVentas = ({ distribucionVentas }) => {
           borderRadius: "3px",
         },
       }}
+     
     >
       <Box
         width={

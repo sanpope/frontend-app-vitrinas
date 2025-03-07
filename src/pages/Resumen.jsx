@@ -474,11 +474,11 @@ export default function Resumen() {
         <Container
           height={ContainerHeight + "px"}
           minHeight={"215px"}
-          // width={"100%"}
+          width={"100%"}
           title={"Distribución diaria de ventas"}
           icon={<ShippingTimed />}
           children={
-            <Box display={"flex"} justifyContent={"center"}>
+            <Box display={"flex"} justifyContent={"center"} mx={-4} mt={-2}>
               {totalDistribucionVentaDiaria === null ? (
                 <LoadingComponent />
               ) : (
@@ -506,7 +506,6 @@ export default function Resumen() {
               h={"100%"}
               display={"flex"}
               justifyContent={"center"}
-             
             >
               {totalProductosPocoStock === null ? (
                 <LoadingComponent />

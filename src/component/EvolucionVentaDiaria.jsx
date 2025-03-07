@@ -80,7 +80,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
             ? "rgba(0, 0, 0, 1)"
             : "rgba(230, 15, 15, 1)";
         },
-        borderWidth: 2,
+        borderWidth: 3,
         pointRadius: 3,
         pointHoverRadius: 8,
         pointStyle: "circle",

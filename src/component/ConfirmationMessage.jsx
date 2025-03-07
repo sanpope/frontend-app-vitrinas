@@ -31,7 +31,6 @@ export default function ConfirmationMessage({
   isLoading,
 }) {
   const handleClick = async () => {
-    console.log(focusRow);
     await funcConfirmar(focusRow);
     onClose();
   };

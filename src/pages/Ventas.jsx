@@ -167,7 +167,7 @@ export default function Ventas() {
           "Content-Type": "application/xml",
         },
       });
-      console.log("Parcial: ", response);
+
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
@@ -181,7 +181,6 @@ export default function Ventas() {
         setDisplayedArticulos(currentTable);
       }
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: "Error al cargar los datos. Intente nuevamente",
@@ -207,7 +206,7 @@ export default function Ventas() {
           "Content-Type": "application/xml",
         },
       });
-      console.log("Total: ", response);
+
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
         const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
@@ -229,7 +228,7 @@ export default function Ventas() {
         setDisplayedArticulos(ventas);
       }
     } catch (error) {
-      console.log(error);
+    
       toast({
         title: "Error",
         description: "Error al cargar los datos. Intente nuevamente",

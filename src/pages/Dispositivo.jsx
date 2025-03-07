@@ -66,7 +66,7 @@ export default function Dispositivo() {
 
       if (response.status === 200) {
         const xmlDoc = parseData(response.data);
-        console.log("datos parseados: ", parseData(xmlDoc));
+
         setInfoDispositivo(dispositivoData(xmlDoc));
         setDispositivosPendientes(false);
       }
@@ -102,7 +102,7 @@ export default function Dispositivo() {
       if (response.status === 200) {
         const xmlDoc = parseData(response.data);
         const pendientes = dispositivosPendientesData(xmlDoc);
-        console.log("Dispositivos Pendientes: ", pendientes);
+
         setInfoDispPend(pendientes);
       }
     } catch (error) {
@@ -198,7 +198,6 @@ export default function Dispositivo() {
   };
 
   const dispositivosPendientesData = (xmlDoc) => {
-    console.log(xmlDoc);
     const dispositivosElements = xmlDoc?.getElementsByTagName("dispositivo");
 
     const dispositivos = [];
@@ -235,8 +234,7 @@ export default function Dispositivo() {
         "Content-Type": "application/x-www-form-urlencoded",
         "codigo-aplicacion": codApp.toString(),
       };
-      console.log("Código aprobar solicitud ", codApp.toString());
-
+     
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo/vinculacion/solicitud`,
         null,
@@ -251,7 +249,7 @@ export default function Dispositivo() {
           position: "top-right",
           isClosable: true,
         });
-        console.log(response.data);
+
         savingDispositivoData();
         setDispositivosPendientes(false);
       }

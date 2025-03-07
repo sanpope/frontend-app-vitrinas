@@ -203,7 +203,6 @@ export default function Asesores() {
 
   const Busqueda = (textToSearch) => {
     let result = tablaAsesores?.filter((element) => {
-      console.log(tablaAsesores);
       return (
         element.nombre
           .toString()
@@ -365,7 +364,6 @@ export default function Asesores() {
       );
 
       if (response.status == 200 && response.data) {
-        console.log(asesorActualizado);
         setDisplayedArticulos((prev) => {
           const copy = [...prev];
           const index = copy.findIndex(
@@ -437,7 +435,6 @@ export default function Asesores() {
           },
         },
       );
-      console.log(response);
 
       if (response.status == 200) {
         setDisplayedArticulos((prev) => {

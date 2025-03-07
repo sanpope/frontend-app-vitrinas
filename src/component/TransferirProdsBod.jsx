@@ -463,7 +463,7 @@ export default function TransferirProdsBod({
 
   const handleSelectHacia = (e) => {
     const value = e.target.value;
-    console.log("Hacia linea 502", value);
+
     setHacia(value);
   };
 

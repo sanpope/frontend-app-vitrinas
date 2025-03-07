@@ -243,7 +243,6 @@ export default function HomePage() {
   };
 
   const getDispositivosAveriados = (xml) => {
-    console.log(xml);
     const dispositivosArr = [];
 
     if (!xml) {
