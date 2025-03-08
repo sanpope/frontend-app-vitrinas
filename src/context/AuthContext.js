@@ -322,14 +322,6 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     setUser(null);
     setUserInfo(null);
-
-    // toast({
-    //   title: "Sesión cerrada",
-    //   description: "Has cerrado sesión exitosamente.",
-    //   status: "info",
-    //   duration: 3000,
-    //   isClosable: true,
-    // });
   };
 
   const value = {

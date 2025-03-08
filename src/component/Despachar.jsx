@@ -142,17 +142,16 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
     setBusqueda(e);
   };
 
-  const handleCheck = (producto) => {
-    const isChecked = activeProdcs.find(
-      (item) => item.codigo === producto.codigo,
-    );
-    if (isChecked) {
-      deleteProductFromList(producto);
-    } else {
-      const nuevoProducto = { ...producto, cantidad: 1 };
-      setActiveProdcs((prev) => [...prev, nuevoProducto]);
-    }
-  };
+  const handleCheck = useCallback((producto) => {
+    setActiveProdcs((prev) => {
+      const exists = prev.some((item) => item.codigo === producto.codigo);
+      if (exists) {
+        return prev.filter((item) => item.codigo !== producto.codigo);
+      } else {
+        return [...prev, { ...producto, cantidad: 1 }];
+      }
+    });
+  }, []);
 
   const setProdCantidad = (val, prod) => {
     const isProdExists = activeProdcs?.find(
@@ -178,14 +177,28 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
         copy.splice(index, 1);
         return copy;
       }
+      return prev;
     });
   };
 
   const ProductListItem = useCallback(
     (product, index) => {
-      const isActive = activeProdcs.find((currentProduct) => {
-        return currentProduct.codigo === product.codigo;
-      });
+      const isActive = activeProdcs.some(
+        (item) => item.codigo === product.codigo,
+      );
+
+      const onItemClick = (e) => {
+        e.stopPropagation();
+
+        if (isActive) {
+          setActiveProdcs((prev) =>
+            prev.filter((item) => item.codigo !== product.codigo),
+          );
+        } else {
+          setActiveProdcs((prev) => [...prev, { ...product, cantidad: 1 }]);
+        }
+      };
+
       return (
         <ListItem
           key={index}
@@ -194,12 +207,20 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
           borderColor="gray.200"
           py={"10px"}
         >
-          <Checkbox
-            checked={!!isActive}
-            setChecked={() => handleCheck(product)}
-            text={capitalizeFirstLetter(product.nombre)}
-            colorScheme={"#1890FF"}
-          />
+          <Box
+            display="flex"
+            alignItems="center"
+            onClick={onItemClick}
+            cursor="pointer"
+          >
+            <input
+              type="checkbox"
+              checked={isActive}
+              readOnly={true}
+              style={{ marginRight: "8px" }}
+            />
+            <Text>{capitalizeFirstLetter(product.nombre)}</Text>
+          </Box>
         </ListItem>
       );
     },

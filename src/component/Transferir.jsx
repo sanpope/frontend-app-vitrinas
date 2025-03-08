@@ -138,7 +138,7 @@ export default function Transferir({
           copy[index]["cantidad"] = val;
           return copy;
         }
-        return prev; // Aseguramos que siempre devuelva un valor
+        return prev;
       });
     }
   };
@@ -151,15 +151,20 @@ export default function Transferir({
         copy.splice(index, 1);
         return copy;
       }
-      return prev; // Aseguramos que siempre devuelva un valor
+      return prev;
     });
   };
 
   const ProductListItem = useCallback(
     (product, index) => {
-      const isActive = activeProdcs.find((currentProduct) => {
-        return currentProduct.codigo === product.codigo;
-      });
+      const isActive = activeProdcs.some(
+        (item) => item.codigo === product.codigo,
+      );
+
+      const onItemClick = (e) => {
+        e.stopPropagation();
+        handleCheck(product);
+      };
 
       return (
         <ListItem
@@ -169,16 +174,25 @@ export default function Transferir({
           borderColor="gray.200"
           py={"10px"}
         >
-          <Checkbox
-            checked={!!isActive}
-            setChecked={() => handleCheck(product)}
-            text={capitalizeFirstLetter(product.nombre)}
-            colorScheme={"#1890FF"}
-          />
+          <Box
+            display="flex"
+            alignItems="center"
+            onClick={onItemClick}
+            cursor="pointer"
+            w="100%"
+          >
+            <input
+              type="checkbox"
+              checked={isActive}
+              readOnly={true}
+              style={{ marginRight: "8px" }}
+            />
+            <Text>{capitalizeFirstLetter(product.nombre)}</Text>
+          </Box>
         </ListItem>
       );
     },
-    [activeProdcs],
+    [activeProdcs, handleCheck],
   );
 
   const transferirProdcs = async () => {
