@@ -20,21 +20,45 @@ import Dispositivo from "./pages/Dispositivo";
 import Mensajes from "./pages/Mensajes";
 import EstaVitrina from "./pages/EstaVitrina";
 import ModalVitrinas from "./pages/ModalVitrinas";
+import LoadingComponent from "./component/LoadingComponent";
 
 import HomeIcon from "./assets/images/HomeIcon";
 import StoreIcon from "./assets/images/StoreIcon";
 import WareHouseIcon from "./assets/images/WareHouseIcon";
 import BriefCaseIcon from "./assets/images/BriefCaseIcon";
 import MinusIcon from "./assets/images/minusIcon";
+import { useState, useEffect } from "react";
 
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (loading) {
+  useEffect(() => {
+    if (isAuthenticated && !loading) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    } else if (!loading) {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, loading]);
+
+  if (loading || isLoading) {
     return (
-      <div>
-        <Spinner size="md" />
-      </div>
+      <Box
+        position="fixed"
+        top="0"
+        left="0"
+        right="0"
+        bottom="0"
+        zIndex="9999"
+        bg="white"
+        opacity="1"
+      >
+        <LoadingComponent size="xl" text={"Cargando ..."} />
+      </Box>
     );
   }
 

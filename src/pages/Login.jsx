@@ -6,23 +6,35 @@ import StandardButton from "../component/ui/buttons/standard/index";
 import TextInput from "../component/ui/textInput";
 import LogoComplete from "../assets/images/logoComplete";
 import { useNavigate, useLocation } from "react-router-dom";
+import LoadingComponent from "../component/LoadingComponent";
 
 function Login() {
-   const toast = useToast();
+  const toast = useToast();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [check, setCheck] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { login, error, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isSubmitting) {
+      // Activamos el estado de redirección
+      setIsRedirecting(true);
+
       const from = location.state?.from?.pathname || "/";
-      navigate(from, { replace: true });
+
+      // Damos tiempo para mostrar el loader antes de navegar
+      // Este tiempo debería ser suficiente para que termine cualquier
+      // proceso de autenticación pendiente en AuthContext
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 1000);
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, isSubmitting, navigate, location]);
 
   const onChangeEmail = (e) => {
     setUser(e.trim());
@@ -36,15 +48,34 @@ function Login() {
     e.preventDefault();
 
     if (!user || !password) {
-      alert("Error", "Usuario y contraseña son requeridos");
+      toast({
+        title: "Error",
+        description: "Usuario y contraseña son requeridos",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
 
-    const success = await login(user, password, check);
+    setIsSubmitting(true);
+    try {
+      // Solo usamos el resultado del login de AuthContext
+      // El estado de AuthContext ya maneja la autenticación
+      await login(user, password, check);
 
-    if (!success && !check) {
-      setUser("");
-      setPassword("");
+      // No necesitamos setIsRedirecting aquí, lo haremos en el useEffect
+      // que observa isAuthenticated
+    } catch (error) {
+      toast({
+        title: "Error de inicio de sesión",
+        description: "Hubo un problema al iniciar sesión",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -56,6 +87,43 @@ function Login() {
       height={"100vh"}
       pos="relative"
     >
+      {/* Loader de redirección */}
+      {isRedirecting && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          zIndex="9999"
+          bg="white"
+          opacity="1"
+        >
+          <LoadingComponent size="xl" />
+          <Box textAlign="center" mt="-12" fontSize="lg" fontWeight="medium">
+            Cargando...
+          </Box>
+        </Box>
+      )}
+
+      {/* Loader del AuthContext */}
+      {loading && !isRedirecting && (
+        <Box
+          position="fixed"
+          top="0"
+          left="0"
+          right="0"
+          bottom="0"
+          zIndex="9998"
+          bg="white"
+          opacity="1"
+        >
+          <LoadingComponent size="xl" />
+          <Box textAlign="center" mt="-12" fontSize="lg" fontWeight="medium">
+            Verificando credenciales...
+          </Box>
+        </Box>
+      )}
       <Box
         pos="absolute"
         display={{ base: "flex", lg: "none" }}
@@ -128,6 +196,7 @@ function Login() {
               onChange={(e) => onChangeEmail(e)}
               error={error}
               rounded="md"
+              isDisabled={isSubmitting}
             />
 
             <Box w="100%">
@@ -138,6 +207,7 @@ function Login() {
                 onChange={(e) => onChangePassword(e)}
                 error={error}
                 type="password"
+                isDisabled={isSubmitting}
               />
             </Box>
 
@@ -154,6 +224,7 @@ function Login() {
                 value={check}
                 onChange={setCheck}
                 defaultChecked={check}
+                isDisabled={isSubmitting}
               />
               <Text>Recordarme</Text>
             </Box>
@@ -172,7 +243,8 @@ function Login() {
                 borderRadius="30px"
                 w="fit-content"
                 type={"submit"}
-                isLoading={loading}
+                isLoading={isSubmitting}
+                isDisabled={loading || isRedirecting}
                 onClick={handleLoginAdmin}
               >
                 Iniciar sesión

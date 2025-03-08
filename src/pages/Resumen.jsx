@@ -478,7 +478,7 @@ export default function Resumen() {
           title={"Distribución diaria de ventas"}
           icon={<ShippingTimed />}
           children={
-            <Box display={"flex"} justifyContent={"center"} mx={-4} mt={-2}>
+            <Box display={"flex"} justifyContent={"center"} mx={-4} mt={-3}>
               {totalDistribucionVentaDiaria === null ? (
                 <LoadingComponent />
               ) : (
