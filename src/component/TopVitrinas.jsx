@@ -44,8 +44,8 @@ const TopVitrinas = ({
   };
 
   return (
-    <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-      <Box h={"50%"} display={{ base: "none", sm: "inline-flex" }}>
+    <Box display={"flex"} justifyContent={"center"} alignItems={"center"} zIndex={1}>
+      <Box h={"45%"} display={{ base: "none", sm: "inline-flex" }}>
         {topVitrinas !== null ? (
           <Doughnut data={chartData} options={options} />
         ) : (

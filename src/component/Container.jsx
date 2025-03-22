@@ -20,18 +20,24 @@ export default function Container({
   hasScroll = false,
   ...props
 }) {
+  const isChrome =
+    typeof navigator !== "undefined" &&
+    /Chrome/.test(navigator.userAgent) &&
+    /Google Inc/.test(navigator.vendor);
+
   return (
     <Box
       position={"relative"}
       bg={bg}
       borderRadius={"20px"}
       p={CONTAINER_PADDING + "px"}
+      paddingBottom={CONTAINER_PADDING}
       display="flex"
       flexDir={"column"}
       width={width}
       className={className}
       {...props}
-      minH={"150px"}
+      minH={"220px"}
       boxSizing="border-box"
       overflow={overflow}
     >
@@ -51,7 +57,7 @@ export default function Container({
               color={color}
               whiteSpace={withLineBreaks ? "pre-line" : "normal"}
               lineHeight={{ base: "1.5", lg: lineHeight }}
-              noOfLines={2}
+              noOfLines={1}
             >
               {title}
             </Text>
@@ -64,15 +70,29 @@ export default function Container({
         height={heightChildren}
         w={"100%"}
         p={paddingChildren}
-        sx={
+        pb={
           hasScroll
+            ? isChrome
+              ? "20px !important"
+              : "0"
+            : paddingChildren + 10
+        }
+        className={hasScroll ? "scroll-container-parent" : ""}
+        sx={{
+          ...(isChrome && hasScroll
             ? {
-                "& .scroll-wrapper": {
-                  paddingBottom: "10px",
+                paddingBottom: "20px !important",
+                ".scroll-wrapper": {
+                  marginBottom: "5px !important",
+                  paddingBottom: "10px !important",
                 },
               }
-            : {}
-        }
+            : {}),
+
+          ".scroll-wrapper": {
+            marginBottom: hasScroll ? "10px" : "0px",
+          },
+        }}
       >
         {children}
       </Box>

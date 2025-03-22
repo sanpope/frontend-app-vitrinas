@@ -4,6 +4,7 @@ import React from "react";
 export default function TopProductoItem({ prodName, prodPercentage }) {
   return (
     <Box
+      w={"100%"}
       display={"flex"}
       flexDirection={{ base: "column", sm: "row" }}
       justifyContent={"space-between"}
@@ -16,15 +17,11 @@ export default function TopProductoItem({ prodName, prodPercentage }) {
       <Box
         display={"flex"}
         justifyContent={"flex-end"}
+        alignSelf={"flex-end"}
         borderLeftWidth={"2px"}
         borderLeftColor={"mainBg"}
       >
-        <Text
-          w={"50px"}
-          textStyle={"RobotoBodyBold"}
-          textAlign={"rigth"}
-          ml={1}
-        >
+        <Text minW={"40px"} textStyle={"RobotoBodyBold"} textAlign={"end"}>
           {prodPercentage}%
         </Text>
       </Box>

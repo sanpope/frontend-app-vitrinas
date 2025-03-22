@@ -22,12 +22,7 @@ export default function TopCategoriaItem({ icon, catName, catPercentage }) {
         borderLeftWidth={"2px"}
         borderLeftColor={"mainBg"}
       >
-        <Text
-          w={"50px"}
-          textStyle={"RobotoBodyBold"}
-          textAlign={"rigth"}
-          ml={1}
-        >
+        <Text minW={"40px"} textStyle={"RobotoBodyBold"} textAlign={"end"}>
           {catPercentage}%
         </Text>
       </Box>

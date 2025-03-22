@@ -1,10 +1,12 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
+import useNormalize from "../hooks/useNormalize";
 
 const COLORS = ["#000000", "#555555", "#BBBBBB"];
 const GRAY_COLOR = "#BBBBBB";
 
 export default function TopCategoriaItem({ topVitrinas }) {
+  const normalize = useNormalize();
   return (
     <>
       {topVitrinas != null ? (
@@ -15,20 +17,22 @@ export default function TopCategoriaItem({ topVitrinas }) {
           flexDirection={"column"}
           justifyContent={"space-around"}
           alignItems={"center"}
-          gap={"1.2rem"}
+          gap={normalize(0.2)}
         >
           {topVitrinas?.map((venta, index) => (
             <Box
               key={index}
               w={"100%"}
               display={"flex"}
-              justifyContent={"space-between"}
+              justifyContent={"space-around"}
               alignItems={"center"}
+              mr={"4px"}
             >
               <Box
                 display={"flex"}
                 justifyContent={"flex-start"}
                 alignItems={"center"}
+                minW={"145px"}
               >
                 <Box
                   bg={COLORS[index]}
@@ -38,7 +42,9 @@ export default function TopCategoriaItem({ topVitrinas }) {
                   mr={"10px"}
                   display={{ base: "none", md: "inline-flex" }}
                 ></Box>
-                <Text textStyle={"RobotoRegular"}>{venta.nombre}</Text>
+                <Text textStyle={"RobotoRegular"} pr={1}>
+                  {venta.nombre}
+                </Text>
               </Box>
               <Box
                 display={"flex"}

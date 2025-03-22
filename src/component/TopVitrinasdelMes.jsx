@@ -47,7 +47,7 @@ const TopVitrinasdelMes = ({
     <>
       {labels !== null && data !== null ? (
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
-          <Box h={"55%"} display={{ base: "none", sm: "inline-flex" }}>
+          <Box h={"45%"} display={{ base: "none", sm: "inline-flex" }}>
             <Doughnut data={chartData} options={options} />
           </Box>
         </Box>
@@ -59,9 +59,7 @@ const TopVitrinasdelMes = ({
           alignItems={"center"}
           justifyContent={"flex-start"}
         >
-          <Text color={"grey.placeholder"}>
-            Sin información.
-          </Text>
+          <Text color={"grey.placeholder"}>Sin información.</Text>
         </Box>
       )}
     </>

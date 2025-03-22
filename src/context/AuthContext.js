@@ -132,9 +132,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error iniciando sesión:", error);
-      setError(
-        "Usuario o contraseña inválidos, por favor ingresa las credenciales correctas!",
-      );
+      setError("");
 
       toast({
         title: "Error de inicio de sesión",

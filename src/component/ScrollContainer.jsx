@@ -14,9 +14,30 @@ export const ScrollContainer = ({
       w="100%"
       overflowY="scroll"
       className="scroll-wrapper"
+      marginBottom="15px"
+      css={{
+        "&:after": {
+          content: '""',
+          display: "block",
+          height: bottomPadding,
+          width: "100%",
+          position: "relative",
+        },
+      }}
       {...props}
+      
     >
-      <Box pb={bottomPadding}>{children}</Box>
+      {children}
+
+      <Box
+        height={bottomPadding}
+        width="100%"
+        display="block"
+        position="static"
+        zIndex="1"
+        backgroundColor="transparent"
+        marginTop="5px"
+      />
     </Box>
   );
 };

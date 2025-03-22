@@ -1,241 +1,137 @@
-import React, { useState, useEffect, useRef } from "react";
 import { Box, Text } from "@chakra-ui/react";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import React from "react";
+import useNormalize from "../hooks/useNormalize";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-);
-
-const DistribucionVentas = ({ distribucionVentas }) => {
-  const [chartVisible, setChartVisible] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setChartVisible(true);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth);
-
-      const observer = new ResizeObserver(() => {
-        if (containerRef.current) {
-          setContainerWidth(containerRef.current.offsetWidth);
-        }
-      });
-
-      observer.observe(containerRef.current);
-      return () => observer.disconnect();
-    }
-
-    return undefined;
-  }, []);
-
-  const safeData = Array.isArray(distribucionVentas) ? distribucionVentas : [];
-
-  if (safeData.length === 0) {
-    return (
-      <Box
-        width="100%"
-        height="100%"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text color="grey.placeholder">Sin información</Text>
-      </Box>
-    );
-  }
-
-  const isNarrowCriticalWidth = containerWidth > 0 && containerWidth < 310;
-
-  const minWidthNeeded = Math.max(200, safeData.length * 8);
-
-  const needsScroll =
-    isNarrowCriticalWidth ||
-    (minWidthNeeded > containerWidth && containerWidth > 0);
-
-  const chartData = {
-    labels: safeData.map((d) => d.hora),
-    datasets: [
-      {
-        data: safeData.map((d) => d.valor),
-        backgroundColor: "rgba(255, 99, 132, 0.7)",
-        borderSkipped: false,
-        borderRadius: isNarrowCriticalWidth ? 2 : safeData.length > 15 ? 5 : 10,
-
-        barPercentage: 1.2,
-        categoryPercentage: 0.99,
-        hoverBackgroundColor: "rgba(230, 15, 15, 0.8)",
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    barThickness: 5,
-    maxBarThickness: 20,
-    animation: false,
-    layout: {
-      padding: {
-        left: 0,
-        right: isNarrowCriticalWidth ? 15 : 5,
-        top: 10,
-        bottom: 20,
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: true,
-        displayColors: false,
-        callbacks: {
-          label: (context) => `${context.parsed.y}%`,
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        min: 0,
-        max: 100,
-        grace: "3%",
-        title: {
-          display: false,
-        },
-        ticks: {
-          callback: (value) => {
-            if (value < 5) return "0%";
-            if (value <= 20) return "20%";
-            if (value <= 40) return "40%";
-            if (value <= 60) return "60%";
-            if (value <= 80) return "80%";
-            return "100%";
-          },
-          font: {
-            size: 8,
-          },
-        },
-        grid: {
-          display: false,
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        bounds: "data",
-        ticks: {
-          font: {
-            size: 6,
-          },
-          maxRotation: 90,
-          minRotation: 90,
-          autoSkip: false,
-          maxTicksLimit: safeData.length,
-          padding: 0,
-          align: "center",
-        },
-        offset: false,
-
-        afterFit: (scale) => {
-          scale.width = scale.width * 0.7;
-          scale.paddingRight = 2;
-        },
-      },
-    },
-  };
-
+export default function DispositivosAveriados({ listadoDispositivos }) {
+  const normalize = useNormalize();
   return (
     <Box
-      ref={containerRef}
-      width="100%"
-      height="100%"
-      display="flex"
-      alignItems="flex-start"
-      justifyContent="flex-start"
-      overflow={needsScroll ? "auto" : "hidden"}
-      position="relative"
-      sx={{
-        "&::-webkit-scrollbar": {
-          height: "3px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "rgba(0,0,0,0.2)",
-          borderRadius: "3px",
-        },
-      }}
+      w={"100%"}
+      height={"100%"}
+      display={"flex"}
+      flexDirection={"column"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      gap={"0.5rem"}
     >
       <Box
-        width={
-          needsScroll
-            ? isNarrowCriticalWidth
-              ? "280px"
-              : `${minWidthNeeded}px`
-            : "100%"
-        }
-        height="100%"
-        pb="2px"
-        position="relative"
-        pl="2px"
-        pr={isNarrowCriticalWidth ? "10px" : "5px"}
+        w={"100%"}
+        display={"flex"}
+        justifyContent={"flex-start"}
+        gap={"1rem"}
+        position={"sticky"}
+        top={0}
+        zIndex={1}
+        backgroundColor={"white"}
       >
-        {chartVisible && (
-          <Bar
-            data={chartData}
-            options={{
-              ...options,
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Box
+            bg="#FFD80C"
+            w={normalize(0.7)}
+            maxW={3}
+            h={normalize(0.7)}
+            maxH={3}
+            borderRadius="full"
+            mr={normalize(0.2)}
+            display={"inline-flex"}
+          ></Box>
+          <Text>Con fallas</Text>
+        </Box>
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Box
+            bg="red"
+            w={normalize(0.7)}
+            maxW={3}
+            h={normalize(0.7)}
+            maxH={3}
+            borderRadius="full"
+            mr={normalize(0.2)}
+            display={"inline-flex"}
+          ></Box>
+          <Text>No operando</Text>
+        </Box>
+      </Box>
 
-              ...(isNarrowCriticalWidth && {
-                elements: {
-                  bar: {
-                    borderWidth: 0,
-                  },
-                },
-              }),
-              layout: {
-                ...options.layout,
-                padding: {
-                  ...options.layout.padding,
-                  right: isNarrowCriticalWidth ? 5 : 2,
-                },
-              },
-              plugins: {
-                ...options.plugins,
-                beforeInit: (chart) => {
-                  chart.canvas.dispatchEvent(
-                    new Event("chartjs-render-complete"),
-                  );
-                },
-              },
-            }}
-          />
-        )}
+      <Box
+        w={"100%"}
+        display={"flex"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        borderBottomWidth={2}
+        borderBottomColor={"mainBg"}
+      >
+        <Text textStyle={""} color={"grey.placeholder"} textAlign={"left"}>
+          Vitrina
+        </Text>
+        <Text
+          textStyle={""}
+          color={"grey.placeholder"}
+          textAlign={"left"}
+          w={"6rem"}
+        >
+          Desde
+        </Text>
+      </Box>
+
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        w={"100%"}
+        height={"100px"}
+        gap={3}
+        sx={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        {listadoDispositivos?.map((dispositivo, index) => (
+          <Box
+            key={index}
+            w={"100%"}
+            display={"flex"}
+            justifyContent={"flex-start"}
+            alignItems={"center"}
+            borderBottomWidth={2}
+            borderBottomColor={"mainBg"}
+          >
+            <Box
+              display={"flex"}
+              justifyContent={"flex-start"}
+              alignItems={"center"}
+            >
+              <Box
+                bg={
+                  dispositivo.detalleDeEstado === "Con fallas"
+                    ? "#FFD80C"
+                    : "red"
+                }
+                w={normalize(0.7)}
+                maxW={3}
+                h={normalize(0.7)}
+                maxH={3}
+                borderRadius="full"
+                mr={normalize(0.2)}
+                display={"inline-flex"}
+              ></Box>
+              <Text textStyle={"RobotoRegular"}>{dispositivo.vitrina}</Text>
+            </Box>
+            <Box flex={1} display={"flex"} justifyContent={"flex-end"}>
+              <Text
+                minW={"4.40rem"}
+                textStyle={"RobotoRegular"}
+                textAlign={"left"}
+                ml={2}
+                color={"grey.placeholder"}
+              >
+                {dispositivo.fechaDelProblema}
+              </Text>
+            </Box>
+          </Box>
+        ))}
       </Box>
     </Box>
   );
-};
-
-export default DistribucionVentas;
+}

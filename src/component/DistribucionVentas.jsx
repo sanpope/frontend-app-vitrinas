@@ -50,12 +50,6 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     return undefined;
   }, []);
 
-  useEffect(() => {
-    if (containerWidth > 0 && containerWidth < 310) {
-      console.log(`Ancho crítico detectado: ${containerWidth}px`);
-    }
-  }, [containerWidth]);
-
   const safeData = Array.isArray(distribucionVentas) ? distribucionVentas : [];
 
   if (safeData.length === 0) {
@@ -208,7 +202,6 @@ const DistribucionVentas = ({ distribucionVentas }) => {
           borderRadius: "3px",
         },
       }}
-     
     >
       <Box
         width={

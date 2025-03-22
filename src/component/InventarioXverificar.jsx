@@ -1,7 +1,9 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
+import useNormalize from "../hooks/useNormalize";
 
 export default function InventarioXverificar({ visitasNoVerificadas }) {
+  const normalize = useNormalize();
   return (
     <Box
       w={"100%"}
@@ -15,20 +17,22 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
       <Box
         w={"100%"}
         display={"flex"}
-        justifyContent={"flex-start"}
+        justifyContent={"center"}
         gap={"1rem"}
         position={"sticky"}
         top={0}
         backgroundColor={"white"}
-        zIndex={2000}
+        zIndex={1}
       >
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box
             bg="green"
-            w={3}
-            h={3}
+            w={normalize(0.7)}
+            maxW={3}
+            h={normalize(0.7)}
+            maxH={3}
             borderRadius="full"
-            mr={"10px"}
+            mr={normalize(0.2)}
             display={"inline-flex"}
           ></Box>
           <Text>Ingresos</Text>
@@ -36,10 +40,12 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box
             bg="red"
-            w={3}
-            h={3}
+            w={normalize(0.7)}
+            maxW={3}
+            h={normalize(0.7)}
+            maxH={3}
             borderRadius="full"
-            mr={"10px"}
+            mr={normalize(0.3)}
             display={"inline-flex"}
           ></Box>
           <Text>Retiros</Text>
@@ -47,10 +53,12 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <Box
             bg="#FFD80C"
-            w={3}
-            h={3}
+            w={normalize(0.7)}
+            maxW={3}
+            h={normalize(0.7)}
+            maxH={3}
             borderRadius="full"
-            mr={"10px"}
+            mr={normalize(0.3)}
             display={"inline-flex"}
           ></Box>
           <Text>Correcciones</Text>
@@ -91,12 +99,18 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
         flexDirection={"column"}
         w={"100%"}
         flexGrow={1}
-        className={"scroll-wrapper"}
         gap={3}
         marginInline={10}
         overflow={"auto"}
         maxH={"calc(100% - 80px)"}
         minH={"150px"}
+        sx={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
       >
         {visitasNoVerificadas?.map((visita, index) => (
           <Box
@@ -140,24 +154,30 @@ export default function InventarioXverificar({ visitasNoVerificadas }) {
               >
                 <Box
                   bg="green"
-                  w={3}
-                  h={3}
+                  w={normalize(0.7)}
+                  maxW={3}
+                  h={normalize(0.7)}
+                  maxH={3}
                   borderRadius="full"
                   display={"inline-flex"}
                 ></Box>
                 <Text>{visita.ingresos}</Text>
                 <Box
                   bg="red"
-                  w={3}
-                  h={3}
+                  w={normalize(0.7)}
+                  maxW={3}
+                  h={normalize(0.7)}
+                  maxH={3}
                   borderRadius="full"
                   display={"inline-flex"}
                 ></Box>
                 <Text>{visita.retiros}</Text>
                 <Box
                   bg="#FFD80C"
-                  w={3}
-                  h={3}
+                  w={normalize(0.7)}
+                  maxW={3}
+                  h={normalize(0.7)}
+                  maxH={3}
                   borderRadius="full"
                   display={"inline-flex"}
                 ></Box>

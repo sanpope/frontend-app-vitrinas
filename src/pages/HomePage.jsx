@@ -99,6 +99,7 @@ export default function HomePage() {
         setTotalCategorias(getTopCategorias(xmlDoc));
         setTopTotalProductos(getTopProductos(xmlDoc));
         setTotalDispAv(getDispositivosAveriados(xmlDoc));
+        console.log("Obteniendo Info: ", getDispositivosAveriados(xmlDoc));
         setTotalDespachos(getDespachosActuales(xmlDoc));
         setTotalVisiasNoVerif(getInventarioPorVerificar(xmlDoc));
       })
@@ -405,7 +406,7 @@ export default function HomePage() {
         md: CONTAINER_PADDING + "px",
       }}
       boxSizing="border-box"
-      overflow="hidden"
+      overflow="auto"
     >
       <Text textStyle={"RobotoTitleSemiBold"} color={"black"}>
         ¡Hola {name}, bienvenido! 👋🏻
@@ -417,10 +418,17 @@ export default function HomePage() {
           lg: "repeat(2, 1fr)",
           xl: "repeat(3, 1fr)",
         }}
-        gridGap={"1rem"}
+        gridGap={"1rem 0.5rem"}
         className="dashboard-grid-container"
-        overflow={{ base: "auto", xl: "hidden" }}
+        overflow={{ base: "auto", xl: "auto" }}
         maxHeight={{ base: "none", xl: "100%" }}
+        sx={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
       >
         <Container
           height={ContainerHeight + "px"}
@@ -521,10 +529,7 @@ export default function HomePage() {
                   h={"100%"}
                   justifyContent={{
                     base: "center",
-                    lg: "space-around",
                   }}
-                  gap={{ base: "0.5rem", lg: "1.2rem" }}
-                  p={1}
                   overflow={"hidden"}
                 >
                   <ItemsTopVitrinasdelMes
@@ -554,25 +559,22 @@ export default function HomePage() {
             topTotalVitrinas === null ? (
               <LoadingComponent />
             ) : topTotalVitrinas != null ? (
-              <Box w={"100%"} display={"flex"} overflow={"hidden"}>
-                <Box
-                  display={"flex"}
-                  flexDirection={"column"}
-                  justifyContent={{
-                    base: "center",
-                    lg: "space-around",
-                  }}
-                  gap={{ base: "0.5rem", lg: "1.2rem" }}
-                  width="100%"
-                >
-                  {topTotalVitrinas?.map((vitrina, index) => (
-                    <TopVitrinaItem
-                      index={index}
-                      vitrinaName={vitrina.nombre}
-                      vitrinaAmount={vitrina.venta}
-                    />
-                  ))}
-                </Box>
+              <Box
+                display={"flex"}
+                flexDirection={{ base: "column", sm: "row" }}
+                w={"100%"}
+                h={"100%"}
+                justifyContent={{
+                  base: "center",
+                }}
+                // gap={{ base: normalize(0.5) }}
+                overflow={"hidden"}
+              >
+                <ItemsTopVitrinasdelMes
+                  topVitrinas={
+                    topTotalVitrinas !== null ? topTotalVitrinas : null
+                  }
+                />
                 <TopVitrinas
                   topVitrinas={topTotalVitrinas ? topTotalVitrinas : null}
                 />
@@ -590,6 +592,7 @@ export default function HomePage() {
             )
           }
         />
+
         <Container
           height={ContainerHeight + "px"}
           width={{ base: "100%", lg: ContainerWidth + "px" }}
@@ -597,7 +600,6 @@ export default function HomePage() {
           minHeight="225px"
           title={"Top categorías"}
           icon={<StarIcon width={"1.5rem"} height={"1.5rem"} />}
-          paddingChildren={topTotalCategorias != null ? 0 : 1}
           hasScroll={true}
           children={
             <>
@@ -640,7 +642,6 @@ export default function HomePage() {
           title={"Top productos"}
           icon={<BoxesIcon width={"1.5rem"} height={"1.5rem"} />}
           heightChildren={topTotalProductos != null ? "auto" : "100%"}
-          paddingChildren={topTotalProductos != null ? 1 : 0}
           hasScroll={true}
           children={
             <>
@@ -678,13 +679,15 @@ export default function HomePage() {
           title={"Dispositivos averiados"}
           icon={<PhoneLaptopIcon width={"25px"} height={"25px"} />}
           heightChildren={totalDispAver != null ? "auto" : "100%"}
-          paddingChildren={totalDispAver != null ? 0 : 1}
+          hasScroll={true}
           children={
             <>
               {totalDispAver === null ? (
                 <LoadingComponent />
               ) : totalDispAver !== null ? (
-                <DispositivosAveriados listadoDispositivos={totalDispAver} />
+                <ScrollContainer>
+                  <DispositivosAveriados listadoDispositivos={totalDispAver} />
+                </ScrollContainer>
               ) : (
                 <Box
                   width={"100%"}
@@ -707,7 +710,7 @@ export default function HomePage() {
           title={"Despachos actuales"}
           icon={<TruckIcon width={"25px"} height={"25px"} />}
           heightChildren={totalDespachos != null ? "auto" : "100%"}
-          paddingChildren={totalDespachos != null ? 0 : 1}
+          hasScroll={true}
           children={
             <>
               {totalDespachos === null ? (
@@ -736,7 +739,6 @@ export default function HomePage() {
           title={"Inventario pendiente de verificar"}
           icon={<FileCheckIcon />}
           heightChildren={totalVisitasNoVerif != null ? "auto" : "100%"}
-          paddingChildren={totalVisitasNoVerif != null ? 1 : 0}
           hasScroll={true}
           children={
             <>

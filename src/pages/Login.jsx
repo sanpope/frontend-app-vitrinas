@@ -22,14 +22,10 @@ function Login() {
 
   useEffect(() => {
     if (isAuthenticated && !isSubmitting) {
-      // Activamos el estado de redirección
       setIsRedirecting(true);
 
       const from = location.state?.from?.pathname || "/";
 
-      // Damos tiempo para mostrar el loader antes de navegar
-      // Este tiempo debería ser suficiente para que termine cualquier
-      // proceso de autenticación pendiente en AuthContext
       setTimeout(() => {
         navigate(from, { replace: true });
       }, 1000);
@@ -60,12 +56,7 @@ function Login() {
 
     setIsSubmitting(true);
     try {
-      // Solo usamos el resultado del login de AuthContext
-      // El estado de AuthContext ya maneja la autenticación
       await login(user, password, check);
-
-      // No necesitamos setIsRedirecting aquí, lo haremos en el useEffect
-      // que observa isAuthenticated
     } catch (error) {
       toast({
         title: "Error de inicio de sesión",
@@ -87,7 +78,6 @@ function Login() {
       height={"100vh"}
       pos="relative"
     >
-      {/* Loader de redirección */}
       {isRedirecting && (
         <Box
           position="fixed"
@@ -106,7 +96,6 @@ function Login() {
         </Box>
       )}
 
-      {/* Loader del AuthContext */}
       {loading && !isRedirecting && (
         <Box
           position="fixed"

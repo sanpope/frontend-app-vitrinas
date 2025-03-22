@@ -110,13 +110,28 @@ const parseNumberSafely = (value) => {
   if (typeof value === "number") return value;
 
   if (typeof value === "string") {
+    if (/^\d{1,3}(\.\d{3})+$/.test(value)) {
+      const cleanValue = value.replace(/\./g, "");
+
+      return Number(cleanValue);
+    }
+
     let result = Number(value);
-    if (!isNaN(result)) return result;
+    if (!isNaN(result)) {
+      return result;
+    }
 
     const cleanValue = value.replace(/\./g, "").replace(/,/g, ".");
-
     result = Number(cleanValue);
-    if (!isNaN(result)) return result;
+    if (!isNaN(result)) {
+      return result;
+    }
+
+    const altCleanValue = value.replace(/,/g, ".");
+    result = Number(altCleanValue);
+    if (!isNaN(result)) {
+      return result;
+    }
   }
 
   return 0;
@@ -127,11 +142,11 @@ const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
   const mesActual = fechaActual.getMonth() + 1;
   const anioActual = fechaActual.getFullYear();
 
+  const valorMesActual = parseNumberSafely(ventaMesActual.valor);
+
   const ventasMesesAnterioresFiltradas = VentasMesAnterior.filter(
     (v) => v.mes !== mesActual.toString(),
   );
-
-  const valorMesActual = parseNumberSafely(ventaMesActual.valor);
 
   const ventasActualizadas = [
     {
@@ -139,17 +154,21 @@ const VentasMesesAnteriores = ({ VentasMesAnterior, ventaMesActual }) => {
       valor: valorMesActual,
       anio: anioActual,
     },
-    ...ventasMesesAnterioresFiltradas.map((v) => ({
-      ...v,
-      valor: parseNumberSafely(v.valor),
-      anio: v.mes <= mesActual ? anioActual : anioActual - 1,
-    })),
+    ...ventasMesesAnterioresFiltradas.map((v) => {
+      const valorProcesado = parseNumberSafely(v.valor);
+
+      return {
+        ...v,
+        valor: valorProcesado,
+        anio: v.mes <= mesActual ? anioActual : anioActual - 1,
+      };
+    }),
   ].slice(0, 12);
 
   const datosRevertidos = [...ventasActualizadas].reverse();
 
   const monthLabels = ventasActualizadas
-    .map((d, index) => {
+    .map((d) => {
       let month = mesesAbreviados[Number(d.mes) - 1];
       if (d.anio < anioActual) {
         month += `-${d.anio.toString().slice(-2)}`;
