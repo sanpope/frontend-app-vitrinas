@@ -197,6 +197,7 @@ function Login() {
                 error={error}
                 type="password"
                 isDisabled={isSubmitting}
+                isPassword={true}
               />
             </Box>
 

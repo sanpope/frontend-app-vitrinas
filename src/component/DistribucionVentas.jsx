@@ -23,7 +23,17 @@ ChartJS.register(
 const DistribucionVentas = ({ distribucionVentas }) => {
   const [chartVisible, setChartVisible] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [maxValueItem, setMaxValueItem] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(-1);
   const containerRef = useRef(null);
+
+  const rangosFijos = [
+    { rango: "0-6am", etiqueta: "0-6am", valor: 0 },
+    { rango: "6-10am", etiqueta: "6-10am", valor: 0 },
+    { rango: "10-3pm", etiqueta: "10-3pm", valor: 0 },
+    { rango: "3-8pm", etiqueta: "3-8pm", valor: 0 },
+    { rango: "8-12pm", etiqueta: "8-12pm", valor: 0 },
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,9 +60,68 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     return undefined;
   }, []);
 
-  const safeData = Array.isArray(distribucionVentas) ? distribucionVentas : [];
+  const procesarDatosEnRangos = () => {
+    if (!Array.isArray(distribucionVentas) || distribucionVentas.length === 0) {
+      return rangosFijos;
+    }
 
-  if (safeData.length === 0) {
+    const rangosConValores = [...rangosFijos];
+
+    distribucionVentas.forEach((item) => {
+      const match = item.hora.match(/(\d+)\s*(AM|PM)/i);
+      if (!match) return;
+
+      let hora = parseInt(match[1]);
+      const periodo = match[2].toUpperCase();
+
+      if (periodo === "PM" && hora < 12) {
+        hora += 12;
+      } else if (periodo === "AM" && hora === 12) {
+        hora = 0;
+      }
+
+      if (hora >= 0 && hora < 6) {
+        rangosConValores[0].valor += item.valor;
+      } else if (hora >= 6 && hora < 10) {
+        rangosConValores[1].valor += item.valor;
+      } else if (hora >= 10 && hora < 15) {
+        rangosConValores[2].valor += item.valor;
+      } else if (hora >= 15 && hora < 20) {
+        rangosConValores[3].valor += item.valor;
+      } else if (hora >= 20 && hora <= 23) {
+        rangosConValores[4].valor += item.valor;
+      }
+    });
+
+    const totalValor = rangosConValores.reduce(
+      (sum, item) => sum + item.valor,
+      0,
+    );
+    if (totalValor > 0) {
+      rangosConValores.forEach((item) => {
+        item.valor = Math.round((item.valor / totalValor) * 100);
+      });
+    }
+
+    return rangosConValores;
+  };
+
+  const datosAgrupados = procesarDatosEnRangos();
+
+  useEffect(() => {
+    if (datosAgrupados.length > 0) {
+      const maxItem = datosAgrupados.reduce(
+        (max, item) => (item.valor > max.valor ? item : max),
+        datosAgrupados[0],
+      );
+      setMaxValueItem(maxItem);
+    }
+  }, [distribucionVentas]);
+
+  if (
+    datosAgrupados.length === 0 ||
+    datosAgrupados.every((item) => item.valor === 0)
+  ) {
     return (
       <Box
         width="100%"
@@ -66,48 +135,40 @@ const DistribucionVentas = ({ distribucionVentas }) => {
     );
   }
 
-  const isNarrowCriticalWidth = containerWidth > 0 && containerWidth < 310;
-
-  const minWidthNeeded = Math.max(320, safeData.length * 25);
-
-  const needsScroll =
-    isNarrowCriticalWidth ||
-    (minWidthNeeded > containerWidth && containerWidth > 0);
+  const getBarColors = () => {
+    return datosAgrupados.map((item, index) => {
+      return "#FDE7E7";
+    });
+  };
 
   const chartData = {
-    labels: safeData.map((d) => d.hora),
+    labels: datosAgrupados.map((d) => d.etiqueta),
     datasets: [
       {
-        data: safeData.map((d) => d.valor),
-        backgroundColor: "rgba(255, 99, 132, 0.7)",
-        borderSkipped: false,
-        borderRadius: isNarrowCriticalWidth ? 4 : safeData.length > 15 ? 9 : 18,
-        barPercentage: isNarrowCriticalWidth
-          ? 0.3
-          : safeData.length > 15
-            ? 0.4
-            : 0.5,
-        categoryPercentage: isNarrowCriticalWidth
-          ? 0.5
-          : safeData.length > 15
-            ? 0.6
-            : 0.7,
-        hoverBackgroundColor: "rgba(230, 15, 15, 0.8)",
+        data: datosAgrupados.map((d) => d.valor),
+        backgroundColor: getBarColors(),
+        hoverBackgroundColor: "#E60F0F",
+        borderWidth: 0,
+        borderRadius: {
+          topRight: 4,
+          bottomRight: 4,
+        },
+        barThickness: 16,
+        maxBarThickness: 20,
       },
     ],
   };
 
   const options = {
+    indexAxis: "y",
     responsive: true,
     maintainAspectRatio: false,
-    barThickness: isNarrowCriticalWidth ? 8 : "flex",
-    animation: false,
     layout: {
       padding: {
-        left: 0,
-        right: isNarrowCriticalWidth ? 30 : 15,
-        top: 10,
-        bottom: 20,
+        left: 5,
+        right: 5,
+        top: 15,
+        bottom: 5,
       },
     },
     plugins: {
@@ -117,71 +178,70 @@ const DistribucionVentas = ({ distribucionVentas }) => {
       tooltip: {
         enabled: true,
         displayColors: false,
-        bodyColor: "rgb(144, 238, 0)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        titleColor: "white",
+        bodyColor: "white",
+        padding: 8,
         callbacks: {
-          label: (context) => `${context.parsed.y}%`,
+          label: (context) => `${context.parsed.x}%`,
+          title: (context) => context[0].label,
+          labelTextColor: () => "#00BC4F",
         },
+      },
+
+      datalabels: {
+        display: false,
       },
     },
     scales: {
       y: {
-        beginAtZero: true,
-        min: 0,
-        max: 100,
-        grace: "3%",
-        title: {
-          display: false,
-        },
-        ticks: {
-          callback: (value) => {
-            if (value < 5) return "0%";
-            if (value <= 20) return "20%";
-            if (value <= 40) return "40%";
-            if (value <= 60) return "60%";
-            if (value <= 80) return "80%";
-            return "100%";
-          },
-          font: {
-            size: 8,
-          },
-        },
         grid: {
           display: false,
+          drawBorder: false,
+        },
+        ticks: {
+          font: {
+            size: 10,
+            weight: "normal",
+          },
+          color: "rgba(0, 0, 0, 1)",
         },
       },
       x: {
+        beginAtZero: true,
+        max: 100,
         grid: {
+          color: "rgba(0, 0, 0, 0.05)",
+        },
+        border: {
           display: false,
         },
-        bounds: "data",
         ticks: {
+          stepSize: 20,
+          callback: (value) => `${value}%`,
           font: {
-            size: 8,
+            size: 9,
           },
-          maxRotation: 45,
-          minRotation: 45,
-          autoSkip: true,
-          maxTicksLimit: isNarrowCriticalWidth
-            ? Math.min(8, safeData.length)
-            : safeData.length > 15
-              ? 10
-              : 22,
-          padding: 2,
-          align: "center",
-        },
-        offset: false,
-        afterFit: (scale) => {
-          if (isNarrowCriticalWidth) {
-            scale.width = scale.width * 1.2;
-            scale.paddingRight = 35;
-          } else {
-            scale.width = scale.width * 1.1;
-            scale.paddingRight = 20;
-          }
         },
       },
     },
+    onResize: (chart, size) => {
+      const canvas = chart.canvas;
+      if (canvas) {
+        canvas.style.minWidth = "250px";
+        canvas.style.width = "100%";
+      }
+    },
+    onHover: (event, chartElements) => {
+      if (chartElements && chartElements.length > 0) {
+        setHoveredIndex(chartElements[0].index);
+      } else {
+        setHoveredIndex(-1);
+      }
+    },
   };
+
+  const getPlugins = () => [];
 
   return (
     <Box
@@ -189,64 +249,13 @@ const DistribucionVentas = ({ distribucionVentas }) => {
       width="100%"
       height="100%"
       display="flex"
-      alignItems="flex-start"
-      justifyContent="flex-start"
-      overflow={needsScroll ? "auto" : "hidden"}
+      alignItems="center"
+      justifyContent="center"
       position="relative"
-      sx={{
-        "&::-webkit-scrollbar": {
-          height: "3px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "rgba(0,0,0,0.2)",
-          borderRadius: "3px",
-        },
-      }}
     >
-      <Box
-        width={
-          needsScroll
-            ? isNarrowCriticalWidth
-              ? "350px"
-              : `${minWidthNeeded}px`
-            : "100%"
-        }
-        height="100%"
-        pb="5px"
-        position="relative"
-        pl="5px"
-        pr={isNarrowCriticalWidth ? "40px" : "20px"}
-      >
+      <Box width="100%" height="100%" minWidth="250px">
         {chartVisible && (
-          <Bar
-            data={chartData}
-            options={{
-              ...options,
-
-              ...(isNarrowCriticalWidth && {
-                elements: {
-                  bar: {
-                    borderWidth: 0,
-                  },
-                },
-              }),
-              layout: {
-                ...options.layout,
-                padding: {
-                  ...options.layout.padding,
-                  right: isNarrowCriticalWidth ? 40 : 25,
-                },
-              },
-              plugins: {
-                ...options.plugins,
-                beforeInit: (chart) => {
-                  chart.canvas.dispatchEvent(
-                    new Event("chartjs-render-complete"),
-                  );
-                },
-              },
-            }}
-          />
+          <Bar data={chartData} options={options} plugins={getPlugins()} />
         )}
       </Box>
     </Box>

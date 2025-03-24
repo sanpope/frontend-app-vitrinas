@@ -126,6 +126,7 @@ body {
   background-color: white;
   border-collapse: collapse;
   padding: 5px;
+  overflow-x: auto;
 }
 
 .content-table thead {
@@ -239,7 +240,6 @@ td {
 /* Estilos base para ambas tablas */
 .content-table {
   width: 100%;
-  min-width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
   margin: 0;

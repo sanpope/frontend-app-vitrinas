@@ -593,7 +593,7 @@ export default function TablaProductosBodega({
                     <td className="ProdTd">{articulo?.codigo}</td>
                     <td className="ProdTd">{articulo?.precio}</td>
                     <td className="ProdTd">{articulo?.costo}</td>
-                    <td className="ProdTd">{articulo?.cantidadEnBodega} Ud.</td>
+                    <td className="ProdTd">{articulo?.cantidadEnBodega}</td>
                     <td className="ProdTd">
                       {articulo?.cantidadEnVitrinas} Ud.
                     </td>

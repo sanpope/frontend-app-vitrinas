@@ -3,21 +3,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import StandardButton from "../component/ui/buttons/standard";
 import ConfirmationMessage from "../component/ConfirmationMessage";
-import EditIcon from "../assets/images/EditIcon";
-import TrashIcon from "../assets/images/TrashIcon";
+
 import WarningIcon from "../assets/images/WarningIcon";
 import PlusCircleIcon from "../assets/images/PlusCircleIcon";
 import AgregarAsesor from "../component/AgregarAsesor";
 import AsesorContainer from "../component/AsesorContainer";
-import MensajeInfoEstaVitrina from "../component/MensajeInfoEstaVitrina";
-import xmlToJSON from "../services/XmlToJsonConverter";
-import estaVitrina from "../services/estaVitrina";
+
 import { parseData } from "../utils/xmlParse";
 import axios from "axios";
 import MensajeInfo from "../component/MensajeInfo";
 import { setCity, setName, setCiudadesVitrinas } from "../store/slices/vitrina";
 import { useNavigate } from "react-router-dom";
-import EditarAsesor from "../component/EditarAsesor";
+
 import EditarEstaVitrina from "../component/EditarEstaVitrina";
 import LoadingComponent from "../component/LoadingComponent";
 
@@ -305,6 +302,7 @@ export default function EstaVitrina() {
       return updatedAsesor.append("nuevasVitrinas", `${vitrina}`);
     });
     updatedAsesor.append("habilitado", `${asesorActualizado.habilitado}`);
+
     setIsLoading(true);
     try {
       const response = await axios.put(
@@ -318,24 +316,30 @@ export default function EstaVitrina() {
       );
 
       if (response.status == 200 && response.data) {
-        const index = infoTotalVitrina?.asesores?.findIndex(
-          (item) => item.nombre === currentAsesor.nombre,
-        );
+        // First close the modal to ensure clean UI state
+        if (handleOnClose) handleOnClose();
 
-        if (index !== -1) {
-          setInfoTotalVitrina((prev) => ({
+        // Then update the state with new data
+        setInfoTotalVitrina((prev) => {
+          const updatedAsesores = prev.asesores.map((asesor) =>
+            asesor.nombre === currentAsesor.nombre
+              ? {
+                  nombre: asesorActualizado.nombre,
+                  usuario: asesorActualizado.usuarioApp,
+                  contraseña: asesorActualizado.claveApp,
+                }
+              : asesor,
+          );
+
+          return {
             ...prev,
-            asesores: prev.asesores.map((asesor, i) =>
-              i === index
-                ? {
-                    nombre: asesorActualizado.nombre,
-                    usuario: asesorActualizado.usuarioApp,
-                    contraseña: asesorActualizado.claveApp,
-                  }
-                : asesor,
-            ),
-          }));
-        }
+            asesores: updatedAsesores,
+          };
+        });
+
+        // Reset currentAsesor to avoid stale references
+        setCurrentAsesor(null);
+
         toast({
           status: "success",
           description: "¡Asesor editado con éxito!",
@@ -353,7 +357,6 @@ export default function EstaVitrina() {
         isClosable: true,
       });
     } finally {
-      handleOnClose();
       setIsLoading(false);
     }
   };

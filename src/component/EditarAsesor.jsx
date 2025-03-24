@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -27,14 +27,26 @@ export default function EditarAsesor({
   Editar,
   isLoading,
 }) {
-  const [newName, setNewName] = useState(asesor?.nombre);
-  const [newUser, setNewUser] = useState(asesor?.usuario);
-  const [newPassword, setNewPassword] = useState(asesor?.contraseña);
+  const [newName, setNewName] = useState("");
+  const [newUser, setNewUser] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [habilitado, setHabilitado] = useState("false");
-  const [selectedVitrinas, setSelectedVitrinas] = useState([vitrinaName]);
+  const [selectedVitrinas, setSelectedVitrinas] = useState([]);
+
   const ciudadesVitrinas = useSelector(
     (state) => state.vitrinaReducer.ciudadesVitrinas,
   );
+
+  // Update form fields whenever the modal opens or asesor data changes
+  useEffect(() => {
+    if (isOpen && asesor) {
+      setNewName(asesor.nombre || "");
+      setNewUser(asesor.usuario || "");
+      setNewPassword(asesor.contraseña || "");
+      setHabilitado("false"); // Default or can be made dynamic if asesor has this field
+      setSelectedVitrinas([vitrinaName]);
+    }
+  }, [isOpen, asesor, vitrinaName]);
 
   const totalVitrinas = Object.values(ciudadesVitrinas).flat();
 
@@ -46,22 +58,34 @@ export default function EditarAsesor({
   const saveName = (val) => {
     setNewName(val);
   };
+
   const saveUser = (val) => {
     setNewUser(val);
   };
+
   const savePassword = (val) => {
     setNewPassword(val);
   };
+
   const saveHabilitado = (val) => {
     setHabilitado(val);
   };
 
   const handleOnClose = () => {
     onClose();
-    setNewName(asesor?.nombre);
-    setNewUser(asesor?.usuario);
-    setNewPassword(asesor?.contraseña);
-    setHabilitado("false");
+  };
+
+  const handleSaveChanges = () => {
+    Editar(
+      {
+        nombre: newName,
+        usuarioApp: newUser,
+        claveApp: newPassword,
+        vitrinas: selectedVitrinas,
+        habilitado: habilitado,
+      },
+      handleOnClose,
+    );
   };
 
   return (
@@ -146,6 +170,7 @@ export default function EditarAsesor({
             fontSize="14px"
             fontWeight="400"
             onClick={handleOnClose}
+            isDisabled={isLoading}
           >
             Cancelar
           </StandardButton>
@@ -156,18 +181,7 @@ export default function EditarAsesor({
             w={"50%"}
             fontSize="14px"
             fontWeight="400"
-            onClick={() => {
-              Editar(
-                {
-                  nombre: newName,
-                  usuarioApp: newUser,
-                  claveApp: newPassword,
-                  vitrinas: selectedVitrinas,
-                  habilitado: habilitado,
-                },
-                handleOnClose,
-              );
-            }}
+            onClick={handleSaveChanges}
             isLoading={isLoading}
           >
             Guardar Cambios

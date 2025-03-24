@@ -228,7 +228,6 @@ export default function Ventas() {
         setDisplayedArticulos(ventas);
       }
     } catch (error) {
-    
       toast({
         title: "Error",
         description: "Error al cargar los datos. Intente nuevamente",
@@ -290,16 +289,17 @@ export default function Ventas() {
         >
           <DatePickerComponent
             startDate={fechaInicio}
-            setStartDate={(date) => {
-              getIntervaloVentas(date, fechaFin);
-              getTotalIntervaloVentas(date, fechaFin);
-              setFechaInicio(date);
-            }}
+            setStartDate={setFechaInicio}
             endDate={fechaFin}
-            setEndDate={(date) => {
-              getIntervaloVentas(fechaInicio, date);
-              getTotalIntervaloVentas(fechaInicio, date);
-              setFechaFin(date);
+            setEndDate={setFechaFin}
+            onFilterChange={({ startDate, endDate }) => {
+              const start = new Date(startDate);
+              start.setDate(start.getDate() + 1);
+
+              const end = new Date(endDate);
+
+              getIntervaloVentas(start, end);
+              getTotalIntervaloVentas(start, end);
             }}
           />
           <Select

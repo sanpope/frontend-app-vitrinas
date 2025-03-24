@@ -1,5 +1,5 @@
-import { Box, Text, useDisclosure, Input } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import TrashIcon from "../assets/images/TrashIcon";
 import EditIcon from "../assets/images/EditIcon";
 import EditarAsesor from "./EditarAsesor";
@@ -27,15 +27,33 @@ export default function AsesorContainer({
     onClose: onDeleteModalClose,
   } = useDisclosure();
 
-  const handleOPenModal = () => {
+  // Reset currentAsesor when the modal closes
+  const handleEditModalClose = () => {
+    onEditarModalClose();
+    setCurrentAsesor(null);
+  };
+
+  // Set current asesor with fresh data when opening modal
+  const handleOpenModal = () => {
+    setCurrentAsesor({ ...asesor });
     onEditarModalOpen();
-    setCurrentAsesor(asesor);
   };
 
   const handleDeleteOpenModal = () => {
+    setCurrentAsesor({ ...asesor });
     onDeleteModalOpen();
-    setCurrentAsesor(asesor);
   };
+
+  // Update currentAsesor whenever the asesor prop changes
+  useEffect(() => {
+    if (
+      isEditarModalOpen &&
+      currentAsesor &&
+      currentAsesor.nombre === asesor.nombre
+    ) {
+      setCurrentAsesor({ ...asesor });
+    }
+  }, [asesor, isEditarModalOpen]);
 
   return (
     <Box
@@ -108,7 +126,7 @@ export default function AsesorContainer({
           <TrashIcon
             height={"20px"}
             width={"20px"}
-            onClick={onDeleteModalOpen}
+            onClick={handleDeleteOpenModal}
           />
         </Box>
         <Box
@@ -117,7 +135,7 @@ export default function AsesorContainer({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <EditIcon height={"20px"} width={"20px"} onClick={handleOPenModal} />
+          <EditIcon height={"20px"} width={"20px"} onClick={handleOpenModal} />
         </Box>
       </Box>
 
@@ -127,25 +145,24 @@ export default function AsesorContainer({
         setCurrentAsesor={setCurrentAsesor}
         isOpen={isEditarModalOpen}
         onOpen={onEditarModalOpen}
-        onClose={onEditarModalClose}
+        onClose={handleEditModalClose}
         Editar={Editar}
         isLoading={isLoading}
       />
 
       {/* Eliminar --> */}
-
       <ConfirmationMessage
         isOpen={isDeleteModalOpen}
         onOpen={handleDeleteOpenModal}
         onClose={onDeleteModalClose}
         icon={<WarningIcon />}
-        text={`¿Estás seguro que desea eliminar el asesor ${""} ?`}
+        text={`¿Estás seguro que desea eliminar el asesor ${asesor?.nombre} ?`}
         text2={
           "Esta acción eliminará permanentemente los registros de este asesor de tu sistema"
         }
         colorText2={"red.100"}
         buttonText={"Continuar"}
-        funcConfirmar={Eliminar}
+        funcConfirmar={() => Eliminar(asesor?.nombre)}
         focusRow={asesor?.nombre}
         products={null}
         isLoading={isLoading}

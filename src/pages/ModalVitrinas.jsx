@@ -121,7 +121,7 @@ export default function ModalVitrinas({
     const formData = new URLSearchParams();
     formData.append("nombre", name);
     formData.append("ciudad", city);
-    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/vitrina`;
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/negocio/vitrinas`;
 
     if (city in ciudadesVitrinas) {
       const index = ciudadesVitrinas[city].findIndex((item) => item === name);
@@ -282,7 +282,7 @@ export default function ModalVitrinas({
             justifyContent="flex-center"
             w={"100%"}
             maxW={"865px"}
-            h={"525px"}
+            h={"530px"}
             bg={"white"}
             borderRadius={{ base: "0px", md: "20px" }}
             position="relative"

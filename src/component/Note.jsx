@@ -1,9 +1,16 @@
 import { Box, ListItem, Text, UnorderedList } from "@chakra-ui/react";
 import React from "react";
 
-export default function Note({ width = "100%", text1, text2, arr }) {
+export default function Note({
+  width = "100%",
+  maxH = "80px",
+  text1,
+  text2,
+  arr,
+}) {
   return (
     <Box
+      maxH={maxH}
       width={"100%"}
       flex={1}
       display="flex"

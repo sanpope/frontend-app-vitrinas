@@ -103,7 +103,7 @@ export default function AgregarAsesor({
       name?.length > 0 &&
       user?.length > 0 &&
       password?.length > 0 &&
-      habilitado?.length > 0 &&
+      habilitado !== undefined &&
       selectedVitrinas?.length
     ) {
       return true;

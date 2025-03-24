@@ -301,7 +301,9 @@ export default function Mensajes() {
               w={"fit-content"}
               fontSize="14px"
               fontWeight="400"
-              onClick={onConfirmationModalOpen}
+              onClick={
+                totalMensajes?.length === 0 ? () => {} : onConfirmationModalOpen
+              }
               disabled={totalMensajes?.length === 0}
               cursor={totalMensajes?.length === 0 ? "not-allowed" : "pointer"}
             >

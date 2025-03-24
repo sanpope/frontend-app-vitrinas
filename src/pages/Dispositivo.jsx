@@ -234,7 +234,7 @@ export default function Dispositivo() {
         "Content-Type": "application/x-www-form-urlencoded",
         "codigo-aplicacion": codApp.toString(),
       };
-     
+
       const response = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/dispositivo/vinculacion/solicitud`,
         null,
@@ -244,7 +244,7 @@ export default function Dispositivo() {
       if (response.status === 200) {
         toast({
           status: "success",
-          description: "¡Solicitud aprobada con éxito!.",
+          description: "¡Solicitud aprobada con éxito!",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -467,6 +467,7 @@ export default function Dispositivo() {
                   variant={"RED_PRIMARY"}
                   borderRadius="30px"
                   w={"160px"}
+                  px={2}
                   onClick={() => {
                     eliminarVinculo(infoDispositivo?.codApp);
                   }}

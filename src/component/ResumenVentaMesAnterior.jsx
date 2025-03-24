@@ -97,10 +97,10 @@ const ResumenVentaMesAnterior = ({ resumenVentaMesAnterior }) => {
         pointBackgroundColor: datosProcesados.map((d) =>
           d.esActual ? "#E60F0F" : "#000000",
         ),
-        pointRadius: 6,
+        pointRadius: 5,
         pointBorderWidth: 2,
         pointBorderColor: "white",
-        pointHoverRadius: 8,
+        pointHoverRadius: 6,
       },
     ],
   };

@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import React, { useRef } from "react";
+import { Box, Text, Flex } from "@chakra-ui/react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import colors from "../theme/colors";
 
 ChartJS.register(
   CategoryScale,
@@ -24,88 +25,132 @@ ChartJS.register(
 
 const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
   const chartRef = useRef(null);
+  const scrollContainerRef = useRef(null);
 
-  const getDaysInCurrentMonth = () => {
+  const getDaysUntilCurrentDay = () => {
     const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const totalDays = new Date(year, month + 1, 0).getDate();
-    return Array.from({ length: totalDays }, (_, i) => i + 1);
+    const currentDay = date.getDate();
+    const days = Array.from({ length: currentDay }, (_, i) => i + 1);
+    return days.reverse();
   };
 
-  const getCurrentDay = () => {
-    return new Date().getDate();
-  };
-
-  const currentDay = getCurrentDay();
-  const allDaysInMonth = getDaysInCurrentMonth();
+  const currentDay = new Date().getDate();
+  const daysUntilCurrent = getDaysUntilCurrentDay();
 
   const ventasPorDia = {};
   evolucionVentaDiaria?.forEach((d) => {
     ventasPorDia[d.dia] = d.valor < 0 ? 0 : d.valor;
   });
 
+  const totalDays = daysUntilCurrent.length;
+  const pointSpacing = 25;
+  const requiredWidth = totalDays * pointSpacing;
+
+  const formatNumberToK = (value) => {
+    if (value >= 1000) {
+      return (value / 1000).toFixed(1) + "k";
+    }
+    return value;
+  };
+
+  const values = daysUntilCurrent.map((dia) => ventasPorDia[dia] || 0);
+  const maxValue = Math.max(...values, 1);
+  const fixedStepSize = 200;
+  const stepsNeeded = Math.ceil(maxValue / fixedStepSize);
+  const steps = Math.min(stepsNeeded, 5);
+  const yAxisValues = Array.from(
+    { length: steps + 1 },
+    (_, i) => i * fixedStepSize,
+  );
+
   const data = {
-    labels: allDaysInMonth,
+    labels: daysUntilCurrent,
     datasets: [
       {
-        data: allDaysInMonth.map((dia) => ventasPorDia[dia] || 0),
+        data: daysUntilCurrent.map((dia) => ventasPorDia[dia] || 0),
         label: "Ventas",
         borderColor: "rgba(230, 15, 15, 1)",
         backgroundColor: "rgba(230, 15, 15, 1)",
         pointBackgroundColor: (context) => {
           const index = context.dataIndex;
-          const value = context.dataset.data[index];
-
-          return allDaysInMonth[index] === currentDay
+          const dia = daysUntilCurrent[index];
+          return dia === currentDay
             ? "rgba(0, 0, 0, 1)"
             : "rgba(230, 15, 15, 1)";
         },
         pointBorderColor: (context) => {
           const index = context.dataIndex;
-
-          return allDaysInMonth[index] === currentDay
+          const dia = daysUntilCurrent[index];
+          return dia === currentDay
             ? "rgba(0, 0, 0, 1)"
             : "rgba(230, 15, 15, 1)";
         },
         pointHoverBackgroundColor: (context) => {
           const index = context.dataIndex;
-          return allDaysInMonth[index] === currentDay
+          const dia = daysUntilCurrent[index];
+          return dia === currentDay
             ? "rgba(0, 0, 0, 1)"
             : "rgba(230, 15, 15, 1)";
         },
         pointHoverBorderColor: (context) => {
           const index = context.dataIndex;
-          return allDaysInMonth[index] === currentDay
+          const dia = daysUntilCurrent[index];
+          return dia === currentDay
             ? "rgba(0, 0, 0, 1)"
             : "rgba(230, 15, 15, 1)";
         },
-        borderWidth: 3,
-        pointRadius: 3,
-        pointHoverRadius: 8,
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 5,
         pointStyle: "circle",
       },
     ],
   };
 
-  const titleTooltip = () => {
-    return "";
-  };
-
   const options = {
     maintainAspectRatio: false,
     responsive: true,
+    animation: false,
+    animations: {
+      colors: false,
+      x: false,
+      y: false,
+    },
+    transitions: {
+      active: {
+        animation: {
+          duration: 0,
+        },
+      },
+    },
     plugins: {
       legend: {
         display: false,
       },
       tooltip: {
+        enabled: true,
+        mode: "nearest",
+        intersect: true,
         displayColors: false,
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        bodyColor: "#ffffff",
+        bodyFont: {
+          size: 14,
+          weight: "bold",
+        },
+        padding: 8,
+        titleAlign: "center",
+        bodyAlign: "center",
         callbacks: {
-          title: titleTooltip,
-          label: function (context) {
-            const value = context.raw;
-            return value !== undefined && !isNaN(value) ? value : "";
+          title: function () {
+            return null;
+          },
+          label: function (tooltipItem) {
+            const value = tooltipItem.raw;
+            if (value !== undefined && !isNaN(value)) {
+              return value.toLocaleString();
+            }
+            return "0";
           },
         },
       },
@@ -116,14 +161,23 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
         ticks: {
           min: 0,
           suggestedMin: 0,
-          stepSize: 200000,
+          stepSize: 200,
           maxTicksLimit: 5,
+          callback: function (value) {
+            return formatNumberToK(value);
+          },
+          display: false,
         },
         border: {
           display: false,
           dash: [2, 6],
           dashOffset: 1,
         },
+        grid: {
+          display: true,
+          color: "rgba(0, 0, 0, 0.1)",
+        },
+        position: "left",
       },
       x: {
         grid: {
@@ -133,7 +187,7 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
           autoSkip: false,
           maxRotation: 0,
           font: {
-            size: 10,
+            size: 12,
           },
         },
         border: {
@@ -143,30 +197,83 @@ const EvolucionVentaDiaria = ({ evolucionVentaDiaria }) => {
     },
     layout: {
       padding: {
-        left: 0,
+        left: 10,
         right: 0,
       },
     },
   };
 
+  const visibleDays = 8;
+  const visibleWidth = visibleDays * pointSpacing;
+  const yAxisWidth = 50;
+
   return (
     <>
-      {allDaysInMonth?.length > 0 ? (
-        <Box
-          w={"100%"}
-          maxW={"225px"}
-          overflowX="auto"
-          css={{
-            "&::-webkit-scrollbar": { width: "4px", height: "4px" },
-            "&::-webkit-scrollbar-track": { background: "#f1f1f1" },
-            "&::-webkit-scrollbar-thumb": { background: "#888" },
-            "&::-webkit-scrollbar-thumb:hover": { background: "#555" },
-          }}
-        >
-          <Box width="500px" height="150px">
-            <Line ref={chartRef} data={data} options={options} />
+      {daysUntilCurrent?.length > 0 ? (
+        <Flex height="150px" position="relative">
+          <Box
+            width={`${yAxisWidth}px`}
+            height="100%"
+            position="relative"
+            zIndex="2"
+            bg="white"
+            display="flex"
+            flexDirection="column-reverse"
+            justifyContent="space-between"
+            paddingY="10px"
+          >
+            {yAxisValues.map((value, index) => (
+              <Text
+                key={index}
+                fontSize="xs"
+                color="gray.500"
+                textAlign="right"
+                paddingRight="5px"
+              >
+                {formatNumberToK(value)}
+              </Text>
+            ))}
           </Box>
-        </Box>
+
+          <Box
+            height="100%"
+            paddingBottom={2}
+            flex="1"
+            overflowX="auto"
+            ref={scrollContainerRef}
+            position="relative"
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "2px",
+                height: "2px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "transparent",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: colors.grey[20],
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: colors.grey.placeholder[10],
+              },
+              "&::-webkit-scrollbar-corner": {
+                background: "transparent",
+              },
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "thin",
+              scrollbarColor: `${colors.grey[20]} transparent`,
+            }}
+          >
+            <Box
+              width={`${requiredWidth}px`}
+              height="100%"
+              minWidth={`${visibleWidth}px`}
+            >
+              <Line ref={chartRef} data={data} options={options} />
+            </Box>
+          </Box>
+        </Flex>
       ) : (
         <Box
           width={"100%"}

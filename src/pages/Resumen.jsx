@@ -21,6 +21,8 @@ import FileExclamationIcon from "../assets/images/FileExclamationIcon";
 import StartIcon from "../assets/images/StarIcon";
 import BoxesIcon from "../assets/images/BoxesIcon";
 import ThumbUpIcon from "../assets/images/ThumbUpIcon";
+import SadFaceIcon from "../assets/images/SadFaceIcon";
+
 import {
   getTiempoInactividad,
   getUltimasVentas,
@@ -156,6 +158,13 @@ export default function Resumen() {
       gap={PADDING + "px"}
       p={PADDING + "px"}
       overflowY={"auto"}
+      sx={{
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
     >
       <Box display={"flex"} flexDir={"column"}>
         <Text textStyle={" RobotoBody"}>
@@ -268,6 +277,7 @@ export default function Resumen() {
         <Box
           height={ContainerHeight + "px"}
           bg={"white"}
+          minH={"220px"}
           borderRadius={"20px"}
           p={3}
           display={"flex"}
@@ -282,7 +292,15 @@ export default function Resumen() {
               <Box w={"100%"}>
                 <MobileIcon
                   width={"40px"}
-                  fill={estadoDelDispositivo !== "Ok" ? "#E60F0F" : "#00BC4F"}
+                  fill={
+                    estadoDelDispositivo === "Ok"
+                      ? "#00BC4F"
+                      : estadoDelDispositivo === "Operando con dificultades"
+                        ? "#FEB220"
+                        : estadoDelDispositivo === "No operando"
+                          ? "#E60F0F"
+                          : ""
+                  }
                 />
               </Box>
 
@@ -291,8 +309,9 @@ export default function Resumen() {
               <Box display={"flex"} justifyContent={"flex-start"}>
                 {estadoDelDispositivo === "Ok" ? (
                   <ThumbUpIcon />
-                ) : estadoDelDispositivo !== "" &&
-                  estadoDelDispositivo !== undefined ? (
+                ) : estadoDelDispositivo === "Operando con dificultades" ? (
+                  <SadFaceIcon />
+                ) : estadoDelDispositivo === "No operando" ? (
                   <ThumbDownIcon />
                 ) : (
                   <></>
@@ -306,7 +325,6 @@ export default function Resumen() {
                     </Text>
                   ) : (
                     <Text color={"grey.placeholder"} alignSelf={"flex-end"}>
-                      {" "}
                       Ninguno vinculado
                     </Text>
                   )}
@@ -477,20 +495,23 @@ export default function Resumen() {
           width={"100%"}
           title={"Distribución diaria de ventas"}
           icon={<ShippingTimed />}
+          paddingChildren={0}
           children={
-            <Box display={"flex"} justifyContent={"center"} mx={-4} mt={-1}>
+            <>
               {totalDistribucionVentaDiaria === null ? (
                 <LoadingComponent />
               ) : (
-                <DistribucionVentas
-                  distribucionVentas={
-                    totalDistribucionVentaDiaria
-                      ? totalDistribucionVentaDiaria
-                      : []
-                  }
-                />
+                <Box display={"flex"} justifyContent={"center"}>
+                  <DistribucionVentas
+                    distribucionVentas={
+                      totalDistribucionVentaDiaria
+                        ? totalDistribucionVentaDiaria
+                        : []
+                    }
+                  />
+                </Box>
               )}
-            </Box>
+            </>
           }
         />
 

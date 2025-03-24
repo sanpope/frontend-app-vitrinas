@@ -70,13 +70,7 @@ export default function Container({
         height={heightChildren}
         w={"100%"}
         p={paddingChildren}
-        pb={
-          hasScroll
-            ? isChrome
-              ? "20px !important"
-              : "0"
-            : paddingChildren + 10
-        }
+        pb={hasScroll ? (isChrome ? "20px !important" : "0") : paddingChildren}
         className={hasScroll ? "scroll-container-parent" : ""}
         sx={{
           ...(isChrome && hasScroll

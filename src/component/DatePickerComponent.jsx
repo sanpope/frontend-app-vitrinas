@@ -61,7 +61,10 @@ const DualCalendarDateRangePicker = ({
     if (endDate) {
       return new Date(endDate);
     } else {
-      return new Date(leftMonth);
+      // Iniciar el calendario derecho un mes más adelante que el izquierdo
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      return nextMonth;
     }
   });
 
@@ -180,6 +183,7 @@ const DualCalendarDateRangePicker = ({
     setSelectedDatesLocal([null, null]);
   };
 
+  // Función modificada para navegar independientemente cada calendario
   const navigateMonth = (calendar, direction) => {
     const monthOffset = direction === "prev" ? -1 : 1;
 
@@ -187,16 +191,10 @@ const DualCalendarDateRangePicker = ({
       const newDate = new Date(leftMonth);
       newDate.setMonth(newDate.getMonth() + monthOffset);
       setLeftMonth(newDate);
-
-      const newRightDate = new Date(newDate);
-      setRightMonth(newRightDate);
     } else {
       const newDate = new Date(rightMonth);
       newDate.setMonth(newDate.getMonth() + monthOffset);
       setRightMonth(newDate);
-
-      const newLeftDate = new Date(newDate);
-      setLeftMonth(newLeftDate);
     }
   };
 
@@ -256,24 +254,22 @@ const DualCalendarDateRangePicker = ({
     };
 
     const isSelected = (date) => {
-      if (isLeftCalendar) {
-        return (
-          selectedDatesLocal[0] &&
-          date.getFullYear() === selectedDatesLocal[0].getFullYear() &&
-          date.getMonth() === selectedDatesLocal[0].getMonth() &&
-          date.getDate() === selectedDatesLocal[0].getDate()
-        );
-      } else {
-        return (
-          selectedDatesLocal[1] &&
-          date.getFullYear() === selectedDatesLocal[1].getFullYear() &&
-          date.getMonth() === selectedDatesLocal[1].getMonth() &&
-          date.getDate() === selectedDatesLocal[1].getDate()
-        );
-      }
+      // Para el calendario izquierdo, solo comprueba la selección de la fecha inicial
+      // Para el calendario derecho, solo comprueba la selección de la fecha final
+      const selectedDate = isLeftCalendar
+        ? selectedDatesLocal[0]
+        : selectedDatesLocal[1];
+
+      return (
+        selectedDate &&
+        date.getFullYear() === selectedDate.getFullYear() &&
+        date.getMonth() === selectedDate.getMonth() &&
+        date.getDate() === selectedDate.getDate()
+      );
     };
 
     const isInRange = (date) => {
+      // No hay visualización de rango
       return false;
     };
 

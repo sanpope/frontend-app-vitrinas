@@ -24,7 +24,7 @@ export default function ActualizacionesInventario({
           display={"flex"}
           flexDirection={"column"}
           justifyContent={"space-between"}
-          alignItems={"center"}
+          
         >
           <Box
             w={"100%"}
