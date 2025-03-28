@@ -1,5 +1,6 @@
 import { Box, HStack, Text } from "@chakra-ui/react";
 import React from "react";
+import colors from "../theme/colors";
 
 const newDate = new Date();
 
@@ -28,7 +29,8 @@ export default function DispositivoContainer({
           flexDirection="column"
           alignItems="center"
           borderRadius="30px"
-          p={3}
+          py={2}
+          px={4}
         >
           <Box w="100%" mb={2}>
             {icon}
@@ -61,7 +63,7 @@ export default function DispositivoContainer({
             </HStack>
           </Box>
           <Box w="100%" flex="1" display="flex" alignItems="flex-end">
-            <Text py={1} textStyle="RobotoRegularBold">
+            <Text py={1} textStyle="RobotoTinyBold" color={colors.grey[60]}>
               {date}
             </Text>
           </Box>

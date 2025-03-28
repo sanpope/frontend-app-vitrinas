@@ -316,10 +316,8 @@ export default function EstaVitrina() {
       );
 
       if (response.status == 200 && response.data) {
-        // First close the modal to ensure clean UI state
         if (handleOnClose) handleOnClose();
 
-        // Then update the state with new data
         setInfoTotalVitrina((prev) => {
           const updatedAsesores = prev.asesores.map((asesor) =>
             asesor.nombre === currentAsesor.nombre
@@ -337,7 +335,6 @@ export default function EstaVitrina() {
           };
         });
 
-        // Reset currentAsesor to avoid stale references
         setCurrentAsesor(null);
 
         toast({
@@ -403,7 +400,6 @@ export default function EstaVitrina() {
     }
   };
 
-  // Show loading spinner while data is being fetched
   if (isLoading && !isDataFetched) {
     return <LoadingComponent />;
   }
@@ -477,7 +473,7 @@ export default function EstaVitrina() {
               onClick={onFirstModalOpen}
               isDisabled={isLoading}
             >
-              Editar Vitrina
+              Editar vitrina
             </StandardButton>
 
             {isFirstModalOpen && (
@@ -502,7 +498,7 @@ export default function EstaVitrina() {
               onClick={onSecondModalOpen}
               isDisabled={isLoading}
             >
-              Eliminar Vitrina
+              Eliminar vitrina
             </StandardButton>
             <ConfirmationMessage
               isOpen={isSecondModalOpen}
@@ -557,7 +553,7 @@ export default function EstaVitrina() {
           leftIcon={<PlusCircleIcon />}
           isDisabled={isLoading}
         >
-          Agregar Asesor
+          Agregar asesor
         </StandardButton>
         <AgregarAsesor
           vitrinaName={name}

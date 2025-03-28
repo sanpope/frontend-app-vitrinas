@@ -272,17 +272,17 @@ const BUTTON_VARIANTS = {
     hover: {
       bg: "#535253",
       borderColor: "#535253",
-      color: "white",
+      color: "grey.placeholder",
     },
     disabled: {
       bg: "grey.60",
       borderColor: "grey.60",
-      color: "white",
+      color: "grey.placeholder",
     },
     active: {
-      bg: "#1b1b1b",
-      borderColor: "#1b1b1b",
-      color: "white",
+      bg: "##535253",
+      borderColor: "##535253",
+      color: "grey.placeholder",
     },
   },
   VERIFIED: {

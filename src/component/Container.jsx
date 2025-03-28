@@ -37,7 +37,7 @@ export default function Container({
       width={width}
       className={className}
       {...props}
-      minH={"220px"}
+      minH={"210px"}
       boxSizing="border-box"
       overflow={overflow}
     >

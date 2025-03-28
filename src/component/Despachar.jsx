@@ -125,16 +125,30 @@ export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
   };
 
   const Busqueda = (textToSearch) => {
+    if (!textToSearch) {
+      setDisplayedArticulos(totalProdcsBodega);
+      return;
+    }
+
+    const textoNormalizado = textToSearch
+      .toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
     let result = totalProdcsBodega?.filter((element) => {
-      if (
-        element?.nombre
-          ?.toString()
+      if (element?.nombre) {
+        const nombreNormalizado = element.nombre
+          .toString()
           .toLowerCase()
-          .includes(textToSearch?.toLowerCase())
-      ) {
-        return element;
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        return nombreNormalizado.includes(textoNormalizado);
       }
+      return false;
     });
+
     setDisplayedArticulos(result);
   };
 

@@ -525,7 +525,8 @@ export default function Visitas() {
       alignItems={"space-between"}
       w={"100%"}
       h={"calc(100% - " + HEADER_HEIGHT + "px)"}
-      p={"10px"}
+      py={"10px"}
+      px={"1.25rem"}
     >
       <Box
         display={"flex"}
@@ -687,14 +688,15 @@ export default function Visitas() {
       </Box>
       <Box
         display={"flex"}
-        gap={{ base: "5px", md: "10px" }}
         flexDirection={{ base: "column", sm: "row" }}
-        justifyContent={{ base: "flex.start", sm: "flex-end" }}
-        alignItems={"center"}
-        margin={{ base: "0px", md: "20px" }}
+        justifyContent={{ base: "flex-start", sm: "flex-end" }}
+        alignItems={{ base: "center", sm: "space-around" }}
+        marginTop={{ base: "0px", md: "20px" }}
         order={{ base: "1", lg: "2" }}
       >
         <StandardButton
+          marginRight={{ sm: "10px" }}
+          marginBottom={{ base: "5px", sm: "0" }}
           variant={"WHITE_RED"}
           borderRadius="20px"
           py={"17px"}
@@ -719,6 +721,7 @@ export default function Visitas() {
           isLoading={enviarProdcsLoading || productosDespachoLoading}
         />
         <StandardButton
+          marginTop={{ base: "5px", sm: "0" }}
           variant={visitaSelected != null ? "RED_PRIMARY" : "DISABLED"}
           borderRadius="20px"
           py={"17px"}

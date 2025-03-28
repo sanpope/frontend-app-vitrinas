@@ -18,7 +18,15 @@ function SmallPagination({ currentPage, totalPages, onPageChange }) {
           onClick={() => onPageChange(currentPage - 1)}
         />
       </Box>
-      <Text textStyle={"RobotoRegularBold"} p={1} px={3} borderWidth={1} borderColor={"red.100"} borderRadius={5} color={"red.100"}>
+      <Text
+        textStyle={"RobotoRegularBold"}
+        py={"2px"}
+        px={"8px"}
+        borderWidth={1}
+        borderColor={"red.100"}
+        borderRadius={5}
+        color={"red.100"}
+      >
         {currentPage}
       </Text>
       <Text px={2} textStyle={"RobotoRegular"}>

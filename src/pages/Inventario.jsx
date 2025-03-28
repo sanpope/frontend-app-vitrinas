@@ -92,23 +92,42 @@ export default function Inventario() {
       return;
     }
 
+    const textoNormalizado = textToSearch
+      .toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
     let result = tablaInventario?.filter((element) => {
-      if (
-        element?.nombre
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase()) ||
-        element?.proveedor
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase()) ||
-        element?.categoria
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase())
-      ) {
-        return element;
-      }
+      const nombreNormalizado = element?.nombre
+        ? element.nombre
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      const proveedorNormalizado = element?.proveedor
+        ? element.proveedor
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      const categoriaNormalizada = element?.categoria
+        ? element.categoria
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      return (
+        nombreNormalizado.includes(textoNormalizado) ||
+        proveedorNormalizado.includes(textoNormalizado) ||
+        categoriaNormalizada.includes(textoNormalizado)
+      );
     });
     setDisplayedArticulos(result);
   };
@@ -186,6 +205,7 @@ export default function Inventario() {
           proveedor,
         });
       }
+      totalProdsArr.sort((a, b) => a.nombre.localeCompare(b.nombre));
       return totalProdsArr;
     } else {
       return null;

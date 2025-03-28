@@ -97,18 +97,38 @@ export default function Transferir({
     }
   };
 
-  const Busqueda = (textToSearch) => {
-    const tableToFilter =
-      desde === "Bodega" ? totalProdcsBodega : displayedArticulos;
-    let result = tableToFilter?.filter((element) => {
-      if (
-        element?.nombre?.toLowerCase().includes(textToSearch?.toLowerCase())
-      ) {
-        return element;
-      }
-    });
-    setProductsToShow(result);
-  };
+ const Busqueda = (textToSearch) => {
+   if (!textToSearch) {
+     setProductsToShow(
+       desde === "Bodega" ? totalProdcsBodega : displayedArticulos,
+     );
+     return;
+   }
+
+   const textoNormalizado = textToSearch
+     .toString()
+     .toLowerCase()
+     .normalize("NFD")
+     .replace(/[\u0300-\u036f]/g, "");
+
+   const tableToFilter =
+     desde === "Bodega" ? totalProdcsBodega : displayedArticulos;
+
+   let result = tableToFilter?.filter((element) => {
+     if (element?.nombre) {
+       const nombreNormalizado = element.nombre
+         .toString()
+         .toLowerCase()
+         .normalize("NFD")
+         .replace(/[\u0300-\u036f]/g, "");
+
+       return nombreNormalizado.includes(textoNormalizado);
+     }
+     return false;
+   });
+
+   setProductsToShow(result);
+ };
 
   const onBuscarChange = (e) => {
     setBusqueda(e);

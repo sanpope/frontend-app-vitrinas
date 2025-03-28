@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -40,6 +40,16 @@ export default function IngresarProducto({
   const [cantidad, setCantidad] = useState(0);
   const [categoria, setCategoria] = useState("");
   const [proveedor, setProveedor] = useState("");
+
+  useEffect(() => {
+    if (listaCategorias && listaCategorias.length > 0) {
+      setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+    }
+
+    if (listaProveedores && listaProveedores.length > 0) {
+      setProveedor(listaProveedores[0]);
+    }
+  }, [listaCategorias, listaProveedores]);
 
   const saveName = (val) => {
     setNombre(val);
@@ -104,8 +114,18 @@ export default function IngresarProducto({
     setCosto(0);
     setPrecio(0);
     setCantidad(0);
-    setCategoria("");
-    setProveedor("");
+
+    if (listaCategorias && listaCategorias.length > 0) {
+      setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+    } else {
+      setCategoria("");
+    }
+
+    if (listaProveedores && listaProveedores.length > 0) {
+      setProveedor(listaProveedores[0]);
+    } else {
+      setProveedor("");
+    }
 
     onClose();
   };
@@ -265,16 +285,20 @@ export default function IngresarProducto({
                 </span>
                 Categoría
               </FormLabel>
-              <Select required onChange={(e) => saveCategoria(e)}>
+              <Select
+                required
+                onChange={(e) => saveCategoria(e)}
+                value={categoria}
+              >
                 {listaCategorias !== null && listaCategorias?.length > 0 ? (
-                  listaCategorias?.map((cat) => (
-                    <option>{capitalizeFirstLetter(cat)}</option>
+                  listaCategorias?.map((cat, index) => (
+                    <option key={index} value={capitalizeFirstLetter(cat)}>
+                      {capitalizeFirstLetter(cat)}
+                    </option>
                   ))
                 ) : (
-                  <option>
-                    <Text color={"grey.placeholder"}>
-                      No existen Categorías
-                    </Text>
+                  <option value="No existen Categorías">
+                    No existen Categorías
                   </option>
                 )}
               </Select>
@@ -290,7 +314,11 @@ export default function IngresarProducto({
                 </span>
                 Proveedor
               </FormLabel>
-              <Select required onChange={(e) => saveProveedor(e)}>
+              <Select
+                required
+                onChange={(e) => saveProveedor(e)}
+                value={proveedor}
+              >
                 {listaProveedores && listaProveedores.length > 0 ? (
                   listaProveedores.map((prov, index) => (
                     <option key={index} value={prov}>
@@ -298,10 +326,8 @@ export default function IngresarProducto({
                     </option>
                   ))
                 ) : (
-                  <option>
-                    <Text color={"grey.placeholder"}>
-                      No existen Proveedores
-                    </Text>
+                  <option value="No existen Proveedores">
+                    No existen Proveedores
                   </option>
                 )}
               </Select>

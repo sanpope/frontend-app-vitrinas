@@ -62,6 +62,7 @@ export default function TablaVentas({
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
         ref={parentRef}
+        position="relative"
       >
         <Contenedor>
           <thead className="">
@@ -89,7 +90,7 @@ export default function TablaVentas({
                     verticalAlign: "middle",
                   }}
                 >
-                  <LoadingComponent />
+                  <LoadingComponent size="xl" />
                 </td>
               </tr>
             </tbody>

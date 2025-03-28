@@ -19,8 +19,8 @@ import LoadingComponent from "../component/LoadingComponent";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 
 const TOP_SECTION_HEIGHT = 64;
-const BOTTOM_SECTION_HEIGHT = 141.5;
-const BOTTOM_SECTION_HEIGHT_MOBILE = 289.5;
+const BOTTOM_SECTION_HEIGHT = 120.5;
+const BOTTOM_SECTION_HEIGHT_MOBILE = 150.5;
 const MARGINS = 16;
 const rowsToShow = 200;
 
@@ -256,7 +256,8 @@ export default function Ventas() {
       display={"flex"}
       flexDir={"column"}
       overflowY={"hidden"}
-      p={"1.25rem"}
+      py={"10px"}
+      px={"1.25rem"}
       h={ContainerHeight}
     >
       <Box
@@ -323,10 +324,11 @@ export default function Ventas() {
         display="flex"
         flexDir={"column"}
         mb={2}
-        h={{
-          base: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT_MOBILE}px - ${MARGINS}px )`,
-          lg: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT}px - ${MARGINS}px)`,
-        }}
+        h={"60%"}
+        // h={{
+        //   base: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT_MOBILE}px - ${MARGINS}px )`,
+        //   lg: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT}px - ${MARGINS}px)`,
+        // }}
       >
         <TablaVentas
           displayedArticulos={displayedArticulos}

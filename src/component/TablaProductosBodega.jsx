@@ -508,23 +508,8 @@ export default function TablaProductosBodega({
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
         ref={parentRef}
+        position="relative"
       >
-        {isLoading && (
-          <Box
-            position="absolute"
-            top="0"
-            left="0"
-            right="0"
-            bottom="0"
-            zIndex="10"
-            bg="rgba(255, 255, 255, 0.7)"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <LoadingComponent size="xl" />
-          </Box>
-        )}
         <Contenedor>
           <thead className="">
             <tr className="ProdTr">
@@ -584,19 +569,36 @@ export default function TablaProductosBodega({
             </tr>
           </thead>
 
-          {displayedArticulos != null && displayedArticulos.length > 0 ? (
+          {isLoading ? (
+            <tbody>
+              <tr style={{ height: "350px", borderBottom: "none" }}>
+                <td
+                  colSpan={HEADERS.length}
+                  style={{
+                    height: `${parentHeight - 80}px`,
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                  }}
+                >
+                  <LoadingComponent size="xl" />
+                </td>
+              </tr>
+            </tbody>
+          ) : displayedArticulos != null && displayedArticulos.length > 0 ? (
             <tbody className="" style={{ height: "100%" }}>
               {displayedArticulos.map((articulo, index) => {
                 return (
                   <tr key={index}>
-                    <td className="ProdTd">{articulo?.nombre}</td>
-                    <td className="ProdTd">{articulo?.codigo}</td>
-                    <td className="ProdTd">{articulo?.precio}</td>
-                    <td className="ProdTd">{articulo?.costo}</td>
-                    <td className="ProdTd">{articulo?.cantidadEnBodega}</td>
-                    <td className="ProdTd">
-                      {articulo?.cantidadEnVitrinas} Ud.
+                    <td className="ProdTd" style={{ paddingLeft: "10px" }}>
+                      {articulo?.nombre}
                     </td>
+                    <td className="ProdTd">{articulo?.codigo}</td>
+                    <td className="ProdTd">${articulo?.precio}</td>
+                    <td className="ProdTd">${articulo?.costo}</td>
+                    <td className="ProdTd">
+                      {articulo?.cantidadEnBodega || articulo?.cantidad}
+                    </td>
+                    <td className="ProdTd">{articulo?.cantidadEnVitrinas}</td>
                     <td className="ProdTd">
                       {capitalizeFirstLetter(articulo?.proveedor)}
                     </td>
@@ -722,9 +724,9 @@ export default function TablaProductosBodega({
 
       <ConfirmationMessage
         icon={<WarningIcon />}
-        text={`¿Estás seguro que desea eliminar ${""}`}
+        text={`¿Estás seguro que desea eliminar este producto?`}
         text2={
-          "Esta cción eliminará permanentemente los registros de este producto de tu sistema"
+          "Esta acción eliminará permanentemente la información de este producto de tu sistema"
         }
         colorText2={"red.100"}
         isOpen={isSixthModalOpen}

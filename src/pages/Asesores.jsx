@@ -201,23 +201,50 @@ export default function Asesores() {
     }
   }, [busqueda]);
 
-  const Busqueda = (textToSearch) => {
-    let result = tablaAsesores?.filter((element) => {
-      return (
-        element.nombre
-          .toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase()) ||
-        element.vitrinas.some((vitrina) =>
-          vitrina.toLowerCase().includes(textToSearch.toLowerCase()),
-        ) ||
-        element.ubicaciones.some((ubicacion) =>
-          ubicacion.toLowerCase().includes(textToSearch.toLowerCase()),
-        )
-      );
-    });
-    setDisplayedArticulos(result);
-  };
+ const Busqueda = (textToSearch) => {
+   if (!textToSearch) {
+     setDisplayedArticulos(tablaAsesores);
+     return;
+   }
+
+   const textoNormalizado = textToSearch
+     .toString()
+     .toLowerCase()
+     .normalize("NFD")
+     .replace(/[\u0300-\u036f]/g, "");
+
+   let result = tablaAsesores?.filter((element) => {
+     const nombreNormalizado = element.nombre
+       .toString()
+       .toLowerCase()
+       .normalize("NFD")
+       .replace(/[\u0300-\u036f]/g, "");
+
+     const vitrinasMatch = element.vitrinas.some((vitrina) => {
+       const vitrinaNormalizada = vitrina
+         .toLowerCase()
+         .normalize("NFD")
+         .replace(/[\u0300-\u036f]/g, "");
+       return vitrinaNormalizada.includes(textoNormalizado);
+     });
+
+     const ubicacionesMatch = element.ubicaciones.some((ubicacion) => {
+       const ubicacionNormalizada = ubicacion
+         .toLowerCase()
+         .normalize("NFD")
+         .replace(/[\u0300-\u036f]/g, "");
+       return ubicacionNormalizada.includes(textoNormalizado);
+     });
+
+     return (
+       nombreNormalizado.includes(textoNormalizado) ||
+       vitrinasMatch ||
+       ubicacionesMatch
+     );
+   });
+
+   setDisplayedArticulos(result);
+ };
 
   useEffect(() => {
     if (sortingBy) {

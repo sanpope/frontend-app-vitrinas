@@ -15,17 +15,14 @@ export const ScrollContainer = ({
       overflowY="scroll"
       className="scroll-wrapper"
       marginBottom="15px"
-      css={{
-        "&:after": {
-          content: '""',
-          display: "block",
-          height: bottomPadding,
-          width: "100%",
-          position: "relative",
+      sx={{
+        "&::-webkit-scrollbar": {
+          display: "none",
         },
+        "-ms-overflow-style": "none",
+        scrollbarWidth: "none",
       }}
       {...props}
-      
     >
       {children}
 

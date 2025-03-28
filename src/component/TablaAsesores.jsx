@@ -23,7 +23,7 @@ const HEADERS = [
   "Acciones",
 ];
 
-export default function TablaProductosBodega({
+export default function TablaAsesores({
   onSecondModalOpen,
   onThirdModalOpen,
   displayedArticulos,
@@ -107,23 +107,8 @@ export default function TablaProductosBodega({
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
         ref={parentRef}
+        position="relative"
       >
-        {isLoading && (
-          <Box
-            position="absolute"
-            top="0"
-            left="0"
-            right="0"
-            bottom="0"
-            zIndex="10"
-            bg="rgba(255, 255, 255, 0.7)"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <LoadingComponent size="xl" />
-          </Box>
-        )}
         <Contenedor>
           <thead className="">
             <tr className="">
@@ -160,7 +145,23 @@ export default function TablaProductosBodega({
               ))}
             </tr>
           </thead>
-          {displayedArticulos != null && displayedArticulos.length > 0 ? (
+
+          {isLoading ? (
+            <tbody>
+              <tr style={{ height: "350px", borderBottom: "none" }}>
+                <td
+                  colSpan={HEADERS.length}
+                  style={{
+                    height: `${parentHeight - 80}px`,
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                  }}
+                >
+                  <LoadingComponent size="xl" />
+                </td>
+              </tr>
+            </tbody>
+          ) : displayedArticulos != null && displayedArticulos.length > 0 ? (
             <tbody style={{ height: "100%" }}>
               {displayedArticulos?.map((asesor, index) => {
                 const ubicaciones = Object.entries(ciudadesVitrina)

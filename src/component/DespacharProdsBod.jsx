@@ -32,6 +32,7 @@ import axios from "axios";
 import { generateProductsListXML, parseData } from "../utils/xmlParse";
 import { capitalizeFirstLetter } from "../utils/formatting";
 import { useSelector, useDispatch } from "react-redux";
+import LoadingComponent from "./LoadingComponent";
 
 export default function DespacharProdsBod({
   isOpen,
@@ -62,6 +63,7 @@ export default function DespacharProdsBod({
     .map((city) => ({
       value: city,
     }));
+
   useEffect(() => {
     if (busqueda !== null) {
       Busqueda(busqueda);
@@ -76,16 +78,30 @@ export default function DespacharProdsBod({
   } = useDisclosure();
 
   const Busqueda = (textToSearch) => {
+    if (!textToSearch) {
+      setDisplayedArticulosCopy(totalProdcsBodegaCopy);
+      return;
+    }
+
+    const textoNormalizado = textToSearch
+      .toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
     let result = totalProdcsBodegaCopy?.filter((element) => {
-      if (
-        element?.nombre
-          ?.toString()
+      if (element?.nombre) {
+        const nombreNormalizado = element.nombre
+          .toString()
           .toLowerCase()
-          .includes(textToSearch?.toLowerCase())
-      ) {
-        return element;
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        return nombreNormalizado.includes(textoNormalizado);
       }
+      return false;
     });
+
     setDisplayedArticulosCopy(result);
   };
 
@@ -93,17 +109,16 @@ export default function DespacharProdsBod({
     setBusqueda(e);
   };
 
-  const handleCheck = (producto) => {
-    const isChecked = activeProdcs.find(
-      (item) => item.codigo === producto.codigo,
-    );
-    if (isChecked) {
-      deleteProductFromList(producto);
-    } else {
-      const nuevoProducto = { ...producto, cantidad: 1 };
-      setActiveProdcs((prev) => [...prev, nuevoProducto]);
-    }
-  };
+  const handleCheck = useCallback((producto) => {
+    setActiveProdcs((prev) => {
+      const exists = prev.some((item) => item.codigo === producto.codigo);
+      if (exists) {
+        return prev.filter((item) => item.codigo !== producto.codigo);
+      } else {
+        return [...prev, { ...producto, cantidad: 1 }];
+      }
+    });
+  }, []);
 
   const setProdCantidad = (val, prod) => {
     const isProdExists = activeProdcs?.find(
@@ -117,6 +132,7 @@ export default function DespacharProdsBod({
           copy[index]["cantidad"] = val;
           return copy;
         }
+        return prev;
       });
     }
   };
@@ -129,14 +145,28 @@ export default function DespacharProdsBod({
         copy.splice(index, 1);
         return copy;
       }
+      return prev;
     });
   };
 
   const ProductListItem = useCallback(
     (product, index) => {
-      const isActive = activeProdcs.find((currentProduct) => {
-        return currentProduct.codigo === product.codigo;
-      });
+      const isActive = activeProdcs.some(
+        (item) => item.codigo === product.codigo,
+      );
+
+      const onItemClick = (e) => {
+        e.stopPropagation();
+
+        if (isActive) {
+          setActiveProdcs((prev) =>
+            prev.filter((item) => item.codigo !== product.codigo),
+          );
+        } else {
+          setActiveProdcs((prev) => [...prev, { ...product, cantidad: 1 }]);
+        }
+      };
+
       return (
         <ListItem
           key={index}
@@ -145,12 +175,20 @@ export default function DespacharProdsBod({
           borderColor="gray.200"
           py={"10px"}
         >
-          <Checkbox
-            checked={!!isActive}
-            setChecked={() => handleCheck(product)}
-            text={capitalizeFirstLetter(product.nombre)}
-            colorScheme={"#1890FF"}
-          />
+          <Box
+            display="flex"
+            alignItems="center"
+            onClick={onItemClick}
+            cursor="pointer"
+          >
+            <input
+              type="checkbox"
+              checked={isActive}
+              readOnly={true}
+              style={{ marginRight: "8px" }}
+            />
+            <Text>{capitalizeFirstLetter(product.nombre)}</Text>
+          </Box>
         </ListItem>
       );
     },
@@ -266,7 +304,7 @@ export default function DespacharProdsBod({
           });
         }
         setLoading(false);
-        hanldeOnCloseDespahar();
+        handleOnCloseDespachar();
       })
       .catch((error) => {
         toast({
@@ -286,7 +324,7 @@ export default function DespacharProdsBod({
     }, 0);
   }, [activeProdcs]);
 
-  const hanldeOnCloseDespahar = () => {
+  const handleOnCloseDespachar = () => {
     onClose();
     setActiveProdcs([]);
     setVitrinaSelected("");
@@ -294,7 +332,7 @@ export default function DespacharProdsBod({
 
   return (
     <Box>
-      <Modal isOpen={isOpen} onClose={hanldeOnCloseDespahar}>
+      <Modal isOpen={isOpen} onClose={handleOnCloseDespachar}>
         <ModalOverlay />
         <ModalContent
           borderRadius={"20px"}
@@ -312,8 +350,8 @@ export default function DespacharProdsBod({
               Despachar
             </Text>
           </ModalHeader>
-          <ModalBody display={"flex"} flexDirection={"column"} gap={2}>
-            <Box w={"100%"} display={"flex"} flexDir={"column"}>
+          <ModalBody display={"flex"} flexDirection={"column"} gap={"10px"}>
+            <Box w={"100%"} display={"flex"} flexDir={"column"} mt={"10px"}>
               <Box
                 w={"100%"}
                 display={"flex"}
@@ -347,7 +385,7 @@ export default function DespacharProdsBod({
                 justifyContent={"flex-start"}
               >
                 <Text
-                  height={"40px"}
+                  minH={"40px"}
                   w={"100%"}
                   maxW={"250px"}
                   textStyle={"RobotoSubtitleRegular"}
@@ -379,17 +417,24 @@ export default function DespacharProdsBod({
                   onChange={(e) => setVitrinaSelected(e.target.value)}
                   required
                 >
+                  <option value="">Seleccionar vitrina</option>
                   {options !== null && options.length > 0
-                    ? options.map((opt) => <option>{opt.value}</option>)
-                    : "No hay vitrinas para mostrar"}
+                    ? options.map((opt, index) => (
+                        <option key={index} value={opt.value}>
+                          {opt.value}
+                        </option>
+                      ))
+                    : null}
                 </Select>
               </Box>
             </Box>
             <Box
               w={"100%"}
+              height={"100%"}
               display={"flex"}
               gap={"1.25rem"}
               flexDirection={{ base: "column", md: "row" }}
+              paddingTop={"10px"}
             >
               <Box
                 w={{ base: "100%", md: "50%" }}
@@ -398,57 +443,84 @@ export default function DespacharProdsBod({
                 border="1px"
                 borderColor="gray.200"
                 p={"0.938rem"}
+                pl={"20px"}
               >
                 <FormControl>
-                  <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                  <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                     Seleccionar productos
                   </Text>
-                  <FormLabel
-                    display="flex"
-                    alignItems="center"
-                    justifyContent={"space-between"}
-                    gap={"0.625rem"}
-                  >
-                    <TextInput
-                      placeholder={"Buscar"}
-                      leftIcon={<SearchIcon />}
-                      onChange={(e) => onBuscarChange(e)}
-                      value={busqueda}
-                    />
-                    <FilterIcon />
-                  </FormLabel>
+                  {loading ? (
+                    <Box height="160px">
+                      <LoadingComponent
+                        size="md"
+                        text="Cargando productos..."
+                      />
+                    </Box>
+                  ) : totalProdcsBodegaCopy &&
+                    totalProdcsBodegaCopy.length > 0 ? (
+                    <>
+                      <FormLabel
+                        display="flex"
+                        flexDirection={"column"}
+                        alignItems="center"
+                        justifyContent={"center"}
+                        gap={"0.625rem"}
+                        width={"100%"}
+                        height={"100%"}
+                      >
+                        <TextInput
+                          placeholder={"Buscar"}
+                          leftIcon={<SearchIcon width="17px" height="17px" />}
+                          onChange={(e) => onBuscarChange(e)}
+                          value={busqueda}
+                        />
+                      </FormLabel>
 
-                  <FormLabel display="flex" alignItems="center">
-                    <UnorderedList
-                      styleType="none"
-                      w={"100%"}
-                      height={"120px"}
-                      overflowY="scroll"
-                      overflowX="hidden"
-                      m={0}
-                      px={1}
-                      sx={{
-                        "::-webkit-scrollbar": {
-                          width: "8px",
-                          height: "4px",
-                        },
-                        "::-webkit-scrollbar-track": {
-                          background: "tranparent",
-                        },
-                        "::-webkit-scrollbar-thumb": {
-                          background: "gray.200",
-                          borderRadius: "10px",
-                        },
-                        "::-webkit-scrollbar-thumb:hover": {
-                          background: "gray.200",
-                        },
-                      }}
+                      <FormLabel display="flex" alignItems="center">
+                        <UnorderedList
+                          styleType="none"
+                          w={"100%"}
+                          height={"120px"}
+                          overflowY="scroll"
+                          overflowX="hidden"
+                          m={0}
+                          px={"5px"}
+                          sx={{
+                            "::-webkit-scrollbar": {
+                              width: "8px",
+                              height: "4px",
+                            },
+                            "::-webkit-scrollbar-track": {
+                              background: "tranparent",
+                            },
+                            "::-webkit-scrollbar-thumb": {
+                              background: "gray.200",
+                              borderRadius: "10px",
+                            },
+                            "::-webkit-scrollbar-thumb:hover": {
+                              background: "gray.200",
+                            },
+                          }}
+                        >
+                          {displayedArticulosCopy?.map((product, index) => {
+                            return ProductListItem(product, index);
+                          })}
+                        </UnorderedList>
+                      </FormLabel>
+                    </>
+                  ) : (
+                    <Box
+                      width="100%"
+                      height="160px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
                     >
-                      {displayedArticulosCopy?.map((product, index) => {
-                        return ProductListItem(product, index);
-                      })}
-                    </UnorderedList>
-                  </FormLabel>
+                      <Text color={"grey.placeholder"}>
+                        No hay productos que mostrar
+                      </Text>
+                    </Box>
+                  )}
                 </FormControl>
               </Box>
               <Box
@@ -465,22 +537,39 @@ export default function DespacharProdsBod({
                     display={"flex"}
                     flexDirection={"column"}
                   >
-                    <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                    <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                       Productos a despachar
                     </Text>
 
                     <Box
                       alignSelf={"flex-end"}
-                      mr={"12%"}
                       display={"flex"}
-                      w={"50%"}
+                      w={"100%"}
                       alignItems={"center"}
-                      justifyContent={"space-around"}
+                      justifyContent={"center"}
                     >
-                      <Text textStyle={"RobotoBody"} py={"10px"}>
+                      <Text
+                        flex={1}
+                        textStyle={"RobotoBodyBold"}
+                        py={"5px"}
+                        textAlign={"center"}
+                      >
+                        Producto
+                      </Text>
+                      <Text
+                        flex={1}
+                        textStyle={"RobotoBodyBold"}
+                        py={"5px"}
+                        textAlign={"center"}
+                      >
                         Stock
                       </Text>
-                      <Text textStyle={"RobotoBody"} py={"10px"}>
+                      <Text
+                        flex={1}
+                        textStyle={"RobotoBodyBold"}
+                        py={"5px"}
+                        textAlign={"left"}
+                      >
                         Cantidad
                       </Text>
                     </Box>
@@ -558,7 +647,7 @@ export default function DespacharProdsBod({
                     display={"flex"}
                     flexDirection={"column"}
                   >
-                    <Text textStyle={"RobotoSubtitleBold"} py={"10px"}>
+                    <Text textStyle={"RobotoSubtitleBold"} pb={"10px"}>
                       Productos a despachar
                     </Text>
                     <Box
@@ -569,7 +658,7 @@ export default function DespacharProdsBod({
                       justifyContent={"center"}
                     >
                       <Text color={"grey.placeholder"}>
-                        Porfavor seleccione los productos a despachar
+                        Por favor seleccione los productos a despachar
                       </Text>
                     </Box>
                   </Box>
@@ -578,7 +667,7 @@ export default function DespacharProdsBod({
             </Box>
           </ModalBody>
 
-          <ModalFooter display={"flex"} gap={"10px"}>
+          <ModalFooter display={"flex"} gap={"10px"} paddingTop={"10px"}>
             <StandardButton
               variant={"WHITE_RED"}
               borderRadius="20px"
@@ -586,7 +675,7 @@ export default function DespacharProdsBod({
               w={"150px"}
               fontSize="14px"
               fontWeight="400"
-              onClick={hanldeOnCloseDespahar}
+              onClick={handleOnCloseDespachar}
             >
               Cancelar
             </StandardButton>
@@ -602,7 +691,9 @@ export default function DespacharProdsBod({
               fontSize="14px"
               fontWeight="400"
               onClick={
-                activeProdcs?.length > 0 ? onConfirmationModalOpen : null
+                activeProdcs?.length > 0 && vitrinaSelected !== ""
+                  ? onConfirmationModalOpen
+                  : null
               }
               disabled={
                 activeProdcs?.length > 0 && vitrinaSelected !== ""

@@ -1,19 +1,129 @@
 import React from "react";
 
-const ConexionIcon = ({ width = "40px", height = "40px", fill = "black" }) => {
+const ConexionIcon = ({
+  width = "40px",
+  height = "40px",
+  fill = "#FFFFFF",
+}) => {
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={width}
       height={height}
-      viewBox="0 0 40 40"
+      viewBox="0 0 89 89"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width={width} height={height} rx="20" fill="#020202" />
-      <path
-        d="M33 12H25.6667C25.4583 12 25.3333 12.1666 25.3333 12.3333V14.3333C25.3333 14.5416 25.4583 14.6666 25.6667 14.6666H33C33.1667 14.6666 33.3333 14.5416 33.3333 14.3333V12.3333C33.3333 12.1666 33.1667 12 33 12ZM33 9.33331H25.6667C25.4583 9.33331 25.3333 9.49998 25.3333 9.66665V10.3333C25.3333 10.5416 25.4583 10.6666 25.6667 10.6666H33C33.1667 10.6666 33.3333 10.5416 33.3333 10.3333V9.66665C33.3333 9.49998 33.1667 9.33331 33 9.33331ZM33 16H25.6667C25.4583 16 25.3333 16.1666 25.3333 16.3333V18.3333C25.3333 18.5416 25.4583 18.6666 25.6667 18.6666H33C33.1667 18.6666 33.3333 18.5416 33.3333 18.3333V16.3333C33.3333 16.1666 33.1667 16 33 16ZM33 24H25.6667C25.4583 24 25.3333 24.1666 25.3333 24.3333V25C25.3333 25.2083 25.4583 25.3333 25.6667 25.3333H33C33.1667 25.3333 33.3333 25.2083 33.3333 25V24.3333C33.3333 24.1666 33.1667 24 33 24ZM33 21.3333H25.6667C25.4583 21.3333 25.3333 21.5 25.3333 21.6666V22.3333C25.3333 22.5416 25.4583 22.6666 25.6667 22.6666H33C33.1667 22.6666 33.3333 22.5416 33.3333 22.3333V21.6666C33.3333 21.5 33.1667 21.3333 33 21.3333ZM22 12H11.3333C8.75 12 6.66667 14.125 6.66667 16.6666C6.66667 18.7916 8.04167 20.5416 9.91667 21.125L6.91667 26.3333C6.375 27.2916 6.70834 28.5416 7.66667 29.0833L9.95833 30.4166C10.2917 30.5833 10.625 30.6666 10.9583 30.6666C11.6667 30.6666 12.3333 30.3333 12.7083 29.6666L15.2083 25.3333H18C19.0833 25.3333 20 24.4583 20 23.3333V21.3333H22C22.3333 21.3333 22.6667 21.0416 22.6667 20.6666V12.6666C22.6667 12.3333 22.3333 12 22 12ZM10.9583 28.6666L8.66667 27.3333L12.125 21.3333H15.2083L10.9583 28.6666ZM18.6667 23.3333C18.6667 23.7083 18.3333 24 18 24H15.9583L17.5 21.3333H18.6667V23.3333ZM20.6667 19.3333H11.3333C9.83333 19.3333 8.66667 18.1666 8.66667 16.6666C8.66667 15.2083 9.83333 14 11.3333 14H20.6667V19.3333ZM33 28H25.6667C25.4583 28 25.3333 28.1666 25.3333 28.3333V30.3333C25.3333 30.5416 25.4583 30.6666 25.6667 30.6666H33C33.1667 30.6666 33.3333 30.5416 33.3333 30.3333V28.3333C33.3333 28.1666 33.1667 28 33 28Z"
-        fill="#FDFDFD"
-      />
+      <circle cx="44.5" cy="44.5" r="44.5" fill="#020202" />
+
+      <g fill={fill} transform="translate(17.8, 17.8) scale(0.6)">
+        <rect x="0" y="0" width="18" height="18" />
+        <rect x="4" y="4" width="10" height="10" fill="#020202" />
+        <rect x="6" y="6" width="6" height="6" />
+
+        <rect x="71" y="0" width="18" height="18" />
+        <rect x="75" y="4" width="10" height="10" fill="#020202" />
+        <rect x="77" y="6" width="6" height="6" />
+
+        <rect x="0" y="71" width="18" height="18" />
+        <rect x="4" y="75" width="10" height="10" fill="#020202" />
+        <rect x="6" y="77" width="6" height="6" />
+
+        <rect x="24" y="0" width="6" height="6" />
+        <rect x="30" y="0" width="6" height="6" />
+        <rect x="36" y="0" width="6" height="6" />
+        <rect x="42" y="0" width="6" height="6" />
+        <rect x="48" y="0" width="6" height="6" />
+        <rect x="54" y="0" width="6" height="6" />
+
+        <rect x="24" y="6" width="6" height="6" />
+        <rect x="36" y="6" width="6" height="6" />
+        <rect x="48" y="6" width="6" height="6" />
+        <rect x="54" y="6" width="6" height="6" />
+
+        <rect x="24" y="12" width="6" height="6" />
+        <rect x="36" y="12" width="6" height="6" />
+        <rect x="42" y="12" width="6" height="6" />
+        <rect x="54" y="12" width="6" height="6" />
+
+        <rect x="0" y="24" width="6" height="6" />
+        <rect x="6" y="24" width="6" height="6" />
+        <rect x="12" y="24" width="6" height="6" />
+        <rect x="24" y="24" width="6" height="6" />
+        <rect x="30" y="24" width="6" height="6" />
+        <rect x="42" y="24" width="6" height="6" />
+        <rect x="54" y="24" width="6" height="6" />
+        <rect x="66" y="24" width="6" height="6" />
+        <rect x="72" y="24" width="6" height="6" />
+        <rect x="78" y="24" width="6" height="6" />
+
+        <rect x="0" y="30" width="6" height="6" />
+        <rect x="12" y="30" width="6" height="6" />
+        <rect x="24" y="30" width="6" height="6" />
+        <rect x="36" y="30" width="6" height="6" />
+        <rect x="48" y="30" width="6" height="6" />
+        <rect x="54" y="30" width="6" height="6" />
+        <rect x="66" y="30" width="6" height="6" />
+        <rect x="78" y="30" width="6" height="6" />
+
+        <rect x="0" y="36" width="6" height="6" />
+        <rect x="12" y="36" width="6" height="6" />
+        <rect x="24" y="36" width="6" height="6" />
+        <rect x="42" y="36" width="6" height="6" />
+        <rect x="54" y="36" width="6" height="6" />
+        <rect x="66" y="36" width="6" height="6" />
+        <rect x="78" y="36" width="6" height="6" />
+
+        <rect x="24" y="42" width="6" height="6" />
+        <rect x="30" y="42" width="6" height="6" />
+        <rect x="42" y="42" width="6" height="6" />
+        <rect x="54" y="42" width="6" height="6" />
+        <rect x="66" y="42" width="6" height="6" />
+        <rect x="72" y="42" width="6" height="6" />
+
+        <rect x="0" y="48" width="6" height="6" />
+        <rect x="6" y="48" width="6" height="6" />
+        <rect x="12" y="48" width="6" height="6" />
+        <rect x="18" y="48" width="6" height="6" />
+        <rect x="24" y="48" width="6" height="6" />
+        <rect x="30" y="48" width="6" height="6" />
+        <rect x="36" y="48" width="6" height="6" />
+        <rect x="54" y="48" width="6" height="6" />
+
+        <rect x="12" y="54" width="6" height="6" />
+        <rect x="36" y="54" width="6" height="6" />
+        <rect x="48" y="54" width="6" height="6" />
+        <rect x="66" y="54" width="6" height="6" />
+        <rect x="72" y="54" width="6" height="6" />
+        <rect x="78" y="54" width="6" height="6" />
+
+        <rect x="0" y="60" width="6" height="6" />
+        <rect x="6" y="60" width="6" height="6" />
+        <rect x="12" y="60" width="6" height="6" />
+        <rect x="30" y="60" width="6" height="6" />
+        <rect x="54" y="60" width="6" height="6" />
+        <rect x="60" y="60" width="6" height="6" />
+        <rect x="66" y="60" width="6" height="6" />
+        <rect x="72" y="60" width="6" height="6" />
+
+        <rect x="0" y="66" width="6" height="6" />
+        <rect x="18" y="66" width="6" height="6" />
+        <rect x="36" y="66" width="6" height="6" />
+        <rect x="42" y="66" width="6" height="6" />
+        <rect x="48" y="66" width="6" height="6" />
+        <rect x="54" y="66" width="6" height="6" />
+        <rect x="72" y="66" width="6" height="6" />
+        <rect x="78" y="66" width="6" height="6" />
+
+        <rect x="24" y="72" width="6" height="6" />
+        <rect x="36" y="72" width="6" height="6" />
+        <rect x="54" y="72" width="6" height="6" />
+        <rect x="60" y="72" width="6" height="6" />
+        <rect x="66" y="72" width="6" height="6" />
+        <rect x="78" y="72" width="6" height="6" />
+
+        <rect x="42" y="78" width="6" height="6" />
+        <rect x="78" y="78" width="6" height="6" />
+      </g>
     </svg>
   );
 };

@@ -27,13 +27,11 @@ export default function AsesorContainer({
     onClose: onDeleteModalClose,
   } = useDisclosure();
 
-  // Reset currentAsesor when the modal closes
   const handleEditModalClose = () => {
     onEditarModalClose();
     setCurrentAsesor(null);
   };
 
-  // Set current asesor with fresh data when opening modal
   const handleOpenModal = () => {
     setCurrentAsesor({ ...asesor });
     onEditarModalOpen();
@@ -44,7 +42,6 @@ export default function AsesorContainer({
     onDeleteModalOpen();
   };
 
-  // Update currentAsesor whenever the asesor prop changes
   useEffect(() => {
     if (
       isEditarModalOpen &&
@@ -150,7 +147,6 @@ export default function AsesorContainer({
         isLoading={isLoading}
       />
 
-      {/* Eliminar --> */}
       <ConfirmationMessage
         isOpen={isDeleteModalOpen}
         onOpen={handleDeleteOpenModal}

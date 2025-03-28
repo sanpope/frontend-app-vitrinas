@@ -27,7 +27,6 @@ export default function PocoStock({ productosConPocoStock }) {
           flexDirection={"column"}
           justifyContent={"space-between"}
           alignItems={"center"}
-         
         >
           <Box
             w={"100%"}
@@ -36,7 +35,6 @@ export default function PocoStock({ productosConPocoStock }) {
             flexDirection={"column"}
             justifyContent={"space-between"}
             alignItems={"space-between"}
-           
           >
             <Box
               w={"100%"}
@@ -187,7 +185,7 @@ export default function PocoStock({ productosConPocoStock }) {
                 <></>
               )}
             </Box>
-            <Box w={"100%"} display={"flex"} justifyContent={"flex-end"} pt={4}>
+            <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
               <SmallPagination
                 currentPage={currentPage}
                 totalPages={totalPages}

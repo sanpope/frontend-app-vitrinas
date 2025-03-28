@@ -50,6 +50,7 @@ import ThumbDownIcon from "../assets/images/ThumbDownIcon";
 import { getPorcentage } from "../utils/formatting";
 import { parseData } from "../utils/xmlParse";
 import { BIG_WIDTH, SMALL_WIDTH } from "../component/SideBar";
+import colors from "../theme/colors";
 
 const PADDING = 15;
 
@@ -185,9 +186,9 @@ export default function Resumen() {
         width={"100%"}
       >
         <Container
-          width={"100%"}
           height={ContainerHeight + "px"}
           minHeight={"215px"}
+          width={"100%"}
           icon={<AlarmClockIcon />}
           title={"Tiempo de inactividad"}
           children={
@@ -224,7 +225,7 @@ export default function Resumen() {
         />
         <Container
           height={ContainerHeight + "px"}
-          minHeight="215px"
+          minHeight={"215px"}
           width={"100%"}
           icon={<ShoppingCartIcon />}
           title={"Ventas del día"}
@@ -274,65 +275,67 @@ export default function Resumen() {
             )
           }
         />
-        <Box
+        <Container
           height={ContainerHeight + "px"}
-          bg={"white"}
-          minH={"220px"}
-          borderRadius={"20px"}
-          p={3}
-          display={"flex"}
-          flexDir={"column"}
-          justifyContent={"space-between"}
-          flex={1}
-        >
-          {estadoDelDispositivo === null ? (
-            <LoadingComponent />
-          ) : (
-            <>
-              <Box w={"100%"}>
-                <MobileIcon
-                  width={"40px"}
-                  fill={
-                    estadoDelDispositivo === "Ok"
-                      ? "#00BC4F"
-                      : estadoDelDispositivo === "Operando con dificultades"
-                        ? "#FEB220"
-                        : estadoDelDispositivo === "No operando"
-                          ? "#E60F0F"
-                          : ""
-                  }
-                />
-              </Box>
-
-              <Text textStyle={"RobotoBodyBold"}>Estado del Dispositivo</Text>
-
-              <Box display={"flex"} justifyContent={"flex-start"}>
-                {estadoDelDispositivo === "Ok" ? (
-                  <ThumbUpIcon />
-                ) : estadoDelDispositivo === "Operando con dificultades" ? (
-                  <SadFaceIcon />
-                ) : estadoDelDispositivo === "No operando" ? (
-                  <ThumbDownIcon />
-                ) : (
-                  <></>
-                )}
-
-                <Box display={"flex"}>
-                  {estadoDelDispositivo !== "" &&
-                  estadoDelDispositivo !== null ? (
-                    <Text textStyle={"RobotoBodyBold"}>
-                      {estadoDelDispositivo}{" "}
-                    </Text>
+          minHeight={"215px"}
+          width={"100%"}
+          title={"Estado del Dispositivo"}
+          icon={
+            <MobileIcon
+              width={"40px"}
+              fill={
+                estadoDelDispositivo === "Ok"
+                  ? "#00BC4F"
+                  : estadoDelDispositivo === "Operando con dificultades"
+                    ? "#FEB220"
+                    : estadoDelDispositivo === "No operando"
+                      ? "#E60F0F"
+                      : colors.black
+              }
+            />
+          }
+          children={
+            estadoDelDispositivo === null ? (
+              <LoadingComponent />
+            ) : (
+              <Box
+                h={"100%"}
+                display={"flex"}
+                flexDir={"column"}
+                justifyContent={"flex-end"}
+              >
+                <Box
+                  display={"flex"}
+                  justifyContent={"flex-start"}
+                  alignItems={"center"}
+                >
+                  {estadoDelDispositivo === "Ok" ? (
+                    <ThumbUpIcon />
+                  ) : estadoDelDispositivo === "Operando con dificultades" ? (
+                    <SadFaceIcon />
+                  ) : estadoDelDispositivo === "No operando" ? (
+                    <ThumbDownIcon />
                   ) : (
-                    <Text color={"grey.placeholder"} alignSelf={"flex-end"}>
-                      Ninguno vinculado
-                    </Text>
+                    <></>
                   )}
+
+                  <Box display={"flex"} ml={1}>
+                    {estadoDelDispositivo !== "" &&
+                    estadoDelDispositivo !== null ? (
+                      <Text textStyle={"RobotoBodyBold"}>
+                        {estadoDelDispositivo}{" "}
+                      </Text>
+                    ) : (
+                      <Text color={"grey.placeholder"} alignSelf={"flex-end"}>
+                        Ninguno vinculado
+                      </Text>
+                    )}
+                  </Box>
                 </Box>
               </Box>
-            </>
-          )}
-        </Box>
+            )
+          }
+        />
 
         <Container
           height={ContainerHeight + "px"}

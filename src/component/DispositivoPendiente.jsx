@@ -1,7 +1,10 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import StandardButton from "./ui/buttons/standard";
 import useNormalize from "../hooks/useNormalize";
+import ConfirmationMessage from "./ConfirmationMessage";
+import ThumbUpIcon from "../assets/images/ThumbUpIcon";
+import WarningIcon from "../assets/images/WarningIcon";
 
 export default function DispositivoContainer({
   h,
@@ -11,11 +14,36 @@ export default function DispositivoContainer({
   maxW,
   icon,
   title = "Título",
+  dispositivo,
+  currentDispositivo,
+  setCurrentDispositivo,
   onAceptar,
   onRechazar,
   loading,
+  loadingAprobar,
+  loadingRechazar,
 }) {
   const normalize = useNormalize();
+  const {
+    isOpen: isAprobarSolicitudOpen,
+    onOpen: onAprobarSolicitudOpen,
+    onClose: onAprobarSolicitudClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isRechazarSolicitudOpen,
+    onOpen: onRechazarSolicitudOpen,
+    onClose: onRechazarSolicitudClose,
+  } = useDisclosure();
+
+  const handleOpenAprobarSolicitud = () => {
+    setCurrentDispositivo({ ...currentDispositivo });
+    onAprobarSolicitudOpen();
+  };
+  const handleOpenRechazarSolicitud = () => {
+    setCurrentDispositivo({ ...currentDispositivo });
+    onRechazarSolicitudOpen();
+  };
   return (
     <Box
       w={w}
@@ -49,8 +77,9 @@ export default function DispositivoContainer({
           variant={"RED_PRIMARY"}
           borderRadius="30px"
           w={normalize(30)}
+          minW={"100px"}
           onClick={() => {
-            onAceptar();
+            handleOpenAprobarSolicitud();
           }}
           loading={loading}
         >
@@ -60,13 +89,47 @@ export default function DispositivoContainer({
           variant={"WHITE_BLACK"}
           borderRadius="30px"
           w={normalize(30)}
+          minW={"100px"}
           onClick={() => {
-            onRechazar();
+            handleOpenRechazarSolicitud();
           }}
         >
           Rechazar
         </StandardButton>
       </Box>
+
+      {isAprobarSolicitudOpen && (
+        <ConfirmationMessage
+          isOpen={isAprobarSolicitudOpen}
+          onOpen={onAprobarSolicitudOpen}
+          onClose={onAprobarSolicitudClose}
+          icon={
+            <WarningIcon colorBc="#91D5FF" colorIcon="#1890FF" width="80px" />
+          }
+          text={`¿Estás seguro que deseas aceptar la solicitud de vinculación del dispositivo ${dispositivo?.nombre}?`}
+          text2={"Esta acción vinculará el dispositivo a tu vitrina"}
+          buttonText={"Continuar"}
+          funcConfirmar={() => onAceptar(dispositivo?.codApp)}
+          isLoading={loadingAprobar}
+        />
+      )}
+
+      {isRechazarSolicitudOpen && (
+        <ConfirmationMessage
+          isOpen={isRechazarSolicitudOpen}
+          onOpen={onRechazarSolicitudOpen}
+          onClose={onRechazarSolicitudClose}
+          icon={<WarningIcon width="80px" />}
+          text={`¿Estás seguro que deseas rechazar la solicitud de vinculación del dispositivo ${dispositivo?.nombre}?`}
+          text2={
+            "Esta acción rechazará permanentemente la solicitud de vinculación"
+          }
+          colorText2={"red.100"}
+          buttonText={"Continuar"}
+          funcConfirmar={() => onRechazar(dispositivo?.codApp)}
+          isLoading={loadingRechazar}
+        />
+      )}
     </Box>
   );
 }

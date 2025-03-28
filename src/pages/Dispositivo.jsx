@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, Spinner, Center, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Spinner,
+  Center,
+  useToast,
+  useDisclosure,
+} from "@chakra-ui/react";
 import ConexionIcon from "../assets/images/ConexionIcon";
 import DevIcon from "../assets/images/DevIcon";
 import MobileIcon from "../assets/images/MobileIcon";
@@ -15,6 +22,9 @@ import axios from "axios";
 import handleHttpError from "../utils/handleHttpError";
 import StandardButton from "../component/ui/buttons/standard/index";
 import LoadingComponent from "../component/LoadingComponent";
+import MensajeInfo from "../component/MensajeInfo";
+import ConfirmationMessage from "../component/ConfirmationMessage";
+import WarningIcon from "../assets/images/WarningIcon";
 
 import { parseData } from "../utils/xmlParse";
 import {
@@ -34,7 +44,6 @@ export default function Dispositivo() {
   const [selectedCodApp, setSelectedCodApp] = useState(null);
   const toast = useToast();
 
-  // Estados para controlar loading por tipo de operación
   const [loading, setLoading] = useState(false);
   const [loadingInfo, setLoadingInfo] = useState(false);
   const [loadingPendientes, setLoadingPendientes] = useState(false);
@@ -42,6 +51,14 @@ export default function Dispositivo() {
   const [loadingRechazar, setLoadingRechazar] = useState(false);
   const [loadingEliminar, setLoadingEliminar] = useState(false);
   const [processingCodApp, setProcessingCodApp] = useState(null);
+  const isLoading = loadingInfo || loadingPendientes;
+  const [currentDispositivo, setCurrentDispositivo] = useState();
+
+  const {
+    isOpen: isEliminarDispositivoOpen,
+    onOpen: onEliminarDispositivoOpen,
+    onClose: onEliminarDispositivoClose,
+  } = useDisclosure();
 
   useEffect(() => {
     savingDispositivoData();
@@ -65,9 +82,11 @@ export default function Dispositivo() {
       });
 
       if (response.status === 200) {
+        console.log(response.data);
         const xmlDoc = parseData(response.data);
 
         setInfoDispositivo(dispositivoData(xmlDoc));
+        console.log(dispositivoData(xmlDoc));
         setDispositivosPendientes(false);
       }
     } catch (error) {
@@ -147,9 +166,24 @@ export default function Dispositivo() {
         detalleDeEstado: safeGetTextContent(
           xmlDoc.getElementsByTagName("detalleDeEstado"),
         ),
-        estado: safeGetTextContent(
-          xmlDoc.getElementsByTagName("estado")[1] || [],
-        ),
+        estadoB: (() => {
+          const estadoElements = xmlDoc.getElementsByTagName("estado");
+
+          if (estadoElements.length > 1) {
+            return safeGetTextContent([estadoElements[1]]);
+          }
+
+          if (
+            estadoElements.length === 1 &&
+            estadoElements[0].getElementsByTagName("estado").length > 0
+          ) {
+            return safeGetTextContent(
+              estadoElements[0].getElementsByTagName("estado"),
+            );
+          }
+
+          return "";
+        })(),
       },
       fechaVinculacion: safeGetTextContent(
         xmlDoc.getElementsByTagName("fechaVinculacion"),
@@ -369,12 +403,10 @@ export default function Dispositivo() {
     }
   };
 
-  const isLoading = loadingInfo || loadingPendientes;
-
   return isLoading ? (
-    <Center w="100%" h="100%" position="absolute" top="0" left="0">
+    <Box display="flex" justifyContent="center" alignItems="center" flex={1}>
       <LoadingComponent size="xl" />
-    </Center>
+    </Box>
   ) : (
     <Box
       bg={"mainBg"}
@@ -384,8 +416,8 @@ export default function Dispositivo() {
       flexDir={"column"}
       display={"flex"}
       gap={"20px"}
-      px={"1.5rem"}
-      pt={"10px"}
+      py={"10px"}
+      px={"1.25rem"}
       overflowY={"scroll"}
     >
       <Box display={"flex"} flexDir={"column"} gap={"10px"}>
@@ -393,39 +425,45 @@ export default function Dispositivo() {
           {name} - {city}
         </Text>
         <Text textStyle={"RobotoTitleBold"}>
-          Dispositivo{" "}
-          {dispositivosPendientes ? "-Solicitudes de vinculación" : ""}
+          Dispositivo
+          {dispositivosPendientes ? "- Solicitudes de vinculación" : ""}
         </Text>
       </Box>
 
       {dispositivosPendientes ? (
         infoDispPend.length === 0 ? (
-          <NoteDispositivo
-            text2={"No hay solicitudes de vinculación pendientes!"}
+          <MensajeInfo
+            mensaje={
+              "No hay ninguna solicitud de vinculación de ningún dispositivo"
+            }
           />
         ) : (
-          <Box display={"flex"} gap={7}>
-            {infoDispPend.map((dispositivo, index) => (
-              <DispositivoPendiente
-                key={dispositivo.codApp}
-                icon={<MobileIcon />}
-                title={dispositivo.nombre}
-                onAceptar={() =>
-                  aprobarSolicitudVinculacion(dispositivo.codApp)
-                }
-                onRechazar={() =>
-                  rechazarSolicitudVinculacion(dispositivo.codApp)
-                }
-                minW="200px"
-                maxW="250px"
-                height="100px"
-                loading={loadingAprobar || loadingRechazar}
-                disabled={
-                  (loadingAprobar || loadingRechazar) &&
-                  processingCodApp === dispositivo.codApp
-                }
-              />
-            ))}
+          <Box width={"100%"} display={"flex"} gap={7}>
+            {infoDispPend.map((dispositivo, index) => {
+              return (
+                <Box key={dispositivo.codApp} position="relative">
+                  <DispositivoPendiente
+                    icon={<MobileIcon />}
+                    title={dispositivo.nombre}
+                    dispositivo={dispositivo}
+                    currentDispositivo={currentDispositivo}
+                    setCurrentDispositivo={setCurrentDispositivo}
+                    loadingAprobar={loadingAprobar}
+                    loadingRechazar={loadingRechazar}
+                    onAceptar={aprobarSolicitudVinculacion}
+                    onRechazar={rechazarSolicitudVinculacion}
+                    minW="200px"
+                    maxW="250px"
+                    height="100px"
+                    loading={loadingAprobar || loadingRechazar}
+                    disabled={
+                      (loadingAprobar || loadingRechazar) &&
+                      processingCodApp === dispositivo.codApp
+                    }
+                  />
+                </Box>
+              );
+            })}
           </Box>
         )
       ) : (
@@ -468,9 +506,7 @@ export default function Dispositivo() {
                   borderRadius="30px"
                   w={"160px"}
                   px={2}
-                  onClick={() => {
-                    eliminarVinculo(infoDispositivo?.codApp);
-                  }}
+                  onClick={onEliminarDispositivoOpen}
                   loading={loadingEliminar}
                   disabled={loadingEliminar}
                 >
@@ -479,17 +515,38 @@ export default function Dispositivo() {
               </Box>
             </Box>
           }
+          <ConfirmationMessage
+            isOpen={isEliminarDispositivoOpen}
+            onOpen={onEliminarDispositivoOpen}
+            onClose={onEliminarDispositivoClose}
+            icon={<WarningIcon />}
+            text={`¿Estás seguro que desea eliminar el dispositivo?`}
+            text2={
+              "Esta acción eliminará permanentemente el dispositivo de tu vitrina"
+            }
+            colorText2={"red.100"}
+            buttonText={"Continuar"}
+            funcConfirmar={() => eliminarVinculo(infoDispositivo?.codApp)}
+            isLoading={loadingEliminar}
+          />
 
           <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
             <DispositivoContainer
               icon={<MobileIcon />}
               title={"Estado del Dispositivo:"}
               emoji={
-                infoDispositivo?.estado?.estado === "No operando" ? (
+                infoDispositivo?.estado?.estadoB === "Ok" ? (
+                  <ThumbUpIcon />
+                ) : infoDispositivo?.estado?.estadoB ===
+                  "Operando con dificultades" ? (
                   <SadFaceIcon />
-                ) : null
+                ) : infoDispositivo?.estado?.estadoB === "No operando" ? (
+                  <ThumbDownIcon />
+                ) : (
+                  <></>
+                )
               }
-              description={infoDispositivo?.estado?.estado || "No disponible"}
+              description={infoDispositivo?.estado?.estadoB || "No disponible"}
               date={""}
               text2={""}
               description2={""}
@@ -531,7 +588,7 @@ export default function Dispositivo() {
               description={
                 infoDispositivo?.perifericos?.impresora?.conectado === "true"
                   ? "Conectado"
-                  : "No Conectado"
+                  : "No conectado"
               }
               text2={"Estado del papel:"}
               description2={

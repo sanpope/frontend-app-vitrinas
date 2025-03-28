@@ -11,7 +11,7 @@ import axios from "axios";
 import { HEADER_HEIGHT } from "../component/Header";
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 import { parseData } from "../utils/xmlParse";
-import { capitalizeFirstLetter } from "../utils/formatting";
+import { capitalizeFirstLetter, formatearNumero } from "../utils/formatting";
 import DespacharProdsBod from "../component/DespacharProdsBod";
 import TransferirProdsBod from "../component/TransferirProdsBod";
 import LoadingComponent from "../component/LoadingComponent";
@@ -74,6 +74,7 @@ export default function ProductosyBodega() {
       setIsLoading(false);
     }
   };
+
   const getProductos = (xml) => {
     const totalProdsArr = [];
     const productosNegocio = xml?.querySelector("productosDelNegocio");
@@ -91,8 +92,8 @@ export default function ProductosyBodega() {
 
         const nombre = capitalizeFirstLetter(getElementTextContent("nombre"));
         const codigo = getElementTextContent("codigo");
-        const precio = getElementTextContent("precio");
-        const costo = getElementTextContent("costo");
+        const precio = formatearNumero(getElementTextContent("precio"));
+        const costo = formatearNumero(getElementTextContent("costo"));
         const cantidadEnBodega = getElementTextContent("cantidadEnBodega");
         const cantidadEnVitrinas = getElementTextContent("cantidadEnVitrinas");
         const proveedor = getElementTextContent("proveedor");
@@ -109,6 +110,8 @@ export default function ProductosyBodega() {
           categoria,
         });
       }
+
+      totalProdsArr.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
       return totalProdsArr;
     }
@@ -191,15 +194,19 @@ export default function ProductosyBodega() {
   };
 
   const createProducto = async (newProducto, cerrar) => {
+    console.log(newProducto);
     const nuevoProducto = new URLSearchParams();
     nuevoProducto.append("nombre", `${newProducto.nombre}`);
-    nuevoProducto.append("codigo", `${newProducto.codigo}`);
-    nuevoProducto.append("precio", `${newProducto.precio}`);
-    nuevoProducto.append("costo", `${newProducto.costo}`);
-    nuevoProducto.append("cantidadEnBodega", `${newProducto.cantidad}`);
+    nuevoProducto.append("codigo", parseInt(newProducto.codigo, 10));
+    nuevoProducto.append("precio", parseFloat(newProducto.precio));
+    nuevoProducto.append("costo", parseFloat(newProducto.costo));
+    nuevoProducto.append(
+      "cantidadEnBodega",
+      parseInt(newProducto.cantidad, 10),
+    );
+    console.log(typeof newProducto.cantidad);
     nuevoProducto.append("categoria", `${newProducto.categoria}`);
     nuevoProducto.append("proveedor", `${newProducto.proveedor}`);
-
     setIsLoading(true);
     try {
       const response = await axios.post(
@@ -300,7 +307,8 @@ export default function ProductosyBodega() {
           codigo: productoAtualizado.codigo,
           precio: productoAtualizado.precio,
           costo: productoAtualizado.costo,
-          cantidadEnBodega: productoAtualizado.cantidad,
+          cantidadEnBodega:
+            productoAtualizado.cantidad || productoAtualizado.cantidadEnBodega,
           cantidadEnVitrinas: productSelected?.cantidadEnVitrinas,
           proveedor: productoAtualizado.proveedor,
           categoria: productoAtualizado.categoria,
@@ -384,7 +392,7 @@ export default function ProductosyBodega() {
           });
           toast({
             status: "success",
-            description: "Producto eliminado con éxito!.",
+            description: "¡Producto eliminado con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -394,7 +402,7 @@ export default function ProductosyBodega() {
     } catch (error) {
       toast({
         status: "error",
-        description: "Error eliminando el producto.",
+        description: "Error eliminando el producto",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -471,53 +479,107 @@ export default function ProductosyBodega() {
   }, [busqueda]);
 
   const Busqueda = (textToSearch) => {
+    if (!textToSearch) {
+      getMasArticulos(1);
+      return;
+    }
+
+    const textoNormalizado = textToSearch
+      .toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
     let result = tablaProductos?.filter((element) => {
-      if (
-        element?.nombre
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase()) ||
-        element?.proveedor
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase()) ||
-        element?.categoria
-          ?.toString()
-          .toLowerCase()
-          .includes(textToSearch?.toLowerCase())
-      ) {
-        return element;
-      }
+      const nombreNormalizado = element?.nombre
+        ? element.nombre
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      const proveedorNormalizado = element?.proveedor
+        ? element.proveedor
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      const categoriaNormalizada = element?.categoria
+        ? element.categoria
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      const codigoNormalizado = element?.codigo
+        ? element.codigo
+            .toString()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        : "";
+
+      return (
+        nombreNormalizado.includes(textoNormalizado) ||
+        proveedorNormalizado.includes(textoNormalizado) ||
+        categoriaNormalizada.includes(textoNormalizado) ||
+        codigoNormalizado.includes(textoNormalizado)
+      );
     });
+
     setDisplayedArticulos(result);
+    setTotalResults(result?.length || 0);
   };
 
   useEffect(() => {
     if (sortingBy) {
       let articulosCopy = [...displayedArticulos];
+      let tablaCopy = [...tablaProductos];
 
       switch (sortingBy) {
         case "productos":
-          articulosCopy?.sort((a, b) => {
+          const compareFn = (a, b) => {
             return isAscendent
-              ? a?.nombre.localeCompare(b?.nombre)
-              : b?.nombre.localeCompare(a?.nombre);
-          });
+              ? a.nombre.localeCompare(b.nombre)
+              : b.nombre.localeCompare(a.nombre);
+          };
+          articulosCopy.sort(compareFn);
+          tablaCopy.sort(compareFn);
           break;
         case "bodega":
-          articulosCopy?.sort((a, b) =>
-            isAscendent ? a.bodega - b.bodega : b.bodega - a.bodega,
-          );
+          articulosCopy.sort((a, b) => {
+            const cantA = parseInt(a.cantidadEnBodega) || 0;
+            const cantB = parseInt(b.cantidadEnBodega) || 0;
+            return isAscendent ? cantA - cantB : cantB - cantA;
+          });
+          tablaCopy.sort((a, b) => {
+            const cantA = parseInt(a.cantidadEnBodega) || 0;
+            const cantB = parseInt(b.cantidadEnBodega) || 0;
+            return isAscendent ? cantA - cantB : cantB - cantA;
+          });
           break;
         case "vitrinas":
-          articulosCopy?.sort((a, b) =>
-            isAscendent ? a.vitrinas - b.vitrinas : b.vitrinas - a.vitrinas,
-          );
+          articulosCopy.sort((a, b) => {
+            const cantA = parseInt(a.cantidadEnVitrinas) || 0;
+            const cantB = parseInt(b.cantidadEnVitrinas) || 0;
+            return isAscendent ? cantA - cantB : cantB - cantA;
+          });
+          tablaCopy.sort((a, b) => {
+            const cantA = parseInt(a.cantidadEnVitrinas) || 0;
+            const cantB = parseInt(b.cantidadEnVitrinas) || 0;
+            return isAscendent ? cantA - cantB : cantB - cantA;
+          });
           break;
         default:
           break;
       }
+
       setDisplayedArticulos(articulosCopy);
+      setTablaProductos(tablaCopy);
     }
   }, [sortingBy, isAscendent]);
 
@@ -526,12 +588,10 @@ export default function ProductosyBodega() {
     setCurrentPage(pageNumber);
 
     setTimeout(() => {
-      setDisplayedArticulos(
-        tablaProductos?.slice(
-          (pageNumber - 1) * rowsToShow,
-          (pageNumber - 1) * rowsToShow + rowsToShow,
-        ),
-      );
+      const start = (pageNumber - 1) * rowsToShow;
+      const end = start + rowsToShow;
+
+      setDisplayedArticulos(tablaProductos.slice(start, end));
       setIsLoading(false);
     }, 300);
   };
@@ -649,22 +709,6 @@ export default function ProductosyBodega() {
         w={"100%"}
         minH={MIN_TABLE_HEIGHT + "px"}
       >
-        {isLoading && (
-          <Box
-            position="absolute"
-            top="0"
-            left="0"
-            right="0"
-            bottom="0"
-            zIndex="10"
-            bg="rgba(255, 255, 255, 0.7)"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <LoadingComponent size="xl" />
-          </Box>
-        )}
         {
           <TablaProductosBodega
             isFirstModalOpen={isFourthModalOpen}
