@@ -19,6 +19,7 @@ body {
   justify-content: flex-start !important;
 }
 
+/* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
   border-bottom-right-radius: 20px;
@@ -34,22 +35,28 @@ body {
   border-radius: 20px;
 }
 
+/* Dashboard grid containers */
 .dashboard-grid-container {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-grid-container-resumen {
   grid-template-columns: 1fr;
 }
 
 /* Medium screens (tablets) */
 @media screen and (min-width: 768px) {
-  .dashboard-grid-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+  .dashboard-grid-container,
   .dashboard-grid-container-resumen {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .thCheckBoxInventario {
     padding: 22px;
+  }
+
+  .table-body-container {
+    overflow-x: auto;
   }
 }
 
@@ -60,10 +67,7 @@ body {
   }
 }
 
-.dashboard-grid-container-resumen {
-  grid-template-columns: 1fr;
-}
-
+/* Scroll container styles */
 .container {
   width: 100%;
   height: 100%;
@@ -76,11 +80,14 @@ body {
   width: calc(100% + 17px);
   overflow-y: scroll;
   margin-right: -17px;
-  padding-right: 17px;
+  padding-right: 0px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(136, 136, 136, 0.1) transparent;
+  -ms-overflow-style: none;
 }
 
 .scroll-wrapper::-webkit-scrollbar {
-  width: 3px;
+  width: 2px;
 }
 
 .scroll-wrapper::-webkit-scrollbar-track {
@@ -88,16 +95,8 @@ body {
 }
 
 .scroll-wrapper::-webkit-scrollbar-thumb {
-  border-bottom: 20px;
-  background-color: #888;
-}
-
-.scroll-wrapper::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
-}
-.scroll-wrapper {
-  scrollbar-width: thin;
-  scrollbar-color: #888 transparent;
+  background-color: rgba(136, 136, 136, 0.5);
+  border-radius: 10px;
 }
 
 .scroll-hidden {
@@ -106,23 +105,20 @@ body {
   overflow-y: scroll;
   margin-right: -17px;
   padding-right: 17px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .scroll-hidden::-webkit-scrollbar {
   display: none;
 }
 
-.scroll-hidden {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
+/* Table styles */
 .content-table {
   position: relative;
   width: 100%;
   min-width: 900px;
   table-layout: fixed;
-  overflow-x: auto;
   background-color: white;
   border-collapse: collapse;
   padding: 5px;
@@ -162,177 +158,22 @@ td {
   vertical-align: middle;
 }
 
+/* Product table styles */
 .ProdTr {
   padding-left: 5px;
 }
 
-.ProdTh {
-  text-align: center;
-}
-.inventTh {
-  text-align: center;
-}
-
-.ventastTh {
-  width: 20%;
-  text-align: center;
-}
-.ventastTh:nth-child(3) {
-  width: 30%;
-}
-.ventastTh:nth-child(4) {
-  width: 30%;
-}
-
-.ventastTh:nth-child(5) {
-  width: 10%;
-}
-
-.ventastTd {
-  vertical-align: text-top;
-}
-
-.ventasTd:nth-child(3) {
-  text-align: justify;
-}
-
-.ventasTd:nth-child(3) ul {
-  list-style-type: circle;
-}
-
+.ProdTh,
+.inventTh,
+.ventastTh,
 .AsesorTh {
   text-align: center;
 }
-.AsesorTd:nth-child(1) {
-  text-align: left;
-  padding-left: 3%;
-}
 
-.AsesorTd:nth-child(2) {
-  align-items: center;
-}
-
-.iconContainer {
-  text-align: center;
-  vertical-align: middle;
-  height: 100%;
-}
-
-.iconContainer svg {
-  display: inline-block;
-  vertical-align: middle;
-  margin-inline: 5px;
-}
-
-.vitrinasContainer {
-  justify-content: flex-start;
-}
-
-@media screen and (max-width: 1083px) {
-  .vitrinasContainer {
-    justify-content: center;
-    padding: 28px;
-  }
-}
-
-/* IMPLEMENTACION NUEVA DEL SCROLL DE LA TABLA */
-
-/* Estilos base para ambas tablas */
-.content-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  margin: 0;
-}
-
-/* Contenedor del encabezado */
-.table-header-container {
-  height: 60px; /* Altura fija para el encabezado */
-}
-
-/* Tabla del encabezado */
-.header-table {
-  background-color: black;
-}
-
-.header-table thead {
-  height: 60px;
-  color: #ffffff;
-  text-align: left;
-  font-weight: bold;
-}
-
-/* Tabla del cuerpo */
-.body-table {
-  background-color: white;
-  margin-top: -1px; /* Elimina un posible espacio entre las tablas */
-}
-
-/* Estilo común para celdas */
-.content-table th,
-.content-table td {
-  padding: 10px 5px;
-  font-size: 14px;
-}
-
-/* Filas del cuerpo */
-.body-table tbody tr {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-/* Elimina bordes superiores para que parezca una tabla continua */
-.body-table tbody tr:first-child {
-  border-top: none;
-}
-
-/* Contenedor del cuerpo con scroll */
-.table-body-container {
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-/* Personalización de la barra de desplazamiento */
-.table-body-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.table-body-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.table-body-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.table-body-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
+/* Ventas table styles */
 .ventastTh,
 .ventasTd {
   width: 20%;
-}
-
-.ventastTh:nth-child(3),
-.ventasTd:nth-child(3) {
-  width: 30%;
-}
-
-.ventastTh:nth-child(4),
-.ventasTd:nth-child(4) {
-  width: 30%;
-}
-
-.ventastTh:nth-child(5),
-.ventasTd:nth-child(5) {
-  width: 10%;
-}
-
-@media screen and (max-width: 768px) {
-  .table-body-container {
-    overflow-x: auto;
-  }
 }
 
 .ventastTh:nth-child(1),
@@ -367,18 +208,18 @@ td {
   white-space: normal;
   word-wrap: break-word;
   box-sizing: border-box;
+  vertical-align: text-top;
+}
+
+.ventasTd:nth-child(3) {
+  text-align: justify;
 }
 
 .ventasTd:nth-child(3) ul {
   list-style-type: circle;
 }
 
-.ventasTd:nth-child(4) > div {
-  box-sizing: border-box;
-  max-width: 100%;
-  overflow: hidden;
-}
-
+.ventasTd:nth-child(4) > div,
 .ventasTd:nth-child(4) .chakra-box {
   box-sizing: border-box;
   max-width: 100%;
@@ -392,49 +233,88 @@ td {
   word-wrap: break-word;
 }
 
-/* Scroll*/
+/* Asesor table styles */
+.AsesorTd:nth-child(1) {
+  text-align: left;
+  padding-left: 3%;
+}
 
-.scroll-wrapper {
+.AsesorTd:nth-child(2) {
+  align-items: center;
+}
+
+.iconContainer {
+  text-align: center;
+  vertical-align: middle;
   height: 100%;
-  width: calc(100% + 17px);
-  overflow-y: scroll;
-  margin-right: -17px;
-  padding-right: 0px;
-
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
-.scroll-wrapper::-webkit-scrollbar {
-  display: none;
+.iconContainer svg {
+  display: inline-block;
+  vertical-align: middle;
+  margin-inline: 5px;
 }
 
-.scroll-wrapper::-webkit-scrollbar-thumb {
-  background-color: transparent;
+/* Vitrinas container */
+.vitrinasContainer {
+  justify-content: flex-start;
 }
 
-.scroll-wrapper {
-  height: 100%;
-  width: calc(100% + 17px);
-  overflow-y: scroll;
-  margin-right: -17px;
-  padding-right: 0px;
-
-  scrollbar-width: thin;
-  scrollbar-color: rgba(136, 136, 136, 0.1) transparent;
+@media screen and (max-width: 1083px) {
+  .vitrinasContainer {
+    justify-content: center;
+    padding: 28px;
+  }
 }
 
-.scroll-wrapper::-webkit-scrollbar {
-  width: 2px;
+/* Table header and body styles */
+.table-header-container {
+  height: 60px;
 }
 
-.scroll-wrapper::-webkit-scrollbar-track {
-  background-color: transparent;
+.header-table {
+  background-color: black;
 }
 
-.scroll-wrapper::-webkit-scrollbar-thumb {
-  background-color: rgba(136, 136, 136, 0.5);
+.header-table thead {
+  height: 60px;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+  align-self: center;
+}
+
+.body-table {
+  background-color: white;
+  margin-top: -1px;
+}
+
+.body-table tbody tr {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.body-table tbody tr:first-child {
+  border-top: none;
+}
+
+.table-body-container {
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.table-body-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-body-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-body-container::-webkit-scrollbar-thumb {
+  background: #888;
   border-radius: 10px;
 }
 
-
+.table-body-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

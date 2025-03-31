@@ -33,7 +33,27 @@ export default function Contenedor({ children }) {
         borderTopLeftRadius={{ base: "0px", md: "20px" }}
         borderTopRightRadius={{ base: "0px", md: "20px" }}
       >
-        <table className="content-table header-table">{tableHead}</table>
+        <table className="content-table header-table">
+          {React.cloneElement(tableHead, {
+            style: {
+              height: "60px",
+              display: "table-header-group",
+            },
+            children: React.Children.map(tableHead.props.children, (tr) =>
+              React.cloneElement(tr, {
+                children: React.Children.map(tr.props.children, (th) =>
+                  React.cloneElement(th, {
+                    style: {
+                      ...th.props.style,
+                      verticalAlign: "middle",
+                      height: "60px",
+                    },
+                  }),
+                ),
+              }),
+            ),
+          })}
+        </table>
       </Box>
 
       <Box
