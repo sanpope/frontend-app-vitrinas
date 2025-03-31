@@ -415,12 +415,16 @@ export default function Dispositivo() {
       position="relative"
       flexDir={"column"}
       display={"flex"}
-      gap={"20px"}
-      py={"10px"}
-      px={"1.25rem"}
       overflowY={"scroll"}
+      style={{
+        gap: "20px",
+        paddingTop: "10px",
+        paddingBottom: "10px",
+        paddingLeft: "1.25rem",
+        paddingRight: "1.25rem",
+      }}
     >
-      <Box display={"flex"} flexDir={"column"} gap={"10px"}>
+      <Box display={"flex"} flexDir={"column"} style={{ gap: "10px" }}>
         <Text textStyle={" RobotoBody"}>
           {name} - {city}
         </Text>
@@ -438,7 +442,7 @@ export default function Dispositivo() {
             }
           />
         ) : (
-          <Box width={"100%"} display={"flex"} gap={7}>
+          <Box width={"100%"} display={"flex"} style={{ gap: "7px" }}>
             {infoDispPend.map((dispositivo, index) => {
               return (
                 <Box key={dispositivo.codApp} position="relative">
@@ -478,20 +482,22 @@ export default function Dispositivo() {
               borderWidth={1}
               borderColor={"#FFE58F"}
               bg={"#FFFBE6"}
-              p={"10px"}
-              gap={"10px"}
+              style={{
+                padding: "10px",
+                gap: "10px",
+              }}
             >
               <Box display="flex" flexDirection={"column"}>
                 <Text textStyle={"RobotoSubtitleBold"}>
                   {infoDispositivo?.nombre}
                 </Text>
-                <Box display={"flex"} gap={"5px"}>
+                <Box display={"flex"} style={{ gap: "5px" }}>
                   <Text textStyle={"RobotoBody"}>Código de aplicación: </Text>
                   <Text textStyle={"RobotoBodyBold"}>
                     {infoDispositivo?.codApp}
                   </Text>
                 </Box>
-                <Box display={"flex"} gap={"5px"}>
+                <Box display={"flex"} style={{ gap: "5px" }}>
                   <Text textStyle={"RobotoBody"}>Vinculado desde: </Text>
                   <Text textStyle={"RobotoBodyBold"}>
                     {infoDispositivo?.fechaVinculacion
@@ -504,8 +510,12 @@ export default function Dispositivo() {
                 <StandardButton
                   variant={"RED_PRIMARY"}
                   borderRadius="30px"
-                  w={"160px"}
-                  px={2}
+                  minW={"160px"}
+                  w="fitContent"
+                  style={{
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                  }}
                   onClick={onEliminarDispositivoOpen}
                   loading={loadingEliminar}
                   disabled={loadingEliminar}
@@ -530,7 +540,7 @@ export default function Dispositivo() {
             isLoading={loadingEliminar}
           />
 
-          <Box display={"flex"} gap={"20px"} flexWrap={"wrap"}>
+          <Box display={"flex"} style={{ gap: "20px" }} flexWrap={"wrap"}>
             <DispositivoContainer
               icon={<MobileIcon />}
               title={"Estado del Dispositivo:"}
