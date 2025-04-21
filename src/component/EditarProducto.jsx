@@ -20,6 +20,14 @@ import StandardButton from "./ui/buttons/standard";
 import NumberInputFloat from "./NumberInputFloat";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
+const desformatearNumero = (valor) => {
+  if (typeof valor === 'string') {
+    let valorSinDolar = valor.replace('$', '');
+    return parseFloat(valorSinDolar.replace(/\./g, '').replace(',', '.'));
+  }
+  return valor;
+};
+
 export default function EditarProducto({
   desc,
   isOpen,
@@ -33,8 +41,8 @@ export default function EditarProducto({
 }) {
   const [nombre, setNombre] = useState(producto?.nombre);
   const [codigo, setCodigo] = useState(producto?.codigo);
-  const [costo, setCosto] = useState(producto?.costo);
-  const [precio, setPrecio] = useState(producto?.precio);
+  const [costo, setCosto] = useState(desformatearNumero(producto?.costo));
+  const [precio, setPrecio] = useState(desformatearNumero(producto?.precio));
   const [cantidad, setCantidad] = useState(producto?.cantidadEnBodega);
   const [categoria, setCategoria] = useState(producto?.categoria);
   const [proveedor, setProveedor] = useState(producto?.proveedor);
@@ -46,10 +54,10 @@ export default function EditarProducto({
     setCodigo(val);
   };
   const saveCosto = (val) => {
-    setCosto(val);
+    setCosto(parseFloat(val));
   };
   const savePrecio = (val) => {
-    setPrecio(val);
+    setPrecio(parseFloat(val));
   };
   const saveCantidad = (val) => {
     setCantidad(val);
@@ -68,7 +76,7 @@ export default function EditarProducto({
       codigo !== 0 &&
       costo !== 0 &&
       precio !== 0 &&
-      cantidad !== 0 &&
+      cantidad >= 0 &&
       categoria !== "" &&
       categoria !== "No existen Categorías" &&
       proveedor !== ""
@@ -79,31 +87,31 @@ export default function EditarProducto({
   };
 
   const handleSubmit = () => {
-    editProducto(
-      {
-        nombre,
-        codigo,
-        costo,
-        precio,
-        cantidad,
-        categoria,
-        proveedor,
-      },
-      handleOnClose,
-    );
+    const productoActualizado = {
+      nombre,
+      codigo,
+      costo: Number(costo),
+      precio: Number(precio),
+      cantidad: Number(cantidad),
+      categoria,
+      proveedor,
+    };
+    
+    editProducto(productoActualizado, handleOnClose);
   };
 
   const handleOnClose = () => {
     setNombre(producto?.nombre);
     setCodigo(producto?.codigo);
-    setCosto(producto?.costo);
-    setPrecio(producto?.precio);
+    setCosto(desformatearNumero(producto?.costo));
+    setPrecio(desformatearNumero(producto?.precio));
     setCantidad(producto?.cantidadEnBodega);
     setCategoria(producto?.categoria);
     setProveedor(producto?.proveedor);
 
     onClose();
   };
+  
   const proveedoresFiltered = listaProveedores.filter((prov) => {
     return prov?.toLowerCase() !== producto?.proveedor?.toLowerCase();
   });
@@ -206,7 +214,7 @@ export default function EditarProducto({
               </FormLabel>
               <NumberInputFloat
                 value={costo}
-                onChange={(costo) => saveCosto(parseFloat(costo))}
+                onChange={(costo) => saveCosto(costo)}
               />
 
               <FormLabel display="flex" alignItems="center" mt={3}>
@@ -224,7 +232,7 @@ export default function EditarProducto({
 
               <NumberInputFloat
                 value={precio}
-                onChange={(costo) => savePrecio(parseFloat(costo))}
+                onChange={(precio) => savePrecio(precio)}
               />
 
               <FormLabel display="flex" alignItems="center" mt={3}>

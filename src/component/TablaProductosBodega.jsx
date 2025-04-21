@@ -596,7 +596,7 @@ export default function TablaProductosBodega({
                     <td className="ProdTd">${articulo?.precio}</td>
                     <td className="ProdTd">${articulo?.costo}</td>
                     <td className="ProdTd">
-                      {articulo?.cantidadEnBodega || articulo?.cantidad}
+                      {articulo?.cantidadEnBodega === 0 || articulo?.cantidad === 0 ? "0" : (articulo?.cantidadEnBodega || articulo?.cantidad)}
                     </td>
                     <td className="ProdTd">{articulo?.cantidadEnVitrinas}</td>
                     <td className="ProdTd">

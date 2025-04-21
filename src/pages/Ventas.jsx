@@ -179,8 +179,10 @@ export default function Ventas() {
 
         setTotalResults(currentTable?.length);
         setDisplayedArticulos(currentTable);
+        
       }
     } catch (error) {
+      console.error("Error en la consulta:", error);
       toast({
         title: "Error",
         description: "Error al cargar los datos. Intente nuevamente",
@@ -226,8 +228,10 @@ export default function Ventas() {
           selectedOption === "Ventas" ? ventas : devoluciones;
         setTotalResults(currentTable?.length);
         setDisplayedArticulos(ventas);
+        
       }
     } catch (error) {
+      console.error("Error en la consulta de totales:", error);
       toast({
         title: "Error",
         description: "Error al cargar los datos. Intente nuevamente",
@@ -244,7 +248,6 @@ export default function Ventas() {
 
   const ContainerHeight = useMemo(() => {
     const result = Math.floor(height - HEADER_HEIGHT - MARGINS);
-    console.log(result);
     return result;
   }, [height]);
 
@@ -294,13 +297,26 @@ export default function Ventas() {
             endDate={fechaFin}
             setEndDate={setFechaFin}
             onFilterChange={({ startDate, endDate }) => {
-              const start = new Date(startDate);
-              start.setDate(start.getDate() + 1);
-
-              const end = new Date(endDate);
-
-              getIntervaloVentas(start, end);
-              getTotalIntervaloVentas(start, end);
+              const startParts = startDate.split("-");
+              const endParts = endDate.split("-");
+              
+              const startDateObj = new Date(
+                parseInt(startParts[0]), 
+                parseInt(startParts[1]) - 1, 
+                parseInt(startParts[2])
+              );
+              
+              const endDateObj = new Date(
+                parseInt(endParts[0]), 
+                parseInt(endParts[1]) - 1, 
+                parseInt(endParts[2])
+              );
+              
+              startDateObj.setHours(0, 0, 0, 0);
+              endDateObj.setHours(23, 59, 59, 999);
+              
+              getIntervaloVentas(startDateObj, endDateObj);
+              getTotalIntervaloVentas(startDateObj, endDateObj);
             }}
           />
           <Select
@@ -324,11 +340,7 @@ export default function Ventas() {
         display="flex"
         flexDir={"column"}
         mb={2}
-        h={"60%"}
-        // h={{
-        //   base: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT_MOBILE}px - ${MARGINS}px )`,
-        //   lg: `calc(100% - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT}px - ${MARGINS}px)`,
-        // }}
+        flex={1}
       >
         <TablaVentas
           displayedArticulos={displayedArticulos}
@@ -360,7 +372,8 @@ export default function Ventas() {
         justifyContent={"space-between"}
       >
         <Container
-          flex={1}
+          flex={0.5}
+          minH='150px'
           bg={"black"}
           title={"Total vendido"}
           color="white"
@@ -390,7 +403,8 @@ export default function Ventas() {
           }
         />
         <Container
-          flex={1}
+          flex={0.5}
+          minH='150px'
           title={"Total devuelto"}
           icon={<ChartLineDownIcon />}
           children={
@@ -418,7 +432,8 @@ export default function Ventas() {
           }
         />
         <Container
-          flex={1}
+          flex={0.5}
+          minH='150px'
           title={"Ingreso real recibido"}
           icon={<HandsUsdIcon />}
           children={

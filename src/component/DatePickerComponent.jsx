@@ -61,7 +61,6 @@ const DualCalendarDateRangePicker = ({
     if (endDate) {
       return new Date(endDate);
     } else {
-      // Iniciar el calendario derecho un mes más adelante que el izquierdo
       const nextMonth = new Date();
       nextMonth.setMonth(nextMonth.getMonth() + 1);
       return nextMonth;
@@ -111,7 +110,7 @@ const DualCalendarDateRangePicker = ({
   const handleDateSelect = (date, isStartDate) => {
     const newDate = new Date(date);
     newDate.setHours(12, 0, 0, 0);
-
+    
     let newDates = [...selectedDatesLocal];
 
     if (isStartDate) {
@@ -134,6 +133,7 @@ const DualCalendarDateRangePicker = ({
     }
 
     setSelectedDatesLocal(newDates);
+
   };
 
   const handleConfirm = () => {
@@ -141,6 +141,7 @@ const DualCalendarDateRangePicker = ({
       setStartDate(selectedDatesLocal[0]);
       setEndDate(selectedDatesLocal[1]);
 
+     
       if (typeof onFilterChange === "function") {
         onFilterChange({
           startDate: formatDateToYYYYMMDD(selectedDatesLocal[0]),
@@ -183,7 +184,6 @@ const DualCalendarDateRangePicker = ({
     setSelectedDatesLocal([null, null]);
   };
 
-  // Función modificada para navegar independientemente cada calendario
   const navigateMonth = (calendar, direction) => {
     const monthOffset = direction === "prev" ? -1 : 1;
 
@@ -242,20 +242,26 @@ const DualCalendarDateRangePicker = ({
 
   const renderCalendar = (baseDate, isLeftCalendar) => {
     const today = new Date();
+    
     today.setHours(0, 0, 0, 0);
-
+    
     const days = generateCalendarDays(baseDate);
 
     const isDateDisabled = (date) => {
-      if (date > today) {
-        return true;
-      }
-      return false;
+     
+      const dateToCheck = new Date(date);
+      dateToCheck.setHours(0, 0, 0, 0);
+      
+      const isToday = dateToCheck.getDate() === today.getDate() && 
+                     dateToCheck.getMonth() === today.getMonth() &&
+                     dateToCheck.getFullYear() === today.getFullYear();
+                     
+      const result = dateToCheck.getTime() > today.getTime();
+      
+      return result;
     };
 
     const isSelected = (date) => {
-      // Para el calendario izquierdo, solo comprueba la selección de la fecha inicial
-      // Para el calendario derecho, solo comprueba la selección de la fecha final
       const selectedDate = isLeftCalendar
         ? selectedDatesLocal[0]
         : selectedDatesLocal[1];
@@ -269,7 +275,6 @@ const DualCalendarDateRangePicker = ({
     };
 
     const isInRange = (date) => {
-      // No hay visualización de rango
       return false;
     };
 
@@ -327,7 +332,11 @@ const DualCalendarDateRangePicker = ({
             const isDisabled = isDateDisabled(day.date);
             const selected = isSelected(day.date);
             const inRange = isInRange(day.date);
-
+            
+            const isToday = day.date.getDate() === new Date().getDate() && 
+                         day.date.getMonth() === new Date().getMonth() && 
+                         day.date.getFullYear() === new Date().getFullYear();
+                         
             return (
               <GridItem key={index} textAlign="center">
                 <Button
@@ -337,7 +346,7 @@ const DualCalendarDateRangePicker = ({
                   fontWeight={400}
                   textStyle="RobotoBody"
                   p={2}
-                  bg={selected ? "red.500" : "transparent"}
+                  bg={selected ? "red.500" : isToday ? "blue.100" : "transparent"}
                   color={
                     selected
                       ? "white"
@@ -348,7 +357,9 @@ const DualCalendarDateRangePicker = ({
                           : "black"
                   }
                   opacity={!day.isCurrentMonth ? 0.5 : 1}
-                  onClick={() => handleDateSelect(day.date, isLeftCalendar)}
+                  onClick={() => {
+                    handleDateSelect(day.date, isLeftCalendar);
+                  }}
                   isDisabled={isDisabled || !day.isCurrentMonth}
                   _hover={{
                     bg:

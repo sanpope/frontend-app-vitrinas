@@ -11,7 +11,7 @@ import axios from "axios";
 import { HEADER_HEIGHT } from "../component/Header";
 import { MIN_TABLE_HEIGHT } from "../component/ui/tablas/Contenedor";
 import { parseData } from "../utils/xmlParse";
-import { capitalizeFirstLetter, formatearNumero } from "../utils/formatting";
+import { capitalizeFirstLetter } from "../utils/formatting";
 import DespacharProdsBod from "../component/DespacharProdsBod";
 import TransferirProdsBod from "../component/TransferirProdsBod";
 import LoadingComponent from "../component/LoadingComponent";
@@ -44,6 +44,32 @@ export default function ProductosyBodega() {
   useEffect(() => {
     getMasArticulos(1);
   }, [tablaProductos]);
+  
+  const formatearNumero = (numero) => {
+    if (numero === 0) {
+      return "0";
+    }
+    
+    if (numero === undefined || numero === null || numero === "") {
+      return "0";
+    }
+    
+    let num;
+    
+    if (typeof numero === 'string') {
+
+      const sinMoneda = numero.replace('$', '');
+      num = parseFloat(sinMoneda.replace(/\./g, '').replace(',', '.'));
+    } else {
+      num = Number(numero);
+    }
+    
+    if (isNaN(num)) {
+      return "0";
+    }
+    
+    return num.toLocaleString('es-CL');
+  };
 
   const getInventarioInfo = async () => {
     setIsLoading(true);
@@ -194,7 +220,7 @@ export default function ProductosyBodega() {
   };
 
   const createProducto = async (newProducto, cerrar) => {
-    console.log(newProducto);
+
     const nuevoProducto = new URLSearchParams();
     nuevoProducto.append("nombre", `${newProducto.nombre}`);
     nuevoProducto.append("codigo", parseInt(newProducto.codigo, 10));
@@ -204,7 +230,6 @@ export default function ProductosyBodega() {
       "cantidadEnBodega",
       parseInt(newProducto.cantidad, 10),
     );
-    console.log(typeof newProducto.cantidad);
     nuevoProducto.append("categoria", `${newProducto.categoria}`);
     nuevoProducto.append("proveedor", `${newProducto.proveedor}`);
     setIsLoading(true);
@@ -276,6 +301,7 @@ export default function ProductosyBodega() {
     const updadtedProduct = new URLSearchParams();
     updadtedProduct.append("nuevoNombre", `${productoAtualizado.nombre}`);
     updadtedProduct.append("nuevoCodigo", `${productoAtualizado.codigo}`);
+    
     updadtedProduct.append("nuevoPrecio", `${productoAtualizado.precio}`);
     updadtedProduct.append("nuevoCosto", `${productoAtualizado.costo}`);
     updadtedProduct.append(
@@ -284,7 +310,7 @@ export default function ProductosyBodega() {
     );
     updadtedProduct.append("nuevaCategoria", `${productoAtualizado.categoria}`);
     updadtedProduct.append("nuevoProveedor", `${productoAtualizado.proveedor}`);
-
+  
     const code = Number.parseInt(productSelected?.codigo);
     setIsLoading(true);
     try {
@@ -297,30 +323,32 @@ export default function ProductosyBodega() {
           },
         },
       );
-
+  
       if (response.status == 200 && response.data) {
         const index = tablaProductos?.findIndex(
           (prod) => prod.codigo === productSelected?.codigo?.toString(),
         );
+        
         const updProd = {
           nombre: productoAtualizado.nombre,
           codigo: productoAtualizado.codigo,
-          precio: productoAtualizado.precio,
-          costo: productoAtualizado.costo,
+          precio: formatearNumero(productoAtualizado.precio),
+          costo: formatearNumero(productoAtualizado.costo),
           cantidadEnBodega:
+            productoAtualizado.cantidad === 0 ? 0 : 
             productoAtualizado.cantidad || productoAtualizado.cantidadEnBodega,
           cantidadEnVitrinas: productSelected?.cantidadEnVitrinas,
           proveedor: productoAtualizado.proveedor,
           categoria: productoAtualizado.categoria,
         };
-
+  
         if (index !== -1) {
           setTablaProductos((prev) => {
             const copy = [...prev];
             copy[index] = updProd;
             return copy;
           });
-
+  
           setDisplayedArticulos((prev) => {
             const copy = [...prev];
             const index = copy.findIndex(
@@ -331,7 +359,7 @@ export default function ProductosyBodega() {
             }
             return copy;
           });
-
+  
           toast({
             status: "success",
             description: "¡Producto editado con éxito!",

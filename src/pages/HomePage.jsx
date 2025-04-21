@@ -99,7 +99,6 @@ export default function HomePage() {
         setTotalCategorias(getTopCategorias(xmlDoc));
         setTopTotalProductos(getTopProductos(xmlDoc));
         setTotalDispAv(getDispositivosAveriados(xmlDoc));
-        console.log("Obteniendo Info: ", getDispositivosAveriados(xmlDoc));
         setTotalDespachos(getDespachosActuales(xmlDoc));
         setTotalVisiasNoVerif(getInventarioPorVerificar(xmlDoc));
       })

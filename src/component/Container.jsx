@@ -12,6 +12,7 @@ export default function Container({
   withLineBreaks = false,
   lineHeight = "1.1",
   width,
+  minH = '210px', 
   children,
   heightChildren,
   paddingChildren = 1,
@@ -37,7 +38,7 @@ export default function Container({
       width={width}
       className={className}
       {...props}
-      minH={"210px"}
+      minH={minH}
       boxSizing="border-box"
       overflow={overflow}
     >
