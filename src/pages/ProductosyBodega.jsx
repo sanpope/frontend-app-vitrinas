@@ -45,31 +45,186 @@ export default function ProductosyBodega() {
     getMasArticulos(1);
   }, [tablaProductos]);
   
-  const formatearNumero = (numero) => {
-    if (numero === 0) {
-      return "0";
+const desformatearNumero = (valor) => {
+  
+  if (valor === undefined || valor === null || valor === '') {
+    return 0;
+  }
+  
+  if (typeof valor === 'number') {
+    return valor;
+  }
+  
+  if (typeof valor === 'string') {
+    let valorLimpio = valor.replace(/\$/g, '').trim();
+    
+    if (valorLimpio.endsWith('.0')) {
+      valorLimpio = valorLimpio.substring(0, valorLimpio.length - 2);
     }
     
-    if (numero === undefined || numero === null || numero === "") {
-      return "0";
-    }
+    const valorSinSeparadores = valorLimpio.replace(/\./g, '');
+    const resultado = Number(valorSinSeparadores);
     
-    let num;
-    
-    if (typeof numero === 'string') {
+    return resultado;
+  }
+  
+  return Number(valor);
+};
 
-      const sinMoneda = numero.replace('$', '');
-      num = parseFloat(sinMoneda.replace(/\./g, '').replace(',', '.'));
-    } else {
-      num = Number(numero);
+const formatearNumero = (numero) => {
+  
+  if (numero === 0 || numero === "0") {
+    return "0";
+  }
+  
+  if (numero === undefined || numero === null || numero === "") {
+    return "0";
+  }
+  
+  let num;
+  
+  if (typeof numero === 'string') {
+    let stringLimpio = numero.replace(/\$/g, '').trim();
+    
+    if (stringLimpio.endsWith('.0')) {
+      stringLimpio = stringLimpio.substring(0, stringLimpio.length - 2);
     }
     
-    if (isNaN(num)) {
-      return "0";
+    num = Number(stringLimpio);
+  } else {
+    num = Number(numero);
+  }
+  
+  if (isNaN(num)) {
+    return "0";
+  }
+  
+  const resultado = num.toLocaleString('es-CL', {maximumFractionDigits: 0});
+  return resultado;
+};
+
+const EditarProducto = async (productoAtualizado, handleOnClose) => {
+  
+  const updadtedProduct = new URLSearchParams();
+  updadtedProduct.append("nuevoNombre", `${productoAtualizado.nombre}`);
+  updadtedProduct.append("nuevoCodigo", `${productoAtualizado.codigo}`);
+  
+  const nuevoPrecio = Number(productoAtualizado.precio);
+  const nuevoCosto = Number(productoAtualizado.costo);
+  
+  
+  const precioFormatted = nuevoPrecio.toFixed(1);
+  const costoFormatted = nuevoCosto.toFixed(1);
+  
+  
+  updadtedProduct.append("nuevoPrecio", precioFormatted);
+  updadtedProduct.append("nuevoCosto", costoFormatted);
+  
+
+  const nuevaCantidad = productoAtualizado.cantidad === 0 || productoAtualizado.cantidad === '0'
+    ? 0
+    : (productoAtualizado.cantidad || productoAtualizado.cantidadEnBodega);
+  
+  updadtedProduct.append("nuevaCantEnBodega", `${nuevaCantidad}`);
+  updadtedProduct.append("nuevaCategoria", `${productoAtualizado.categoria}`);
+  updadtedProduct.append("nuevoProveedor", `${productoAtualizado.proveedor}`);
+
+  const code = Number.parseInt(productSelected?.codigo);
+  setIsLoading(true);
+  try {
+    const response = await axios.put(
+      `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos?codigo=${code}`,
+      updadtedProduct,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      },
+    );
+
+
+    if (response.status == 200 && response.data) {
+      const index = tablaProductos?.findIndex(
+        (prod) => prod.codigo === productSelected?.codigo?.toString(),
+      );
+      
+      let precioServidor, costoServidor;
+      
+      try {
+        const xmlString = response.data;
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        
+        precioServidor = xmlDoc.getElementsByTagName("precio")[0]?.textContent || precioFormatted;
+        costoServidor = xmlDoc.getElementsByTagName("costo")[0]?.textContent || costoFormatted;
+        
+      } catch (error) {
+        console.error('Error al extraer valores del XML:', error);
+        precioServidor = precioFormatted;
+        costoServidor = costoFormatted;
+      }
+      
+      const precioFormateado = formatearNumero(precioServidor);
+      const costoFormateado = formatearNumero(costoServidor);
+      
+      
+      const updProd = {
+        nombre: productoAtualizado.nombre,
+        codigo: productoAtualizado.codigo,
+        precio: precioFormateado,
+        costo: costoFormateado,
+        cantidadEnBodega: nuevaCantidad.toString(),
+        cantidadEnVitrinas: productSelected?.cantidadEnVitrinas,
+        proveedor: productoAtualizado.proveedor,
+        categoria: productoAtualizado.categoria,
+      };
+      
+
+      if (index !== -1) {
+        setTablaProductos((prev) => {
+          const copy = [...prev];
+          copy[index] = updProd;
+          return copy;
+        });
+
+        setDisplayedArticulos((prev) => {
+          const copy = [...prev];
+          const index = copy.findIndex(
+            (prod) => prod.codigo === productSelected?.codigo?.toString(),
+          );
+          if (index !== -1) {
+            copy[index] = updProd;
+          }
+          return copy;
+        });
+
+        toast({
+          status: "success",
+          description: "¡Producto editado con éxito!",
+          duration: 3000,
+          position: "top-right",
+          isClosable: true,
+        });
+      }
     }
-    
-    return num.toLocaleString('es-CL');
-  };
+  } catch (error) {
+    console.error('EditarProducto - Error:', error);
+    toast({
+      status: "error",
+      description: "Error editando el producto",
+      duration: 3000,
+      position: "top-right",
+      isClosable: true,
+    });
+  } finally {
+    setIsLoading(false);
+    setProductSelected(null);
+    setBusqueda(null);
+    handleOnClose();
+  }
+};
+ 
+
 
   const getInventarioInfo = async () => {
     setIsLoading(true);
@@ -104,27 +259,32 @@ export default function ProductosyBodega() {
   const getProductos = (xml) => {
     const totalProdsArr = [];
     const productosNegocio = xml?.querySelector("productosDelNegocio");
-
+  
     const listadoProds = productosNegocio?.querySelectorAll("producto") ?? [];
-
+  
     if (listadoProds.length > 0) {
       for (let i = 0; i < listadoProds.length; i++) {
         const producto = listadoProds[i];
-
+  
         const getElementTextContent = (elementName) => {
           const element = producto?.getElementsByTagName(elementName);
           return element && element[0] ? element[0].textContent ?? "" : "";
         };
-
+  
         const nombre = capitalizeFirstLetter(getElementTextContent("nombre"));
         const codigo = getElementTextContent("codigo");
-        const precio = formatearNumero(getElementTextContent("precio"));
-        const costo = formatearNumero(getElementTextContent("costo"));
+        const precioOriginal = getElementTextContent("precio");
+        const costoOriginal = getElementTextContent("costo");
+        
+        
+        const precio = formatearNumero(precioOriginal);
+        const costo = formatearNumero(costoOriginal);
+        
         const cantidadEnBodega = getElementTextContent("cantidadEnBodega");
         const cantidadEnVitrinas = getElementTextContent("cantidadEnVitrinas");
         const proveedor = getElementTextContent("proveedor");
         const categoria = getElementTextContent("categoria");
-
+  
         totalProdsArr.push({
           nombre,
           codigo,
@@ -136,14 +296,16 @@ export default function ProductosyBodega() {
           categoria,
         });
       }
-
+  
       totalProdsArr.sort((a, b) => a.nombre.localeCompare(b.nombre));
-
       return totalProdsArr;
     }
-
+  
     return [];
   };
+  
+  
+
 
   const getProveedoresInfo = async () => {
     setIsLoading(true);
@@ -220,18 +382,30 @@ export default function ProductosyBodega() {
   };
 
   const createProducto = async (newProducto, cerrar) => {
-
+  
+    let precio = 0;
+    let costo = 0;
+    
+    try {
+      precio = Number(newProducto.precio) || 0;
+      costo = Number(newProducto.costo) || 0;
+    } catch (error) {
+      console.error('Error al convertir precio/costo a números:', error);
+    }
+    
+    
+    const precioFormatted = precio.toFixed(1);
+    const costoFormatted = costo.toFixed(1);
+  
     const nuevoProducto = new URLSearchParams();
     nuevoProducto.append("nombre", `${newProducto.nombre}`);
     nuevoProducto.append("codigo", parseInt(newProducto.codigo, 10));
-    nuevoProducto.append("precio", parseFloat(newProducto.precio));
-    nuevoProducto.append("costo", parseFloat(newProducto.costo));
-    nuevoProducto.append(
-      "cantidadEnBodega",
-      parseInt(newProducto.cantidad, 10),
-    );
+    nuevoProducto.append("precio", precioFormatted);
+    nuevoProducto.append("costo", costoFormatted);
+    nuevoProducto.append("cantidadEnBodega", parseInt(newProducto.cantidad, 10));
     nuevoProducto.append("categoria", `${newProducto.categoria}`);
     nuevoProducto.append("proveedor", `${newProducto.proveedor}`);
+    
     setIsLoading(true);
     try {
       const response = await axios.post(
@@ -245,16 +419,26 @@ export default function ProductosyBodega() {
       );
 
       if (response.status === 200) {
+        const precioFormateado = formatearNumero(newProducto.precio);
+        const costoFormateado = formatearNumero(newProducto.costo);
+        
+        
         const newProd = {
-          ...newProducto,
-          cantidadEnVitrinas: 0,
+          nombre: newProducto.nombre,
           codigo: newProducto.codigo.toString(),
+          precio: precioFormateado,
+          costo: costoFormateado,
+          cantidadEnBodega: newProducto.cantidad,
+          cantidadEnVitrinas: 0,
+          proveedor: newProducto.proveedor,
+          categoria: newProducto.categoria,
         };
-
+        
+  
         const index = tablaProductos?.findIndex(
           (prod) => prod.codigo == newProd.codigo,
         );
-
+  
         if (index === -1) {
           setTablaProductos((prev) => {
             const copy = [...(prev || []), newProd];
@@ -264,7 +448,7 @@ export default function ProductosyBodega() {
             const copy = [...(prev || []), newProd];
             return copy;
           });
-
+  
           toast({
             status: "success",
             description: "¡Producto creado con éxito!",
@@ -283,6 +467,7 @@ export default function ProductosyBodega() {
         }
       }
     } catch (error) {
+      console.error('createProducto - Error:', error);
       toast({
         status: "error",
         description: "Error creando el Producto",
@@ -297,93 +482,6 @@ export default function ProductosyBodega() {
     }
   };
 
-  const EditarProducto = async (productoAtualizado, handleOnClose) => {
-    const updadtedProduct = new URLSearchParams();
-    updadtedProduct.append("nuevoNombre", `${productoAtualizado.nombre}`);
-    updadtedProduct.append("nuevoCodigo", `${productoAtualizado.codigo}`);
-    
-    updadtedProduct.append("nuevoPrecio", `${productoAtualizado.precio}`);
-    updadtedProduct.append("nuevoCosto", `${productoAtualizado.costo}`);
-    updadtedProduct.append(
-      "nuevaCantEnBodega",
-      `${productoAtualizado.cantidad}`,
-    );
-    updadtedProduct.append("nuevaCategoria", `${productoAtualizado.categoria}`);
-    updadtedProduct.append("nuevoProveedor", `${productoAtualizado.proveedor}`);
-  
-    const code = Number.parseInt(productSelected?.codigo);
-    setIsLoading(true);
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/app/rest/bodega/productos?codigo=${code}`,
-        updadtedProduct,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        },
-      );
-  
-      if (response.status == 200 && response.data) {
-        const index = tablaProductos?.findIndex(
-          (prod) => prod.codigo === productSelected?.codigo?.toString(),
-        );
-        
-        const updProd = {
-          nombre: productoAtualizado.nombre,
-          codigo: productoAtualizado.codigo,
-          precio: formatearNumero(productoAtualizado.precio),
-          costo: formatearNumero(productoAtualizado.costo),
-          cantidadEnBodega:
-            productoAtualizado.cantidad === 0 ? 0 : 
-            productoAtualizado.cantidad || productoAtualizado.cantidadEnBodega,
-          cantidadEnVitrinas: productSelected?.cantidadEnVitrinas,
-          proveedor: productoAtualizado.proveedor,
-          categoria: productoAtualizado.categoria,
-        };
-  
-        if (index !== -1) {
-          setTablaProductos((prev) => {
-            const copy = [...prev];
-            copy[index] = updProd;
-            return copy;
-          });
-  
-          setDisplayedArticulos((prev) => {
-            const copy = [...prev];
-            const index = copy.findIndex(
-              (prod) => prod.codigo === productSelected?.codigo?.toString(),
-            );
-            if (index !== -1) {
-              copy[index] = updProd;
-            }
-            return copy;
-          });
-  
-          toast({
-            status: "success",
-            description: "¡Producto editado con éxito!",
-            duration: 3000,
-            position: "top-right",
-            isClosable: true,
-          });
-        }
-      }
-    } catch (error) {
-      toast({
-        status: "error",
-        description: "Error editando el producto",
-        duration: 3000,
-        position: "top-right",
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-      setProductSelected(null);
-      setBusqueda(null);
-      handleOnClose();
-    }
-  };
 
   const DeleteProducto = async (codigo) => {
     const code = Number.parseInt(codigo);

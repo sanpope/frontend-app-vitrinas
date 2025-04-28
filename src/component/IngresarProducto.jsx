@@ -42,70 +42,124 @@ export default function IngresarProducto({
   const [proveedor, setProveedor] = useState("");
 
   useEffect(() => {
-    if (listaCategorias && listaCategorias.length > 0) {
+    if (listaCategorias && listaCategorias.length > 0 && !categoria) {
       setCategoria(capitalizeFirstLetter(listaCategorias[0]));
     }
 
-    if (listaProveedores && listaProveedores.length > 0) {
+    if (listaProveedores && listaProveedores.length > 0 && !proveedor) {
       setProveedor(listaProveedores[0]);
     }
-  }, [listaCategorias, listaProveedores]);
+  }, [listaCategorias, listaProveedores, isOpen]);
+
+  useEffect(() => {
+    if (categoria === "" && listaCategorias && listaCategorias.length > 0) {
+      setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+    }
+    
+    if (proveedor === "" && listaProveedores && listaProveedores.length > 0) {
+      setProveedor(listaProveedores[0]);
+    }
+  }, [categoria, proveedor, listaCategorias, listaProveedores]);
 
   const saveName = (val) => {
     setNombre(val);
   };
+  
   const saveCodigo = (val) => {
     setCodigo(val);
   };
+  
   const saveCosto = (val) => {
-    setCosto(val);
+    if (val === '') {
+      setCosto(0);
+      return;
+    }
+    
+    let costoNum;
+    if (typeof val === 'string') {
+
+      if (val.includes('.')) {
+        costoNum = parseInt(val.replace(/\./g, ''));
+      } else {
+        costoNum = parseInt(val);
+      }
+    } else {
+      costoNum = val;
+    }
+    
+    if (!isNaN(costoNum)) {
+      setCosto(costoNum);
+    } else {
+     
+      console.warn('saveCosto - valor no válido');
+    }
   };
+  
   const savePrecio = (val) => {
-    setPrecio(val);
+    
+    if (val === '') {
+      setPrecio(0);
+      return;
+    }
+    
+    let precioNum;
+    if (typeof val === 'string') {
+      if (val.includes('.')) {
+        precioNum = parseInt(val.replace(/\./g, ''));
+      } else {
+        precioNum = parseInt(val);
+      }
+    } else {
+      precioNum = val;
+    }
+    
+    
+    if (!isNaN(precioNum)) {
+      setPrecio(precioNum);
+    } else {
+      console.warn('savePrecio - valor no válido');
+    }
   };
+  
   const saveCantidad = (val) => {
     setCantidad(val);
   };
+  
   const saveCategoria = (val) => {
     setCategoria(val.target.value);
   };
+  
   const saveProveedor = (val) => {
     setProveedor(val.target.value);
   };
 
   const checkFileds = () => {
-    if (
-      nombre?.length > 0 &&
-      codigo !== "" &&
-      codigo !== 0 &&
-      costo !== 0 &&
-      precio !== 0 &&
-      cantidad !== 0 &&
-      categoria !== "" &&
-      categoria !== "No existen Categorías" &&
-      proveedor !== "" &&
-      proveedor !== "No se encontraron proveedores"
-    ) {
-      return true;
-    }
-    return false;
+    const nombreValido = nombre?.length > 0;
+    const codigoValido = codigo !== "" && codigo !== 0;
+    const costoValido = costo !== 0;
+    const precioValido = precio !== 0;
+    const cantidadValida = cantidad !== 0;
+    const categoriaValida = categoria !== "" && categoria !== "No existen Categorías";
+    const proveedorValido = proveedor !== "" && proveedor !== "No se encontraron proveedores" && 
+                            proveedor !== "No existen Proveedores";
+  
+    return nombreValido && codigoValido && costoValido && precioValido && 
+           cantidadValida && categoriaValida && proveedorValido;
   };
 
   const handleSubmit = () => {
-    addProducto(
-      {
-        nombre,
-        codigo,
-        costo,
-        precio,
-        cantidad,
-        categoria,
-        proveedor,
-      },
-      handleOnClose,
-    );
-
-    handleOnClose();
+    
+    const productData = {
+      nombre,
+      codigo,
+      costo, 
+      precio, 
+      cantidad,
+      categoria,
+      proveedor,
+    };
+    
+    addProducto(productData, handleOnClose);
   };
 
   const handleOnClose = () => {
@@ -115,6 +169,7 @@ export default function IngresarProducto({
     setPrecio(0);
     setCantidad(0);
 
+    
     if (listaCategorias && listaCategorias.length > 0) {
       setCategoria(capitalizeFirstLetter(listaCategorias[0]));
     } else {
@@ -219,7 +274,7 @@ export default function IngresarProducto({
               </FormLabel>
               <NumberInputFloat
                 value={costo}
-                onChange={(costo) => saveCosto(parseFloat(costo))}
+                onChange={(costo) => saveCosto(costo)}
               />
 
               <FormLabel display="flex" alignItems="center" mt={3}>
@@ -237,7 +292,7 @@ export default function IngresarProducto({
 
               <NumberInputFloat
                 value={precio}
-                onChange={(costo) => savePrecio(parseFloat(costo))}
+                onChange={(precio) => savePrecio(precio)}
               />
 
               <FormLabel display="flex" alignItems="center" mt={3}>
@@ -289,6 +344,7 @@ export default function IngresarProducto({
                 required
                 onChange={(e) => saveCategoria(e)}
                 value={categoria}
+                defaultValue={listaCategorias && listaCategorias.length > 0 ? capitalizeFirstLetter(listaCategorias[0]) : ""}
               >
                 {listaCategorias !== null && listaCategorias?.length > 0 ? (
                   listaCategorias?.map((cat, index) => (
@@ -318,6 +374,7 @@ export default function IngresarProducto({
                 required
                 onChange={(e) => saveProveedor(e)}
                 value={proveedor}
+                defaultValue={listaProveedores && listaProveedores.length > 0 ? listaProveedores[0] : ""}
               >
                 {listaProveedores && listaProveedores.length > 0 ? (
                   listaProveedores.map((prov, index) => (

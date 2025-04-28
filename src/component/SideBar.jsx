@@ -149,11 +149,12 @@ export default function SideBar({ setLoggedIn }) {
         overflowY={"auto"}
         display="flex"
         flexDirection={"column"}
-        p={{ base: "5px", md: "10px" }}
+        px={{ base: "5px", md: "10px" }}
         gap="5px"
         className="scroll-hidden"
+       
       >
-        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}  p={{ base: "5px", md: "10px" }}  bg={'black'} position={'sticky'} top={0}  zIndex={1000}>
           <Box display={{ base: "flex", md: "none" }} mt={"10px"}>
             <Link to={"/"}>
               <IconLogo width={"40px"} height={"40px"} stroke={"white"} />

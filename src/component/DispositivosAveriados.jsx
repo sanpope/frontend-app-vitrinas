@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, list, Text } from "@chakra-ui/react";
 import React from "react";
 import useNormalize from "../hooks/useNormalize";
 
@@ -104,9 +104,9 @@ export default function DispositivosAveriados({ listadoDispositivos }) {
             >
               <Box
                 bg={
-                  dispositivo.detalleDeEstado === "Con fallas"
-                    ? "#FFD80C"
-                    : "red"
+                  dispositivo.detalleDeEstado === "No operando"
+                    ? "red"
+                    : "#FFD80C"
                 }
                 w={normalize(0.7)}
                 maxW={3}

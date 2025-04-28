@@ -82,11 +82,9 @@ export default function Dispositivo() {
       });
 
       if (response.status === 200) {
-        console.log(response.data);
         const xmlDoc = parseData(response.data);
 
         setInfoDispositivo(dispositivoData(xmlDoc));
-        console.log(dispositivoData(xmlDoc));
         setDispositivosPendientes(false);
       }
     } catch (error) {

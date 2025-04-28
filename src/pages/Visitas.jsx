@@ -88,7 +88,6 @@ export default function Visitas() {
       });
       if (response.status == 200 && response.data) {
         const xmlDoc = parseData(response.data);
-        
         const visitas = getVisitasData(xmlDoc);
         
         setTotalVisitas(visitas?.visitas);
@@ -122,7 +121,7 @@ export default function Visitas() {
         fechaHora: formatFecha(
           totalVisitas[i].getElementsByTagName("fechaHora")?.[0].textContent,
         ),
-        asesor: totalVisitas[i].getElementsByTagName("asesor")?.[0]?.textContent || "",
+        asesor: totalVisitas[i].getElementsByTagName("asesor")[0]?.textContent || "",
         verificada:
           totalVisitas[i].getElementsByTagName("verificada")?.[0].textContent,
         ingresos:

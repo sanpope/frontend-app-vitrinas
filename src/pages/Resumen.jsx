@@ -86,32 +86,52 @@ export default function Resumen() {
   useEffect(() => {
     getResumenInfo(name);
   }, [name]);
-
+  
   const getResumenInfo = async (vitrinaName) => {
     const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/resumen-de-actividad?nombre=${vitrinaName}`;
-
+  
     try {
       const response = await axios.get(url, {
         headers: {
           Accept: "application/xml",
         },
       });
-
+  
       const xmlDoc = parseData(response.data);
       setInactividad(getTiempoInactividad(xmlDoc));
       setProdsUltimasVentas(getUltimasVentas(xmlDoc));
-
+  
       const { cantidad, porcentajeDeCrecimiento } = getVentasDia(xmlDoc);
       setTotalVentasDia(getPorcentage(cantidad, porcentajeDeCrecimiento));
       setEtadoDelDispositivo(getEstadoDispositivo(xmlDoc));
       setTotalMesesAnteriores(getVentaMesesAnteriores(xmlDoc));
+      
       const valorYPorcentajeMes = getVentasMes(xmlDoc);
-      setTotalVentasMes(
-        getPorcentage(
-          valorYPorcentajeMes.valor,
-          valorYPorcentajeMes.porcentajeDeCrecimiento,
-        ),
-      );
+  
+      if (valorYPorcentajeMes.valor === 0 || valorYPorcentajeMes.valor === "0") {
+        setTotalVentasMes({
+          valor: valorYPorcentajeMes.valor,
+          porcentajeDeCrecimiento: 0,
+          text: "",
+          color: "grey.placeholder"
+        });
+      } 
+      else if (valorYPorcentajeMes.porcentajeDeCrecimiento === "") {
+        setTotalVentasMes({
+          valor: valorYPorcentajeMes.valor,
+          porcentajeDeCrecimiento: "",
+          text: "",
+          color: "green.100"
+        });
+      } else {
+        setTotalVentasMes(
+          getPorcentage(
+            valorYPorcentajeMes.valor,
+            valorYPorcentajeMes.porcentajeDeCrecimiento,
+          )
+        );
+      }
+      
       setActualizacionesInvNoRev(getActualizacionesInventario(xmlDoc));
       setIntervaloDelDia(getEvolucionDiariaVentas(xmlDoc));
       setTotalCategorias(getTopCategorias(xmlDoc));
@@ -121,6 +141,7 @@ export default function Resumen() {
       console.error("Error fetching XML data:", error);
     }
   };
+
 
   const REM_BASE = 16;
 
@@ -358,10 +379,21 @@ export default function Resumen() {
                     ${totalVentasMes != null ? totalVentasMes.valor : 0}
                   </Text>
                 </Box>
-                {totalVentasMes?.porcentajeDeCrecimiento === 0 ? (
+                
+                
+                {(totalVentasMes?.valor === 0 || 
+                  totalVentasMes?.valor === "0" || 
+                  totalVentasMes?.porcentajeDeCrecimiento === 0) ? (
                   <Text textStyle={"RobotoBody"} color={"grey.placeholder"}>
                     No se han registrado ventas
                   </Text>
+                ) : totalVentasMes?.porcentajeDeCrecimiento === "" ? (
+                  <Box display="flex" alignItems="center">
+                    <Text textStyle={"RobotoRegular"} color="green" mr={1}>
+                      Por encima del promedio
+                    </Text>
+                    <GreenArrowICon />
+                  </Box>
                 ) : (
                   <Box display="flex" alignItems="center">
                     <Text
@@ -369,18 +401,13 @@ export default function Resumen() {
                       color={totalVentasMes?.color || "grey.placeholder"}
                       mr={1}
                     >
-                      {totalVentasMes != null &&
-                      totalVentasMes?.porcentajeDeCrecimiento !== 0
-                        ? `${totalVentasMes?.porcentajeDeCrecimiento}% ${totalVentasDia?.text}`
-                        : "No se cuenta con información registrada."}
+                      {totalVentasMes?.porcentajeDeCrecimiento}% {totalVentasMes?.text || ""}
                     </Text>
-                    {totalVentasMes?.color &&
-                    totalVentasMes?.color === "red.100" ? (
+                    {totalVentasMes?.color && totalVentasMes?.color === "red.100" ? (
                       <RedArrowDownIcon />
-                    ) : totalVentasMes?.color &&
-                      totalVentasMes?.color !== "red.100" ? (
+                    ) : (
                       <GreenArrowICon />
-                    ) : null}
+                    )}
                   </Box>
                 )}
               </Box>

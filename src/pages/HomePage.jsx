@@ -243,6 +243,7 @@ export default function HomePage() {
   };
 
   const getDispositivosAveriados = (xml) => {
+  
     const dispositivosArr = [];
 
     if (!xml) {
@@ -566,7 +567,7 @@ export default function HomePage() {
                 justifyContent={{
                   base: "center",
                 }}
-                // gap={{ base: normalize(0.5) }}
+               
                 overflow={"hidden"}
               >
                 <ItemsTopVitrinasdelMes

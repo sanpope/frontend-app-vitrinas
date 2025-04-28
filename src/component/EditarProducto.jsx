@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -21,11 +21,29 @@ import NumberInputFloat from "./NumberInputFloat";
 import { capitalizeFirstLetter } from "../utils/formatting";
 
 const desformatearNumero = (valor) => {
-  if (typeof valor === 'string') {
-    let valorSinDolar = valor.replace('$', '');
-    return parseFloat(valorSinDolar.replace(/\./g, '').replace(',', '.'));
+  if (valor === undefined || valor === null || valor === '') {
+    return 0;
   }
-  return valor;
+  
+  if (typeof valor === 'number') {
+    return valor;
+  }
+  
+  if (typeof valor === 'string') {
+
+    let valorLimpio = valor.replace(/\$/g, '').trim();
+    
+    if (valorLimpio.endsWith('.0')) {
+      valorLimpio = valorLimpio.substring(0, valorLimpio.length - 2);
+    }
+    
+    const valorSinSeparadores = valorLimpio.replace(/\./g, '');
+    const resultado = Number(valorSinSeparadores);
+    
+    return resultado;
+  }
+  
+  return Number(valor);
 };
 
 export default function EditarProducto({
@@ -39,58 +57,98 @@ export default function EditarProducto({
   producto,
   editProducto,
 }) {
-  const [nombre, setNombre] = useState(producto?.nombre);
-  const [codigo, setCodigo] = useState(producto?.codigo);
-  const [costo, setCosto] = useState(desformatearNumero(producto?.costo));
-  const [precio, setPrecio] = useState(desformatearNumero(producto?.precio));
-  const [cantidad, setCantidad] = useState(producto?.cantidadEnBodega);
-  const [categoria, setCategoria] = useState(producto?.categoria);
-  const [proveedor, setProveedor] = useState(producto?.proveedor);
+  const [nombre, setNombre] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [costo, setCosto] = useState(0);
+  const [precio, setPrecio] = useState(0);
+  const [cantidad, setCantidad] = useState(0);
+  const [categoria, setCategoria] = useState("");
+  const [proveedor, setProveedor] = useState("");
+
+  useEffect(() => {
+    if (producto) {
+      
+      setNombre(producto.nombre || '');
+      setCodigo(producto.codigo || '');
+      
+      const costoDesformateado = desformatearNumero(producto.costo);
+      setCosto(costoDesformateado);
+      
+      const precioDesformateado = desformatearNumero(producto.precio);
+      setPrecio(precioDesformateado);
+      
+      setCantidad(producto.cantidadEnBodega || 0);
+      setCategoria(producto.categoria || '');
+      setProveedor(producto.proveedor || '');
+    }
+    
+    if (listaCategorias && listaCategorias.length > 0 && !categoria) {
+      setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+    }
+
+    if (listaProveedores && listaProveedores.length > 0 && !proveedor) {
+      setProveedor(listaProveedores[0]);
+    }
+  
+  }, [producto, listaCategorias, listaProveedores]);
+
+  useEffect(() => {
+    if (categoria === "" && listaCategorias && listaCategorias.length > 0) {
+      setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+    }
+    
+    if (proveedor === "" && listaProveedores && listaProveedores.length > 0) {
+      setProveedor(listaProveedores[0]);
+    }
+  }, [categoria, proveedor, listaCategorias, listaProveedores]);
 
   const saveName = (val) => {
     setNombre(val);
   };
+  
   const saveCodigo = (val) => {
     setCodigo(val);
   };
+  
   const saveCosto = (val) => {
-    setCosto(parseFloat(val));
+    setCosto(val);
   };
+  
   const savePrecio = (val) => {
-    setPrecio(parseFloat(val));
+    setPrecio(val);
   };
+  
   const saveCantidad = (val) => {
     setCantidad(val);
   };
+  
   const saveCategoria = (val) => {
     setCategoria(val.target.value);
   };
+  
   const saveProveedor = (val) => {
     setProveedor(val.target.value);
   };
 
   const checkFileds = () => {
-    if (
-      nombre?.length > 0 &&
-      codigo !== "" &&
-      codigo !== 0 &&
-      costo !== 0 &&
-      precio !== 0 &&
-      cantidad >= 0 &&
-      categoria !== "" &&
-      categoria !== "No existen Categorías" &&
-      proveedor !== ""
-    ) {
-      return true;
-    }
-    return false;
+    const nombreValido = nombre?.length > 0;
+    const codigoValido = codigo !== "" && codigo !== 0;
+    const costoValido = costo !== 0;
+    const precioValido = precio !== 0;
+    const cantidadValida = cantidad >= 0;
+    const categoriaValida = categoria !== "" && categoria !== "No existen Categorías";
+    const proveedorValido = proveedor !== "";
+    
+    return nombreValido && codigoValido && costoValido && precioValido && 
+           cantidadValida && categoriaValida && proveedorValido;
   };
 
   const handleSubmit = () => {
+    
     const productoActualizado = {
       nombre,
       codigo,
-      costo: Number(costo),
+      costo: Number(costo), 
       precio: Number(precio),
       cantidad: Number(cantidad),
       categoria,
@@ -101,13 +159,47 @@ export default function EditarProducto({
   };
 
   const handleOnClose = () => {
-    setNombre(producto?.nombre);
-    setCodigo(producto?.codigo);
-    setCosto(desformatearNumero(producto?.costo));
-    setPrecio(desformatearNumero(producto?.precio));
-    setCantidad(producto?.cantidadEnBodega);
-    setCategoria(producto?.categoria);
-    setProveedor(producto?.proveedor);
+    if (producto) {
+      setNombre(producto.nombre || '');
+      setCodigo(producto.codigo || '');
+      setCosto(desformatearNumero(producto.costo));
+      setPrecio(desformatearNumero(producto.precio));
+      setCantidad(producto.cantidadEnBodega || 0);
+      
+      if (producto.categoria) {
+        setCategoria(producto.categoria);
+      } else if (listaCategorias && listaCategorias.length > 0) {
+        setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+      } else {
+        setCategoria('');
+      }
+      
+      if (producto.proveedor) {
+        setProveedor(producto.proveedor);
+      } else if (listaProveedores && listaProveedores.length > 0) {
+        setProveedor(listaProveedores[0]);
+      } else {
+        setProveedor('');
+      }
+    } else {
+      setNombre('');
+      setCodigo('');
+      setCosto(0);
+      setPrecio(0);
+      setCantidad(0);
+      
+      if (listaCategorias && listaCategorias.length > 0) {
+        setCategoria(capitalizeFirstLetter(listaCategorias[0]));
+      } else {
+        setCategoria('');
+      }
+      
+      if (listaProveedores && listaProveedores.length > 0) {
+        setProveedor(listaProveedores[0]);
+      } else {
+        setProveedor('');
+      }
+    }
 
     onClose();
   };
@@ -124,7 +216,7 @@ export default function EditarProducto({
     producto?.proveedor !== "" ? proveedoresFiltered : listaProveedores;
 
   const listCatToShow =
-    producto.categoria !== "" ? categoriasFiltered : listaCategorias;
+    producto?.categoria !== "" ? categoriasFiltered : listaCategorias;
 
   return (
     <Modal isOpen={isOpen} onClose={handleOnClose}>
@@ -285,6 +377,7 @@ export default function EditarProducto({
                     ? capitalizeFirstLetter(producto?.categoria)
                     : "Selecciona la Categoría"
                 }
+                defaultValue={listaCategorias && listaCategorias.length > 0 ? capitalizeFirstLetter(listaCategorias[0]) : ""}
               >
                 {listCatToShow !== null && listCatToShow?.length > 0 ? (
                   listCatToShow?.map((cat, index) => (
@@ -293,10 +386,8 @@ export default function EditarProducto({
                     </option>
                   ))
                 ) : (
-                  <option>
-                    <Text color={"grey.placeholder"}>
-                      No existen Categorías
-                    </Text>
+                  <option value="No existen Categorías">
+                    No existen Categorías
                   </option>
                 )}
               </Select>
@@ -321,6 +412,7 @@ export default function EditarProducto({
                     ? capitalizeFirstLetter(producto?.proveedor)
                     : "Selecciona Proveedor"
                 }
+                defaultValue={listaProveedores && listaProveedores.length > 0 ? listaProveedores[0] : ""}
               >
                 {listProvToShow && listProvToShow.length > 0
                   ? listProvToShow.map((prov, index) => (
@@ -328,7 +420,10 @@ export default function EditarProducto({
                         {capitalizeFirstLetter(prov)}
                       </option>
                     ))
-                  : null}
+                  : <option value="No existen Proveedores">
+                      No existen Proveedores
+                    </option>
+                }
               </Select>
             </Box>
           </Box>
