@@ -34,6 +34,7 @@ import { capitalizeFirstLetter } from "../utils/formatting";
 import LoadingComponent from "./LoadingComponent";
 
 export default function Despachar({ vitrina, isOpen, onOpen, onClose }) {
+  
   const toast = useToast();
   const [totalProdcsBodega, setTotalProdcsBodega] = useState([]);
   const [displayedArticulos, setDisplayedArticulos] = useState([]);

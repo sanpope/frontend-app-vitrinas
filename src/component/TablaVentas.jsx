@@ -31,12 +31,13 @@ export default function TablaVentas({
   setProds,
   setFecha,
   setValorTotal,
+  setIdVentaActual,
   isOpen,
   onOpen,
   onClose,
   loading,
 }) {
-  const HEADERS = ["Fecha y hora", "Precio", tableTitle, "Nota", "Acciones"];
+  const HEADERS = ["Cod", "Fecha y hora", "Valor", tableTitle, "Nota", "Acciones"];
 
   const [parentHeight, setParentHeight] = useState(0);
   const parentRef = useRef(null);
@@ -55,7 +56,7 @@ export default function TablaVentas({
   }, []);
 
   return (
-    <Box h="100%">
+    <Box height="100%">
       <Box
         h="calc(100% - 80px)"
         bgColor={"white"}
@@ -103,6 +104,7 @@ export default function TablaVentas({
                   (articulo?.productosAfectados?.length || 0) - 2;
                 return (
                   <tr key={articuloIndex} className="">
+                    <td className="ventasTd">{articulo.id}</td>
                     <td className="ventasTd">
                       {formatFecha(articulo.fechaHora)}
                     </td>
@@ -137,7 +139,7 @@ export default function TablaVentas({
                         <Note
                           arr={null}
                           text2={
-                            "¡Transacción generada por un asesor para corregir inventario!  "
+                            "¡Transacción generada por un asesor para corregir inventario!"
                           }
                         />
                       ) : (
@@ -153,6 +155,7 @@ export default function TablaVentas({
                           setProds(articulo.productosAfectados);
                           setFecha(articulo.fechaHora);
                           setValorTotal(articulo.valor);
+                          setIdVentaActual(articulo.id);
                         }}
                         p={1}
                       />
@@ -186,7 +189,7 @@ export default function TablaVentas({
                     justifyContent={{ base: "flex-start", lg: "center" }}
                     alignItems={"center"}
                   >
-                    {`No se encontraron ${selectedOption.toLowerCase()} para mostrar.`}
+                    {`No se encontraron ${selectedOption.toLowerCase()} para mostrar`}
                   </Text>
                 </td>
               </tr>

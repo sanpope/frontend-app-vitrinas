@@ -173,33 +173,44 @@ td {
 /* Ventas table styles */
 .ventastTh,
 .ventasTd {
-  width: 20%;
+  width: auto; /* Ya no asignas un ancho fijo global */
 }
 
+/* Columna 1: ID */
 .ventastTh:nth-child(1),
 .ventasTd:nth-child(1) {
+  width: 10%;
+}
+
+/* Columna 2: Fecha-Hora */
+.ventastTh:nth-child(2),
+.ventasTd:nth-child(2) {
   width: 20%;
 }
 
-.ventastTh:nth-child(2),
-.ventasTd:nth-child(2) {
+/* Columna 3: Valor */
+.ventastTh:nth-child(3),
+.ventasTd:nth-child(3) {
   width: 15%;
 }
 
-.ventastTh:nth-child(3),
-.ventasTd:nth-child(3) {
-  width: 30%;
-  box-sizing: border-box;
-}
-
+/* Columna 4: Productos */
 .ventastTh:nth-child(4),
 .ventasTd:nth-child(4) {
   width: 25%;
   box-sizing: border-box;
 }
 
+/* Columna 5: Nota */
 .ventastTh:nth-child(5),
 .ventasTd:nth-child(5) {
+  width: 20%;
+  box-sizing: border-box;
+}
+
+/* Columna 6: Acción */
+.ventastTh:nth-child(6),
+.ventasTd:nth-child(6) {
   width: 10%;
 }
 
@@ -211,23 +222,23 @@ td {
   vertical-align: text-top;
 }
 
-.ventasTd:nth-child(3) {
+.ventasTd:nth-child(4) {
   text-align: justify;
   
 }
 
-.ventasTd:nth-child(3) ul {
+.ventasTd:nth-child(4) ul {
   list-style-type: circle;
 }
 
-.ventasTd:nth-child(4) > div,
-.ventasTd:nth-child(4) .chakra-box {
+.ventasTd:nth-child(5) > div,
+.ventasTd:nth-child(5) .chakra-box {
   box-sizing: border-box;
   max-width: 100%;
   overflow: hidden;
 }
 
-.ventasTd:nth-child(4) .chakra-text {
+.ventasTd:nth-child(5) .chakra-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;

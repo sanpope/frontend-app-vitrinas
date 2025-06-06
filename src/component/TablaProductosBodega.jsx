@@ -114,7 +114,7 @@ export default function TablaProductosBodega({
           });
           toast({
             status: "success",
-            description: "Categoría creado con éxito!",
+            description: "¡Categoría creada con éxito!",
             duration: 3000,
             position: "top-right",
             isClosable: true,
@@ -123,7 +123,7 @@ export default function TablaProductosBodega({
       } else {
         toast({
           status: "info",
-          description: "La categoría ya existe, no se agregó.",
+          description: "La categoría ya existe, no se agregó",
           duration: 3000,
           position: "top-right",
           isClosable: true,
@@ -132,7 +132,7 @@ export default function TablaProductosBodega({
     } catch (error) {
       toast({
         status: "error",
-        description: "Error creando la Categoría.",
+        description: "Error al crear la categoría",
         duration: 3000,
         position: "top-right",
         isClosable: true,
@@ -729,9 +729,9 @@ export default function TablaProductosBodega({
 
       <ConfirmationMessage
         icon={<WarningIcon />}
-        text={`¿Estás seguro que desea eliminar este producto?`}
+        text={`¿Estás seguro de que deseas eliminar este producto?`}
         text2={
-          "Esta acción eliminará permanentemente la información de este producto de tu sistema"
+          "Esta acción eliminará permanentemente este producto de tu sistema"
         }
         colorText2={"red.100"}
         isOpen={isSixthModalOpen}

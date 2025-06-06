@@ -18,6 +18,9 @@ import {
   formatearNumero,
   formatFecha,
 } from "../utils/formatting";
+import { useDisclosure, useToast } from "@chakra-ui/react";
+import ConfirmationMessage from "./ConfirmationMessage";
+import WarningIcon from "../assets/images/WarningIcon";
 
 export default function VerExistencias({
   fecha,
@@ -27,7 +30,12 @@ export default function VerExistencias({
   onOpen,
   onClose,
   text,
+  idVenta,
+  eliminarVenta
 }) {
+
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -40,7 +48,7 @@ export default function VerExistencias({
             borderTopRadius="20px"
           >
             <Text textStyle={"RobotoSubtitle"} color={"white"}>
-              Productos Afectados
+              Productos afectados
             </Text>
           </ModalHeader>
           <ModalBody display={"flex"} flexDirection={"column"} p={"20px"}>
@@ -154,8 +162,41 @@ export default function VerExistencias({
             >
               Salir
             </StandardButton>
+
+            <StandardButton
+              variant="WHITE_RED"
+              borderRadius="20px"
+              py="17px"
+              w="100%"
+              maxW="230px"
+              fontSize="14px"
+              fontWeight="400"
+              onClick={onConfirmOpen}
+            >
+              Eliminar venta
+            </StandardButton>
+
           </ModalFooter>
         </ModalContent>
+
+        <ConfirmationMessage
+          isOpen={isConfirmOpen}
+          onOpen={onConfirmOpen}
+          onClose={onConfirmClose}
+          icon={<WarningIcon />}
+          text={"¿Estás seguro de que deseas eliminar esta venta?"}
+          text2={"Esta acción eliminará la venta permanentemente del sistema"}
+          colorText2={"red.100"}
+          buttonText={"Confirmar"}
+          funcConfirmar={() => {
+            eliminarVenta(idVenta);
+            onConfirmClose();
+            onClose();
+          }}
+          products={null}
+          isLoading={false}
+        />
+
       </Modal>
     </>
   );

@@ -15,6 +15,7 @@ export default function CardVisitas({
   visitaSelected,
   seleccionarYVerificar,
   isSelected,
+  handleVerInventarioPDF,
 }) {
   return (
     <Box
@@ -142,6 +143,19 @@ export default function CardVisitas({
           <></>
         )}
       </HStack>
+      {/* Renderizar texto subrayado si visita.invPDF es true */}
+      {visita?.invPDF === true || visita?.invPDF === "true" ? (
+        <Text
+          textDecoration="underline"
+          color="blue.500"
+          fontSize="sm"
+          mt={2}
+          cursor="pointer"
+          onClick={handleVerInventarioPDF}
+        >
+          Ver inventario entregado
+        </Text>
+      ) : null}
     </Box>
-  );
+);
 }

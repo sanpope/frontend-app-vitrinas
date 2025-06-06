@@ -133,6 +133,8 @@ export default function Visitas() {
         )?.[0].textContent,
         revertida:
           totalVisitas[i].getElementsByTagName("revertida")?.[0].textContent,
+        invPDF:
+          totalVisitas[i].getElementsByTagName("tieneInventarioEnPDF")?.[0].textContent,
       });
     }
 
@@ -141,6 +143,7 @@ export default function Visitas() {
     const movimientosArray = [];
     for (let i = 0; i < movimientos?.length; i++) {
       const movimiento = movimientos[i];
+
       const productosIngresados = [];
       const productosIngresadosElements = movimiento.querySelectorAll(
         "productosIngresados > producto",
@@ -221,6 +224,65 @@ export default function Visitas() {
       correcciones: correccionesArray,
       movimientos: movimientosArray,
     };
+  };
+
+  const fetchPdfBase64 = async (idVisita) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/visitas/inventario-entregado?vitrina=${name}&idVisita=${idVisita}`
+      );
+  
+      if (response.status === 200 && response.data) {
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error al obtener el PDF:", error);
+      toast({
+        status: "error",
+        description: "No se pudo obtener el PDF",
+        duration: 3000,
+        position: "top-right",
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleVerInventarioPDF = async (idVisita) => {
+    // Abrimos una pestaña en blanco inmediatamente
+    const nuevaVentana = window.open('', '_blank');
+  
+    if (!nuevaVentana) {
+      toast({
+        status: 'warning',
+        description: 'Tu navegador bloqueó la ventana emergente. Habilita las ventanas emergentes para este sitio.',
+        duration: 4000,
+        position: 'top-right',
+        isClosable: true,
+      });
+      return;
+    }
+  
+    try {
+      const base64 = await fetchPdfBase64(idVisita);
+  
+      if (base64) {
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length)
+          .fill()
+          .map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+  
+        // Redirige la nueva ventana al PDF
+        nuevaVentana.location.href = blobUrl;
+      } else {
+        nuevaVentana.close();
+      }
+    } catch (error) {
+      console.error("Error mostrando el PDF:", error);
+      nuevaVentana.close();
+    }
   };
 
   const {
@@ -594,6 +656,9 @@ export default function Visitas() {
                     showInfoVisitaRelated(visita);
                     scrollToId(visita?.idVisita);
                   }}
+                  handleVerInventarioPDF={() =>
+                    handleVerInventarioPDF(visita?.idVisita)
+                  }
                 />
               ))
             ) : (

@@ -52,6 +52,7 @@ export default function Ventas() {
   const [prods, setProds] = useState(null);
   const [fechaAct, setFechaActual] = useState(null);
   const [valorTotal, setValorTotal] = useState(null);
+  const [idVentaActual, setIdVentaActual] = useState(null);
 
   useEffect(() => {
     getTotalIntervaloVentas(fechaInicio, fechaFin);
@@ -99,18 +100,15 @@ export default function Ventas() {
 
     for (let i = 0; i < devoluciones.length; i++) {
       const devolucion = devoluciones[i];
-      const fechaHora =
-        devolucion.getElementsByTagName("fechaHora")[0].textContent;
-      const generadaEnCorreccion = devolucion.getElementsByTagName(
-        "generadaEnCorreccion",
-      )[0].textContent;
+      const id = devolucion.getElementsByTagName("id")[0].textContent;
+      const fechaHora = devolucion.getElementsByTagName("fechaHora")[0].textContent;
+      const generadaEnCorreccion = devolucion.getElementsByTagName("generadaEnCorreccion")[0].textContent;
       const productos = devolucion.getElementsByTagName("producto");
 
       const productosAfectados = [];
       for (let j = 0; j < productos.length; j++) {
         productosAfectados.push({
-          cantidad:
-            productos[j].getElementsByTagName("cantidad")[0].textContent,
+          cantidad:productos[j].getElementsByTagName("cantidad")[0].textContent,
           codigo: productos[j].getElementsByTagName("codigo")[0].textContent,
           nombre: productos[j].getElementsByTagName("nombre")[0].textContent,
           precio: productos[j].getElementsByTagName("precio")[0].textContent,
@@ -118,6 +116,7 @@ export default function Ventas() {
       }
 
       result.devoluciones.push({
+        id,
         fechaHora,
         generadaEnCorreccion,
         productosAfectados,
@@ -127,17 +126,15 @@ export default function Ventas() {
 
     for (let i = 0; i < ventas.length; i++) {
       const venta = ventas[i];
+      const id = venta.getElementsByTagName("id")[0].textContent;
       const fechaHora = venta.getElementsByTagName("fechaHora")[0].textContent;
-      const generadaEnCorreccion = venta.getElementsByTagName(
-        "generadaEnCorreccion",
-      )[0].textContent;
-      const productos = venta.getElementsByTagName("producto");
+      const generadaEnCorreccion = venta.getElementsByTagName("generadaEnCorreccion")[0].textContent;
 
+      const productos = venta.getElementsByTagName("producto");
       const productosAfectados = [];
       for (let j = 0; j < productos.length; j++) {
         productosAfectados.push({
-          cantidad:
-            productos[j].getElementsByTagName("cantidad")[0].textContent,
+          cantidad: productos[j].getElementsByTagName("cantidad")[0].textContent,
           codigo: productos[j].getElementsByTagName("codigo")[0].textContent,
           nombre: productos[j].getElementsByTagName("nombre")[0].textContent,
           precio: productos[j].getElementsByTagName("precio")[0].textContent,
@@ -145,6 +142,7 @@ export default function Ventas() {
       }
 
       result.ventas.push({
+        id,
         fechaHora,
         generadaEnCorreccion,
         productosAfectados,
@@ -169,6 +167,7 @@ export default function Ventas() {
       });
 
       if (response.status == 200 && response.data) {
+
         const xmlDoc = parseData(response.data);
         const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
 
@@ -178,10 +177,11 @@ export default function Ventas() {
           selectedOption === "Ventas" ? ventas : devoluciones;
 
         setTotalResults(currentTable?.length);
-        setDisplayedArticulos(currentTable);
-        
+        setDisplayedArticulos(currentTable);       
       }
+
     } catch (error) {
+
       console.error("Error en la consulta:", error);
       toast({
         title: "Error",
@@ -190,6 +190,7 @@ export default function Ventas() {
         duration: 3000,
         isClosable: true,
       });
+      
     } finally {
       setLoading(false);
     }
@@ -203,6 +204,7 @@ export default function Ventas() {
     const url2 = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/intervalo?nombreVitrina=${name}&fechaInicio=${fecha1}&fechaFin=${fecha2}&numeroDeElementos=${rowsToShow}`;
 
     try {
+      
       const response = await axios.get(url2, {
         headers: {
           "Content-Type": "application/xml",
@@ -210,8 +212,10 @@ export default function Ventas() {
       });
 
       if (response.status == 200 && response.data) {
+
         const xmlDoc = parseData(response.data);
         const { ventas, devoluciones } = getVentasyDevoluciones(xmlDoc);
+
         setTotalVendidoIntervalo(
           xmlDoc?.getElementsByTagName("ventaTotal")[0]?.textContent,
         );
@@ -227,11 +231,13 @@ export default function Ventas() {
         const currentTable =
           selectedOption === "Ventas" ? ventas : devoluciones;
         setTotalResults(currentTable?.length);
-        setDisplayedArticulos(ventas);
-        
+        setDisplayedArticulos(ventas);     
       }
+
     } catch (error) {
+
       console.error("Error en la consulta de totales:", error);
+
       toast({
         title: "Error",
         description: "Error al cargar los datos. Intente nuevamente",
@@ -239,8 +245,47 @@ export default function Ventas() {
         duration: 3000,
         isClosable: true,
       });
+
     } finally {
+
       setLoading(false);
+    }
+  };
+
+  const eliminarVenta = async (idVta) => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/app/rest/vitrina/ventas-devoluciones/venta?nombreVitrina=${name}&idVta=${idVta}`;
+  
+    try {
+      const response = await axios.delete(url, {
+        headers: {
+          "Content-Type": "application/xml"
+        }
+      });
+  
+      if (response.status === 200) {
+        toast({
+          title: "Venta eliminada",
+          description: "La venta fue eliminada correctamente",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+  
+        // Actualizar los datos
+        await getTotalIntervaloVentas(fechaInicio, fechaFin);
+  
+      } else {
+        throw new Error("Error inesperado");
+      }
+    } catch (error) {
+      console.error("Error al eliminar venta:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la venta. Intenta de nuevo",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -335,7 +380,9 @@ export default function Ventas() {
           </Select>
         </Box>
       </Box>
+      
       <Box
+        height={`calc(${ContainerHeight}px - ${TOP_SECTION_HEIGHT}px - ${BOTTOM_SECTION_HEIGHT}px - 5*${MARGINS}px)`}
         w={"100%"}
         display="flex"
         flexDir={"column"}
@@ -354,6 +401,7 @@ export default function Ventas() {
           setProds={setProds}
           setFecha={setFechaActual}
           setValorTotal={setValorTotal}
+          setIdVentaActual={setIdVentaActual}
           isOpen={isOpen}
           onOpen={onOpen}
           onClose={onClose}
@@ -468,6 +516,8 @@ export default function Ventas() {
         productos={prods}
         fecha={fechaAct}
         total={valorTotal}
+        idVenta={idVentaActual}
+        eliminarVenta={eliminarVenta}
       />
     </Box>
   );
