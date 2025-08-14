@@ -289,9 +289,9 @@ export default function TablaProductosBodega({
     }
   };
 
-  const crearProveedor = async (nuevoProveedor) => {
+  const crearProveedor = async (ciudad, proveedor) => {
     const prov = new URLSearchParams();
-    prov.append("nombreProveedor", `${nuevoProveedor}`);
+    prov.append("nombreProveedor", `${proveedor}`);
 
     setLoading(true);
     try {
@@ -307,12 +307,12 @@ export default function TablaProductosBodega({
 
       if (response.status === 200) {
         const index = listaProveedores?.findIndex(
-          (cat) => cat?.toLowerCase() === nuevoProveedor?.toLowerCase(),
+          (cat) => cat?.toLowerCase() === proveedor?.toLowerCase(),
         );
         if (index === -1) {
           setListaProveedores((prev) => {
             let copy = prev ? [...prev] : [];
-            copy.push(nuevoProveedor);
+            copy.push(proveedor);
             return copy;
           });
           toast({
